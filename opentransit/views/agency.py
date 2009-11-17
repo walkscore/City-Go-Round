@@ -61,16 +61,19 @@ def agencies(request, country='', state='', city='', name=''):
         #mck = 'agencies_%s' % country
     if state:
         agencies = agencies.filter('state =', state)
+        logging.debug('filtering by state %s' % state)
         mck = 'agencies_%s_%s' % (country, state)
     if city:
         agencies = agencies.filter('city =', city)
+        logging.debug('filtering by city %s' % city)
         mck = 'agencies_%s_%s_%s' % (country, state, city)
     
-    agencies = memcache.get(mck)
-    if not agencies:
-        agencies = Agency.all().order("name")
+    mem_result = memcache.get(mck)
+    if not mem_result:
+        agencies = agencies.order("name")
         mc_added = memcache.add(mck, agencies, 60*60)
-
+    else:
+        agencies = mem_result
     return render_to_response( request, "agency_list.html", {'agencies':agencies, } )
 
 def generate_slugs(request):
@@ -137,10 +140,11 @@ def agencies_search(request):
         agencies = agencies.filter('')
         
     if search_type == 'city':
+        logging.debug('filtering by city %s' % city)
         if not (city and state):
             return HttpResponse('404 - you must include city and state params')
         #get all agencies matching a state and city
-        agencies = agencies.filter('state =',state.lower()).filter('city =',city)
+        agencies = agencies.filter('state =',state.upper()).filter('city =',city)
     
     return HttpResponse(json.dumps({'agencies' : agencies_to_json(agencies)}), mimetype='text/html')
     
