@@ -2,7 +2,6 @@ from django import forms
 from google.appengine.api import images
 from django.utils.translation import ugettext_lazy as _
 from .utils.image import image_bytes_are_valid
-# from .utils.breakpoint import BREAKPOINT
 
 # Django's built-in ImageField doesn't work on AppEngine because
 # it relies on unavailable PIL APIs. Here's my own version that works.
@@ -13,7 +12,6 @@ class AppEngineImageField(forms.FileField):
     }
     
     def clean(self, data, initial=None):
-        # BREAKPOINT()        
         raw_file = super(AppEngineImageField, self).clean(data, initial)
         if raw_file is None:
             return None
