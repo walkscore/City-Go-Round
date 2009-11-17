@@ -8,8 +8,8 @@
 <div id="header">
   {% block header %}
       <h1><a href="{% url home %}">Open Transit Data</a></h1>
-      <h2>Make public data public</h2>
-      <p id="nav"><a href="">Blog</a> &nbsp; <a href="">About</a> &nbsp; <a href="">FAQ</a> &nbsp; <a href="">Contact</a></p>
+      <h2>Innovative apps help you get around</h2>
+      <p id="nav"><a href="">About</a> &nbsp; <a href="">FAQ</a> &nbsp; <a href="">Contact</a></p>
       <div id="friends-and-followers">
           <div class="clickable2 friend-twitter" onclick='trackNavigationNewWindow("http://twitter.com/opentransitdata", "header", "follow us", "twitter")'>
             <label>Follow us</label>
@@ -22,12 +22,16 @@
 </div>
 <div id="lede">
 	{% block lede %}
-  	<p>There are {{agencies.count}} transit agencies in the U.S., but only {{new_refs.count}} make their data available to the public. <a href="">Why?</a></p>
+  	<label>Find apps near you:</label>
+  	<input id="query" name="query" type="text">
+  	<input id="search" name="search" type="image" src="{% static_url /images/button-search.gif %}">
+  	<p>U.S. only for now.</p>
   {% endblock %}
 </div>
-
-<div id="outer-wrapper">{% block content %} &nbsp; {% endblock %}</div>
-
+<div id="outer-wrapper">
+	{% block content %}
+	{% endblock %}
+</div>
 <div id="footer">
     <a id="front-seat-logo" href="http://www.frontseat.org"><img src="{% static_url /images/front-seat-logo.gif %}" /></a>
     <p id="gtfs-data-exchange-logo"><a href="http://www.gtfs-data-exchange.com/"><img src="{% static_url /images/gtfs-data-exchange-logo.gif %}" /></a>Data provided by GTFS Data Exchange </p>

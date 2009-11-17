@@ -1,41 +1,45 @@
 {% extends 'base.html' %}
 
 {% block content %}
-	<div id="left-col">
-	  <div id="no-data-list">
-	    <h4>{{agencies.count}} agencies</h4>
-	    <h3>NO PUBLIC DATA</h3>
-	    {% include "no-data-list.html" %}
-	    <p><a href="all-agencies">View all</a><br />
-	    Transit agency? <a href="">How to get off this list</a></p>
-	  </div>
-  
-    <div id="recently-added-list">
-      <h4>{{new_refs.count}} agencies</h4>
-      <h3>RECENTLY MADE PUBLIC</h3>
-	    {% include "recently-added-list.html" %}      
-      <p><a href="feed_references">View all</a></p>
-    </div>
+
+	<div id="features">
+    {% include "featured-apps.html" %}			
 	</div>
-  <div id="middle-col">
-	  <div id="petition" class="body-content">
-	    <h4>3972 signatures</h4>
-	    <h3>DEMAND PUBLIC DATA</h3>
-	    {% include "petition-form.html" %}
-	    <p class="p2">After signing you will receive occasional updates about transportation issues from Front Seat</p>
-	  </div>
-	  <div id="petition-comments">
-	    <p class="body"><a href="">Tweet a comment</a> that includes opentransitdata.org</p>
-	    {% include "tweet-viewer.html" %}
-	  </div>
+	<div id="main-col-group" class="data-lists">
+		<div class="boxed-content">
+			<h2>DATA POWERS APPS</h2>
+			<p>There are 574 transit agencies in the U.S.  Only 43 make their data public. <a href="">Why?</a></p>
+			<div id="left-col">
+			  <div id="no-data-list">
+			    <h3>No public data</h3>
+			    <h6>{{agencies.count}} agencies</h6>
+			    {% include "no-data-list.html" %}
+			    <p><a href="all-agencies">View all</a><br />
+			    Transit agency? <a href="">How to get off this list</a></p>
+			  </div>
+		  	</div>
+		  <div id="middle-col">
+		    <div id="recently-added-list">
+		      <h3>Recently made public</h3>
+		      <h6>{{new_refs.count}} agencies</h6>
+			    {% include "recently-added-list.html" %}      
+		      <p><a href="feed_references">View all</a></p>
+		    </div>
+		  </div>
+		</div>
   </div>
   <div id="right-col">
-    <div id="app-gallery">
-      <h4>27 transit apps</h4>
-      <h3>TRANSIT APP GALLERY</h3>
-      <p>Public transit data makes apps like these possible:</p>
-      {% include "app-scroller.html" %}			
-      <div id="app-gallery-button" onclick='trackNavigationNewWindow("", "featured-apps", "view app gallery")'></div>
-    </div>
+	  <div id="petition" class="body-content">
+			<div class="boxed-content">
+		    <h2>DEMAND PUBLIC DATA</h2>
+		    {% include "petition-form.html" %}
+		    <p class="p2">After signing you will receive occasional updates about transportation issues from Front Seat</p>
+		  </div>
+	  </div>
+	  <div id="petition-comments">
+	    <p class="body"><a href="">Tweet a comment</a> <span class="p2">that includes opentransitdata.org</span></p>
+	    {% include "tweet-viewer.html" %}
+	  </div>
+  	
   </div>
 {% endblock %}
