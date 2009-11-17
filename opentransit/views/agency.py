@@ -6,12 +6,10 @@ from google.appengine.api import memcache
 
 from ..forms import AgencyForm
 from ..utils.view import render_to_response, redirect_to, not_implemented
-from ..models import Agency
+from ..models import Agency, FeedReference
 
 from django.http import HttpResponse
 from ..utils.slug import slugify
-
-from toplevel import wrap_tmpl_vars
 
 def edit_agency(request, agency_id):
     agency = Agency.get_by_id( int(agency_id) )
@@ -76,7 +74,13 @@ def agencies(request, country='', state='', city='', name=''):
         mc_added = memcache.add(mck, agencies, 60*60)
     else:
         agencies = mem_result
-    return render_to_response( request, "agency_list.html", wrap_tmpl_vars(request, {'agencies':agencies, } ))
+        
+    template_vars = {
+        'agencies': agencies,
+        'feed_references': FeedReference.all_by_most_recent(),
+    }
+    
+    return render_to_response( request, "agency_list.html", template_vars)
 
 def generate_slugs(request):
     """Generates slugs for all agencies in the data store. The current bulk uploader does not support adding a derived field
@@ -98,9 +102,12 @@ def generate_locations(request):
 def agency(request, urlslug):
     agency = Agency.all().filter('urlslug =', urlslug).get()
     
-    return render_to_response( request, "agency.html", wrap_tmpl_vars(request,{
-        'agency':agency
-        }))
+    template_vars = {
+        'agency': agency,
+        'feed_references': FeedReference.all_by_most_recent(),
+    }
+    
+    return render_to_response( request, "agency.html", template_vars)
     
     
 def agencies_search(request):

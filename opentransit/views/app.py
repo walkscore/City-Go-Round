@@ -10,19 +10,19 @@ from ..models import TransitApp, TransitAppStats
 from ..constants import TRANSIT_APP_IMAGE_WIDTH, TRANSIT_APP_IMAGE_HEIGHT
 
 def gallery(request):    
-    dictionary = {
+    template_vars = {
         'transit_app_count': TransitAppStats.get_transit_app_count(),
         'transit_apps': TransitApp.all().fetch(10), # TODO DAVEPECK: replace with something better
     }
         
-    return render_to_response(request, 'app/gallery.html', dictionary)
+    return render_to_response(request, 'app/gallery.html', template_vars)
     
 @requires_valid_slug
 def details(request, transit_app):
-    dictionary = {
+    template_vars = {
         'transit_app': transit_app,
     }    
-    return render_to_response(request, 'app/details.html', dictionary)
+    return render_to_response(request, 'app/details.html', template_vars)
     
 @requires_valid_slug
 def screenshot(request, transit_app):

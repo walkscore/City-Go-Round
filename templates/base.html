@@ -19,6 +19,27 @@ function find_nearby_agencies(){
     console.log(qurl);
     jQuery.getJSON(qurl, function(json){
         console.log(json)
+        if(json.Placemark){
+            var p = json.Placemark[0];
+            var ad = p.AddressDetails.Country.AdministrativeArea;
+            console.log(ad);
+            if (!ad.CountryName=='USA'){
+                alert('sorry, for now we only support US addresses');
+                }
+            var state = ad.AdministrativeAreaName;
+            if (ad.SubAdministrativeArea.Locality) {
+                var city = ad.SubAdministrativeArea.Locality.LocalityName;
+                window.location.replace('/agencies/US/' + state + '/' + city + '/');
+                }
+            else {
+                window.location.replace('/agencies/US/' + state + '/');
+ 
+                }
+            
+            }
+        else{
+            alert('unable to geocode your address');
+            }
         });
     }
 </script>
