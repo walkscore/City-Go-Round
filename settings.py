@@ -54,4 +54,11 @@ SITE_WIDE_USERNAME = "transit"
 SITE_WIDE_PASSWORD = "appsnearyou"
 SITE_WIDE_REALM = "Open Transit Data"
 
+#override in local_settings.py, not here
+GOOGLE_API_KEY='ABQIAAAAOtgwyX124IX2Zpe7gGhBsxSCRqJWmDzbZh5mozwXpdIfpjWXRhSi9qNJD6bg7_Sl6DjLqkfJ2UmOmA'
+
+try:
+    from local_settings import *
+except ImportError, exp:
+    pass
 

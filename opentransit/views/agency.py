@@ -11,6 +11,8 @@ from ..models import Agency
 from django.http import HttpResponse
 from ..utils.slug import slugify
 
+from toplevel import wrap_tmpl_vars
+
 def edit_agency(request, agency_id):
     agency = Agency.get_by_id( int(agency_id) )
     
@@ -74,7 +76,7 @@ def agencies(request, country='', state='', city='', name=''):
         mc_added = memcache.add(mck, agencies, 60*60)
     else:
         agencies = mem_result
-    return render_to_response( request, "agency_list.html", {'agencies':agencies, } )
+    return render_to_response( request, "agency_list.html", wrap_tmpl_vars(request, {'agencies':agencies, } ))
 
 def generate_slugs(request):
     """Generates slugs for all agencies in the data store. The current bulk uploader does not support adding a derived field
@@ -96,7 +98,9 @@ def generate_locations(request):
 def agency(request, urlslug):
     agency = Agency.all().filter('urlslug =', urlslug).get()
     
-    return render_to_response( request, "agency.html", {'agency':agency} )
+    return render_to_response( request, "agency.html", wrap_tmpl_vars(request,{
+        'agency':agency
+        }))
     
     
 def agencies_search(request):
