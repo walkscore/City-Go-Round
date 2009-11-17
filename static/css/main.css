@@ -3,7 +3,7 @@
 	pre,code,address,caption,cite,code,em,strong,th { font-size: 1em; font-weight: normal; font-style: normal; }
 	h1,h2,h3,h4,h5,h6,strong { font-weight: bold; margin: 0; padding: 0; }
 	cite, em { font-style:italic; }
-	ul, ol { margin: 0 0 0 20px; }
+	ul, ol { margin: 0 0 0 0; }
 	fieldset,img { border: 0; }
 	caption,th { text-align: left; }
 	table { border-collapse: collapse; border-spacing: 0; }
@@ -16,7 +16,13 @@
 	cite, blockquote {
 		font-style: normal;
 		display: inline;
-	}	
+	}		
+	.boxed-content {
+		margin: 12px 10px 0 12px;
+	}
+	.clear-all {
+		clear: both;
+	}
 	
 	div.clickable, div.clickable2, div.clickable *, div.clickable2 * {
 		cursor: pointer;
@@ -49,48 +55,43 @@
 		font-size:55px; 
 	}
   h2 {
-		font-size:18px; 
+		font-size:22px; 
 	}
 	h3 {
-		font:21px/21px "Arial Black", Helvetica, sans-serif;
+		font:16px/16px "Arial Black", Helvetica, sans-serif;
 		font-weight: normal; 
-		margin:  0 0 5px 0;
-		padding: 0;
 	}
 	h4 {
-		font-size:14px;
-		line-height: 14px;
 		font-weight: normal;
-		margin-top:  14px;
-		padding: 0;
 	}
 	h5 {
 		font-size:12px; 
 	}
 	h6 {
 		font-size:12px;
+		font-weight: normal;
 		line-height:12px; 
+		color: #777;
+		margin: 2px 0 8px 0;
 	}
 	
+	#petition h2 { color: #028dc7; }
+	.data-lists h2 { color: #f72e2e; }
+	
 	#no-data-list h3 { color: #f72e2e; }
-	#petition h3 { color: #028dc7; }
-	#app-gallery h3 { color: #f79900; }
 	#recently-added-list h3 { color: #18b541; font-size: 18px; }
 
-	#no-data-list h4 { color: #c76402; }
-	#petition h4 { color: #124d65; }
-	#app-gallery h4 { color: #c76402; }
-	#recently-added-list h4 { color: #516d57; }
 	
-  p, ul, ol, blockquote, label {
-		font:12px/16px Verdana, Arial, Helvetica, sans-serif;
+  p, a, ul, ol, blockquote, label {
+		font:12px Verdana, Arial, Helvetica, sans-serif;
 		color: #555;
 	}
 	ul, ol {
 		padding-left: 5px;
 	}
-	p.p2 {
-		font-size:10px; 
+	.p2 {
+		font-size:11px;
+		color: #909090;
 	}
 	cite {
 		font-weight: bold;
@@ -129,20 +130,22 @@
 
 	#header {
 		margin: 0px auto 0 auto;
-		width: 950px;
+		width: 920px;
 		position:relative;
-		background: url(/images/logo-icons.gif) 105px 29px no-repeat;
-		height: 125px;
+		height: 115px;
 	}
 	#lede {
 		background-color: #c6e6f2;
-		width: 100%;
+		margin: 0px auto 0 auto;
+		width: 920px;
+		height: 65px;
 	}
 	#outer-wrapper {
 		margin: 0px auto 0 auto;
-		width: 950px;
+		width: 920px;
 		position:relative;
 	}
+	
 	
 	#left-col { 
 		width: 260px;
@@ -155,13 +158,30 @@
 		float: left;
 	}
 	#right-col { 
-		width: 320px;
+		width: 326px;
 		float: left;
 	}
+	
+	#main-col-group {
+		width: 578px;
+		float: left;
+		border: 1px solid #bbb;
+		margin-right: 14px;
+		padding-bottom: 18px;
+	}
+		#main-col-group #left-col { 
+			width: 225px;
+			margin: 10px 38px 0 0;
+		}
+		#main-col-group #middle-col { 
+			width: 290px;
+			margin: 10px 0 0 0;
+		}
+	
 	#footer {
 		clear: both;
 		margin: 0 auto 0 auto;
-		width: 950px;
+		width: 920px;
 		position: relative;
 		top: 10px;
 	}
@@ -172,30 +192,29 @@
 	#header h1 {
 		position:absolute;
 		top: 25px;
-		left: 205px;
-		width: 380px;
-		height: 77px;
-		background: url(/images/open-transit-data-logo.gif) 0 0 no-repeat;
+		left: 0px;
+		width: 351px;
+		height: 79px;
+		background: url(/images/transit-apps-logo.png) 0 0 no-repeat;
 		text-indent: -40000px;
+		cursor: pointer;
 	}
 	#header h2 {
 		position:absolute;
-		top: 95px;
-		left: 260px;
-		width: 274px;
-		height: 19px;
-		background: url(/images/tagline.gif) 0 0 no-repeat;
-		text-indent: -40000px;
+		top: 77px;
+		left: 370px;
+		font: 16px/16px Verdana, Arial, Helvetica, sans-serif;
+		color: #888;
 	}
 	#header #nav {
 		position:absolute;
 		top: 3px;
-		left: 720px;
+		left: 740px;
 	}
 	#friends-and-followers {
 		position: absolute;
 		top: 28px;
-		left: 715px;
+		left: 730px;
 	}	
 	#friends-and-followers div {
 		float:left;
@@ -218,6 +237,7 @@
 
 	.agency-list {
 		color: #cf7200;
+		list-style-type: none;
 	}
 	.agency-list h5 {
 		font: 12px/13px Verdana, Arial, Helvetica, sans-serif;
@@ -225,7 +245,7 @@
 		padding-bottom: 0;
 		margin: 0;
 	}
-	.agency-list p {
+	.agency-list p.tagline {
 		font: 11px/14px Verdana, Arial, Helvetica, sans-serif;
 		color: #777;
 	}
@@ -241,16 +261,47 @@
 
 /*********** LEDE ****************/
 	
-	#lede p {
-		margin: 0 auto 0 auto;
-		width: 950px;
-		font-style: italic;
-		font: 14px/14px;
-		padding: 3px 0 6px 0;
+	#lede {
+		position: relative;
+	}
+	#lede label {
+		font: 24px/24px Verdana, Arial, Helvetica, sans-serif;
+		font-weight: bold;
+		color: #028dc7;
+		position: absolute;
+		top: 17px;
+		left: 30px;
 	}	
+	#lede input#query {
+		font: 18px/28px Verdana, Arial, Helvetica, sans-serif;
+		position: absolute;
+		top: 17px;
+		left: 305px;
+		width: 380px;
+		height: 32px;
+		
+	}	
+	#lede input#search {
+		position: absolute;
+		top: 17px;
+		left: 700px;
+		height: 32px;
+	}	
+	#lede p {
+		font-size:10px; 
+		color: #747474;
+		position: absolute;
+		bottom: 3px;
+		left: 0;
+		width: 685px;
+		text-align: right;
+	}
 
 /*********** PETITION FORM ****************/
 
+	#petition {
+		border: 1px solid #bbb;
+	}
 	#petition-form blockquote {
 		margin: 8px 15px 12px 0;
 		font-style: italic;
@@ -315,6 +366,100 @@
     }
 
 
+/*********** FEATURED APPS ****************/
+	
+	#feat {
+		background: url(/images/feature-gradient-bg.gif) 0 0 repeat-x; 
+		width: 620px;
+		height: 255px;
+		margin: 25px auto;
+		position: relative;
+	}
+	#feat h3 {
+		position: absolute;
+		left: 60px;
+		top: 15px;
+		color: #546b75; 
+		font-size: 18px;
+	}
+	#feat #feat-bigprev {
+		position: absolute;
+		top: 95px;
+		left: 10px;
+		width: 30px;
+		height: 65px;
+		background: url(/images/big-arrows.png) 0px 15px no-repeat;
+		cursor: pointer;
+	}
+	#feat #feat-bigprev:hover {
+		background-position: -30px 15px;
+	}
+	#feat #feat-bignext {
+		position: absolute;
+		top: 95px;
+		right: 10px;
+		width: 30px;
+		height: 65px;
+		background: url(/images/big-arrows.png) -60px 15px no-repeat;
+		cursor: pointer;
+	}
+	#feat #feat-bignext:hover {
+		background-position: -90px 15px;
+	}
+	#feat-controls {
+		position: absolute;
+		bottom: 3px;
+		left: 239px;
+		width: 150px;
+	}
+	#feat-controls #feat-controls-prev, #feat-controls #feat-controls-next, #feat-controls #feat-controls-jumpers div {
+		width: 16px;
+		height: 21px;
+		float: left;
+		background: url(/images/feat-controls.gif) no-repeat;
+		cursor: pointer;
+	}
+	#feat-controls #feat-controls-prev { background-position: 0px 5px; }
+	#feat-controls #feat-controls-prev:hover { background-position: -16px 5px; }
+	#feat-controls #feat-controls-next { background-position: -32px 5px; }
+	#feat-controls #feat-controls-next:hover { background-position: -48px 5px; }
+
+	#feat-controls #feat-controls-jumpers div { 
+		width: 22px; 
+		background-position: -64px 5px;
+	}	
+	#feat-controls #feat-controls-jumpers div:hover { background-position: -86px 5px; }
+	#feat #view-all {
+		position: absolute;
+		bottom: 8px;
+		right: 15px;
+	}
+	#feat-content {
+		width: 100%;
+		height: 182px;
+		padding-top: 44px;
+	}
+	#feat-content div img {
+		float: left;  
+		margin: 0 15px 0 60px;
+		border: 1px solid #999;
+	}
+	#feat-content div h4 a {
+		float: left;
+		color: #c76402; 
+		font-size: 22px; 
+		line-height: 22px; 
+		padding: 0 0 12px 0;
+		margin: 0;
+	}
+	#feat-content div p {
+		font-size: 18px;
+		color: #6c6c6c;
+		width: 290px;
+		float: left;
+	}
+
+
 /*********** APP GALLERY ****************/
 	
 	#app-gallery #up-control, #app-gallery #down-control {
@@ -376,6 +521,8 @@
 /*********** TWEETS ****************/
 	.tweet {
 		margin-bottom: 15px;
+		clear: both;
+		padding-top: 8px;
 	}
 	.tweet img {
 		float: left;

@@ -1,6 +1,7 @@
 import logging
 from google.appengine.ext import db
 from django.core.urlresolvers import reverse
+from geo.geomodel import GeoModel
 
 class PetitionModel(db.Model):
     name        = db.StringProperty()
@@ -9,7 +10,7 @@ class PetitionModel(db.Model):
     state       = db.StringProperty()
     country     = db.StringProperty()
     
-class Agency(db.Model):
+class Agency(GeoModel):
     name            = db.StringProperty()
     short_name      = db.StringProperty()
     tier            = db.IntegerProperty()
