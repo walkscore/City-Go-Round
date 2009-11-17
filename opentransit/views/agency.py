@@ -128,6 +128,7 @@ def agencies_search(request):
     lon = rg('lon','')
     city = rg('city','')
     state = rg('state','')
+    format = rg('format','')
     
     agencies = Agency.all()
     if not search_type in ['location', 'city']:
@@ -146,5 +147,8 @@ def agencies_search(request):
         #get all agencies matching a state and city
         agencies = agencies.filter('state =',state.upper()).filter('city =',city)
     
-    return HttpResponse(json.dumps({'agencies' : agencies_to_json(agencies)}), mimetype='text/html')
+    if format == 'json':
+        return HttpResponse(json.dumps({'agencies' : agencies_to_json(agencies)}), mimetype='text/html')
+    else:
+        return render_to_response( request, "agency_search.html", {'agencies' : agencies} )
     
