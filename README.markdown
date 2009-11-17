@@ -1,9 +1,11 @@
-OpenTransitData.org
+TransitData.org
 ===================
 
-The following repository contains all the code to power the [Open Transit Data](http://opentransitdata.org/) web site.
+The following repository contains all the code to power the [Transit Data](http://transitdata.org/) web site.
 
 It is an AppEngine application running Django 1.1.
+
+It is released under BSD -- do what you will with it.
 
 
 HOW TO GET RUNNING LOCALLY
