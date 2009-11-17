@@ -81,16 +81,6 @@ def agencies(request, countryslug='', stateslug='', cityslug='', name=''):
     }
     
     return render_to_response( request, "agency_list.html", template_vars)
-
-def generate_slugs(request):
-    """Generates slugs for all agencies in the data store. The current bulk uploader does not support adding a derived field
-       during import. This is easier than writing a bulk uploader that does."""
-       
-    for agency in Agency.all():
-        agency.urlslug = slugify(agency.state)+"/"+slugify(agency.city)+"/"+slugify(agency.name)
-        agency.put()
-    
-    return HttpResponse( "slugs generated" )
     
 def generate_locations(request):
     """Generates Locations for all agencies in the data store. The current bulk uploader does not support adding a derived field
