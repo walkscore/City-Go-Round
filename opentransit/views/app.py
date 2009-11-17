@@ -5,7 +5,7 @@ from google.appengine.ext import db
 from ..forms import AddAppForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, render_image_response, redirect_to_url
 from ..utils.image import crop_and_resize_image_to_square
-from ..utils.transitapp import requires_valid_slug
+from ..decorators import requires_valid_transit_app_slug
 from ..models import TransitApp, TransitAppStats
 from ..constants import TRANSIT_APP_IMAGE_WIDTH, TRANSIT_APP_IMAGE_HEIGHT
 
@@ -17,14 +17,14 @@ def gallery(request):
         
     return render_to_response(request, 'app/gallery.html', template_vars)
     
-@requires_valid_slug
+@requires_valid_transit_app_slug
 def details(request, transit_app):
     template_vars = {
         'transit_app': transit_app,
     }    
     return render_to_response(request, 'app/details.html', template_vars)
     
-@requires_valid_slug
+@requires_valid_transit_app_slug
 def screenshot(request, transit_app):
     if transit_app.has_screen_shot:
         return render_image_response(request, transit_app.screen_shot)
