@@ -34,9 +34,9 @@ urlpatterns += patterns(
     url(r'^agency/(.*)/$', 'agency'),
     url(r'^agencies/$', 'agencies'),
     url(r'^agencies/search/$', 'agencies_search'),
-    url(r'^agencies/(?P<country>[-\w ]+)/$', 'agencies'),
-    url(r'^agencies/(?P<country>[-\w ]+)/(?P<state>[-\w ]+)/$', 'agencies'),
-    url(r'^agencies/(?P<country>[-\w ]+)/(?P<state>[-\w ]+)/(?P<city>[-\w ]+)/$', 'agencies'),
+    url(r'^agencies/(?P<countryslug>[-\w ]+)/$', 'agencies'),
+    url(r'^agencies/(?P<countryslug>[-\w ]+)/(?P<stateslug>[-\w ]+)/$', 'agencies'),
+    url(r'^agencies/(?P<countryslug>[-\w ]+)/(?P<stateslug>[-\w ]+)/(?P<cityslug>[-\w ]+)/$', 'agencies'),
     url(r'^agencies/(?P<agency>\d+)/$', 'agencies'),
 )
 

@@ -2,10 +2,11 @@ import datetime
 from google.appengine.ext import db
 from google.appengine.tools import bulkloader
 from models import Agency
-from django.template.defaultfilters import slugify
 
 #note - you will need to modify your $PYTHONPATH 
-# to include both opentransit and opentransit/opentransit
+# to include both opentransit and opentransit/opentransit:
+# $ export PYTHONPATH=/path/to/opentransitdata:path/to/opentransitdata/opentransit
+# $ /home/brandon/downloads/google_appengine/appcfg.py upload_data . --filename=./data/agencies.csv --kind=Agency --config_file=./data/agency_loader.py --url=http://localhost:8080/remote_api --has_header
 
 class AgencyLoader(bulkloader.Loader):
     def __init__(self):
@@ -15,22 +16,17 @@ class AgencyLoader(bulkloader.Loader):
             return db.GeoPt(lat, lon)
         
         bulkloader.Loader.__init__(self, 'Agency',
-                                       [('long_name', str),
+                                       [('name', str),
                                         ('short_name', str),
-                                        ('area', str),
+                                        ('city', str),
                                         ('state', str),
-                                        ('contact', str),
-                                        ('email', str),
-                                        ('url', str),
+                                        ('executive', str),
+                                        ('executive_email', str),
+                                        ('agency_url', lambda x: str(x) if x!="" else None),
                                         ('phone', str),
                                         ('address', str),
                                         ('location', lat_lon)
                                        ])
                                        
-                                       
-        def handle_entity(self, entity):
-            entity.update_location()
-            entity.urlslug = '/'.join(map(slugify,[entity.state, entity.city, entity.name]))
-            return entity
 
 loaders = [AgencyLoader]

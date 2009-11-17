@@ -35,21 +35,23 @@ $(document).ready(function()
     <th>Website</th> 
     <th>Twitter</th> 
     <th>Email</th>
+    <th>Loc</th>
 </tr> 
 </thead> 
 <tbody> 
 {% for a in agencies %}
 <tr> 
     <td>{{a.key.id}}</td>
-    <td><a href="agency/{{a.urlslug}}">{{a.name}}</a></a></td> 
+    <td><a href="/agency/{{a.urlslug}}">{{a.name}}</a></a></td> 
     <td>{{a.tier}}</td> 
     <td>{{a.city}}</td> 
     <td>{{a.state}}</td> 
     <td>{{a.country}}</td> 
-    <td>{{a.website}}</td> 
+    <td>{{a.agency_url}}</td> 
     <td>{{a.twitter}}</td> 
-    <td>{{a.contact_email}}</td> 
-    <td><a href="agency/edit/{{a.key.id}}">edit</a></td>
+    <td>{{a.contact_email}}</td>
+    <td>{{a.location}}</td>
+    <td><a href="/agency/edit/{{a.key.id}}">edit</a></td>
 </tr> 
 {% endfor %}
 </tbody> 

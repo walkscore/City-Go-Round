@@ -1,10 +1,14 @@
+import logging
 from google.appengine.api import images
 
 def image_bytes_are_valid(image_bytes):
     try:
         test_image = images.Image(image_bytes)
         # Unfortunately the only way to validate image bytes on AppEngine is to
-        # perform a transform. Lame.
+        # perform a transform. Lame. ALSO: the latest version of PIL on OSX (needed
+        # only for running dev_appserver locally) requires at least one transformation
+        # in the pipeline, or execute_transforms will fail. So... fix that, too.
+        test_image.crop(0.0, 0.0, 1.0, 1.0)
         ignored_output = test_image.execute_transforms(images.PNG)
     except images.Error:
         return False
