@@ -1,7 +1,10 @@
 import os
 
+RUNNING_APP_ENGINE_LOCAL_SERVER = os.environ['SERVER_SOFTWARE'].startswith('Dev')
+
+DEBUG = RUNNING_APP_ENGINE_LOCAL_SERVER # For now
+
 APPEND_SLASH = True
-DEBUG = os.environ['SERVER_SOFTWARE'].startswith('Dev')
 
 INSTALLED_APPS = ['opentransit']
 
@@ -23,7 +26,7 @@ MIDDLEWARE_CLASSES = [
 
 ROOT_URLCONF = 'urls'
 
-TEMPLATE_CONTEXT_PROCESSORS = [] 
+TEMPLATE_CONTEXT_PROCESSORS = ['opentransit.context.api_keys'] 
 
 # NOTE davepeck:
 #
@@ -57,8 +60,10 @@ SITE_WIDE_REALM = "Open Transit Data"
 #override in local_settings.py, not here
 GOOGLE_API_KEY='ABQIAAAAOtgwyX124IX2Zpe7gGhBsxSCRqJWmDzbZh5mozwXpdIfpjWXRhSi9qNJD6bg7_Sl6DjLqkfJ2UmOmA'
 
-try:
-    from local_settings import *
-except ImportError, exp:
-    pass
+# only use local_settings.py if we're running debug server
+if RUNNING_APP_ENGINE_LOCAL_SERVER:
+    try:
+        from local_settings import *
+    except ImportError, exp:
+        pass
 

@@ -1,9 +1,4 @@
-# NOTE DAVEPECK
-#
-# I wrote this code to help you get sessions and users on django +appengine applications.
-# It is NOT AT ALL INTERESTING if you don't need users. In fact, for opentransit, I've
-# turned if off in the settings.py file. But I kept it here just in case...
-#
+from django.conf import settings
 
 def appengine_user(request):
     if request.user:
@@ -11,3 +6,7 @@ def appengine_user(request):
     else:
         return {'user': None, 'user_is_valid':False}
 
+
+def api_keys(request):
+    return {'GOOGLE_API_KEY': settings.GOOGLE_API_KEY}
+    
