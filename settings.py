@@ -1,6 +1,6 @@
 import os
 
-APPEND_SLASH = False
+APPEND_SLASH = True
 DEBUG = os.environ['SERVER_SOFTWARE'].startswith('Dev')
 
 INSTALLED_APPS = ['opentransit']
