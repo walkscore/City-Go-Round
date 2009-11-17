@@ -12,22 +12,22 @@
     
 function find_nearby_agencies(){
     var loc = jQuery('#location_query').val()
-    console.log(loc);
+    //console.log(loc);
     
     base_url = 'http://maps.google.com/maps/geo?sensor=false&key={{GOOGLE_API_KEY}}';
     qurl = base_url + '&q=' + loc + '&callback=?';
-    console.log(qurl);
+    //console.log(qurl);
     jQuery.getJSON(qurl, function(json){
-        console.log(json)
+        //console.log(json)
         if(json.Placemark){
             var p = json.Placemark[0];
             var ad = p.AddressDetails.Country.AdministrativeArea;
-            console.log(ad);
+            //console.log(ad);
             if (!ad.CountryName=='USA'){
                 alert('sorry, for now we only support US addresses');
                 }
             var state = ad.AdministrativeAreaName;
-            if (ad.SubAdministrativeArea.Locality) {
+            if (ad.SubAdministrativeArea && ad.SubAdministrativeArea.Locality) {
                 var city = ad.SubAdministrativeArea.Locality.LocalityName;
                 window.location.replace('/agencies/US/' + state + '/' + city + '/');
                 }
