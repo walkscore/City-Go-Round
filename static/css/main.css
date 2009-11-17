@@ -191,7 +191,7 @@
 
 	#header h1 {
 		position:absolute;
-		top: 25px;
+		top: 14px;
 		left: 0px;
 		width: 351px;
 		height: 79px;
@@ -201,27 +201,43 @@
 	}
 	#header h2 {
 		position:absolute;
-		top: 77px;
+		top: 70px;
 		left: 370px;
 		font: 16px/16px Verdana, Arial, Helvetica, sans-serif;
 		color: #888;
 	}
 	#header #nav {
 		position:absolute;
-		top: 3px;
-		left: 740px;
+		top: 90px;
+		left: 4px;
+	}
+	#header #front-seat-logo {
+		position: absolute;
+		top: 20px;
+		right: 0px;
+	}
+	#header #nav a {
+		text-decoration: none;
+		color: #777;
+		font-size: 14px;
+	}
+	#header #nav a:hover {
+		color: #628dc7;
+		text-decoration: underline;
 	}
 	#friends-and-followers {
 		position: absolute;
-		top: 28px;
-		left: 730px;
+		bottom: 3px;
+		left: 734px;
 	}	
 	#friends-and-followers div {
 		float:left;
-		white-space: nowrap;
-		margin-right: 4px;
+		white-space: nowrap;		
 		width: 85px;
 		padding: 3px 4px 2px 0;
+	}
+	#friends-and-followers div.friend-twitter {
+		margin-right: 4px;
 	}
 	#friends-and-followers div label {
 		padding: 4px 0 0 29px;
