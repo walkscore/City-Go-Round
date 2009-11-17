@@ -2,6 +2,7 @@ import logging
 from google.appengine.ext import db
 from django.core.urlresolvers import reverse
 from geo.geomodel import GeoModel
+from utils.slug import slugify
 
 class PetitionModel(db.Model):
     name        = db.StringProperty()
@@ -11,12 +12,12 @@ class PetitionModel(db.Model):
     country     = db.StringProperty()
     
 class Agency(GeoModel):
-    name            = db.StringProperty()
+    name            = db.StringProperty(required=True)
     short_name      = db.StringProperty()
     tier            = db.IntegerProperty()
-    city            = db.StringProperty()
-    state           = db.StringProperty()
-    country         = db.StringProperty()
+    city            = db.StringProperty(required=True)
+    state           = db.StringProperty(required=True)
+    country         = db.StringProperty(default="us")
     postal_code     = db.IntegerProperty()
     address         = db.StringProperty()
     agency_url      = db.LinkProperty()
@@ -26,7 +27,22 @@ class Agency(GeoModel):
     contact_email   = db.EmailProperty()
     updated         = db.DateTimeProperty()
     phone           = db.StringProperty()
+    
+    nameslug        = db.StringProperty()
+    cityslug        = db.StringProperty()
+    stateslug       = db.StringProperty()
+    countryslug     = db.StringProperty()
     urlslug         = db.StringProperty()
+    
+    def __init__(self, *args, **kwargs):
+        # this loads everything to self that's passed as a kwarg, making required and default attribs safe to use
+        GeoModel.__init__(self, *args, **kwargs)
+        
+        self.nameslug = slugify(self.name)
+        self.cityslug = slugify(self.city)
+        self.stateslug = slugify(self.state)
+        self.countryslug = slugify(self.country)
+        self.urlslug = "%s/%s/%s/%s"%(self.countryslug,self.stateslug,self.cityslug,self.nameslug)
     
 class FeedReference(db.Model):
     """feed reference models a GTFS Data Exchange entity"""
