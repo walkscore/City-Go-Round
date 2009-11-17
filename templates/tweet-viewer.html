@@ -1,27 +1,28 @@
-<div id="tweet-viewer">
-  <div class="tweet">
-  	<a href="http://twitter.com/ewedistrict" target="_blank"><img alt="ewedistrict's profile image on Twitter" src="http://a1.twimg.com/profile_images/110131592/icon_bigger.jpg" width="50px" height="50px" /></a>
-  	<blockquote><cite>@ewedistrict said:</cite>  "Open transit data allows programmers to innovate. http://opentransitdata.org."</blockquote>
-  	<label>2 hours ago</label>
-  </div>
-  <div class="tweet">
-  	<a href="http://twitter.com/ewedistrict" target="_blank"><img alt="ewedistrict's profile image on Twitter" src="http://a1.twimg.com/profile_images/110131592/icon_bigger.jpg" width="50px" height="50px" /></a>
-  	<blockquote><cite>@ewedistrict said:</cite>  "Standardizing opentransitdata.org lets developers innovate across the country and around the world."</blockquote>
-  	<label>2 hours ago</label>
-  </div>
-  <div class="tweet">
-  	<a href="http://twitter.com/ewedistrict" target="_blank"><img alt="ewedistrict's profile image on Twitter" src="http://a1.twimg.com/profile_images/110131592/icon_bigger.jpg" width="50px" height="50px" /></a>
-  	<blockquote><cite>@ewedistrict said:</cite>  "You guys should really add international support. http://opentransitdata.org."</blockquote>
-  	<label>2 hours ago</label>
-  </div>
-  <div class="tweet">
-  	<a href="http://twitter.com/ewedistrict" target="_blank"><img alt="ewedistrict's profile image on Twitter" src="http://a1.twimg.com/profile_images/110131592/icon_bigger.jpg" width="50px" height="50px" /></a>
-  	<blockquote><cite>@ewedistrict said:</cite>  "You guys should really add international support. http://opentransitdata.org.. I like to ride my tandem bike alone."</blockquote>
-  	<label>2 hours ago</label>
-  </div>
-  <div class="tweet">
-  	<a href="http://twitter.com/ewedistrict" target="_blank"><img alt="ewedistrict's profile image on Twitter" src="http://a1.twimg.com/profile_images/110131592/icon_bigger.jpg" width="50px" height="50px" /></a>
-  	<blockquote><cite>@ewedistrict said:</cite>  "I like to ride my tandem bike alone to look at http://opentransitdata.org."</blockquote>
-  	<label>2 hours ago</label>
-  </div>		    
+<html>
+  <head>
+    <script type="text/javascript" src="jquery.js"></script>
+    
+    <script type="text/javascript">
+    
+    function react_to_twitter( data ) {
+      for(i=0; i<data.results_per_page; i++) {
+        var result = data.results[i];
+        
+        $("#tweet-viewer").append("<div><a href=\"http://twitter.com/"+result.from_user+"\"><img src="+result.profile_image_url+
+                                  " width=50px height=50px></a><blockquote><cite>@"+result.from_user+
+                                  " said:</cite> \""+result.text+"\"</blockquote><label>"+result.created_at+"</label></div>")
+        
+      }
+    }
+    
+     $(document).ready(function(){
+      $.getJSON("http://search.twitter.com/search.json?callback=?&q=transit", react_to_twitter);
+     });
+
+    </script>
+  </head>
+
+<div id="tweet-viewer">	    
 </div>
+
+</html>
