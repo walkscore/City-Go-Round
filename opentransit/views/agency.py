@@ -6,6 +6,9 @@ from ..forms import AgencyForm
 from ..utils.view import render_to_response, redirect_to, not_implemented
 from ..models import Agency
 
+from django.http import HttpResponse
+from ..utils.slug import slugify
+
 def edit_agency(request, agency_id):
     agency = Agency.get_by_id( int(agency_id) )
     
@@ -45,10 +48,24 @@ def edit_agency(request, agency_id):
                                'updated':agency.updated,
                                'phone':agency.phone})
     
-    return render_to_response( request, "agency.html", {'agency':agency, 'form':form} )
+    return render_to_response( request, "edit_agency.html", {'agency':agency, 'form':form} )
     
 def all_agencies(request):
     agencies = Agency.all().order("name")
 
     return render_to_response( request, "agency_list.html", {'agencies':agencies, } )
 
+def generate_slugs(request):
+    """Generates slugs for all agencies in the data store. The current bulk uploader does not support adding a derived field
+       during import. This is easier than writing a bulk uploader that does."""
+       
+    for agency in Agency.all():
+        agency.urlslug = slugify(agency.state)+"/"+slugify(agency.city)+"/"+slugify(agency.name)
+        agency.put()
+    
+    return HttpResponse( "slugs generated" )
+
+def agency(request, urlslug):
+    agency = Agency.all().filter('urlslug =', urlslug).get()
+    
+    return render_to_response( request, "agency.html", {'agency':agency} )

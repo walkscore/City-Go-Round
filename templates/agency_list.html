@@ -42,7 +42,7 @@ $(document).ready(function()
 {% for a in agencies %}
 <tr> 
     <td>{{a.key.id}}</td>
-    <td>{{a.name}}</a></td> 
+    <td><a href="agency/{{a.urlslug}}">{{a.name}}</a></a></td> 
     <td>{{a.tier}}</td> 
     <td>{{a.city}}</td> 
     <td>{{a.state}}</td> 
