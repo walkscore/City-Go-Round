@@ -42,6 +42,10 @@ class FeedReference(db.Model):
     license_url       = db.LinkProperty()
     date_added        = db.FloatProperty()
     
+    @staticmethod
+    def all_by_most_recent():
+        return FeedReference.all().order("-date_added")
+    
 class TransitAppStats(db.Model):
     # low contention model -- don't bother with sharding
     transit_app_count   = db.IntegerProperty()

@@ -2,12 +2,48 @@
 <head>
 <title>[{% block title %}Open Transit Data{% endblock %}]</title>
 <link rel="stylesheet" type="text/css" href="{% static_url /css/main.css %}" media="screen" />
-<script type="text/javascript"src="http://www.google.com/jsapi?key=ABQIAAAAOtgwyX124IX2Zpe7gGhBsxSCRqJWmDzbZh5mozwXpdIfpjWXRhSi9qNJD6bg7_Sl6DjLqkfJ2UmOmA"></script><script type="text/javascript">
-    google.load("jquery", "1.3.2");
-    google.load("jqueryui", "1.7.2");
+<script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAOtgwyX124IX2Zpe7gGhBsxSCRqJWmDzbZh5mozwXpdIfpjWXRhSi9qNJD6bg7_Sl6DjLqkfJ2UmOmA"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+<script type="text/javascript">
+
     {% block googlescripts %}
     {% endblock %}
+    
+function find_nearby_agencies(){
+    var loc = jQuery('#location_query').val()
+    //console.log(loc);
+    
+    base_url = 'http://maps.google.com/maps/geo?sensor=false&key={{GOOGLE_API_KEY}}';
+    qurl = base_url + '&q=' + loc + '&callback=?';
+    //console.log(qurl);
+    jQuery.getJSON(qurl, function(json){
+        //console.log(json)
+        if(json.Placemark){
+            var p = json.Placemark[0];
+            var ad = p.AddressDetails.Country.AdministrativeArea;
+            //console.log(ad);
+            if (!ad.CountryName=='USA'){
+                alert('sorry, for now we only support US addresses');
+                }
+            var state = ad.AdministrativeAreaName;
+            if (ad.SubAdministrativeArea && ad.SubAdministrativeArea.Locality) {
+                var city = ad.SubAdministrativeArea.Locality.LocalityName;
+                window.location.replace('/agencies/US/' + state + '/' + city + '/');
+                }
+            else {
+                window.location.replace('/agencies/US/' + state + '/');
+ 
+                }
+            
+            }
+        else{
+            alert('unable to geocode your address');
+            }
+        });
+    }
 </script>
+<script type="text/javascript" src="/js/transitapps.js"></script>
 {% block extra_head %}{% endblock %}
 
 </head>
@@ -31,8 +67,8 @@
 <div id="lede">
 	{% block lede %}
   	<label>Find apps near you:</label>
-  	<input id="query" name="query" type="text">
-  	<input id="search" name="search" type="image" src="{% static_url /images/button-search.gif %}">
+  	<input id="location_query" name="location_query" type="text">
+  	<input id="search" name="search" type="image" src="{% static_url /images/button-search.gif %}" onclick="find_nearby_agencies()">
   	<p>U.S. only for now.</p>
   {% endblock %}
 </div>

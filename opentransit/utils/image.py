@@ -1,5 +1,15 @@
 from google.appengine.api import images
 
+def image_bytes_are_valid(image_bytes):
+    try:
+        test_image = images.Image(image_bytes)
+        # Unfortunately the only way to validate image bytes on AppEngine is to
+        # perform a transform. Lame.
+        ignored_output = test_image.execute_transforms(images.PNG)
+    except images.Error:
+        return False
+    return True
+
 def crop_and_resize_image_to_square(image_bytes, final_width, final_height, output_encoding=images.PNG):
     try:
         original_image = images.Image(image_bytes)
