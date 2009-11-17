@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Open Transit Data &raquo; Transit App Gallery{% endblock %}
+
+{% block content %}
+    <!-- TODO jesse: add some design here. (dave) -->
+    
+    <div id="app-gallery" class="body-content">    
+        <h2>TRANSIT APP GALLERY</h2>
+        <h4>{{transit_app_count}} Transit Apps In The Gallery</h4>     
+        
+        <p>&nbsp;</p>   
+        
+        {% for transit_app in transit_apps %}
+        <h3><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a>:</h3>
+        <table>
+            <tr>
+                <th>Description:</th>
+                <td>{{transit_app.description}}</td>
+            </tr>
+            <tr>
+                <th>Screen Shot:</th>
+                <td><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></td>
+            </tr>
+        </table>
+        <p>&nbsp;</p>
+        {% endfor %}
+        
+        <p>&nbsp;</p>
+        <a href="{% url apps_add_form %}">Add An Application</a>
+                
+    </div>
+{% endblock %}
+
+
+{% block scripts %}
+{% endblock %}

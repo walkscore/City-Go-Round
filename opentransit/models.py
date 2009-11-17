@@ -1,5 +1,6 @@
+import logging
 from google.appengine.ext import db
-# from django.contrib.auth.models import get_hexdigest, check_password
+from django.core.urlresolvers import reverse
 
 class PetitionModel(db.Model):
     name        = db.StringProperty()
@@ -53,6 +54,7 @@ class TransitAppStats(db.Model):
                 stats.put()
             except db.TimeoutException:
                 stats.put()
+        return stats
             
     @staticmethod
     def get_transit_app_count():
@@ -78,3 +80,21 @@ class TransitApp(db.Model):
     tags                = db.StringListProperty()
     screen_shot         = db.BlobProperty()
     
+    @property
+    def has_screen_shot(self):
+        return (self.screen_shot is not None)
+        
+    @property
+    def screen_shot_url(self):
+        if self.has_screen_shot:
+            return reverse('apps_screenshot', kwargs = {'transit_app_slug': self.slug})
+        else:
+            return "/images/default-transit-app.png"            
+        
+    @staticmethod
+    def transit_app_for_slug(transit_app_slug):
+        return TransitApp.all().filter('slug =', transit_app_slug).get()
+    
+    @staticmethod
+    def has_transit_app_for_slug(transit_app_slug):
+        return (TransitApp.transit_app_for_slug(transit_app_slug) is not None)
