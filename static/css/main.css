@@ -197,6 +197,7 @@
 		height: 79px;
 		background: url(/images/transit-apps-logo.png) 0 0 no-repeat;
 		text-indent: -40000px;
+		cursor: pointer;
 	}
 	#header h2 {
 		position:absolute;
@@ -520,6 +521,8 @@
 /*********** TWEETS ****************/
 	.tweet {
 		margin-bottom: 15px;
+		clear: both;
+		padding-top: 8px;
 	}
 	.tweet img {
 		float: left;
