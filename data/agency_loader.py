@@ -1,7 +1,11 @@
 import datetime
 from google.appengine.ext import db
 from google.appengine.tools import bulkloader
+from models import Agency
 from django.template.defaultfilters import slugify
+
+#note - you will need to modify your $PYTHONPATH 
+# to include both opentransit and opentransit/opentransit
 
 class AgencyLoader(bulkloader.Loader):
     def __init__(self):
@@ -16,6 +20,7 @@ class AgencyLoader(bulkloader.Loader):
                                         ('area', str),
                                         ('state', str),
                                         ('contact', str),
+                                        ('email', str),
                                         ('url', str),
                                         ('phone', str),
                                         ('address', str),
