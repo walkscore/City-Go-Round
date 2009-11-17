@@ -52,21 +52,21 @@ def edit_agency(request, agency_id):
     
     return render_to_response( request, "edit_agency.html", {'agency':agency, 'form':form} )
     
-def agencies(request, country='', state='', city='', name=''):
+def agencies(request, countryslug='', stateslug='', cityslug='', name=''):
+    
     agencies = Agency.all().order("name")
     mck = 'agencies'
-    if country:
-        pass
-        #agencies = agencies.filter('country =',country)
-        #mck = 'agencies_%s' % country
-    if state:
-        agencies = agencies.filter('state =', state)
-        logging.debug('filtering by state %s' % state)
-        mck = 'agencies_%s_%s' % (country, state)
-    if city:
-        agencies = agencies.filter('city =', city)
-        logging.debug('filtering by city %s' % city)
-        mck = 'agencies_%s_%s_%s' % (country, state, city)
+    if countryslug:
+        agencies = agencies.filter('countryslug =',countryslug)
+        mck = 'agencies_%s' % countryslug
+    if stateslug:
+        agencies = agencies.filter('stateslug =', stateslug)
+        logging.debug('filtering by stateslug %s' % stateslug)
+        mck = 'agencies_%s_%s' % (countryslug, stateslug)
+    if cityslug:
+        agencies = agencies.filter('cityslug =', cityslug)
+        logging.debug('filtering by cityslug %s' % cityslug)
+        mck = 'agencies_%s_%s_%s' % (countryslug, stateslug, cityslug)
     
     mem_result = memcache.get(mck)
     if not mem_result:
