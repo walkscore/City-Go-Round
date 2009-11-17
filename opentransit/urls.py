@@ -29,9 +29,9 @@ urlpatterns += patterns(
 # Agency Views -- Full URL structure for viewing agencies, and for adding/editing them
 urlpatterns += patterns(
     'opentransit.views.agency',
-    url('^agency/edit/(.*)$', 'edit_agency', name='edit_agency'),
+    url('^agency/edit/(.*)/$', 'edit_agency', name='edit_agency'),
     url(r'^generate-slugs$', 'generate_slugs'),
-    url(r'^agency/(.*)$', 'agency'),
+    url(r'^agency/(.*)/$', 'agency'),
     url(r'^agencies/$', 'agencies'),
     url(r'^agencies/search/$', 'agencies_search'),
     url('^agencies/(?P<country>[-\w ]+)/$', 'agencies'),
