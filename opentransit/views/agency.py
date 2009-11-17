@@ -1,6 +1,8 @@
 import time
 import logging
+from django.utils import simplejson as json
 from google.appengine.ext import db
+from google.appengine.api import memcache
 
 from ..forms import AgencyForm
 from ..utils.view import render_to_response, redirect_to, not_implemented
@@ -50,8 +52,24 @@ def edit_agency(request, agency_id):
     
     return render_to_response( request, "edit_agency.html", {'agency':agency, 'form':form} )
     
-def all_agencies(request):
+def agencies(request, country='', state='', city='', name=''):
     agencies = Agency.all().order("name")
+    mck = 'agencies'
+    if country:
+        pass
+        #agencies = agencies.filter('country =',country)
+        #mck = 'agencies_%s' % country
+    if state:
+        agencies = agencies.filter('state =', state)
+        mck = 'agencies_%s_%s' % (country, state)
+    if city:
+        agencies = agencies.filter('city =', city)
+        mck = 'agencies_%s_%s_%s' % (country, state, city)
+    
+    agencies = memcache.get(mck)
+    if not agencies:
+        agencies = Agency.all().order("name")
+        mc_added = memcache.add(mck, agencies, 60*60)
 
     return render_to_response( request, "agency_list.html", {'agencies':agencies, } )
 
@@ -64,8 +82,65 @@ def generate_slugs(request):
         agency.put()
     
     return HttpResponse( "slugs generated" )
+    
+def generate_locations(request):
+    """Generates Locations for all agencies in the data store. The current bulk uploader does not support adding a derived field
+       during import. This is easier than writing a bulk uploader that does."""
+       
+    pass
+    return HttpResponse( "locations NOT generated" )
 
 def agency(request, urlslug):
     agency = Agency.all().filter('urlslug =', urlslug).get()
     
     return render_to_response( request, "agency.html", {'agency':agency} )
+    
+    
+def agencies_search(request):
+    """
+    params
+     - type (location or city)
+     - lat/lon [location]
+     - city/state [city]
+    returns:
+     list of nearby (location) or matching (city) agencies, and their associated apps
+    """
+    def agencies_to_json(agencies):
+        ag = []
+        for a in agencies:
+            ad = {}
+            for k in 'name,city,urlslug,tier,state'.split(','):
+                ad[k] = getattr(a,k)
+            #unsure how to get apps...
+            ad['apps'] = []
+            ag.append(ad)
+        return ag                
+    def check_lat_lon(lat, lon):
+        return lat, lon
+        
+    #ensure location type search
+    rg = request.GET.get
+    search_type = rg('type','')
+    lat = rg('lat','')
+    lon = rg('lon','')
+    city = rg('city','')
+    state = rg('state','')
+    
+    agencies = Agency.all()
+    if not search_type in ['location', 'city']:
+        return HttpResponse('404 - invalid search type')
+    if search_type == 'location':
+        #get all agencies that are nearby
+        lat,lon = check_lat_lon(lat, lon)
+        if not (lat and lon):
+            return HttpResponse('404 - invalid lat/lng')
+        agencies = agencies.filter('')
+        
+    if search_type == 'city':
+        if not (city and state):
+            return HttpResponse('404 - you must include city and state params')
+        #get all agencies matching a state and city
+        agencies = agencies.filter('state =',state.lower()).filter('city =',city)
+    
+    return HttpResponse(json.dumps({'agencies' : agencies_to_json(agencies)}), mimetype='text/html')
+    
