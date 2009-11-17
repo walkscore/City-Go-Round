@@ -39,7 +39,7 @@ TEMPLATE_LOADERS = ['django.template.loaders.filesystem.load_template_source']
 
 FILE_UPLOAD_HANDLERS = ['django.core.files.uploadhandler.MemoryFileUploadHandler']
 
-FILE_UPLOAD_MAX_MEMORY_SIZE = 2097152 # 2 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 1048576 # 1 MB -- an appengine maximum
 
 SERIALIZATION_SECRET_KEY = '\xcfB\xf6\xb9\xc4\xe4\xfa\x07\x8atE\xdc\xec\xf9zaR\xa4\x13\x88'
 

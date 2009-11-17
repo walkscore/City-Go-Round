@@ -30,18 +30,24 @@ urlpatterns += patterns(
 urlpatterns += patterns(
     'opentransit.views.agency',
     url('^agency/edit/(.*)$', 'edit_agency', name='edit_agency'),
-    url(r'^all-agencies$', 'all_agencies'),
     url(r'^generate-slugs$', 'generate_slugs'),
     url(r'^agency/(.*)$', 'agency'),
+    url(r'^agencies/?$', 'agencies'),
+    url(r'^agencies/search/?$', 'agencies_search'),
+    url('^agencies/(?P<country>[-\w ]+)/?$', 'agencies'),
+    url('^agencies/(?P<country>[-\w ]+)/(?P<state>[-\w ]+)/?$', 'agencies'),
+    url('^agencies/(?P<country>[-\w ]+)/(?P<state>[-\w ]+)/(?P<city>[-\w ]+)/?$', 'agencies'),
+    url('^agencies/(?P<agency>\d+)/?$', 'agencies'),
+
 )
 
 
 # Agency Views -- Full URL structure for viewing transit apps, and for adding/editing them
 urlpatterns += patterns(
     'opentransit.views.app',
-    url(r'^apps/$', 'app_gallery', name='app_gallery'),
-    url(r'^apps/add/$', 'add_app_form', name='add_app_form'),
-    url(r'^apps/add/success/$', 'add_app_success_form', name='add_app_success_form'),
-    url(r'^apps/(?P<transit_app_slug>[\w-]+)/$', 'app_details', name='app_details'),
-    url(r'^apps/(?P<transit_app_slug>[\w-]+)/screenshot.png$', 'app_screenshot', name='app_screenshot'),
+    url(r'^apps/$', 'gallery', name='apps_gallery'),
+    url(r'^apps/add/$', 'add_form', name='apps_add_form'),
+    url(r'^apps/add/success/$', 'add_success', name='apps_add_success'),
+    url(r'^apps/(?P<transit_app_slug>[\w-]+)/$', 'details', name='apps_details'),
+    url(r'^apps/(?P<transit_app_slug>[\w-]+)/screenshot.png$', 'screenshot', name='apps_screenshot'),
 )
