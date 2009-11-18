@@ -51,34 +51,50 @@ class Agency(GeoModel):
         
     @staticmethod
     def all_public_agencies():
+        """Return a query to all Agency entities marked 'public' by Brandon's import scripts."""
         return Agency.all().filter('is_public =', True)
         
     @staticmethod
+    def fetch_explicitly_supported_for_transit_app(transit_app):
+        """Return a list of Agency entities that are explicitly supported by the transit app."""
+        return Agency.get(transit_app.explicitly_supported_agency_keys)
+        
+    @staticmethod
+    def iter_explicitly_supported_for_transit_app(transit_app):
+        """Return an iterator over Agency entities that are explicitly supported by the transit app."""
+        # Not a true lazy iterator, but this should be plenty fast
+        for agency in Agency.fetch_explicitly_supported_for_transit_app(transit_app):
+            yield agency
+        
+    @staticmethod
     def fetch_for_transit_app(transit_app, uniqify = True):
+        """Return a list of Agency entities, by default unique, that the given transit app supports"""
         fetched = []
         if transit_app.supports_all_public_agencies:
             for public_agency in Agency.all_public_agencies():
                 fetched.append(public_agency)
-        fetched.extend(transit_app.fetch_explicitly_supported_agencies())
+        fetched.extend(Agency.fetch_explicitly_supported_for_transit_app(transit_app))
         if uniqify:
             fetched = unique_entities(fetched)
         return fetched
         
     @staticmethod
     def iter_for_transit_app(transit_app, uniqify = True):
+        """Return an iterator over Agency entities, by default unique, that the given transit app supports"""
         seen = {}
         if transit_app.supports_all_public_agencies:
             for public_agency in Agency.all_public_agencies():
                 if (not uniqify) or (public_agency.key() not in seen):
                     if uniqify: seen[public_agency.key()] = True
                     yield public_agency
-        for explicit_agency in transit_app.iter_explicitly_supported_agencies():
+        for explicit_agency in Agency.iter_explicitly_supported_for_transit_app(transit_app):
             if (not uniqify) or (explicit_agency.key() not in seen):
                 if uniqify: seen[explicit_agency.key()] = True
                 yield explicit_agency
         
     @staticmethod
     def fetch_for_transit_apps(transit_apps, uniqify = True):
+        """Return a list of Agency entities, by default unique, that at least one transit application in the transit_apps list supports."""
         fetched = []
         for transit_app in transit_apps:
             fetched.extend(Agency.fetch_for_transit_app(transit_app, uniqify = False))
@@ -88,6 +104,7 @@ class Agency(GeoModel):
 
     @staticmethod
     def iter_for_transit_apps(transit_apps, uniqify = True):
+        """Return an iterator over Agency entities, by default unique, that at least one transit application in the transit_apps list supports."""
         seen = {}
         for transit_app in transit_apps:
             for agency in Agency.iter_for_transit_app(transit_app, uniqify = False):
@@ -154,6 +171,9 @@ class TransitApp(db.Model):
     tags                = db.StringListProperty()
     screen_shot         = db.BlobProperty()
     
+    supports_all_public_agencies = db.BooleanProperty(indexed = True)
+    explicitly_supported_agency_keys = db.ListProperty(db.Key)
+                
     @property
     def has_screen_shot(self):
         return (self.screen_shot is not None)
@@ -191,39 +211,47 @@ class TransitApp(db.Model):
     # With all of these APIs, you must call put() afterward.
     #
     # -Dave
-    
-    supports_all_public_agencies = db.BooleanProperty(indexed = True)
-    explicitly_supported_agency_keys = db.ListProperty(db.Key)
 
     @staticmethod
     def all_supporting_public_agencies():
+        """Return a query to all TransitApp entities flagged as supporting Agencies with 'public' data."""
+        return TransitApp.all().filter('supports_all_public_agencies = ', True)
         
+    @staticmethod
+    def fetch_for_agency(agency, uniqify = True):
+        """Return a list of TransitApp entities, by default unique, that support the given agency."""
         pass
         
     @staticmethod
-    def fetch_for_agency(agency):
+    def iter_for_agency(agency, uniqify = True):
+        """Return an iterator over TransitApp entities, by default unique, that support the given agency."""
+        pass
+
+    @staticmethod
+    def fetch_for_agencies(agencies, uniqify = True):
+        """Return a list of TransitApp entities, by default unique, that support at least one of the given agencies."""
         pass
         
     @staticmethod
-    def fetch_for_agencies(agencies):
+    def iter_for_agencies(agencies, uniqify = True):
+        """Return an iterator over TransitApp entities, by default unique, that support at least one of the given agencies."""
         pass
 
-    @property
-    def supported_agencies(self):
-        pass # TODO davepeck
-
-    def fetch_explicitly_supported_agencies(self):
-        return Agency.get(self.explicitly_supported_agency_keys)
-    
     def add_explicitly_supported_agencies(self, agencies_or_keys):
+        """Helper to add new supported agencies to this transit app. You must call put() sometime later."""
         agency_keys = normalize_to_keys(agencies_or_keys)
         self.explicitly_supported_agency_keys.extend(agency_keys)
-        
+
     def add_explicitly_supported_agency(self, angency_or_key):
+        """Helper to add a single supported agency to this transit app. You must call put() sometime later."""
         self.add_explicitly_supported_agencies([agency_or_key])
-        
+
     def remove_explicitly_supported_agencies(self, agencies_or_keys):
+        """Helper to remove supported agencies from this transit app. You must call put() sometime later."""
         agency_keys = normalize_to_keys(agencies_or_keys)
         for agency_key in agency_keys:
             self.explicitly_supported_agency_keys.remove(agency_key)
-        
+
+    def remove_explicitly_supported_agency(self, agency_or_key):
+        """Helper to remove supported agencies from this transit app. You must call put() sometime later."""
+        self.remove_explicitly_supported_agencies([agency_or_key])
