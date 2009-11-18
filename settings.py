@@ -6,7 +6,7 @@ DEBUG = RUNNING_APP_ENGINE_LOCAL_SERVER # For now
 
 APPEND_SLASH = True
 
-INSTALLED_APPS = ['opentransit']
+INSTALLED_APPS = ['opentransit', 'gaeunit']
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
