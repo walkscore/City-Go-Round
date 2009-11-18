@@ -38,6 +38,8 @@ TEMPLATE_DEBUG = DEBUG
 
 TEMPLATE_DIRS = [os.path.join(os.path.dirname(__file__), 'templates')]
 
+TEST_DIR = os.path.join(os.path.dirname(__file__), 'tests')
+
 TEMPLATE_LOADERS = ['django.template.loaders.filesystem.load_template_source']
 
 FILE_UPLOAD_HANDLERS = ['django.core.files.uploadhandler.MemoryFileUploadHandler']
