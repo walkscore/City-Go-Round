@@ -66,9 +66,11 @@ function find_nearby_agencies(){
 </div>
 <div id="lede">
 	{% block lede %}
-  	<label>Find apps near you:</label>
-  	<input id="location_query" name="location_query" type="text">
-  	<input id="search" name="search" type="image" src="{% static_url /images/button-search.gif %}" onclick="find_nearby_agencies()">
+  	<form onsubmit="find_nearby_agencies()">
+	  	<label>Find apps near you:</label>
+	  	<input id="location_query" name="location_query" type="text">
+	  	<input id="search" name="search" type="image" src="{% static_url /images/button-search.gif %}" onclick="find_nearby_agencies()">
+  	</form>
   	<p>U.S. only for now.</p>
   {% endblock %}
 </div>
