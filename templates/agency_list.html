@@ -26,7 +26,7 @@ $(document).ready(function()
 <table id="agency_list"> 
 <thead> 
 <tr> 
-    <th>id</th>
+    <th>External Id</th>
     <th>Name</th> 
     <th>Tier</th> 
     <th>City</th> 
@@ -41,7 +41,7 @@ $(document).ready(function()
 <tbody> 
 {% for a in agencies %}
 <tr> 
-    <td>{{a.key.id}}</td>
+    <td>{{a.external_id}}</td>
     <td><a href="/agencies/{{a.urlslug}}">{{a.name}}</a></a></td> 
     <td>{{a.tier}}</td> 
     <td>{{a.city}}</td> 

@@ -44,6 +44,10 @@ class Agency(GeoModel):
         self.stateslug = slugify(self.state)
         self.countryslug = slugify(self.country)
         self.urlslug = "%s/%s/%s/%s"%(self.countryslug,self.stateslug,self.cityslug,self.nameslug)
+        
+        # set the external_id if it has not already been set
+        if self.external_id is None:
+            self.external_id = self.nameslug
     
 class FeedReference(db.Model):
     """feed reference models a GTFS Data Exchange entity"""
