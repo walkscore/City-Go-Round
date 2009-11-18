@@ -41,7 +41,7 @@ $(document).ready(function()
 <tbody> 
 {% for a in agencies %}
 <tr> 
-    <td>{{a.external_id}}</td>
+    <td>{{a.gtfs_data_exchange_id}}</td>
     <td><a href="/agencies/{{a.urlslug}}">{{a.name}}</a></a></td> 
     <td>{{a.tier}}</td> 
     <td>{{a.city}}</td> 

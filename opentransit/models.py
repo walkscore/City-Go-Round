@@ -13,10 +13,12 @@ class PetitionModel(db.Model):
     country     = db.StringProperty()
     
 class Agency(GeoModel):
-    external_id     = db.StringProperty()
-    name            = db.StringProperty(required=True)
-    short_name      = db.StringProperty()
-    tier            = db.IntegerProperty()
+    # properties straight out of the NTD import
+    ntd_id                = db.StringProperty()
+    gtfs_data_exchange_id = db.StringProperty()
+    name                  = db.StringProperty(required=True)
+    short_name            = db.StringProperty()
+    tier                  = db.IntegerProperty()
     city            = db.StringProperty(required=True)
     state           = db.StringProperty(required=True)
     country         = db.StringProperty(default="us")
@@ -27,10 +29,14 @@ class Agency(GeoModel):
     executive_email = db.EmailProperty()
     twitter         = db.StringProperty()
     contact_email   = db.EmailProperty()
-    updated         = db.DateTimeProperty()
     phone           = db.StringProperty()
+    service_area_population = db.IntegerProperty()
+    
+    # bookkeeping
+    updated         = db.DateTimeProperty()
     date_opened     = db.FloatProperty() # not datetime because the FeedReference.date_added is a float
     
+    # slugs
     nameslug        = db.StringProperty()
     cityslug        = db.StringProperty()
     stateslug       = db.StringProperty()
@@ -51,9 +57,9 @@ class Agency(GeoModel):
         self.countryslug = slugify(self.country)
         self.urlslug = "%s/%s/%s/%s"%(self.countryslug,self.stateslug,self.cityslug,self.nameslug)
         
-        # set the external_id if it has not already been set
-        if self.external_id is None:
-            self.external_id = self.nameslug
+        # set the gtfs_data_exchange_id if it has not already been set
+        if self.gtfs_data_exchange_id is None:
+            self.gtfs_data_exchange_id = self.nameslug
         
     @staticmethod
     def all_public_agencies():
@@ -110,7 +116,7 @@ class Agency(GeoModel):
 class FeedReference(db.Model):
     """feed reference models a GTFS Data Exchange entity"""
     
-    external_id       = db.StringProperty()
+    gtfs_data_exchange_id = db.StringProperty()
     date_last_updated = db.FloatProperty()
     feed_baseurl      = db.LinkProperty()
     name              = db.StringProperty()
