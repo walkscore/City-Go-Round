@@ -9,6 +9,10 @@ from ..decorators import requires_valid_transit_app_slug
 from ..models import TransitApp, TransitAppStats
 from ..constants import TRANSIT_APP_IMAGE_WIDTH, TRANSIT_APP_IMAGE_HEIGHT
 
+
+def nearby(request):
+    return render_to_response(request, 'app/nearby.html')
+
 def gallery(request):    
     template_vars = {
         'transit_app_count': TransitAppStats.get_transit_app_count(),

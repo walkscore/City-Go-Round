@@ -44,6 +44,7 @@ urlpatterns += patterns(
 urlpatterns += patterns(
     'opentransit.views.app',
     url(r'^apps/$', 'gallery', name='apps_gallery'),
+    url(r'^apps/nearby/$', 'nearby', name='apps_nearby'),
     url(r'^apps/add/$', 'add_form', name='apps_add_form'),
     url(r'^apps/add/success/$', 'add_success', name='apps_add_success'),
     url(r'^apps/(?P<transit_app_slug>[\w-]+)/$', 'details', name='apps_details'),

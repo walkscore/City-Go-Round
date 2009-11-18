@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+
+{% block title %}Open Transit Data &raquo; Transit App Gallery{% endblock %}
+
+{% block extra_head %}
+<script type="text/javascript">
+jQuery(document).ready(function() {
+    var agencies;
+    var agency_no_public;
+    var agency_public;
+    var agency_public_count = 0;
+    var apps;
+    function display_apps(json){
+        agencies = json.agencies;
+        agency_public = {};
+        agency_no_public = {};
+        var agency_public_html = '<b>Apps powered by: </b>'
+        var agency_no_public_html =''
+        apps = [];
+        jQuery.each(agencies, function(i,a){
+            var name = a.name;
+            var slug = a.urlslug;
+            console.log(name,slug);
+            if (a.apps.length){
+                jQuery.each(a.apps, function(i,j){apps.push(j);});
+                agency_public_count += 1;
+                agency_public_html += '<a href="' + slug + '">' + name + '</a>';
+                }
+            else{
+                agency_no_public_html += '<a href="' + slug + '">' + name + '</a>';
+                }
+            });
+        var summary = '<b>' + apps.length + '</b> transit apps use data from <b>' +
+               agency_public_count + '</b> agencies';
+        var app_html = ''
+        jQuery.each(apps, function(i,a){
+            app_html += a.name + '<br><br>'
+            });
+        jQuery('#fill_nearby_summary').html(summary);
+        jQuery('#fill_nearby_no_public').html(agency_no_public_html);
+        jQuery('#fill_nearby_public').html(agency_public_html);
+        jQuery('#fill_nearby_apps').html(app_html);
+        }
+        
+        
+    function find_nearby_agencies(){
+        var base_url = 'http://maps.google.com/maps/geo?sensor=false&key={{GOOGLE_API_KEY}}';
+        var address = getUrlParam('location_query');
+        var qurl = base_url + '&q=' + address + '&callback=?';
+        //console.log(qurl);
+        jQuery.getJSON(qurl, function(json){
+            console.log(json);
+            if(json.Placemark){
+                var p = json.Placemark[0];
+                var ad = p.AddressDetails.Country.AdministrativeArea;
+                //console.log(ad);
+                if (!ad.CountryName=='USA'){
+                    alert('sorry, for now we only support US addresses');
+                    }
+                var state = ad.AdministrativeAreaName;
+                if (ad.SubAdministrativeArea && ad.SubAdministrativeArea.Locality) {
+                    var city = ad.SubAdministrativeArea.Locality.LocalityName;
+                    //window.location.replace('/agencies/US/' + state + '/' + city + '/');
+                    }
+                else {
+                    //window.location.replace('/agencies/US/' + state + '/');
+                    console.log();
+                    }
+                var coords = p.Point.coordinates;
+                console.log(coords);
+                var lon = coords[0];
+                var lat = coords[1];
+                var nearby_url = '/agencies/search/?type=location&format=json';
+                nearby_url += '&lat=' + lat + '&lon=' + lon;
+                jQuery.getJSON(nearby_url, display_apps);
+                }
+            else{
+                alert('unable to geocode your address');
+                }
+            });
+        }
+
+    find_nearby_agencies()
+    });
+
+</script>
+{% endblock %}
+
+{% block content %}
+	<h2>Nearby Apps</h2>
+  <div id="app-gallery" class="body-content">
+
+    <div id="nearby_top_box">
+        <h3>Nearby Agencies with no public data</h3>
+        <div id="fill_nearby_no_public"><div class="loading"></div></div>
+        
+        <div id="nearby_petition_box">
+            <table width="100%">
+                <tr>
+                    <td colspan="2">
+                        <h4>SUPPORT PUBLIC DATA</h4>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="300">
+                        Add your name to the following message:<br><br>
+                        <i>"Transit apps help me get around.  Make public
+                        transit data <b>public</b> using a standard format
+                        and license."</i>
+                    </td>
+                    <td>
+                        <div id="nearby_petition_form">form goes here</div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div id="fill_nearby_summary">loading..</div>
+    <div id="fill_nearby_public"></div>
+    <div id="fill_nearby_apps"></div>
+  </div>
+
+{% endblock %}
+
+
+{% block scripts %}
+{% endblock %}

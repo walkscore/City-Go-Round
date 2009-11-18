@@ -10,37 +10,11 @@
     {% block googlescripts %}
     {% endblock %}
     
-function find_nearby_agencies(){
+function goto_search(){
     var loc = jQuery('#location_query').val()
-    //console.log(loc);
-    
-    base_url = 'http://maps.google.com/maps/geo?sensor=false&key={{GOOGLE_API_KEY}}';
-    qurl = base_url + '&q=' + loc + '&callback=?';
-    //console.log(qurl);
-    jQuery.getJSON(qurl, function(json){
-        //console.log(json)
-        if(json.Placemark){
-            var p = json.Placemark[0];
-            var ad = p.AddressDetails.Country.AdministrativeArea;
-            //console.log(ad);
-            if (!ad.CountryName=='USA'){
-                alert('sorry, for now we only support US addresses');
-                }
-            var state = ad.AdministrativeAreaName;
-            if (ad.SubAdministrativeArea && ad.SubAdministrativeArea.Locality) {
-                var city = ad.SubAdministrativeArea.Locality.LocalityName;
-                window.location.replace('/agencies/US/' + state + '/' + city + '/');
-                }
-            else {
-                window.location.replace('/agencies/US/' + state + '/');
- 
-                }
-            
-            }
-        else{
-            alert('unable to geocode your address');
-            }
-        });
+    alert(loc);
+    window.location.replace('/apps/search/#?location=' + loc);
+    return false;
     }
 </script>
 <script type="text/javascript" src="/js/transitapps.js"></script>
@@ -66,10 +40,10 @@ function find_nearby_agencies(){
 </div>
 <div id="lede">
 	{% block lede %}
-  	<form onsubmit="find_nearby_agencies()">
+  	<form onsubmit="javascript:goto_app_search(); return false;">
 	  	<label>Find apps near you:</label>
 	  	<input id="location_query" name="location_query" type="text">
-	  	<input id="search" name="search" type="image" src="{% static_url /images/button-search.gif %}" onclick="find_nearby_agencies()">
+	  	<input id="search" name="search" type="image" src="{% static_url /images/button-search.gif %}" onclick="goto_app_search();">
   	</form>
   	<p>U.S. only for now.</p>
   {% endblock %}
