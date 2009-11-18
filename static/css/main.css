@@ -16,14 +16,25 @@
 	cite, blockquote {
 		font-style: normal;
 		display: inline;
-	}		
+	}
 	.boxed-content {
 		margin: 12px 10px 0 12px;
+	}
+	.floatleft {
+		float: left;
+		margin-right: 12px;
+	}
+	.floatright {
+		float: right;
+		margin-left: 12px;
 	}
 	.clear-all {
 		clear: both;
 	}
-	
+	h3 em {
+		font-size: 22px;
+		font-style: normal;
+	}
 	div.clickable, div.clickable2, div.clickable *, div.clickable2 * {
 		cursor: pointer;
 		overflow: hidden;
@@ -48,18 +59,26 @@
 /*********** Fonts ****************/
 	h1,h2,h3,h4,h5,h6 { 
 		font-family: "trebuchet ms", Geneva, Arial, Helvetica, sans-serif;
-		color: #666;
-	}
+		color: #f79900;
+		}
 	
   h1 {
 		font-size:55px; 
 	}
   h2 {
 		font-size:22px; 
-	}
+		padding: 18px 0 7px 0;	}
 	h3 {
-		font:16px/16px "Arial Black", Helvetica, sans-serif;
-		font-weight: normal; 
+		font:17px;
+		font-weight: normal;
+		padding: 12px 0 8px 0;
+	}
+	h3 em {
+		font-size: 22px;
+		font-style: normal;
+	}
+	.boxed-content h2, .boxed-content h3 {
+		padding: 0;
 	}
 	h4 {
 		font-weight: normal;
@@ -146,34 +165,31 @@
 		position:relative;
 	}
 	
-	
-	#left-col { 
+	#outer-wrapper .rightmost {
+		margin-right: 0;
+	}
+	.narrow-col { 
 		width: 260px;
 		margin-right: 20px;
 		float: left;
 	}
-	#middle-col { 
+	.wide-col { 
 		width: 320px;
 		margin-right: 30px;
 		float: left;
-	}
-	#right-col { 
-		width: 326px;
-		float: left;
-	}
-	
-	#main-col-group {
+	}	
+	.col-group {
 		width: 578px;
 		float: left;
-		border: 1px solid #bbb;
+		clear: both;
 		margin-right: 14px;
 		padding-bottom: 18px;
 	}
-		#main-col-group #left-col { 
+		.col-group .boxed-content .narrow-col { 
 			width: 225px;
 			margin: 10px 38px 0 0;
 		}
-		#main-col-group #middle-col { 
+		.col-group .boxed-content .wide-col { 
 			width: 290px;
 			margin: 10px 0 0 0;
 		}
@@ -186,7 +202,12 @@
 		top: 10px;
 	}
 
+/*********** HOME PAGE ****************/
 
+	#home .col-group {
+		border: 1px solid #bbb;
+	}
+	
 /*********** HEADER ****************/
 
 	#header h1 {
@@ -201,9 +222,10 @@
 	}
 	#header h2 {
 		position:absolute;
-		top: 70px;
+		top: 66px;
 		left: 370px;
 		font: 16px/16px Verdana, Arial, Helvetica, sans-serif;
+		padding: 0;
 		color: #888;
 	}
 	#header #nav {
@@ -501,14 +523,18 @@
 	#app-gallery .scroll-item-first {
 		margin-top: 0;
 	} 
+	
+	
 	#app-gallery img { 
 		float: left;
 		margin-right: 10px;
 		border: 1px solid #888;
+		width: 90px;
+		height: 90px;
 	}
-	#app-gallery h5 { 
+	#app-gallery h5 a { 
 		color: #c76402; 
-		font-size: 13px;
+		font-size: 15px;
 		font-weight: normal;
 	}
 	#app-gallery-button {
@@ -542,7 +568,10 @@
 	}
 	.tweet img {
 		float: left;
-		margin-right: 10px;
+		margin-right: 7px;
+		position: relative;
+		top: 3px;
+		border: 1px solid #bbb;
 	}
 	.tweet label {
 		float: right;
@@ -553,5 +582,12 @@
 		color: #666;
 		font-size:  11px;
 	}
-		
 	
+	
+/*********** CUSTOM STUFF ************/
+	.bluegreen {
+		color: #028dc7;
+	}
+	.bluegreen span {
+		color: #18b541;
+	}

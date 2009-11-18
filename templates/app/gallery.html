@@ -3,52 +3,67 @@
 {% block title %}Open Transit Data &raquo; Transit App Gallery{% endblock %}
 
 {% block content %}
-  <h2><em>24</em> transit apps use public data from <span><em>43</em> transit agencies.</span></h2><a href="{% url apps_add_form %}">Add a new app</a>
+	<h2>Transit App Gallery</h2>
+  <h4 class="bluegreen floatleft"><em>24</em> transit apps use public data from <span><em>43</em> transit agencies.</span></h4><a href="{% url apps_add_form %}">Add a new app</a>
   <div id="app-gallery" class="body-content">
 
-	  <h3>Recently added</h3>  
-    <div class="app-thumbs"> 
-	    <h2>TRANSIT APP GALLERY</h2>
-	    <h4>{{transit_app_count}} Transit Apps In The Gallery</h4>     
-	        
-	    {% for transit_app in transit_apps %}
-			  <div id="app-scroll-content">
-			    <div class="scroll-item-first"> <a href=""><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
-			      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
-			      <p>{{transit_app.description}}</p>
-			    </div>
-		    </div>
-	    {% endfor %}
-		</div>
-	  
-	 	<h3>Featured</h3>
-    <div class="app-thumbs">
-	    <h2>TRANSIT APP GALLERY</h2>
-	    <h4>{{transit_app_count}} Transit Apps In The Gallery</h4>     
-	        
-	    {% for transit_app in transit_apps %}
-			  <div id="app-scroll-content">
-			    <div class="scroll-item-first"> <a href=""><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
-			      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
-			      <p>{{transit_app.description}}</p>
-			    </div>
-		    </div>
-	    {% endfor %}
+	  <div class="col-group">
+	  	<div class="narrow-col">
+			  <h3>Recently added</h3>  
+		    <div class="app-thumbs"> 
+			        
+			    {% for transit_app in transit_apps %}
+				    <div class="scroll-item-first"> <a href=""><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
+				      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
+				      <p>{{transit_app.description}}</p>
+				    </div>
+			    {% endfor %}
+	
+				</div>
+			</div>
+		  
+		  <div class="narrow-col">
+			 	<h3>Featured</h3>
+		    <div class="app-thumbs">
+			        
+			    {% for transit_app in transit_apps %}
+				    <div class="scroll-item-first"> <a href=""><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
+				      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
+				      <p>{{transit_app.description}}</p>
+				    </div>
+			    {% endfor %}
+	
+				</div>
+			</div>
 		</div>
   
-  	<h3>All transit apps</h3>  
-    <div class="app-thumbs">
-	    <h2>TRANSIT APP GALLERY</h2>
-	    <h4>{{transit_app_count}} Transit Apps In The Gallery</h4>     
-	        
-	    {% for transit_app in transit_apps %}
-			  <div id="app-scroll-content">
-			    <div class="scroll-item-first"> <a href=""><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
-			      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
-			      <p>{{transit_app.description}}</p>
-			    </div>
-		    </div>
-	    {% endfor %}
+	 	<div class="col-group">
+  		<h3>All transit apps</h3> 
+		  <div class="narrow-col"> 
+		    <div class="app-thumbs">   
+		        
+			    {% for transit_app in transit_apps %}
+				    <div class="scroll-item-first"> <a href=""><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
+				      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
+				      <p>{{transit_app.description}}</p>
+				    </div>
+			    {% endfor %}
+
+				</div>
+			</div>
+		  <div class="narrow-col">
+		    <div class="app-thumbs">    
+			        
+			    {% for transit_app in transit_apps %}
+				    <div class="scroll-item-first"> <a href=""><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
+				      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
+				      <p>{{transit_app.description}}</p>
+				    </div>
+			    {% endfor %}
+
+				</div>
+
+			</div>
 		</div>
 
   </div>

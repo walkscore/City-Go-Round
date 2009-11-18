@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
+<div id="home">
 	<div id="features">
     {% include "featured-apps.html" %}			
 	</div>
-	<div id="main-col-group" class="data-lists">
+	<div class="col-group data-lists thinline">
 		<div class="boxed-content">
 			<h2>DATA POWERS APPS</h2>
 			<p>There are 574 transit agencies in the U.S.  Only 43 make their data public. <a href="">Why?</a></p>
-			<div id="left-col">
+			<div class="narrow-col">
 			  <div id="no-data-list">
 			    <h3>No public data</h3>
 			    <h6>{{agencies.count}} agencies</h6>
@@ -18,7 +18,7 @@
 			    Transit agency? <a href="">How to get off this list</a></p>
 			  </div>
 		  	</div>
-		  <div id="middle-col">
+		  <div class="wide-col">
 		    <div id="recently-added-list">
 		      <h3>Recently made public</h3>
 		      <h6>{{feed_references.count}} agencies</h6>
@@ -28,7 +28,7 @@
 		  </div>
 		</div>
   </div>
-  <div id="right-col">
+  <div class="wide-col rightmost">
 	  <div id="petition" class="body-content">
 			<div class="boxed-content">
 		    <h2>DEMAND PUBLIC DATA</h2>
@@ -40,6 +40,6 @@
 	    <p class="body"><a href="">Tweet a comment</a> <span class="p2">that includes opentransitdata.org</span></p>
 	    {% include "tweet-viewer.html" %}
 	  </div>
-  	
   </div>
+</div>
 {% endblock %}
