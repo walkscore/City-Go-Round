@@ -101,17 +101,6 @@ def generate_locations(request):
     pass
     return HttpResponse( "locations NOT generated" )
 
-def agency(request, urlslug):
-    agency = Agency.all().filter('urlslug =', urlslug).get()
-    
-    template_vars = {
-        'agency': agency,
-        'feed_references': FeedReference.all_by_most_recent(),
-    }
-    
-    return render_to_response( request, "agency.html", template_vars)
-    
-    
 def agencies_search(request):
     """
     params
