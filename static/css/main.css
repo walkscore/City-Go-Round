@@ -211,24 +211,24 @@
 	#header h1 {
 		position:absolute;
 		top: 14px;
-		left: 0px;
+		left: -5px;
 		width: 351px;
-		height: 79px;
-		background: url(/images/transit-apps-logo.png) 0 0 no-repeat;
+		height: 75px;
+		background: url(/images/city-go-round-logo.png) 0 0 no-repeat;
 		text-indent: -40000px;
 		cursor: pointer;
 	}
 	#header h2 {
 		position:absolute;
-		top: 66px;
-		left: 370px;
+		top: 62px;
+		left: 360px;
 		font: 16px/16px Verdana, Arial, Helvetica, sans-serif;
 		padding: 0;
 		color: #888;
 	}
 	#header #nav {
 		position:absolute;
-		top: 90px;
+		top: 91px;
 		left: 4px;
 	}
 	#header #front-seat-logo {
