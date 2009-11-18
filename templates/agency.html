@@ -7,6 +7,7 @@ short name: {{agency.short_name}}<br>
 web page: <a href="{{agency.agency_url}}">{{agency.agency_url}}</a><br>
 external_id: {{agency.external_id}}<br>
 <h3>feeds</h3>
+opened {{agency.date_opened}}<br>
 {% for feed in feeds %}
 {{ feed.dataexchange_url }} [{% if feed.is_official %}official{% else %}unofficial{%endif%}]<br>
 {% endfor %}
