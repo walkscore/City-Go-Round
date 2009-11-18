@@ -53,7 +53,18 @@ def edit_agency(request, agency_id):
     
     return render_to_response( request, "edit_agency.html", {'agency':agency, 'form':form} )
     
-def agencies(request, countryslug='', stateslug='', cityslug='', name=''):
+def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
+    
+    if nameslug:
+        urlslug = '/'.join([countryslug,stateslug,cityslug,nameslug])
+        agency = Agency.all().filter('urlslug =', urlslug).get()
+        template_vars = {
+            'agency': agency,
+            'feed_references': FeedReference.all_by_most_recent(),
+            }
+    
+        return render_to_response( request, "agency.html", template_vars)
+
     
     agencies = Agency.all().order("name")
     mck = 'agencies'
@@ -72,7 +83,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', name=''):
     mem_result = memcache.get(mck)
     if not mem_result:
         agencies = agencies.order("name")
-        mc_added = memcache.add(mck, agencies, 60*60)
+        mc_added = memcache.add(mck, agencies, 60 * 1)
     else:
         agencies = mem_result
         
