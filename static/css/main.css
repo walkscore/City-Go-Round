@@ -17,9 +17,6 @@
 		font-style: normal;
 		display: inline;
 	}
-	.boxed-content {
-		margin: 12px 10px 0 12px;
-	}
 	.floatleft {
 		float: left;
 		margin-right: 12px;
@@ -32,14 +29,12 @@
 		clear: both;
 	}	
 	.thinline {
-		margin-top: 14px;
+		margin-top: 12px;
 		border: 1px solid #bbb;
 		padding-bottom: 10px;
 	}
-
-	h3 em {
-		font-size: 22px;
-		font-style: normal;
+	.boxed-content {
+		margin: 8px 10px 0 12px;
 	}
 	div.clickable, div.clickable2, div.clickable *, div.clickable2 * {
 		cursor: pointer;
@@ -101,8 +96,8 @@
 	}
 	
 	#petition h2 { color: #028dc7; }
+	#petition h4 { color: #f72e2e; }
 	.data-lists h2 { color: #f72e2e; }
-	
 	#no-data-list h3 { color: #f72e2e; }
 	#recently-added-list h3 { color: #18b541; font-size: 18px; }
 
@@ -122,7 +117,7 @@
 		font-weight: bold;
 	}
 	.body-content p, p.body {
-		margin: 6px 0 6px 0;
+		margin: 2px 0 8px 0;
 	}
 	
 
@@ -190,13 +185,14 @@
 		clear: both;
 		margin-right: 14px;
 	}
+		.col-group .widecontent {
+			padding-bottom: 10px;
+		}
 		.col-group .boxed-content .narrow-col { 
 			width: 225px;
-			margin: 10px 38px 0 0;
 		}
 		.col-group .boxed-content .wide-col { 
 			width: 290px;
-			margin: 10px 0 0 0;
 		}
 	
 	#footer {
@@ -339,7 +335,7 @@
 
 /*********** PETITION FORM ****************/
 
-	#blockquote {
+	.body-content blockquote {
 		margin: 8px 15px 0 0;
 		padding-bottom: 10px;
 		font-style: italic;
@@ -596,4 +592,8 @@
 	}
 	.bluegreen span {
 		color: #18b541;
+	}
+	.bluegreen em {
+		font-size: 22px;
+		font-style: normal;
 	}

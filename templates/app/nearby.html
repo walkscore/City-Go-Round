@@ -14,8 +14,9 @@ jQuery(document).ready(function() {
         agencies = json.agencies;
         agency_public = {};
         agency_no_public = {};
-        var agency_public_html = '<b>Apps powered by: </b>'
-        var agency_no_public_html =''
+        
+        var agency_public_html = '<p><strong>Apps powered by:</strong>';
+        var agency_no_public_html ='<p>';
         apps = [];
         jQuery.each(agencies, function(i,a){
             var name = a.name;
@@ -29,8 +30,12 @@ jQuery(document).ready(function() {
                 agency_no_public_html += '<a href="/agencies/' + slug + '">' + name + '</a> | ';
                 }
             });
-        var summary = '<b>' + apps.length + '</b> transit apps use data from <b>' +
-               agency_public_count + '</b> agencies';
+				agency_no_public_html +='</p>';
+				agency_public_html += '</p>';
+				
+        var summary = '<h4 class="bluegreen"><em>' + apps.length + '</em> transit apps use public data from ';
+        summary += '<span><em>' + agency_public_count + '</em> transit agencies.</span></h4>';
+        
         var app_html = ''
         jQuery.each(apps, function(i,a){
             app_html += a.name + '<br><br>'
@@ -84,26 +89,53 @@ jQuery(document).ready(function() {
 
 {% block content %}
 	<div class="col-group">
-
-    
     <div id="petition" class="body-content thinline">
 			<div class="boxed-content">	
-      	<h3>Nearby Agencies with no public data</h3>
-      	<p id="fill_nearby_no_public"><span class="loading"></span></p>
+      	<h4>Nearby Agencies with no public data</h4>
+      	<div id="fill_nearby_no_public"><span class="loading"></span></div>
 	    	<h2>SUPPORT PUBLIC DATA</h2>
-				<div class="narrow-col">
-			    {% include "petition-text.html" %}				
+				<div class="wide-col rightmost">
+			    {% include "petition-text.html" %}	
+			    {% include "petition-disclaimer.html" %}				
 		    </div>
 		    <div class="narrow-col">
 		    	{% include "petition-form.html" %}
-		    	<p class="p2">After signing you will receive occasional updates about transportation issues from Front Seat</p>
+			  </div>
+			  <br class="clear-all" />
 		  </div>
 	  </div>
+	</div>
+	<div class="col-group">
 	  <div id="fill_nearby_summary">loading..</div>
 	  <div id="fill_nearby_public"></div>
 	  <div id="fill_nearby_apps"></div>
-	</div>
+	  <div class="narrow-col"> 
+	    <div class="app-thumbs">   
+	        
+		    {% for transit_app in transit_apps %}
+			    <div class="scroll-item-first"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
+			      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
+			      <p>{{transit_app.description}}</p>
+			    </div>
+		    {% endfor %}
 
+			</div>
+		</div>
+
+	  <div class="narrow-col"> 
+	    <div class="app-thumbs">   
+	        
+		    {% for transit_app in transit_apps %}
+			    <div class="scroll-item-first"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
+			      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
+			      <p>{{transit_app.description}}</p>
+			    </div>
+		    {% endfor %}
+
+			</div>
+		</div>
+				
+	</div>
 {% endblock %}
 
 

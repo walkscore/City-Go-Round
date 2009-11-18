@@ -7,8 +7,10 @@
 	</div>
 	<div class="col-group data-lists thinline">
 		<div class="boxed-content">
-			<h2>DATA POWERS APPS</h2>
-			<p>There are 574 transit agencies in the U.S.  Only 43 make their data public. <a href="">Why?</a></p>
+			<div class="widecontent">
+				<h2>DATA POWERS APPS</h2>
+				<p>There are 574 transit agencies in the U.S.  Only 43 make their data public. <a href="">Why?</a></p>
+			</div>
 			<div class="narrow-col">
 			  <div id="no-data-list">
 			    <h3>No public data</h3>
@@ -18,7 +20,7 @@
 			    Transit agency? <a href="">How to get off this list</a></p>
 			  </div>
 		  	</div>
-		  <div class="wide-col">
+		  <div class="wide-col rightmost">
 		    <div id="recently-added-list">
 		      <h3>Recently made public</h3>
 		      <h6>{{feed_references.count}} agencies</h6>
@@ -34,7 +36,7 @@
 		    <h2>DEMAND PUBLIC DATA</h2>
 		    {% include "petition-text.html" %}
 		    {% include "petition-form.html" %}
-		    <p class="p2">After signing you will receive occasional updates about transportation issues from Front Seat</p>
+		    {% include "petition-disclaimer.html" %}
 		  </div>
 	  </div>
 	  <div id="petition-comments">
