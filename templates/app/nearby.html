@@ -20,14 +20,13 @@ jQuery(document).ready(function() {
         jQuery.each(agencies, function(i,a){
             var name = a.name;
             var slug = a.urlslug;
-            console.log(name,slug);
             if (a.apps.length){
                 jQuery.each(a.apps, function(i,j){apps.push(j);});
                 agency_public_count += 1;
-                agency_public_html += '<a href="' + slug + '">' + name + '</a>';
+                agency_public_html += '<a href="/agencies/' + slug + '">' + name + '</a> ';
                 }
             else{
-                agency_no_public_html += '<a href="' + slug + '">' + name + '</a>';
+                agency_no_public_html += '<a href="/agencies/' + slug + '">' + name + '</a> ';
                 }
             });
         var summary = '<b>' + apps.length + '</b> transit apps use data from <b>' +
@@ -47,9 +46,8 @@ jQuery(document).ready(function() {
         var base_url = 'http://maps.google.com/maps/geo?sensor=false&key={{GOOGLE_API_KEY}}';
         var address = getUrlParam('location_query');
         var qurl = base_url + '&q=' + address + '&callback=?';
-        //console.log(qurl);
         jQuery.getJSON(qurl, function(json){
-            console.log(json);
+            //console.log(json);
             if(json.Placemark){
                 var p = json.Placemark[0];
                 var ad = p.AddressDetails.Country.AdministrativeArea;
@@ -62,12 +60,10 @@ jQuery(document).ready(function() {
                     var city = ad.SubAdministrativeArea.Locality.LocalityName;
                     //window.location.replace('/agencies/US/' + state + '/' + city + '/');
                     }
-                else {
+                //else {
                     //window.location.replace('/agencies/US/' + state + '/');
-                    console.log();
-                    }
+                  //  }
                 var coords = p.Point.coordinates;
-                console.log(coords);
                 var lon = coords[0];
                 var lat = coords[1];
                 var nearby_url = '/agencies/search/?type=location&format=json';
