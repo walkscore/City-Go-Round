@@ -228,8 +228,8 @@
 	}
 	#header #nav {
 		position:absolute;
-		top: 91px;
-		left: 4px;
+		top: 90px;
+		left: 1px;
 	}
 	#header #front-seat-logo {
 		position: absolute;
@@ -422,8 +422,12 @@
 		position: absolute;
 		left: 60px;
 		top: 15px;
+		padding: 0;
 		color: #546b75; 
 		font-size: 18px;
+	}
+	#feat h3 a {
+		text-decoration: underline;
 	}
 	#feat #feat-bigprev {
 		position: absolute;
