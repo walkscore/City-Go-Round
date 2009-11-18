@@ -13,7 +13,7 @@
 		    <div class="app-thumbs"> 
 			        
 			    {% for transit_app in transit_apps %}
-				    <div class="scroll-item-first"> <a href=""><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
+				    <div class="scroll-item-first"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
 				      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
 				      <p>{{transit_app.description}}</p>
 				    </div>
@@ -27,7 +27,7 @@
 		    <div class="app-thumbs">
 			        
 			    {% for transit_app in transit_apps %}
-				    <div class="scroll-item-first"> <a href=""><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
+				    <div class="scroll-item-first"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
 				      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
 				      <p>{{transit_app.description}}</p>
 				    </div>
@@ -43,7 +43,7 @@
 		    <div class="app-thumbs">   
 		        
 			    {% for transit_app in transit_apps %}
-				    <div class="scroll-item-first"> <a href=""><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
+				    <div class="scroll-item-first"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
 				      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
 				      <p>{{transit_app.description}}</p>
 				    </div>
@@ -55,7 +55,7 @@
 		    <div class="app-thumbs">    
 			        
 			    {% for transit_app in transit_apps %}
-				    <div class="scroll-item-first"> <a href=""><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
+				    <div class="scroll-item-first"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
 				      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
 				      <p>{{transit_app.description}}</p>
 				    </div>

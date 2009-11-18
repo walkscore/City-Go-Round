@@ -12,8 +12,7 @@
     
 function goto_search(){
     var loc = jQuery('#location_query').val()
-    alert(loc);
-    window.location.replace('/apps/search/#?location=' + loc);
+    window.location.replace('/apps/nearby/?location_query=' + loc);    
     return false;
     }
 </script>
@@ -40,10 +39,10 @@ function goto_search(){
 </div>
 <div id="lede">
 	{% block lede %}
-  	<form onsubmit="javascript:goto_app_search(); return false;">
+  	<form onsubmit="goto_search(); return false;">
 	  	<label>Find apps near you:</label>
 	  	<input id="location_query" name="location_query" type="text">
-	  	<input id="search" name="search" type="image" src="{% static_url /images/button-search.gif %}" onclick="goto_app_search();">
+	  	<input id="search" name="search" type="image" src="{% static_url /images/button-search.gif %}">
   	</form>
   	<p>U.S. only for now.</p>
   {% endblock %}

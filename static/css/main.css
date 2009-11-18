@@ -30,7 +30,13 @@
 	}
 	.clear-all {
 		clear: both;
+	}	
+	.thinline {
+		margin-top: 14px;
+		border: 1px solid #bbb;
+		padding-bottom: 10px;
 	}
+
 	h3 em {
 		font-size: 22px;
 		font-style: normal;
@@ -116,7 +122,7 @@
 		font-weight: bold;
 	}
 	.body-content p, p.body {
-		margin: 4px 0 8px 0;
+		margin: 6px 0 6px 0;
 	}
 	
 
@@ -183,7 +189,6 @@
 		float: left;
 		clear: both;
 		margin-right: 14px;
-		padding-bottom: 18px;
 	}
 		.col-group .boxed-content .narrow-col { 
 			width: 225px;
@@ -204,9 +209,6 @@
 
 /*********** HOME PAGE ****************/
 
-	#home .col-group {
-		border: 1px solid #bbb;
-	}
 	
 /*********** HEADER ****************/
 
@@ -337,11 +339,9 @@
 
 /*********** PETITION FORM ****************/
 
-	#petition {
-		border: 1px solid #bbb;
-	}
-	#petition-form blockquote {
-		margin: 8px 15px 12px 0;
+	#blockquote {
+		margin: 8px 15px 0 0;
+		padding-bottom: 10px;
 		font-style: italic;
 		display: block;
 	}
@@ -410,7 +410,7 @@
 		background: url(/images/feature-gradient-bg.gif) 0 0 repeat-x; 
 		width: 620px;
 		height: 255px;
-		margin: 25px auto;
+		margin: 25px auto 10px auto;
 		position: relative;
 	}
 	#feat h3 {
@@ -517,7 +517,7 @@
 	
 	#app-gallery .scroll-item, #app-gallery .scroll-item-first { 
 		clear: both;
-		margin-top: 10px;
+		padding-bottom: 15px;
 		min-height: 80px;
 	}
 	#app-gallery .scroll-item-first {
@@ -529,8 +529,8 @@
 		float: left;
 		margin-right: 10px;
 		border: 1px solid #888;
-		width: 90px;
-		height: 90px;
+		width: 80px;
+		height: 80px;
 	}
 	#app-gallery h5 a { 
 		color: #c76402; 
@@ -583,6 +583,12 @@
 		font-size:  11px;
 	}
 	
+/*********** SEARCH RESULTS ************/
+
+	#fill_nearby_no_public {
+		color: #316b84;
+	}
+
 	
 /*********** CUSTOM STUFF ************/
 	.bluegreen {
