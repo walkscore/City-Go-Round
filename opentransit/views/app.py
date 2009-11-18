@@ -43,9 +43,7 @@ def add_form(request):
     if request.method == 'POST':
         form = AddAppForm(request.POST, request.FILES)
         if form.is_valid():         
-            application = TransitApp()            
-            application.slug = form.transit_app_slug
-            application.title = form.cleaned_data['title']
+            application = TransitApp(title = form.cleaned_data['title'])            
             application.description = form.cleaned_data['description']
             application.url = db.Link(form.cleaned_data['url'])
             application.author_name = form.cleaned_data['author_name']

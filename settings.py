@@ -58,7 +58,7 @@ SITE_WIDE_PASSWORD = "appsnearyou"
 SITE_WIDE_REALM = "Open Transit Data"
 
 #override in local_settings.py, not here
-GOOGLE_API_KEY='ABQIAAAAOtgwyX124IX2Zpe7gGhBsxSCRqJWmDzbZh5mozwXpdIfpjWXRhSi9qNJD6bg7_Sl6DjLqkfJ2UmOmA'
+GOOGLE_API_KEY='ABQIAAAAOtgwyX124IX2Zpe7gGhBsxTz6YtX4DvCXuRZKs5NV4Iafw-YMRSFKCvmwc0zxsAPANYpNL1uiCmf_w'
 
 # only use local_settings.py if we're running debug server
 if RUNNING_APP_ENGINE_LOCAL_SERVER:
