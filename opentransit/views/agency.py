@@ -160,4 +160,10 @@ def agencies_search(request):
         return HttpResponse(json.dumps({'agencies' : agencies_to_json(agencies)}), mimetype='text/html')
     else:
         return render_to_response( request, "agency_search.html", {'agencies' : agencies} )
+        
+def delete_all_agencies(request):
+    for agency in Agency.all():
+        agency.delete()
+        
+    return HttpResponse( "deleted all agencies")
     
