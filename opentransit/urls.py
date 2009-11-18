@@ -37,6 +37,7 @@ urlpatterns += patterns(
     url(r'^agencies/(?P<countryslug>[-\w ]+)/(?P<stateslug>[-\w ]+)/$', 'agencies'),
     url(r'^agencies/(?P<countryslug>[-\w ]+)/(?P<stateslug>[-\w ]+)/(?P<cityslug>[-\w ]+)/$', 'agencies'),
     url(r'^agencies/(?P<agency>\d+)/$', 'agencies'),
+    url(r'^admin/agencies/delete/$', 'delete_all_agencies')
 )
 
 
