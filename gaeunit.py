@@ -64,6 +64,11 @@ import unittest
 import time
 import logging
 import cgi
+
+# ADDED BY DAVEPECK TO MAKE IT WORK NICELY WITH OUR SITE
+from google.appengine.dist import use_library
+use_library('django', '1.1')
+
 import django.utils.simplejson
 
 from google.appengine.ext import webapp

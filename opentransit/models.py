@@ -29,6 +29,7 @@ class Agency(GeoModel):
     contact_email   = db.EmailProperty()
     updated         = db.DateTimeProperty()
     phone           = db.StringProperty()
+    date_opened     = db.FloatProperty() # not datetime because the FeedReference.date_added is a float
     
     nameslug        = db.StringProperty()
     cityslug        = db.StringProperty()
@@ -49,6 +50,10 @@ class Agency(GeoModel):
         self.stateslug = slugify(self.state)
         self.countryslug = slugify(self.country)
         self.urlslug = "%s/%s/%s/%s"%(self.countryslug,self.stateslug,self.cityslug,self.nameslug)
+        
+        # set the external_id if it has not already been set
+        if self.external_id is None:
+            self.external_id = self.nameslug
         
     @staticmethod
     def all_public_agencies():
@@ -100,8 +105,8 @@ class Agency(GeoModel):
                 if (not uniqify) or (agency.key() not in seen):
                     if uniqify: seen[agency.key()] = True
                     yield agency        
-
         
+    
 class FeedReference(db.Model):
     """feed reference models a GTFS Data Exchange entity"""
     

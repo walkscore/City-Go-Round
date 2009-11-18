@@ -5,7 +5,7 @@ from google.appengine.ext import db
 from google.appengine.api.urlfetch import fetch as fetch_url
 from ..utils.view import render_to_response, redirect_to, not_implemented
 from ..utils.prettyprint import pretty_print_time_elapsed
-from ..models import FeedReference
+from ..models import FeedReference, Agency
 from urlparse import urlparse
 import re
 
@@ -40,14 +40,19 @@ def replace_feed_references(old_references, new_references):
         else:
             fr.external_id = id_from_gtfs_data_exchange_url( fr.dataexchange_url )
             
-        logging.info(  fr.external_id )
-            
-        
         # be hopeful the api call includes is_official. It's True by default
         if 'is_official' in feed_reference_json:
             fr.is_official   = feed_reference_json['is_official']
         
         fr.put()
+        
+        # set the 'date_opened' for every feed reference newly opened
+        agency = Agency.all().filter("external_id =", fr.external_id).filter("date_opened =", None).get()
+        
+        if agency is not None:
+            logging.info( "date opened: %s"%agency.date_opened )
+            agency.date_opened = fr.date_added
+            agency.put()
 
 def update_feed_references(request):
     FEED_REFS_URL = "http://www.gtfs-data-exchange.com/api/agencies"
@@ -57,7 +62,8 @@ def update_feed_references(request):
     
     # replace feed references in a transaction
     old_references = FeedReference.all().fetch(1000)
-    db.run_in_transaction(replace_feed_references, old_references, feed_refs_json)
+    replace_feed_references( old_references, feed_refs_json )
+    #db.run_in_transaction(replace_feed_references, old_references, feed_refs_json)
       
     # redirect to a page for viewing all your new feed references
     return redirect_to("feed_references")

@@ -295,6 +295,15 @@
 		margin-bottom: 5px;
 	}
 
+	.agency-text-list a {
+		color: #316b84;
+		text-decoration: none;
+	}
+	.agency-text-list a:hover {
+		text-decoration: underline;
+	}	
+	
+	
 /*********** LEDE ****************/
 	
 	#lede {
