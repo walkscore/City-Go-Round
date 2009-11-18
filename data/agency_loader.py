@@ -16,17 +16,15 @@ class AgencyLoader(bulkloader.Loader):
             return db.GeoPt(lat, lon)
         
         bulkloader.Loader.__init__(self, 'Agency',
-                                       [('name', str),
+                                       [('ntd_id', str),
+                                        ('name', str),
                                         ('short_name', str),
                                         ('city', str),
                                         ('state', str),
-                                        ('executive', str),
-                                        ('executive_email', str),
+                                        ('country', str),
                                         ('agency_url', lambda x: str(x) if x!="" else None),
-                                        ('phone', str),
                                         ('address', str),
-                                        ('location', lat_lon),
-                                        ('external_id', lambda x: str(x) if x!="" else None),
+                                        ('service_area_population', int),
                                        ])
                                        
 
