@@ -28,6 +28,7 @@ class Agency(GeoModel):
     contact_email   = db.EmailProperty()
     updated         = db.DateTimeProperty()
     phone           = db.StringProperty()
+    date_opened     = db.FloatProperty() # not datetime because the FeedReference.date_added is a float
     
     nameslug        = db.StringProperty()
     cityslug        = db.StringProperty()
