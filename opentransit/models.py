@@ -12,6 +12,7 @@ class PetitionModel(db.Model):
     country     = db.StringProperty()
     
 class Agency(GeoModel):
+    external_id     = db.StringProperty()
     name            = db.StringProperty(required=True)
     short_name      = db.StringProperty()
     tier            = db.IntegerProperty()
@@ -47,6 +48,7 @@ class Agency(GeoModel):
 class FeedReference(db.Model):
     """feed reference models a GTFS Data Exchange entity"""
     
+    external_id       = db.StringProperty()
     date_last_updated = db.FloatProperty()
     feed_baseurl      = db.LinkProperty()
     name              = db.StringProperty()
@@ -57,6 +59,7 @@ class FeedReference(db.Model):
     state             = db.StringProperty()
     license_url       = db.LinkProperty()
     date_added        = db.FloatProperty()
+    is_official       = db.BooleanProperty(default=True)
     
     @staticmethod
     def all_by_most_recent():
