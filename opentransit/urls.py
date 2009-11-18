@@ -21,8 +21,8 @@ urlpatterns += patterns(
 # Feed Views -- Lists, Update Hooks, etc.
 urlpatterns += patterns(
     'opentransit.views.feed',
-    url(r'^update_feed_references$', 'update_feed_references', name='update_feed_references'),
-    url(r'^feed_references$', 'feed_references', name='feed_references'),
+    url(r'^update-feed-references$', 'update_feed_references', name='update_feed_references'),
+    url(r'^feed-references$', 'feed_references', name='feed_references'),
 )
 
 
