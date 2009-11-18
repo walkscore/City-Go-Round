@@ -3,6 +3,7 @@ import logging
 from django.utils import simplejson as json
 from google.appengine.ext import db
 from google.appengine.api import memcache
+from geo import geotypes
 
 from ..forms import AgencyForm
 from ..utils.view import render_to_response, redirect_to, not_implemented
@@ -120,7 +121,10 @@ def agencies_search(request):
             ag.append(ad)
         return ag                
     def check_lat_lon(lat, lon):
-        return lat, lon
+        try:
+            return float(lat), float(lon)
+        except:
+            return (0,0)
         
     #ensure location type search
     rg = request.GET.get
@@ -139,7 +143,11 @@ def agencies_search(request):
         lat,lon = check_lat_lon(lat, lon)
         if not (lat and lon):
             return HttpResponse('404 - invalid lat/lng')
-        agencies = agencies.filter('')
+        r = .25
+        agencies = Agency.bounding_box_fetch(
+            agencies,
+            geotypes.Box(lat+r, lon+r, lat-r, lon-r),
+            max_results = 50)
         
     if search_type == 'city':
         logging.debug('filtering by city %s' % city)
