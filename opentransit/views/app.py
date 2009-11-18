@@ -2,12 +2,20 @@ import time
 import logging
 from google.appengine.ext import db
 
-from ..forms import AddAppForm
+from ..forms import AddAppForm, PetitionForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, render_image_response, redirect_to_url
 from ..utils.image import crop_and_resize_image_to_square
 from ..decorators import requires_valid_transit_app_slug
-from ..models import TransitApp, TransitAppStats
+from ..models import TransitApp, TransitAppStats, FeedReference
 from ..constants import TRANSIT_APP_IMAGE_WIDTH, TRANSIT_APP_IMAGE_HEIGHT
+
+
+def nearby(request):
+    petition_form = PetitionForm()    
+    template_vars = {
+        'petition_form': petition_form
+    }    
+    return render_to_response(request, 'app/nearby.html', template_vars)
 
 def gallery(request):    
     template_vars = {

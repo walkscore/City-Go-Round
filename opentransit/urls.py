@@ -21,23 +21,24 @@ urlpatterns += patterns(
 # Feed Views -- Lists, Update Hooks, etc.
 urlpatterns += patterns(
     'opentransit.views.feed',
-    url(r'^update_feed_references$', 'update_feed_references', name='update_feed_references'),
-    url(r'^feed_references$', 'feed_references', name='feed_references'),
+    url(r'^admin/feeds/update$', 'update_feed_references', name='update_feed_references'),
+    url(r'^feed-references$', 'feed_references', name='feed_references'),
 )
 
 
 # Agency Views -- Full URL structure for viewing agencies, and for adding/editing them
 urlpatterns += patterns(
     'opentransit.views.agency',
-    url('^agency/edit/(.*)/$', 'edit_agency', name='edit_agency'),
-    url(r'^generate-slugs$', 'generate_slugs'),
-    url(r'^agency/(.*)/$', 'agency'),
+    url('^agencies/edit/(?P<agency_id>\d+)/$', 'edit_agency', name='edit_agency'), #todo: move this to /agencies/..../edit url
     url(r'^agencies/$', 'agencies'),
     url(r'^agencies/search/$', 'agencies_search'),
     url(r'^agencies/(?P<countryslug>[-\w ]+)/$', 'agencies'),
     url(r'^agencies/(?P<countryslug>[-\w ]+)/(?P<stateslug>[-\w ]+)/$', 'agencies'),
     url(r'^agencies/(?P<countryslug>[-\w ]+)/(?P<stateslug>[-\w ]+)/(?P<cityslug>[-\w ]+)/$', 'agencies'),
+    url(r'^agencies/(?P<countryslug>[-\w ]+)/(?P<stateslug>[-\w ]+)/(?P<cityslug>[-\w ]+)/(?P<nameslug>[-\w]+)/$', 'agencies'),
+    url(r'^agencies/(?P<countryslug>[-\w ]+)/(?P<stateslug>[-\w ]+)/(?P<cityslug>[-\w ]+)/(?P<nameslug>[-\w]+)/edit/$', 'edit_agency'),
     url(r'^agencies/(?P<agency>\d+)/$', 'agencies'),
+    url(r'^admin/agencies/delete/$', 'delete_all_agencies')
 )
 
 
@@ -45,6 +46,7 @@ urlpatterns += patterns(
 urlpatterns += patterns(
     'opentransit.views.app',
     url(r'^apps/$', 'gallery', name='apps_gallery'),
+    url(r'^apps/nearby/$', 'nearby', name='apps_nearby'),
     url(r'^apps/add/$', 'add_form', name='apps_add_form'),
     url(r'^apps/add/success/$', 'add_success', name='apps_add_success'),
     url(r'^apps/(?P<transit_app_slug>[\w-]+)/$', 'details', name='apps_details'),

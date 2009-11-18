@@ -3,6 +3,7 @@ import logging
 from django.utils import simplejson as json
 from google.appengine.ext import db
 from google.appengine.api import memcache
+from geo import geotypes
 
 from ..forms import AgencyForm
 from ..utils.view import render_to_response, redirect_to, not_implemented
@@ -52,7 +53,18 @@ def edit_agency(request, agency_id):
     
     return render_to_response( request, "edit_agency.html", {'agency':agency, 'form':form} )
     
-def agencies(request, countryslug='', stateslug='', cityslug='', name=''):
+def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
+    
+    if nameslug:
+        urlslug = '/'.join([countryslug,stateslug,cityslug,nameslug])
+        agency = Agency.all().filter('urlslug =', urlslug).get()
+        template_vars = {
+            'agency': agency,
+            'feed_references': FeedReference.all_by_most_recent(),
+            }
+    
+        return render_to_response( request, "agency.html", template_vars)
+
     
     agencies = Agency.all().order("name")
     mck = 'agencies'
@@ -71,7 +83,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', name=''):
     mem_result = memcache.get(mck)
     if not mem_result:
         agencies = agencies.order("name")
-        mc_added = memcache.add(mck, agencies, 60*60)
+        mc_added = memcache.add(mck, agencies, 60 * 1)
     else:
         agencies = mem_result
         
@@ -89,17 +101,6 @@ def generate_locations(request):
     pass
     return HttpResponse( "locations NOT generated" )
 
-def agency(request, urlslug):
-    agency = Agency.all().filter('urlslug =', urlslug).get()
-    
-    template_vars = {
-        'agency': agency,
-        'feed_references': FeedReference.all_by_most_recent(),
-    }
-    
-    return render_to_response( request, "agency.html", template_vars)
-    
-    
 def agencies_search(request):
     """
     params
@@ -120,7 +121,10 @@ def agencies_search(request):
             ag.append(ad)
         return ag                
     def check_lat_lon(lat, lon):
-        return lat, lon
+        try:
+            return float(lat), float(lon)
+        except:
+            return (0,0)
         
     #ensure location type search
     rg = request.GET.get
@@ -139,7 +143,11 @@ def agencies_search(request):
         lat,lon = check_lat_lon(lat, lon)
         if not (lat and lon):
             return HttpResponse('404 - invalid lat/lng')
-        agencies = agencies.filter('')
+        r = .25
+        agencies = Agency.bounding_box_fetch(
+            agencies,
+            geotypes.Box(lat+r, lon+r, lat-r, lon-r),
+            max_results = 50)
         
     if search_type == 'city':
         logging.debug('filtering by city %s' % city)
@@ -152,4 +160,10 @@ def agencies_search(request):
         return HttpResponse(json.dumps({'agencies' : agencies_to_json(agencies)}), mimetype='text/html')
     else:
         return render_to_response( request, "agency_search.html", {'agencies' : agencies} )
+        
+def delete_all_agencies(request):
+    for agency in Agency.all():
+        agency.delete()
+        
+    return HttpResponse( "deleted all agencies")
     

@@ -42,7 +42,7 @@ $(document).ready(function()
 {% for a in agencies %}
 <tr> 
     <td>{{a.key.id}}</td>
-    <td><a href="/agency/{{a.urlslug}}">{{a.name}}</a></a></td> 
+    <td><a href="/agencies/{{a.urlslug}}">{{a.name}}</a></a></td> 
     <td>{{a.tier}}</td> 
     <td>{{a.city}}</td> 
     <td>{{a.state}}</td> 
@@ -51,7 +51,7 @@ $(document).ready(function()
     <td>{{a.twitter}}</td> 
     <td>{{a.contact_email}}</td>
     <td>{{a.location}}</td>
-    <td><a href="/agency/edit/{{a.key.id}}">edit</a></td>
+    <td><a href="/agencies/edit/{{a.key.id}}">edit</a></td>
 </tr> 
 {% endfor %}
 </tbody> 

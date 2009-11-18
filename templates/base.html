@@ -10,37 +10,10 @@
     {% block googlescripts %}
     {% endblock %}
     
-function find_nearby_agencies(){
+function goto_search(){
     var loc = jQuery('#location_query').val()
-    //console.log(loc);
-    
-    base_url = 'http://maps.google.com/maps/geo?sensor=false&key={{GOOGLE_API_KEY}}';
-    qurl = base_url + '&q=' + loc + '&callback=?';
-    //console.log(qurl);
-    jQuery.getJSON(qurl, function(json){
-        //console.log(json)
-        if(json.Placemark){
-            var p = json.Placemark[0];
-            var ad = p.AddressDetails.Country.AdministrativeArea;
-            //console.log(ad);
-            if (!ad.CountryName=='USA'){
-                alert('sorry, for now we only support US addresses');
-                }
-            var state = ad.AdministrativeAreaName;
-            if (ad.SubAdministrativeArea && ad.SubAdministrativeArea.Locality) {
-                var city = ad.SubAdministrativeArea.Locality.LocalityName;
-                window.location.replace('/agencies/US/' + state + '/' + city + '/');
-                }
-            else {
-                window.location.replace('/agencies/US/' + state + '/');
- 
-                }
-            
-            }
-        else{
-            alert('unable to geocode your address');
-            }
-        });
+    window.location.replace('/apps/nearby/?location_query=' + loc);    
+    return false;
     }
 </script>
 <script type="text/javascript" src="/js/transitapps.js"></script>
@@ -58,7 +31,7 @@ function find_nearby_agencies(){
       <div class="clickable2 friend-twitter" onclick='trackNavigationNewWindow("http://twitter.com/transitapps", "header", "follow us", "twitter")'>
         <label>Follow us</label>
       </div>
-      <div class="clickable2 friend-facebook" onclick='trackNavigationNewWindow("http://www.facebook.com/pages/Open-Transit-Data/328347565520?created#/pages/Open-Transit-Data/328347565520?v=wall", "header", "follow us", "facebook")'>
+      <div class="clickable2 friend-facebook" onclick='trackNavigationNewWindow("http://www.facebook.com/pages/TransitApps/178450140958?v=app_2373072738#/pages/TransitApps/178450140958?v=wall", "header", "follow us", "facebook")'>
       	<label>Friend us</label>
       </div>
     </div>
@@ -66,9 +39,11 @@ function find_nearby_agencies(){
 </div>
 <div id="lede">
 	{% block lede %}
-  	<label>Find apps near you:</label>
-  	<input id="location_query" name="location_query" type="text">
-  	<input id="search" name="search" type="image" src="{% static_url /images/button-search.gif %}" onclick="find_nearby_agencies()">
+  	<form onsubmit="goto_search(); return false;">
+	  	<label>Find apps near you:</label>
+	  	<input id="location_query" name="location_query" type="text">
+	  	<input id="search" name="search" type="image" src="{% static_url /images/button-search.gif %}">
+  	</form>
   	<p>U.S. only for now.</p>
   {% endblock %}
 </div>
@@ -80,7 +55,12 @@ function find_nearby_agencies(){
     <p id="gtfs-data-exchange-logo"><a href="http://www.gtfs-data-exchange.com/"><img src="{% static_url /images/gtfs-data-exchange-logo.gif %}" /></a>Data provided by GTFS Data Exchange </p>
 </div>
 </body>
-<script src="{% static_url /js/main.js %}" type="text/javascript"></script>
+<script src="{% static_url /js/util.js %}" type="text/javascript"></script>
 {% block scripts %}
 {% endblock %}
+<script type="text/javascript"> 
+	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www."); 
+	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); 
+</script> 
+<script type="text/javascript"> try { var pageTracker = _gat._getTracker("UA-11647297-1"); pageTracker._trackPageview(); } catch(err) {}</script>
 </html>

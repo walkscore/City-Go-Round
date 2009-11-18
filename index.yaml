@@ -18,5 +18,12 @@ indexes:
 
 - kind: Agency
   properties:
+  - name: cityslug
+  - name: countryslug
+  - name: stateslug
+  - name: name
+
+- kind: Agency
+  properties:
   - name: state
   - name: name

@@ -6,6 +6,11 @@ from google.appengine.api.urlfetch import fetch as fetch_url
 from ..utils.view import render_to_response, redirect_to, not_implemented
 from ..utils.prettyprint import pretty_print_time_elapsed
 from ..models import FeedReference
+from urlparse import urlparse
+import re
+
+def id_from_gtfs_data_exchange_url(url):
+    return re.findall( "/agency/(.*)/", urlparse( url )[2] )[0]
 
 def replace_feed_references(old_references, new_references):
     # TODO: deleting one at a time is stupid
@@ -17,6 +22,7 @@ def replace_feed_references(old_references, new_references):
     parentKey = db.Key.from_path("FeedReference", "base")
     for feed_reference_json in new_references:
         fr = FeedReference(parent=parentKey)
+        
         fr.date_last_updated = feed_reference_json['date_last_updated']
         fr.feed_baseurl      = feed_reference_json['feed_baseurl'].strip() if feed_reference_json['feed_baseurl'] != "" else None
         fr.name              = feed_reference_json['name']
@@ -27,6 +33,20 @@ def replace_feed_references(old_references, new_references):
         fr.state             = feed_reference_json['state']
         fr.license_url       = feed_reference_json['license_url'].strip() if feed_reference_json['license_url'] != "" else None
         fr.date_added        = feed_reference_json['date_added']
+        
+        # be hopeful that the api call has the external id. If not, yank it from the url
+        if 'external_id' in feed_reference_json:
+            fr.external_id = feed_reference_json['external_id']
+        else:
+            fr.external_id = id_from_gtfs_data_exchange_url( fr.dataexchange_url )
+            
+        logging.info(  fr.external_id )
+            
+        
+        # be hopeful the api call includes is_official. It's True by default
+        if 'is_official' in feed_reference_json:
+            fr.is_official   = feed_reference_json['is_official']
+        
         fr.put()
 
 def update_feed_references(request):
