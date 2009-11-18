@@ -1,5 +1,8 @@
 from google.appengine.ext import db
 
+def normalize_to_key(entity_or_key):
+    return entity_or_key.key() if isinstance(entity_or_key, db.Model) else entity_or_key
+
 def normalize_to_keys(entities_or_keys):
     return [eok.key() if isinstance(eok, db.Model) else eok for eok in entities_or_keys]
 

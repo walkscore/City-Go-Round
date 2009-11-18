@@ -3,7 +3,7 @@ from google.appengine.ext import db
 from django.core.urlresolvers import reverse
 from geo.geomodel import GeoModel
 from .utils.slug import slugify
-from .utils.datastore import normalize_to_keys, unique_entities
+from .utils.datastore import normalize_to_key, normalize_to_keys, unique_entities
 
 class PetitionModel(db.Model):
     name        = db.StringProperty()
@@ -70,38 +70,26 @@ class Agency(GeoModel):
     @staticmethod
     def fetch_for_transit_app(transit_app, uniqify = True):
         """Return a list of Agency entities, by default unique, that the given transit app supports"""
-        fetched = []
-        if transit_app.supports_all_public_agencies:
-            for public_agency in Agency.all_public_agencies():
-                fetched.append(public_agency)
-        fetched.extend(Agency.fetch_explicitly_supported_for_transit_app(transit_app))
-        if uniqify:
-            fetched = unique_entities(fetched)
-        return fetched
+        return [agency for agency in Agency.iter_for_transit_app(transit_app, uniqify)]
         
     @staticmethod
     def iter_for_transit_app(transit_app, uniqify = True):
         """Return an iterator over Agency entities, by default unique, that the given transit app supports"""
         seen = {}
+        for explicit_agency in Agency.iter_explicitly_supported_for_transit_app(transit_app):
+            if (not uniqify) or (explicit_agency.key() not in seen):
+                if uniqify: seen[explicit_agency.key()] = True
+                yield explicit_agency
         if transit_app.supports_all_public_agencies:
             for public_agency in Agency.all_public_agencies():
                 if (not uniqify) or (public_agency.key() not in seen):
                     if uniqify: seen[public_agency.key()] = True
                     yield public_agency
-        for explicit_agency in Agency.iter_explicitly_supported_for_transit_app(transit_app):
-            if (not uniqify) or (explicit_agency.key() not in seen):
-                if uniqify: seen[explicit_agency.key()] = True
-                yield explicit_agency
         
     @staticmethod
     def fetch_for_transit_apps(transit_apps, uniqify = True):
         """Return a list of Agency entities, by default unique, that at least one transit application in the transit_apps list supports."""
-        fetched = []
-        for transit_app in transit_apps:
-            fetched.extend(Agency.fetch_for_transit_app(transit_app, uniqify = False))
-        if uniqify:
-            fetched = unique_entities(fetched)
-        return fetched   
+        return [agency for agency in Agency.iter_for_transit_apps(transit_apps, uniqify)]
 
     @staticmethod
     def iter_for_transit_apps(transit_apps, uniqify = True):
@@ -109,7 +97,7 @@ class Agency(GeoModel):
         seen = {}
         for transit_app in transit_apps:
             for agency in Agency.iter_for_transit_app(transit_app, uniqify = False):
-                if (not uniqify) or (agency not in seen):
+                if (not uniqify) or (agency.key() not in seen):
                     if uniqify: seen[agency.key()] = True
                     yield agency        
 
@@ -165,7 +153,7 @@ class TransitAppStats(db.Model):
     
 class TransitApp(db.Model):
     slug                = db.StringProperty(indexed=True)
-    title               = db.StringProperty()
+    title               = db.StringProperty(required = True)
     description         = db.StringProperty()
     url                 = db.LinkProperty()
     author_name         = db.StringProperty()
@@ -176,7 +164,11 @@ class TransitApp(db.Model):
     
     supports_all_public_agencies = db.BooleanProperty(indexed = True)
     explicitly_supported_agency_keys = db.ListProperty(db.Key)
-                
+    
+    def __init__(self, *args, **kwargs):
+        super(TransitApp, self).__init__(*args, **kwargs)
+        self.slug = slugify(self.title)
+    
     @property
     def has_screen_shot(self):
         return (self.screen_shot is not None)
@@ -221,36 +213,51 @@ class TransitApp(db.Model):
         return TransitApp.all().filter('supports_all_public_agencies = ', True)
         
     @staticmethod
-    def fetch_for_agency(agency, uniqify = True):
+    def fetch_for_agency(agency_or_key, uniqify = True):
         """Return a list of TransitApp entities, by default unique, that support the given agency."""
-        # fetched = []
-        # if agency.is_public:
-        #     for transit_app_with_public_support in TransitApp.all_supporting_public_agencies():
-        #         fetched.append(transit_app_with_public_support)
-        # 
-        pass
+        return [transit_app for transit_app in TransitApp.iter_for_agency(agency_or_key, uniqify)]
         
     @staticmethod
-    def iter_for_agency(agency, uniqify = True):
+    def iter_for_agency(agency_or_key, uniqify = True):
         """Return an iterator over TransitApp entities, by default unique, that support the given agency."""
-        pass
+        seen = {}
+        if isinstance(agency_or_key, db.Model):
+            agency = agency_or_key
+            agency_key = agency.key()
+        else:
+            agency = Agency.get([agency_or_key])
+            agency_key = agency_or_key        
+        for transit_app_with_explicit_support in TransitApp.gql('WHERE explicitly_supported_agency_keys = :1', agency_key):
+            if (not uniqify) or (transit_app_with_explicit_support.key() not in seen):
+                if uniqify: seen[transit_app_with_explicit_support.key()] = True
+                yield transit_app_with_explicit_support        
+        if agency.is_public:
+            for transit_app_with_public_support in TransitApp.all_supporting_public_agencies():
+                if (not uniqify) or (transit_app_with_public_support.key() not in seen):
+                    if uniqify: seen[transit_app_with_public_support.key()] = True
+                    yield transit_app_with_public_support
 
     @staticmethod
-    def fetch_for_agencies(agencies, uniqify = True):
+    def fetch_for_agencies(agencies_or_keys, uniqify = True):
         """Return a list of TransitApp entities, by default unique, that support at least one of the given agencies."""
-        pass
+        return [transit_app for transit_app in TransitApp.iter_for_agencies(agencies_or_keys, uniqify)]
         
     @staticmethod
-    def iter_for_agencies(agencies, uniqify = True):
+    def iter_for_agencies(agencies_or_keys, uniqify = True):
         """Return an iterator over TransitApp entities, by default unique, that support at least one of the given agencies."""
-        pass
+        seen = {}
+        for agency_or_key in agencies_or_keys:
+            for transit_app in TransitApp.iter_for_agency(agency_or_key, uniqify = False):
+                if (not uniqify) or (transit_app.key() not in seen):
+                    if uniqify: seen[transit_app.key()] = True
+                    yield transit_app
 
     def add_explicitly_supported_agencies(self, agencies_or_keys):
         """Helper to add new supported agencies to this transit app. You must call put() sometime later."""
         agency_keys = normalize_to_keys(agencies_or_keys)
         self.explicitly_supported_agency_keys.extend(agency_keys)
 
-    def add_explicitly_supported_agency(self, angency_or_key):
+    def add_explicitly_supported_agency(self, agency_or_key):
         """Helper to add a single supported agency to this transit app. You must call put() sometime later."""
         self.add_explicitly_supported_agencies([agency_or_key])
 
