@@ -220,6 +220,11 @@ class TransitApp(db.Model):
     @staticmethod
     def fetch_for_agency(agency, uniqify = True):
         """Return a list of TransitApp entities, by default unique, that support the given agency."""
+        # fetched = []
+        # if agency.is_public:
+        #     for transit_app_with_public_support in TransitApp.all_supporting_public_agencies():
+        #         fetched.append(transit_app_with_public_support)
+        # 
         pass
         
     @staticmethod
