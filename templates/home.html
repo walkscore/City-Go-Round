@@ -16,7 +16,7 @@
 			    <h3>No public data</h3>
 			    <h6>{{agencies.count}} agencies</h6>
 			    {% include "no-data-list.html" %}
-			    <p><a href="agencies">View all</a><br />
+			    <p><a href="{% url opentransit.views.agency.agencies %}">View all</a><br />
 			    Transit agency? <a href="">How to get off this list</a></p>
 			  </div>
 		  	</div>
@@ -25,7 +25,7 @@
 		      <h3>Recently made public</h3>
 		      <h6>{{feed_references.count}} agencies</h6>
 			    {% include "recently-added-list.html" %}      
-		      <p><a href="feed_references">View all</a></p>
+		      <p><a href="{% url opentransit.views.feed.feed_references %}">View all</a></p>
 		    </div>
 		  </div>
 		</div>
