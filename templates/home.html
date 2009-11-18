@@ -9,12 +9,12 @@
 		<div class="boxed-content">
 			<div class="widecontent">
 				<h2>DATA POWERS APPS</h2>
-				<p>There are 574 transit agencies in the U.S.  Only 43 make their data public. <a href="">Why?</a></p>
+				<p>There are {{agency_count}} transit agencies in the U.S.  Only {{open_agencies.count}} make their data public. <a href="">Why?</a></p>
 			</div>
 			<div class="narrow-col">
 			  <div id="no-data-list">
 			    <h3>No public data</h3>
-			    <h6>{{agencies.count}} agencies</h6>
+			    <h6>{{closed_agencies.count}} agencies</h6>
 			    {% include "no-data-list.html" %}
 			    <p><a href="{% url opentransit.views.agency.agencies %}">View all</a><br />
 			    Transit agency? <a href="">How to get off this list</a></p>
@@ -23,7 +23,7 @@
 		  <div class="wide-col rightmost">
 		    <div id="recently-added-list">
 		      <h3>Recently made public</h3>
-		      <h6>{{feed_references.count}} agencies</h6>
+		      <h6>{{open_agencies.count}} agencies</h6>
 			    {% include "recently-added-list.html" %}      
 		      <p><a href="{% url opentransit.views.feed.feed_references %}">View all</a></p>
 		    </div>

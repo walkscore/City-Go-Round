@@ -1,9 +1,9 @@
 <ol class="agency-list">
-  {% for feed_ref in feed_references|slice:":4" %}
+  {% for open_agency in open_agencies|slice:":4" %}
   <li>
-    <h5><a href="">{{feed_ref.name}}</a></h5>
-    <p><a href="">email</a> twitter: @nytsubwayscoop<br />
-      Added {{feed_ref.date_added}}</p>
+    <h5><a href="agencies/{{open_agency.urlslug}}">{{open_agency.name}}</a></h5>
+    <p><a href="">{{open_agency.executive_email}}</a> {% if twitter %}twitter: @{{open_agency.twitter}}{% endif %}<br />
+      exec: {{open_agency.executive}}</p>
   </li>
   {% endfor %}
 </ol>

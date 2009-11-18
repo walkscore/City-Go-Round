@@ -1,17 +1,9 @@
 <ol class="agency-list">
+  {% for closed_agency in closed_agencies|slice:":4" %}
   <li>
-    <h5><a href="">Chicago</a></h5>
-    <p><a href="">email</a> twitter: @nytsubwayscoop<br />
-      CEO: Jay H Walter</p>
+    <h5><a href="agencies/{{closed_agency.urlslug}}">{{closed_agency.name}}</a></h5>
+    <p><a href="">{{closed_agency.executive_email}}</a> {% if twitter %}twitter: @{{closed_agency.twitter}}{% endif %}<br />
+      exec: {{closed_agency.executive}}</p>
   </li>
-  <li>
-    <h5><a href="">Cleveland</a></h5>
-    <p><a href="">email</a> twitter: @nytsubwayscoop<br />
-      CEO: Jay H Walter</p>
-  </li>
-  <li>
-    <h5><a href="">Kansas City</a></h5>
-    <p><a href="">email</a> twitter: @nytsubwayscoop<br />
-      CEO: Jay H Walter</p>
-  </li>
+  {% endfor %}
 </ol>

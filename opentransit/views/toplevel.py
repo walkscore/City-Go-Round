@@ -8,12 +8,21 @@ from django.template.context import RequestContext
 from django.conf import settings
 
 def home(request):    
-    petition_form = PetitionForm()    
-    agencies = Agency.all()
+    petition_form = PetitionForm()
+    
+    agency_count = Agency.all().count()
+    
+    closed_agencies = Agency.all().filter("date_opened =", None)
+    open_agencies = Agency.all().filter("date_opened !=", None).order("-date_opened")
+    
+    logging.info( closed_agencies.count() )
+    logging.info( open_agencies.count() )
+    
     template_vars = {
         'petition_form': petition_form,
-        'agencies': agencies,
-        'feed_references': FeedReference.all_by_most_recent(),
+        'agency_count': agency_count,
+        'closed_agencies': closed_agencies,
+        'open_agencies': open_agencies,
     }    
     return render_to_response(request, 'home.html', template_vars)
     

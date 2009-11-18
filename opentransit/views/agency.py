@@ -30,9 +30,10 @@ def edit_agency(request, agency_id):
             agency.executive        = form.cleaned_data['executive']
             agency.executive_email  = form.cleaned_data['executive_email'] if form.cleaned_data['executive_email'] != "" else None
             agency.twitter          = form.cleaned_data['twitter']
-            agency.contact_email    = form.cleaned_data['contact_email']
+            agency.contact_email    = form.cleaned_data['contact_email'] if form.cleaned_data['contact_email'] != "" else None
             agency.updated          = form.cleaned_data['updated']
             agency.phone            = form.cleaned_data['phone']
+            agency.external_id      = form.cleaned_data['external_id']
             agency.put()
     else:
         form = AgencyForm(initial={'name':agency.name,
@@ -49,7 +50,8 @@ def edit_agency(request, agency_id):
                                'twitter':agency.twitter,
                                'contact_email':agency.contact_email,
                                'updated':agency.updated,
-                               'phone':agency.phone})
+                               'phone':agency.phone,
+                               'external_id':agency.external_id})
     
     return render_to_response( request, "edit_agency.html", {'agency':agency, 'form':form} )
     
@@ -58,9 +60,12 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
     if nameslug:
         urlslug = '/'.join([countryslug,stateslug,cityslug,nameslug])
         agency = Agency.all().filter('urlslug =', urlslug).get()
+        
+        feeds = FeedReference.all().filter('external_id =', agency.external_id)
+        
         template_vars = {
             'agency': agency,
-            'feed_references': FeedReference.all_by_most_recent(),
+            'feeds': feeds,
             }
     
         return render_to_response( request, "agency.html", template_vars)

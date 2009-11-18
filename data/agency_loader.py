@@ -25,7 +25,8 @@ class AgencyLoader(bulkloader.Loader):
                                         ('agency_url', lambda x: str(x) if x!="" else None),
                                         ('phone', str),
                                         ('address', str),
-                                        ('location', lat_lon)
+                                        ('location', lat_lon),
+                                        ('external_id', lambda x: str(x) if x!="" else None),
                                        ])
                                        
 
