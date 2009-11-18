@@ -3,3 +3,6 @@ from django.conf.urls.defaults import *
 
 # Load the opentransit application's URLs
 urlpatterns = patterns('', url(r'', include('opentransit.urls')))
+
+# Load the test application's URLs
+# urlpatterns = patterns('', url(r'^test.*', include('gaeunit.urls')))
