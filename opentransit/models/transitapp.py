@@ -62,9 +62,10 @@ from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_key
 
 class TransitAppFormProgress(db.Model):
     """Holds on to key pieces of form progress that cannot be sent through invisible input fields."""
-    screen_shot = db.BlobProperty()    
-    app_title = db.StringProperty(required = True)
-    app_slug = db.StringProperty(indexed = True)
+    progress_unique_id = db.StringProperty(indexed = True)
+    last_updated = db.DateTimeProperty(auto_now = True)    
+    general_info_form = db.BlobProperty() # pickled django form object, post-validation
+    screen_shot = db.BlobProperty()
 
 class TransitApp(db.Model):
     PLATFORMS = ["Mobile Web", "iPhone", "Android", "Palm WebOS", "Blackberry", "SMS", "Other"]
