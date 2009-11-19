@@ -9,6 +9,7 @@ urlpatterns += patterns(
     url(r'^$', 'home', name='home'),
     url(r'^contact/$', 'contact', name='contact'),
     url(r'^contact-thanks/$', 'contact_thanks', name='contact_thanks'),
+    url(r'^faq/$', 'faq', name='faq'),
 )
 
 

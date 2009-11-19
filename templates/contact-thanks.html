@@ -3,16 +3,26 @@
 {% block title %}Contact Us &mdash; TransitApps.org{% endblock %}
 
 {% block content %}
+<div class="body-content">
   <h2>Thanks for contacting us!</h2>
   <p>We read every message we receive but may not be able to respond to each one.</p>
-  <h3>Have you signed our petiton yes?</h3>
-  <div id="petition" class="body-content thinline">
-		<div class="boxed-content">
-	    <h2>DEMAND PUBLIC DATA</h2>
-	    {% include "petition-text.html" %}
-	    {% include "petition-form.html" %}
-	    {% include "petition-disclaimer.html" %}
+  <p>Back to the <a href="{% url home %}">home page</a></p>
+  <h3>Have you signed our petition?</h3>
+  <div class="col-group">
+    <div id="petition" class="body-content thinline">
+			<div class="boxed-content">	
+	    	<h2>SUPPORT PUBLIC DATA</h2>
+				<div class="wide-col rightmost">
+			    {% include "petition-text.html" %}	
+			    {% include "petition-disclaimer.html" %}				
+		    </div>
+		    <div class="narrow-col">
+		    	{% include "petition-form.html" %}
+			  </div>
+			  <br class="clear-all" />
+		  </div>
 	  </div>
   </div>
+</div>
 {% endblock %}
 
