@@ -32,13 +32,14 @@ $(document).ready(function()
     </span>
 
 <select name="public_filter">
-   <option value="public">Public</option>
-   <option value="no_public">Not Public</option>
+   <option value="all">Public Data</option>
+   <option value="public">Has Public Data</option>
+   <option value="no_public">No Public Data</option>
 </select>
 
 <select name="location_filter" onchange="window.location.replace(this.value)">
+   <option value="/agencies/us/">All States
   {% for s in states %}
-   <option value="/agencies/us/">All
    <option value="/agencies/us/{{s}}"{% ifequal location s %} selected {% endifequal %}>{{s|upper}}
   {% endfor %}
 </select>
@@ -62,7 +63,7 @@ $(document).ready(function()
 <tr class="{% if a.date_opened %}agency_public{% else %}agency_no_public {%endif %}"> 
     <td><a href="/agencies/{{a.urlslug}}">{{a.name}}</a></a></td> 
     <td>{% if a.date_opened %}Yes{% else %}No{% endif %}</td>
-    <td>{% if a.date_opened %}{{a.date_opened_formatted|date:"N Y"}}{% else %}N/A{% endif %}</td>
+    <td>{% if a.date_opened %}{{a.date_opened_formatted|date:"N Y"}}{% endif %}</td>
     <td>{{a.city}}</td> 
     <td>{{a.state}}</td> 
     <td>{{a.executive}}</td> 
