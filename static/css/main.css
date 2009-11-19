@@ -57,7 +57,7 @@
 		font-size:22px; 
 		padding: 0 0 7px 0;	}
 	h3 {
-		font:17px;
+		font-size:17px;
 		font-weight: normal;
 		padding: 12px 0 8px 0;
 	}
@@ -583,6 +583,13 @@
 	#fill_nearby_no_public {
 		color: #316b84;
 	}
+	
+/*********** APP ADD FORMS ************/
+	
+	#locations {
+	 display: none;
+	}
+
 
 	
 /*********** CUSTOM STUFF ************/

@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block title %}Where does your app work? &mdash; City-Go-Round{% endblock %}
+
+
+{% block headscripts %}
+<script type="text/javascript">
+	google.load("maps", "2.167");
+	
+	//********** GEOCODER ****************
+
+		//*********** set onload callback ***********
+    function init() {
+			geocoder = new Geocoder();
+		}
+				
+		function Geocoder() {
+			googleCoder = new GClientGeocoder();
+  		
+  		this.geocode = function(input){
+  			googleCoder.getLocations( input, geocodeReturn );
+  			geoTimeout = setTimeout("geocodeTimeout()", 15000);
+  		}
+		}		
+		function geocodeTimeout() {
+			alert("verification timed out, please try again.  If you continue to have problems, please check that your internet connection is working.");
+		}
+		
+		function geocodeReturn(response) {
+			var place, lat, lng;
+			var latLng, countryCode, formattedAddress, administrativeArea, thoroughfare, locality, postalCode;
+			var latLng = countryCode = formattedAddress = administrativeArea = thoroughfare = locality = postalCode = null;
+
+			if (response && response.Status.code == 200) {
+				place = response.Placemark[0];
+				lat = place.Point.coordinates[1];
+				lng = place.Point.coordinates[0];											
+				latLng	= new GLatLng(lat,lng);	
+				
+				if (place.AddressDetails.Country) {			
+					countryCode = String(place.AddressDetails.Country.CountryNameCode);
+					formattedAddress = String(place.address);
+					//store additional information if available
+					if (place.AddressDetails.Country.AdministrativeArea) {
+						
+						if (place.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName) {
+							administrativeArea = String(place.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName);
+						}
+						
+						//for more details, need to see if this area has a SubAdministrativeArea
+						var adminArea = place.AddressDetails.Country.AdministrativeArea;
+						if (place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea) {
+							adminArea = place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea
+						}
+						
+						if (adminArea.Locality) {
+							if (adminArea.Locality.Thoroughfare)
+								thoroughfare = String(adminArea.Locality.Thoroughfare.ThoroughfareName);
+										
+							if (adminArea.Locality.LocalityName)
+								locality = String(adminArea.Locality.LocalityName);
+							
+							if (adminArea.Locality.PostalCode)
+								postalCode = String(adminArea.Locality.PostalCode.PostalCodeNumber);
+						}
+					}
+					queryStatus = QUERY_LOCATION_SETUP;
+				} 
+			}
+
+      /*package up the results:
+			geoData.geoLatLng = latLng;
+			geoData.locCountryCode = countryCode;
+			geoData.locFormattedAddress = formattedAddress;
+			geoData.locAdministrativeArea = administrativeArea;
+			geoData.locThoroughfare = thoroughfare;
+			geoData.locLocality = locality;
+			geoData.locPostalCode = postalCode;*/
+		}
+		
+		function dbug(str){
+		  $("#dbug").append(str);
+		}
+		
+		function updateUI(){
+		  var str = "";
+		  str += ($("#global").checked) ? "global <br />":"not global <br />";
+	    //str += (document.getElementById("global").checked) ? "global <br />":"not global <br />";
+	    dbug(str);
+		}
+	
+</script>
+{% endblock %}
+
+
+{% block content %}
+<div class="body-content">
+  <h2>Select locations where your app works:</h2>
+  <form>
+    <p><input type="checkbox" name="global" id="global" onchange="updateUI()" />Globally</p>
+    <p><input type="checkbox" name="entire-us" id="entire-us" onchange="updateUI()" />Entire U.S.</p>
+    <p><input type="checkbox" name="choose-locations" id="choose-locations" onchange="updateUI()" />Select countries or cities</p>
+    <div id="locations">
+      <div id="location0">
+        <label>Enter a city or Country name:</label>
+        <input type="text" />
+        <input type="button" value="Add" />
+      </div>
+    </div>
+  </form>
+</div>
+<div id="dbug"></div>
+{% endblock %}
+

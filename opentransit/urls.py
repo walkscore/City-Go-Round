@@ -11,6 +11,7 @@ urlpatterns += patterns(
     url(r'^contact-thanks/$', 'contact_thanks', name='contact_thanks'),
     url(r'^faq/$', 'faq', name='faq'),
     url(r'^about/$', 'about', name='about'),
+    url(r'^petition-signed/$', 'petition_signed', name='petition_signed'),
 )
 
 
@@ -52,6 +53,7 @@ urlpatterns += patterns(
     url(r'^apps/$', 'gallery', name='apps_gallery'),
     url(r'^apps/nearby/$', 'nearby', name='apps_nearby'),
     url(r'^apps/add/$', 'add_form', name='apps_add_form'),
+    url(r'^apps/add/locations/$', 'add_locations', name='apps_add_locations'),
     url(r'^apps/add/success/$', 'add_success', name='apps_add_success'),
     url(r'^apps/(?P<transit_app_slug>[\w-]+)/$', 'details', name='apps_details'),
     url(r'^apps/(?P<transit_app_slug>[\w-]+)/screenshot.png$', 'screenshot', name='apps_screenshot'),
