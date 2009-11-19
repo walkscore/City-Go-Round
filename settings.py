@@ -11,16 +11,16 @@ INSTALLED_APPS = ['opentransit', 'gaeunit']
 MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
-    'opentransit.middleware.SiteWideUsernameAndPassword',
+    'opentransit.middleware.SiteWideUsernameAndPasswordMiddleware',
+    'opentransit.middleware.AppEngineSecureSessionMiddleware',
 ]
 
 # NOTE davepeck:
 #
-# Add the following two middleware classes
+# Add the following middleware classes
 # if you want support for users in this application
 # (I wrote these classes myself for another project)
 #
-# 'opentransit.middleware.AppEngineSecureSessionMiddleware',
 # 'opentransit.middleware.AppEngineGenericUserMiddleware',
 
 
@@ -55,7 +55,10 @@ REDIRECT_FIELD_NAME = "redirect_url"
 # casual eyes won't see us 'til we're ready.)
 SITE_WIDE_USERNAME = "transit"
 SITE_WIDE_PASSWORD = "appsnearyou"
-SITE_WIDE_REALM = "Open Transit Data"
+SITE_WIDE_REALM = "City Go Round"
+
+TRANSIT_APP_IMAGE_WIDTH = 180
+TRANSIT_APP_IMAGE_HEIGHT = 180
 
 #override in local_settings.py, not here
 GOOGLE_API_KEY='ABQIAAAAOtgwyX124IX2Zpe7gGhBsxTz6YtX4DvCXuRZKs5NV4Iafw-YMRSFKCvmwc0zxsAPANYpNL1uiCmf_w'
