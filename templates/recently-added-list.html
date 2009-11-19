@@ -1,5 +1,5 @@
 <ol class="agency-list">
-  {% for open_agency in open_agencies|slice:":4" %}
+  {% for open_agency in open_agencies|slice:":10" %}
   <li>
     <h5><a href="agencies/{{open_agency.urlslug}}">{{open_agency.name}}</a></h5>
     <p><a href="">{{open_agency.executive_email}}</a> {% if twitter %}twitter: @{{open_agency.twitter}}{% endif %}<br />

@@ -42,7 +42,7 @@ class AddAppForm(forms.Form):
         
 class AgencyForm(forms.Form):
     name            = forms.CharField()
-    external_id     = forms.CharField(required=False)
+    gtfs_data_exchange_id     = forms.CharField(required=False)
     short_name      = forms.CharField(required=False)
     tier            = forms.IntegerField(required=False)
     city            = forms.CharField(required=False)

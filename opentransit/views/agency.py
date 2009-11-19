@@ -33,7 +33,7 @@ def edit_agency(request, agency_id):
             agency.contact_email    = form.cleaned_data['contact_email'] if form.cleaned_data['contact_email'] != "" else None
             agency.updated          = form.cleaned_data['updated']
             agency.phone            = form.cleaned_data['phone']
-            agency.external_id      = form.cleaned_data['external_id']
+            agency.gtfs_data_exchange_id      = form.cleaned_data['gtfs_data_exchange_id']
             agency.put()
     else:
         form = AgencyForm(initial={'name':agency.name,
@@ -51,7 +51,7 @@ def edit_agency(request, agency_id):
                                'contact_email':agency.contact_email,
                                'updated':agency.updated,
                                'phone':agency.phone,
-                               'external_id':agency.external_id})
+                               'gtfs_data_exchange_id':agency.gtfs_data_exchange_id})
     
     return render_to_response( request, "edit_agency.html", {'agency':agency, 'form':form} )
     
@@ -61,7 +61,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         urlslug = '/'.join([countryslug,stateslug,cityslug,nameslug])
         agency = Agency.all().filter('urlslug =', urlslug).get()
         
-        feeds = FeedReference.all().filter('external_id =', agency.external_id)
+        feeds = FeedReference.all().filter('gtfs_data_exchange_id =', agency.gtfs_data_exchange_id)
         
         template_vars = {
             'agency': agency,
