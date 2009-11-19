@@ -1,8 +1,10 @@
 import os
 project_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+geo_path = os.path.abspath(os.path.join(project_path, 'geo'))
 
 import sys
 sys.path.append(project_path)
+sys.path.append(geo_path)
 
 import unittest
 import logging
