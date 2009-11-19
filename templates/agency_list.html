@@ -23,7 +23,7 @@ $(document).ready(function()
    
 </script>
 
-<div class="blue_background">All {{location}} Transit Agencies</div>
+<div class="blue_background">All {{location|upper}} Transit Agencies</div>
 <br>
 <span class="italic">
     {{agency_count}} transit agencies in the {{location}}.
@@ -31,9 +31,14 @@ $(document).ready(function()
     <span class="red"> {{no_public_count}} do not. </span>
     </span>
 
-<select name="locaton_filter" onchange="window.location.replace(this.value)">
+<select name="public_filter">
+   <option value="public">Public</option>
+   <option value="no_public">Not Public</option>
+</select>
+
+<select name="location_filter" onchange="window.location.replace(this.value)">
   {% for s in states %}
-   <option value="/agencies/us/{{s}}">{{s|upper}}</option>
+   <option value="/agencies/us/{{s}}"{% ifequal location s %} selected {% endifequal %}>{{s|upper}}
   {% endfor %}
 </select>
 
