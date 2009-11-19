@@ -36,10 +36,6 @@ class Agency(GeoModel):
     countryslug     = db.StringProperty()
     urlslug         = db.StringProperty()
     
-    # is_public is True IF at least one of the feeds for this agency (--dave)
-    # TODO bmander: keep this property up to date when you do the feed + agency work.
-    is_public       = db.BooleanProperty(indexed = True)
-    
     def __init__(self, *args, **kwargs):
         # this loads everything to self that's passed as a kwarg, making required and default attribs safe to use
         GeoModel.__init__(self, *args, **kwargs)
@@ -60,11 +56,15 @@ class Agency(GeoModel):
                 'gtfs_data_exchange_id':self.gtfs_data_exchange_id,
                 'date_opened':self.date_opened,
                 'passenger_miles':self.passenger_miles}
+                
+    @property
+    def is_public(self):
+        return (self.date_opened != None)
         
     @staticmethod
     def all_public_agencies():
         """Return a query to all Agency entities marked 'public' by Brandon's import scripts."""
-        return Agency.all().filter('is_public =', True)
+        return Agency.all().filter('date_opened !=', None)
         
     @staticmethod
     def fetch_explicitly_supported_for_transit_app(transit_app):
