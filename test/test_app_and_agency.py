@@ -1,12 +1,18 @@
+import os
+project_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+
+import sys
+sys.path.append(project_path)
+
 import unittest
 import logging
 from copy import copy
+from gaetestbed import DataStoreTestCase
 from google.appengine.ext import db
 from opentransit.models import Agency, TransitApp
 from opentransit.utils.slug import slugify
 
-
-class TestAppAndAgency(unittest.TestCase):
+class TestAppAndAgency(DataStoreTestCase, unittest.TestCase):
     def setUp(self):
         self.public_agency_1 = Agency(name="Public 1", city="San Francisco", state="CA", country="US", is_public = True)
         self.public_agency_1.put()

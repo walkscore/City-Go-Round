@@ -17,8 +17,5 @@ handlers:
   script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
   login: admin
 
-- url: /admin/test.*
-  script: gaeunit.py
-  
 - url: /(.*)
   script: bootstrap.py
