@@ -46,32 +46,27 @@ $(document).ready(function()
 <table id="agency_list"> 
 <thead> 
 <tr> 
-    <th>External Id</th>
     <th>Name</th> 
-    <th>Tier</th> 
+    <th>Public</th>
+    <th>Date Added</th>
     <th>City</th> 
     <th>State</th> 
-    <th>Country</th> 
-    <th>Website</th> 
+    <th>Director</th> 
     <th>Twitter</th> 
-    <th>Email</th>
-    <th>Public</th>
+    <th>Agency URL</th> 
 </tr> 
 </thead> 
 <tbody> 
 {% for a in agencies %}
 <tr> 
-    <td>{{a.gtfs_data_exchange_id}}</td>
     <td><a href="/agencies/{{a.urlslug}}">{{a.name}}</a></a></td> 
-    <td>{{a.tier}}</td> 
+    <td>{% if a.date_opened %}Yes{% else %}No{% endif %}</td>
+    <td>{% if a.date_opened %}{{a.date_opened}}{% else %}N/A{% endif %}</td>
     <td>{{a.city}}</td> 
     <td>{{a.state}}</td> 
-    <td>{{a.country}}</td> 
-    <td>{{a.agency_url}}</td> 
+    <td>{{a.executive}}</td> 
     <td>{{a.twitter}}</td> 
-    <td>{{a.contact_email}}</td>
-    <td>{% if a.date_opened %}Yes{% else %}No{% endif %}</td>
-    <td><a href="/agencies/edit/{{a.key.id}}">edit</a></td>
+    <td><a href="{{a.agency_url}}" target="_blank">{{a.agency_url}}</a></td> 
 </tr> 
 {% endfor %}
 </tbody> 
