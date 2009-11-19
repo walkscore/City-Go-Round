@@ -35,6 +35,7 @@ class AgencyLoader(bulkloader.Loader):
                                         ('gtfs_data_exchange_id', smart_utf8),
                                         ('executive', smart_utf8),
                                         ('executive_email', smart_utf8),
+                                        ('location',str),
                                        ])
                                        
 
