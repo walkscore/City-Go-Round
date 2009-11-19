@@ -26,6 +26,11 @@ indexes:
 - kind: Agency
   properties:
   - name: countryslug
+  - name: name
+
+- kind: Agency
+  properties:
+  - name: countryslug
   - name: stateslug
   - name: name
 

@@ -29,7 +29,6 @@ def edit_agency(request, agency_id):
         if form.is_valid():
             agency.name       = form.cleaned_data['name']
             agency.short_name = form.cleaned_data['short_name']
-            agency.tier       = form.cleaned_data['tier']
             agency.city       = form.cleaned_data['city']
             agency.state      = form.cleaned_data['state']
             agency.country    = form.cleaned_data['country']
@@ -47,7 +46,6 @@ def edit_agency(request, agency_id):
     else:
         form = AgencyForm(initial={'name':agency.name,
                                'short_name':agency.short_name,
-                               'tier':agency.tier,
                                'city':agency.city,
                                'state':agency.state,
                                'country':agency.country,
@@ -86,10 +84,12 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         agency = Agency.all().filter('urlslug =', urlslug).get()
         
         feeds = FeedReference.all().filter('gtfs_data_exchange_id =', agency.gtfs_data_exchange_id)
+        apps = TransitApp.iter_for_agency(agency)
         
         template_vars = {
             'agency': agency,
             'feeds': feeds,
+            'apps': apps,
             }
     
         return render_to_response( request, "agency.html", template_vars)
@@ -170,7 +170,7 @@ def agencies_search(request):
         ag = {'agencies' : []}
         for a in agencies:
             ad = {}
-            for k in 'name,city,urlslug,tier,state'.split(','):
+            for k in 'name,city,urlslug,state'.split(','):
                 ad[k] = getattr(a,k)
             #unsure how to get apps...
             ad['apps'] = list(TransitApp.iter_for_agency(a))
