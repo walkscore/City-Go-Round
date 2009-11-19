@@ -14,10 +14,42 @@ import csv
 """
 
 def parse_comma_int(str):
+    if str=="":
+        return None
+    
     return int("".join(str.split(",")))
+    
+def get_service_level( filename ):
+    cr = csv.reader( open( filename ) )
+
+    sums = {}
+
+    header = cr.next()
+    headerindex = dict( zip( header, range(len(header)) ) )
+
+    print header
+
+    for row in cr:
+        ntd_id = row[ headerindex["Trs_Id"] ].strip()
+        
+        if ntd_id not in sums:
+            sums[ntd_id] = 0
+            
+        time_period_desc = row[ headerindex["Time_Period_Desc"] ].strip()
+        
+        if time_period_desc == "Annual Total":
+            passenger_miles = parse_comma_int(row[ headerindex["Passenger_Miles"] ].strip())
+            
+            if passenger_miles is not None:
+                sums[ntd_id] += passenger_miles
+            
+    return sums
 
 IN_FILENAME = "ntd_agencies.csv"
+SERVICE_LEVEL_FILENAME = "service.csv"
 OUT_FILENAME = "agencies.csv"
+
+service_level = get_service_level( SERVICE_LEVEL_FILENAME )
 
 cr = csv.reader( open( IN_FILENAME ) )
 cw = csv.writer( open( OUT_FILENAME, "w" ) )
@@ -51,4 +83,6 @@ for row in cr:
     
     service_area_population = parse_comma_int(row[ headerindex["Service_Area_Population"] ].strip())
     
-    cw.writerow( (ntd_id, name, short_name, city, state, country, agency_url, address, service_area_population) )
+    agency_service_level = service_level.get(ntd_id)
+    
+    cw.writerow( (ntd_id, name, short_name, city, state, country, agency_url, address, service_area_population, agency_service_level) )

@@ -25,6 +25,7 @@ class AgencyLoader(bulkloader.Loader):
                                         ('agency_url', lambda x: unicode(x, encoding="utf_8") if x!="" else None),
                                         ('address', lambda x: unicode(x, encoding="utf_8")),
                                         ('service_area_population', int),
+                                        ('passenger_miles', lambda x: int(x) if x!="" else None),
                                        ])
                                        
 

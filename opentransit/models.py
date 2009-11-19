@@ -31,6 +31,7 @@ class Agency(GeoModel):
     contact_email   = db.EmailProperty()
     phone           = db.StringProperty()
     service_area_population = db.IntegerProperty()
+    passenger_miles         = db.IntegerProperty()
     
     # bookkeeping
     updated         = db.DateTimeProperty()

@@ -12,7 +12,7 @@ def home(request):
     
     agency_count = Agency.all().count()
     
-    closed_agencies = Agency.all().filter("date_opened =", None).order("-service_area_population")
+    closed_agencies = Agency.all().filter("date_opened =", None).order("-passenger_miles")
     open_agencies = Agency.all().filter("date_opened !=", None).order("-date_opened")
     
     logging.info( closed_agencies.count() )
