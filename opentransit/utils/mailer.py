@@ -73,7 +73,7 @@ def send_to_admin(subject, body):
     if throttle_mail(subject):
         logging.debug('already sent out an email titled %s in the last 5 mins' % subject)
         return
-    message = mail.EmailMessage(sender="no-reply@citygoround.org")
+    message = mail.EmailMessage(sender="info@citygoround.org")
     message.to = "api-error@frontseat.org"
     message.subject = subject
     message.body = body

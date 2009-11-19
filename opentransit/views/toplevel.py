@@ -32,7 +32,7 @@ def contact(request):
         contact_form = ContactForm(request.POST)
         if contact_form.is_valid():                    
           
-            send_to_contact("[CityGoRound contact form] " + contact_form.cleaned_data['name'] + ", " + contact_form.cleaned_data['name'], contact_form.cleaned_data['message']);
+            send_to_contact("[CityGoRound contact form] " + contact_form.cleaned_data['name'] + ", " + contact_form.cleaned_data['email'], contact_form.cleaned_data['message']);
           
             # Done!
             return redirect_to('contact_thanks')
@@ -58,3 +58,6 @@ def faq(request):
 
 def about(request):  
     return render_to_response(request, 'about.html')
+    
+def petition_signed(request):  
+    return render_to_response(request, 'petition_signed.html')

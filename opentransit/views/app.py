@@ -73,6 +73,9 @@ def add_form(request):
         form = AddAppForm()        
     return render_to_response(request, 'app/add-form.html', {'form': form})
     
+def add_locations(request):
+    return render_to_response(request, 'app/add-locations.html')
+    
 def add_success(request):
     return render_to_response(request, 'app/add-success.html')
 
