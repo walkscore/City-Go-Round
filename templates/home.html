@@ -3,7 +3,7 @@
 {% block content %}
 <div id="home">
 	<div id="features">
-    {% include "featured-apps.html" %}			
+    {% include "includes/featured-apps.html" %}			
 	</div>
 	<div class="col-group data-lists thinline">
 		<div class="boxed-content">
@@ -15,7 +15,7 @@
 			  <div id="no-data-list">
 			    <h3>No public data</h3>
 			    <h6>{{closed_agencies.count}} agencies</h6>
-			    {% include "no-data-list.html" %}
+			    {% include "includes/no-data-list.html" %}
 			    <p><a href="{% url opentransit.views.agency.agencies %}">View all</a><br />
 			    Transit agency? <a href="">How to get off this list</a></p>
 			  </div>
@@ -24,7 +24,7 @@
 		    <div id="recently-added-list">
 		      <h3>Recently made public</h3>
 		      <h6>{{open_agencies.count}} agencies</h6>
-			    {% include "recently-added-list.html" %}      
+			    {% include "includes/recently-added-list.html" %}      
 		      <p><a href="{% url opentransit.views.feed.feed_references %}">View all</a></p>
 		    </div>
 		  </div>
@@ -34,14 +34,14 @@
 	  <div id="petition" class="body-content thinline">
 			<div class="boxed-content">
 		    <h2>DEMAND PUBLIC DATA</h2>
-		    {% include "petition-text.html" %}
-		    {% include "petition-form.html" %}
-		    {% include "petition-disclaimer.html" %}
+		    {% include "includes/petition-text.html" %}
+		    {% include "includes/petition-form.html" %}
+		    {% include "includes/petition-disclaimer.html" %}
 		  </div>
 	  </div>
 	  <div id="petition-comments">
 	    <p class="body"><a href="">Tweet a comment</a> <span class="p2">that includes opentransitdata.org</span></p>
-	    {% include "tweet-viewer.html" %}
+	    {% include "includes/tweet-viewer.html" %}
 	  </div>
   </div>
 </div>

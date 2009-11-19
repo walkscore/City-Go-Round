@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Open Transit Data &raquo; Transit App Gallery{% endblock %}
+{% block title %}Transit apps near [] on CityGoRound.org{% endblock %}
 
 {% block extra_head %}
 <script type="text/javascript">
@@ -95,11 +95,11 @@ jQuery(document).ready(function() {
       	<div class="agency-text-list" id="fill_nearby_no_public"><span class="loading"></span></div>
 	    	<h2>SUPPORT PUBLIC DATA</h2>
 				<div class="wide-col rightmost">
-			    {% include "petition-text.html" %}	
-			    {% include "petition-disclaimer.html" %}				
+			    {% include "includes/petition-text.html" %}	
+			    {% include "includes/petition-disclaimer.html" %}				
 		    </div>
 		    <div class="narrow-col">
-		    	{% include "petition-form.html" %}
+		    	{% include "includes/petition-form.html" %}
 			  </div>
 			  <br class="clear-all" />
 		  </div>
@@ -137,7 +137,7 @@ jQuery(document).ready(function() {
 	</div>
 	
 	<div class="wide-col rightmost">
-	  {% include "ads/mrec1.html" %}
+	  {% include "includes/mrec1.html" %}
 	</div>
 
 {% endblock %}

@@ -53,6 +53,8 @@ def contact_thanks(request):
 
     return render_to_response(request, 'contact-thanks.html', template_vars)
     
-
 def faq(request):  
     return render_to_response(request, 'faq.html')
+
+def about(request):  
+    return render_to_response(request, 'about.html')

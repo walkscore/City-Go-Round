@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>[{% block title %}Open Transit Data{% endblock %}]</title>
+<title>{% block title %}City-Go-Round - A searchable directory of transit apps and public transit agencies{% endblock %}</title>
 <link rel="stylesheet" type="text/css" href="{% static_url /css/main.css %}" media="screen" />
 <script type="text/javascript" src="http://www.google.com/jsapi?key={{GOOGLE_API_KEY}}"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
@@ -26,7 +26,7 @@ function goto_search(){
     <h1 onclick="document.location='{% url home %}'">Open Transit Data</h1>
     <h2>Transportation apps to help you get around</h2>
     <a id="front-seat-logo" href="http://www.frontseat.org"><img src="{% static_url /images/front-seat-logo.gif %}" /></a>
-    <p id="nav"><a href="">About</a> &nbsp;&nbsp; <a href="">FAQ</a> &nbsp;&nbsp; <a href="{% url contact %}">Contact</a> &nbsp;&nbsp; <a href="http://github.com/bmander/opentransitdata">Open Source</a></p>
+    <p id="nav"><a href="{% url about %}">About</a> &nbsp;&nbsp; <a href="{% url faq %}">FAQ</a> &nbsp;&nbsp; <a href="{% url contact %}">Contact</a> &nbsp;&nbsp; <a target="_blank" href="http://github.com/bmander/opentransitdata">Open Source</a></p>
     <div id="friends-and-followers">
       <div class="clickable2 friend-twitter" onclick='trackNavigationNewWindow("http://twitter.com/citygoround", "header", "follow us", "twitter")'>
         <p>Follow us</p>
