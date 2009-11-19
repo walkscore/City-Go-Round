@@ -3,7 +3,7 @@ import logging
 from django.conf import settings
 from google.appengine.ext import db
 
-from ..forms import AddAppForm, PetitionForm
+from ..forms import NewAppGeneralInfoForm, PetitionForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, render_image_response, redirect_to_url
 from ..utils.image import crop_and_resize_image_to_square
 from ..decorators import requires_valid_transit_app_slug
@@ -40,7 +40,7 @@ def screenshot(request, transit_app):
 def add_form(request):
     # TODO davepeck
     if request.method == 'POST':
-        form = AddAppForm(request.POST, request.FILES)
+        form = NewAppGeneralInfoForm(request.POST, request.FILES)
         if form.is_valid():         
             application = TransitApp(title = form.cleaned_data['title'])            
             application.description = form.cleaned_data['description']
@@ -70,7 +70,7 @@ def add_form(request):
             # Done!
             return redirect_to('apps_add_success')
     else:
-        form = AddAppForm()        
+        form = NewAppGeneralInfoForm()        
     return render_to_response(request, 'app/add-form.html', {'form': form})
     
 def add_locations(request):

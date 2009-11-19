@@ -66,10 +66,32 @@ class TransitAppFormProgress(db.Model):
     last_updated = db.DateTimeProperty(auto_now = True)    
     general_info_form = db.BlobProperty() # pickled django form object, post-validation
     screen_shot = db.BlobProperty()
-
+    
 class TransitApp(db.Model):
-    PLATFORMS = ["Mobile Web", "iPhone", "Android", "Palm WebOS", "Blackberry", "SMS", "Other"]
-    CATEGORIES = ["Public Transit", "Driving", "Biking", "Walking"]
+    PLATFORMS = { 
+        "mobile_web": "Mobile Web",
+        "iphone": "iPhone", 
+        "android": "Android", 
+        "palm_webos": "Palm WebOS", 
+        "blackberry": "Blackberry",
+        "sms": "SMS",
+        "other": "Other",
+    }
+    
+    CATEGORIES = {
+        "public_transit": "Public Transit", 
+        "driving": "Driving", 
+        "biking": "Biking", 
+        "walking": "Walking",
+    }
+    
+    @staticmethod 
+    def platform_choices():
+        return [(short_name, label) for short_name, label in TransitApp.PLATFORMS.iteritems()]
+    
+    @staticmethod
+    def category_choices():
+        return [(short_name, label) for short_name, label in TransitApp.CATEGORIES.iteritems()]
     
     slug                = db.StringProperty(indexed = True)
     title               = db.StringProperty(required = True)
@@ -107,7 +129,8 @@ class TransitApp(db.Model):
 
     supports_all_public_agencies = db.BooleanProperty(indexed = True)
     explicitly_supported_agency_keys = db.ListProperty(db.Key)
-    explicitly_supported_cities = db.StringListProperty()
+    explicitly_supported_cities = db.StringListProperty(indexed = True)   # ["Seattle", "San Francisco", ...]
+    explicitly_supported_city_details = db.StringListProperty() # ["Seattle,WA,US", "San Francisco,CA,US", ...]
     explicitly_supported_countries = db.StringListProperty()
                 
     @staticmethod
@@ -199,4 +222,8 @@ class TransitApp(db.Model):
         for transit_app in TransitApp.all_for_country(country_code):
             if transit_app.key() in seen_city:
                 yield transit_app
+
     
+# class TransitAppLocation(GeoModel):
+#     transit_app = db.ReferenceProperty(TransitApp, collection="explicitly_supported_locations")
+

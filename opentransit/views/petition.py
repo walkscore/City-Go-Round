@@ -1,7 +1,7 @@
 import time
 import logging
 from google.appengine.ext import db
-from ..forms import PetitionForm, AgencyForm, AddAppForm
+from ..forms import PetitionForm
 from ..utils.view import render_to_response, redirect_to, not_implemented
 from ..models import PetitionModel
 

@@ -1,9 +1,9 @@
 from django import forms
 from ..models import TransitApp
 from ..utils.slug import slugify
-from ..formfields import AppEngineImageField
+from ..formfields import AppEngineImageField, LocationListField, AgencyListField
 
-class AddAppForm(forms.Form):
+class NewAppGeneralInfoForm(forms.Form):
     title               = forms.CharField(max_length = 64, min_length = 6, label = u"Title")
     description         = forms.CharField(max_length = 140, min_length = 6, label = u"One Sentence Description")
     url                 = forms.URLField(verify_exists = False, min_length = 6, label = u"App URL")
@@ -29,3 +29,10 @@ class AddAppForm(forms.Form):
     @property
     def tag_list(self):
         return [tag.strip() for tag in self.cleaned_data['tags'].split(',')]
+
+
+class NewAppAgencyForm(forms.Form):
+    pass
+    
+class NewAppLocationForm(forms.Form):
+    pass
