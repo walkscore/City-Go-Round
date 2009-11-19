@@ -64,7 +64,22 @@ def edit_agency(request, agency_id):
     return render_to_response( request, "edit_agency.html", {'agency':agency, 'form':form} )
     
 def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
-    
+
+    def get_state_list():
+        #factoring this out since we want all states all the time
+        #and because we want to memcache this
+        #todo: add other countries (return dict where value includes proper url)
+        mem_result = memcache.get('all_states')
+        if not mem_result:
+            states = uniquify([a.stateslug for a in Agency.all()])
+            states.sort()
+            mc_added = memcache.add('all_states', states, 60 * 1)
+        else:
+            states = mem_result
+
+        return states
+        
+
     if nameslug:
         urlslug = '/'.join([countryslug,stateslug,cityslug,nameslug])
         agency = Agency.all().filter('urlslug =', urlslug).get()
@@ -103,15 +118,23 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
     else:
         agencies = mem_result
     
-    agencies = [a for a in agencies] #listify now so we dont have to do it again for count()
-    states = uniquify([a.stateslug for a in agencies]) 
-    states.sort()
+    agency_list = []
+    public_count = no_public_count = 0
+    
+    for a in agencies:
+        if a.date_opened:
+            public_count += 1
+        else:
+            no_public_count += 1
+        agency_list.append(a)  #listify now so we dont have to do it again for count(), etc
 
     template_vars = {
-        'agencies': agencies,
+        'agencies': agency_list,
         'location' : location,
-        'states' : states,
-        'agency_count' : len(agencies),
+        'public_count' : public_count,
+        'no_public_count' : no_public_count,
+        'states' : get_state_list(),
+        'agency_count' : len(agency_list),
         'feed_references': FeedReference.all_by_most_recent(),
     }
     
