@@ -138,6 +138,14 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         'feed_references': FeedReference.all_by_most_recent(),
     }
     
+    if request.GET.get( 'format' ) == 'json':
+        jsonable_list = []
+        
+        for agency in agencies:
+            jsonable_list.append( agency.to_jsonable() )
+        
+        return HttpResponse( content=json.dumps( jsonable_list, indent=2 ), mimetype="text/plain" )
+    
     return render_to_response( request, "agency_list.html", template_vars)
     
 def generate_locations(request):
