@@ -104,8 +104,7 @@ jQuery(document).ready(function() {
 			  <br class="clear-all" />
 		  </div>
 	  </div>
-	</div>
-	<div class="col-group">
+	  <br class="clear-all" />
 	  <div id="fill_nearby_summary">loading..</div>
 	  <div class="agency-text-list" id="fill_nearby_public"></div>
 	  <div id="fill_nearby_apps"></div>
@@ -113,7 +112,7 @@ jQuery(document).ready(function() {
 	    <div class="app-thumbs">   
 	        
 		    {% for transit_app in transit_apps %}
-			    <div class="scroll-item-first"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
+			    <div class="app"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
 			      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
 			      <p>{{transit_app.description}}</p>
 			    </div>
@@ -126,7 +125,7 @@ jQuery(document).ready(function() {
 	    <div class="app-thumbs">   
 	        
 		    {% for transit_app in transit_apps %}
-			    <div class="scroll-item-first"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
+			    <div class="app"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
 			      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
 			      <p>{{transit_app.description}}</p>
 			    </div>
@@ -136,6 +135,11 @@ jQuery(document).ready(function() {
 		</div>
 				
 	</div>
+	
+	<div class="wide-col rightmost">
+	  {% include "ads/mrec1.html" %}
+	</div>
+
 {% endblock %}
 
 

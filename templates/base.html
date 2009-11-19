@@ -26,13 +26,13 @@ function goto_search(){
     <h1 onclick="document.location='{% url home %}'">Open Transit Data</h1>
     <h2>Innovative apps help you get around</h2>
     <a id="front-seat-logo" href="http://www.frontseat.org"><img src="{% static_url /images/front-seat-logo.gif %}" /></a>
-    <p id="nav"><a href="">About</a> &nbsp;&nbsp; <a href="">FAQ</a> &nbsp;&nbsp; <a href="">Contact</a></p>
+    <p id="nav"><a href="">About</a> &nbsp;&nbsp; <a href="">FAQ</a> &nbsp;&nbsp; <a href="{% url contact %}">Contact</a> &nbsp;&nbsp; <a href="http://github.com/bmander/opentransitdata">Open Source</a></p>
     <div id="friends-and-followers">
-      <div class="clickable2 friend-twitter" onclick='trackNavigationNewWindow("http://twitter.com/transitapps", "header", "follow us", "twitter")'>
-        <label>Follow us</label>
+      <div class="clickable2 friend-twitter" onclick='trackNavigationNewWindow("http://twitter.com/citygoround", "header", "follow us", "twitter")'>
+        <p>Follow us</p>
       </div>
-      <div class="clickable2 friend-facebook" onclick='trackNavigationNewWindow("http://www.facebook.com/pages/TransitApps/178450140958?v=app_2373072738#/pages/TransitApps/178450140958?v=wall", "header", "follow us", "facebook")'>
-      	<label>Friend us</label>
+      <div class="clickable2 friend-facebook" onclick='trackNavigationNewWindow("http://www.facebook.com/pages/City-Go-Round/179590999311", "header", "follow us", "facebook")'>
+      	<p>Friend us</p>
       </div>
     </div>
   {% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Us &mdash; TransitApps.org{% endblock %}
+
+{% block content %}
+<div id="contact-form">
+<form id="contact-form" action="" method="POST">
+  <table>
+  {{ contact_form.as_table }}
+  </table>
+  <input class="button" type="submit" value="Send"></input>
+</form>
+</div>
+{% endblock %}
+

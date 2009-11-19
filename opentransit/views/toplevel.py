@@ -1,7 +1,7 @@
 import time
 import logging
 from google.appengine.ext import db
-from ..forms import PetitionForm, AgencyForm, AddAppForm
+from ..forms import PetitionForm, AgencyForm, AddAppForm, ContactForm
 from ..utils.view import render_to_response, redirect_to, not_implemented
 from ..models import FeedReference, Agency
 from django.template.context import RequestContext
@@ -25,4 +25,23 @@ def home(request):
         'open_agencies': open_agencies,
     }    
     return render_to_response(request, 'home.html', template_vars)
+
+def contact(request):    
+    if request.method == 'POST':
+        contact_form = ContactForm(request.POST)
+        if contact_form.is_valid():                    
+            
+            # Done!
+            return redirect_to('home')
+
+    else:
+        contact_form = ContactForm()
+
+    template_vars = {
+        'contact_form': contact_form
+    }    
+    return render_to_response(request, 'contact.html', template_vars)
+
+def contact_thanks(request):
+    pass
     
