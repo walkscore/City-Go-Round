@@ -1,5 +1,6 @@
 import time
 import logging
+from datetime import datetime
 from django.utils import simplejson as json
 from google.appengine.ext import db
 from google.appengine.api import memcache
@@ -28,7 +29,6 @@ def edit_agency(request, agency_id):
         if form.is_valid():
             agency.name       = form.cleaned_data['name']
             agency.short_name = form.cleaned_data['short_name']
-            agency.tier       = form.cleaned_data['tier']
             agency.city       = form.cleaned_data['city']
             agency.state      = form.cleaned_data['state']
             agency.country    = form.cleaned_data['country']
@@ -46,7 +46,6 @@ def edit_agency(request, agency_id):
     else:
         form = AgencyForm(initial={'name':agency.name,
                                'short_name':agency.short_name,
-                               'tier':agency.tier,
                                'city':agency.city,
                                'state':agency.state,
                                'country':agency.country,
@@ -64,16 +63,33 @@ def edit_agency(request, agency_id):
     return render_to_response( request, "edit_agency.html", {'agency':agency, 'form':form} )
     
 def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
-    
+
+    def get_state_list():
+        #factoring this out since we want all states all the time
+        #and because we want to memcache this
+        #todo: add other countries (return dict where value includes proper url)
+        mem_result = memcache.get('all_states')
+        if not mem_result:
+            states = uniquify([a.stateslug for a in Agency.all()])
+            states.sort()
+            mc_added = memcache.add('all_states', states, 60 * 1)
+        else:
+            states = mem_result
+
+        return states
+        
+
     if nameslug:
         urlslug = '/'.join([countryslug,stateslug,cityslug,nameslug])
         agency = Agency.all().filter('urlslug =', urlslug).get()
         
         feeds = FeedReference.all().filter('gtfs_data_exchange_id =', agency.gtfs_data_exchange_id)
+        apps = TransitApp.iter_for_agency(agency)
         
         template_vars = {
             'agency': agency,
             'feeds': feeds,
+            'apps': apps,
             }
     
         return render_to_response( request, "agency.html", template_vars)
@@ -103,17 +119,34 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
     else:
         agencies = mem_result
     
-    agencies = [a for a in agencies] #listify now so we dont have to do it again for count()
-    states = uniquify([a.stateslug for a in agencies]) 
-    states.sort()
+    agency_list = []
+    public_count = no_public_count = 0
+    
+    for a in agencies:
+        if a.date_opened:
+            public_count += 1
+            a.date_opened_formatted = datetime.fromtimestamp(a.date_opened)
+        else:
+            no_public_count += 1
+        agency_list.append(a)  #listify now so we dont have to do it again for count(), etc
 
     template_vars = {
-        'agencies': agencies,
+        'agencies': agency_list,
         'location' : location,
-        'states' : states,
-        'agency_count' : len(agencies),
+        'public_count' : public_count,
+        'no_public_count' : no_public_count,
+        'states' : get_state_list(),
+        'agency_count' : len(agency_list),
         'feed_references': FeedReference.all_by_most_recent(),
     }
+    
+    if request.GET.get( 'format' ) == 'json':
+        jsonable_list = []
+        
+        for agency in agencies:
+            jsonable_list.append( agency.to_jsonable() )
+        
+        return HttpResponse( content=json.dumps( jsonable_list, indent=2 ), mimetype="text/plain" )
     
     return render_to_response( request, "agency_list.html", template_vars)
     
@@ -137,7 +170,7 @@ def agencies_search(request):
         ag = {'agencies' : []}
         for a in agencies:
             ad = {}
-            for k in 'name,city,urlslug,tier,state'.split(','):
+            for k in 'name,city,urlslug,state'.split(','):
                 ad[k] = getattr(a,k)
             #unsure how to get apps...
             ad['apps'] = list(TransitApp.iter_for_agency(a))

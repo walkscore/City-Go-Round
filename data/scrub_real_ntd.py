@@ -1,4 +1,9 @@
 import csv
+try:
+    import simplejson as json
+except ImportError:
+    import json
+import re
 
 """
     'ntd_id': 'Trs_Id',
@@ -20,6 +25,8 @@ def parse_comma_int(str):
     return int("".join(str.split(",")))
     
 def get_service_level( filename ):
+    """use service level file to find dict of ntdid:passenger_miles"""
+    
     cr = csv.reader( open( filename ) )
 
     sums = {}
@@ -44,12 +51,54 @@ def get_service_level( filename ):
                 sums[ntd_id] += passenger_miles
             
     return sums
+    
+def get_gtfs_data_exchange_ids( gtfs_data_exchange_id_filename ):
+    """use agency database snapshot to find dict of ntdid:gtfs_data_exchange_id"""
+    
+    NTDID_COL = 0
+    GTFSDEID_COL = 3
+    
+    cr = csv.reader( open( gtfs_data_exchange_id_filename ) )
+    
+    ret = dict( [ (row[NTDID_COL], row[GTFSDEID_COL]) for row in cr ] )
+    
+    return ret
+    
+def get_contact_information( scraped_filename ):
+    """ use jehiah's screenscrape file to find dict of agency_name:contact_information """
+    
+    NAME_COL = 0
+    CONTACT_COL = 2
+    EMAIL_COL = 3
+    
+    cr = csv.reader( open( scraped_filename ) )
+    
+    ret = dict( [ (name_to_base_name(row[NAME_COL]), {'name':row[CONTACT_COL], 'email':row[EMAIL_COL]}) for row in cr ] )
+    
+    return ret
+    
+def name_to_base_name(name):
+    """cuts out basename in string like "Transit Authority (TA)"""
+    
+    matches = re.findall( "(.*)\((.*)\)", name )
+    if len(matches)>0:
+        base_name = matches[0][0].strip()
+        short_name = matches[0][1].strip()
+    else:
+        base_name = name
+        short_name = ""
+        
+    return base_name
 
 IN_FILENAME = "ntd_agencies.csv"
 SERVICE_LEVEL_FILENAME = "service.csv"
 OUT_FILENAME = "agencies.csv"
+GTFS_IDS_FILENAME = "gtfs_data_exchange_ids.csv"
+SCREENSCRAPE_FILENAME = "ntdprogram.csv"
 
 service_level = get_service_level( SERVICE_LEVEL_FILENAME )
+data_exchange_ids = get_gtfs_data_exchange_ids( GTFS_IDS_FILENAME )
+contact_information = get_contact_information( SCREENSCRAPE_FILENAME )
 
 cr = csv.reader( open( IN_FILENAME ) )
 cw = csv.writer( open( OUT_FILENAME, "w" ) )
@@ -85,4 +134,8 @@ for row in cr:
     
     agency_service_level = service_level.get(ntd_id)
     
-    cw.writerow( (ntd_id, name, short_name, city, state, country, agency_url, address, service_area_population, agency_service_level) )
+    gtfs_data_exchange_id = data_exchange_ids.get(ntd_id)
+    
+    contact_info = contact_information.get( name, {} )
+    
+    cw.writerow( (ntd_id, name, short_name, city, state, country, agency_url, address, service_area_population, agency_service_level, gtfs_data_exchange_id, contact_info.get('name'), contact_info.get('email')) )

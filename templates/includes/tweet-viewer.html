@@ -4,7 +4,7 @@
     var search_term = "citygoround";
     
     function react_to_twitter( data ) {
-      for(i=0; i<data.results_per_page; i++) {
+      for(i=0; i<data.results.length; i++) {
         var result = data.results[i];
         
         $("#tweet-viewer").append("<div class='tweet'><a href='http://twitter.com/"+result.from_user+"'><img src="+result.profile_image_url+

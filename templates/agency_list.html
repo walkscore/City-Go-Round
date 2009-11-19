@@ -23,17 +23,24 @@ $(document).ready(function()
    
 </script>
 
-<div class="blue_background">All {{location}} Transit Agencies</div>
+<div class="blue_background">All {{location|upper}} Transit Agencies</div>
 <br>
 <span class="italic">
-	{{agency_count}} transit agencies in the {{location}}.
-	<span class="green"> {{public_count}} have public data.  </span>
-	<span class="red"> {{no_public_count}} do not. </span>
-</span>
+    {{agency_count}} transit agencies in the {{location}}.
+    <span class="green"> {{public_count}} have public data.  </span>
+    <span class="red"> {{no_public_count}} do not. </span>
+    </span>
 
-<select name="locaton_filter">
+<select name="public_filter">
+   <option value="all">Public Data</option>
+   <option value="public">Has Public Data</option>
+   <option value="no_public">No Public Data</option>
+</select>
+
+<select name="location_filter" onchange="window.location.replace(this.value)">
+   <option value="/agencies/us/">All States
   {% for s in states %}
-   <option value="{{s}}">{{s}}</option>
+   <option value="/agencies/us/{{s}}"{% ifequal location s %} selected {% endifequal %}>{{s|upper}}
   {% endfor %}
 </select>
 
@@ -41,53 +48,48 @@ $(document).ready(function()
 <table id="agency_list"> 
 <thead> 
 <tr> 
-    <th>External Id</th>
     <th>Name</th> 
-    <th>Tier</th> 
+    <th>Public</th>
+    <th>Date Added</th>
     <th>City</th> 
     <th>State</th> 
-    <th>Country</th> 
-    <th>Website</th> 
+    <th>Director</th> 
     <th>Twitter</th> 
-    <th>Email</th>
-    <th>Loc</th>
+    <th>Agency URL</th> 
 </tr> 
 </thead> 
 <tbody> 
 {% for a in agencies %}
-<tr> 
-    <td>{{a.gtfs_data_exchange_id}}</td>
+<tr class="{% if a.date_opened %}agency_public{% else %}agency_no_public {%endif %}"> 
     <td><a href="/agencies/{{a.urlslug}}">{{a.name}}</a></a></td> 
-    <td>{{a.tier}}</td> 
+    <td>{% if a.date_opened %}Yes{% else %}No{% endif %}</td>
+    <td>{% if a.date_opened %}{{a.date_opened_formatted|date:"N Y"}}{% endif %}</td>
     <td>{{a.city}}</td> 
     <td>{{a.state}}</td> 
-    <td>{{a.country}}</td> 
-    <td>{{a.agency_url}}</td> 
+    <td>{{a.executive}}</td> 
     <td>{{a.twitter}}</td> 
-    <td>{{a.contact_email}}</td>
-    <td>{{a.location}}</td>
-    <td><a href="/agencies/edit/{{a.key.id}}">edit</a></td>
+    <td><a href="{{a.agency_url}}" target="_blank">{{a.agency_url}}</a></td> 
 </tr> 
 {% endfor %}
 </tbody> 
 </table>
 
 <div id="pager" class="pager">
-	<form>
-		<img src="/images/tablesort/pager/first.png" class="first"/>
-		<img src="/images/tablesort/pager/prev.png" class="prev"/>
-		<input type="text" class="pagedisplay"/>
-		<img src="/images/tablesort/pager/next.png" class="next"/>
-		<img src="/images/tablesort/pager/last.png" class="last"/>
-		<select class="pagesize">
+    <form>
+        <img src="/images/tablesort/pager/first.png" class="first"/>
+        <img src="/images/tablesort/pager/prev.png" class="prev"/>
+        <input type="text" class="pagedisplay"/>
+        <img src="/images/tablesort/pager/next.png" class="next"/>
+        <img src="/images/tablesort/pager/last.png" class="last"/>
+        <select class="pagesize">
 
-			<option value="25">25</option>
-			<option selected="selected"  value="50">50</option>
-			<option  value="100">100</option>
+            <option value="25">25</option>
+            <option selected="selected"  value="50">50</option>
+            <option  value="100">100</option>
             <option  value="200">200</option>
             <option  value="500">500</option>
-		</select>
-	</form>
+        </select>
+    </form>
 </div>
 <br><br><br>
 

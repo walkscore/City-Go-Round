@@ -8,6 +8,12 @@ from opentransit.models import Agency
 # $ export PYTHONPATH=/path/to/opentransitdata:path/to/opentransitdata/opentransit
 # $ /home/brandon/downloads/google_appengine/appcfg.py upload_data . --filename=./data/agencies.csv --kind=Agency --config_file=./data/agency_loader.py --url=http://localhost:8080/remote_api --has_header
 
+def smart_utf8(x):
+    return unicode(x, encoding="utf_8") if x!="" else None
+        
+def smart_int(x):
+    return int(x) if x!="" else None
+
 class AgencyLoader(bulkloader.Loader):
     def __init__(self):
     
@@ -16,16 +22,19 @@ class AgencyLoader(bulkloader.Loader):
             return db.GeoPt(lat, lon)
         
         bulkloader.Loader.__init__(self, 'Agency',
-                                       [('ntd_id', lambda x: unicode(x, encoding="utf_8")),
-                                        ('name', lambda x: unicode(x, encoding="utf_8")),
-                                        ('short_name', lambda x: unicode(x, encoding="utf_8")),
-                                        ('city', lambda x: unicode(x, encoding="utf_8")),
-                                        ('state', lambda x: unicode(x, encoding="utf_8")),
-                                        ('country', lambda x: unicode(x, encoding="utf_8")),
-                                        ('agency_url', lambda x: unicode(x, encoding="utf_8") if x!="" else None),
-                                        ('address', lambda x: unicode(x, encoding="utf_8")),
-                                        ('service_area_population', int),
-                                        ('passenger_miles', lambda x: int(x) if x!="" else None),
+                                       [('ntd_id', smart_utf8),
+                                        ('name', smart_utf8),
+                                        ('short_name', smart_utf8),
+                                        ('city', smart_utf8),
+                                        ('state', smart_utf8),
+                                        ('country', smart_utf8),
+                                        ('agency_url', smart_utf8),
+                                        ('address', smart_utf8),
+                                        ('service_area_population', smart_int),
+                                        ('passenger_miles', smart_int),
+                                        ('gtfs_data_exchange_id', smart_utf8),
+                                        ('executive', smart_utf8),
+                                        ('executive_email', smart_utf8),
                                        ])
                                        
 

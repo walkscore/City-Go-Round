@@ -4,20 +4,31 @@
 
 {% block content %}
 
-ntd_id: {{agency.ntd_id}}<br>
-long name: {{agency.name}}<br>
-short name: {{agency.short_name}}<br>
-web page: <a href="{{agency.agency_url}}">{{agency.agency_url}}</a><br>
-service_area_population: {{agency.service_area_population}}<br>
-passenger_miles: {{agency.passenger_miles}}<br>
-gtfs_data_exchange_id: {{agency.gtfs_data_exchange_id}}<br>
-<h3>feeds</h3>
-opened {{agency.date_opened}}<br>
-{% for feed in feeds %}
-{{ feed.dataexchange_url }} [{% if feed.is_official %}official{% else %}unofficial{%endif%}]<br>
-{% endfor %}
-<h3>apps</h3>
+{% if agency.date_opened %}
+<div class="big_green">Provides Public Data</div>
+{{ agency.name }} ({{agency.short_name}}) provides public data.<br>
+{% else %}
+<div class="big_red">No Public Data</div>
+{{ agency.name }} ({{agency.short_name}}) does not make their data public.<br>
+{{ agency.city }} residents can't take advantage of our <a href="/apps">transit app gallery</a>.
+
+
+{% endif %}
+
+
+<p>
+<b>Agency URL</b>: <a href="{{a.agency_url}}" target="_blank">{{a.agency_url}}</a> 
+<b>Director</b>:{{agency.executive}}<br>
+<a href="mailto:{{agency.contact_email}}">Send Email</a> 
+{% if agency.twitter %}<a href="agency.twitter">Twitter</a>{% endif %}
 <br>
-<h3>map</h3>
+
+{% if agency.date_opened %}{% if apps %}
+    <h3> Transit Apps for this agency</h3>
+    {% for app in app %}
+        {{app}}
+    {% endfor %}
+{% endif %}{% endif %}
+
     
 {% endblock %}

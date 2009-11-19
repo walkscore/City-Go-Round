@@ -624,3 +624,18 @@
 	.app-gallery #up-control:hover label { background-position: 0 -90px; }
 	.app-gallery #down-control label { background: url(/images/otd-icons.png) 0 -78px no-repeat; }
 	.app-gallery #down-control:hover label { background-position: 0 -102px; }	
+    
+    
+    
+    
+/*********** AGENCY LISTING MISC ************/
+.agency_public td{background-color:#D1EFD5;}
+.agency_no_public td{background-color:#EFD1D1;}
+
+.agency_detail{padding:5px;}
+.agency_detail_key{font-weight:bold; width:200px;}
+.agency_detail_value{}
+
+
+.big_red{font-size:2em;font-weight:bold; color:red}
+.big_green{font-size:2em; font-weight:bold; color:green;}

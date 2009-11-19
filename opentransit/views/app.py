@@ -1,5 +1,6 @@
 import time
 import logging
+from django.conf import settings
 from google.appengine.ext import db
 
 from ..forms import AddAppForm, PetitionForm
@@ -7,8 +8,6 @@ from ..utils.view import render_to_response, redirect_to, not_implemented, rende
 from ..utils.image import crop_and_resize_image_to_square
 from ..decorators import requires_valid_transit_app_slug
 from ..models import TransitApp, TransitAppStats, FeedReference
-from ..constants import TRANSIT_APP_IMAGE_WIDTH, TRANSIT_APP_IMAGE_HEIGHT
-
 
 def nearby(request):
     petition_form = PetitionForm()    
@@ -55,7 +54,7 @@ def add_form(request):
             # Process the image, resizing if necessary, and failing silently if something goes wrong.
             screen_shot_file = request.FILES.get('screen_shot', None)
             if screen_shot_file:
-                screen_shot_bytes = crop_and_resize_image_to_square(screen_shot_file.read(), TRANSIT_APP_IMAGE_WIDTH, TRANSIT_APP_IMAGE_HEIGHT)
+                screen_shot_bytes = crop_and_resize_image_to_square(screen_shot_file.read(), settings.TRANSIT_APP_IMAGE_WIDTH, settings.TRANSIT_APP_IMAGE_HEIGHT)
                 if screen_shot_bytes:
                     application.screen_shot = db.Blob(screen_shot_bytes)
                     
