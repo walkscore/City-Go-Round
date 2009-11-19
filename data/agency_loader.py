@@ -1,7 +1,7 @@
 import datetime
 from google.appengine.ext import db
 from google.appengine.tools import bulkloader
-from models import Agency
+from opentransit.models import Agency
 
 #note - you will need to modify your $PYTHONPATH 
 # to include both opentransit and opentransit/opentransit:
@@ -16,17 +16,16 @@ class AgencyLoader(bulkloader.Loader):
             return db.GeoPt(lat, lon)
         
         bulkloader.Loader.__init__(self, 'Agency',
-                                       [('name', str),
-                                        ('short_name', str),
-                                        ('city', str),
-                                        ('state', str),
-                                        ('executive', str),
-                                        ('executive_email', str),
-                                        ('agency_url', lambda x: str(x) if x!="" else None),
-                                        ('phone', str),
-                                        ('address', str),
-                                        ('location', lat_lon),
-                                        ('external_id', lambda x: str(x) if x!="" else None),
+                                       [('ntd_id', lambda x: unicode(x, encoding="utf_8")),
+                                        ('name', lambda x: unicode(x, encoding="utf_8")),
+                                        ('short_name', lambda x: unicode(x, encoding="utf_8")),
+                                        ('city', lambda x: unicode(x, encoding="utf_8")),
+                                        ('state', lambda x: unicode(x, encoding="utf_8")),
+                                        ('country', lambda x: unicode(x, encoding="utf_8")),
+                                        ('agency_url', lambda x: unicode(x, encoding="utf_8") if x!="" else None),
+                                        ('address', lambda x: unicode(x, encoding="utf_8")),
+                                        ('service_area_population', int),
+                                        ('passenger_miles', lambda x: int(x) if x!="" else None),
                                        ])
                                        
 

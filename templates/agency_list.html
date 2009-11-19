@@ -21,6 +21,19 @@ $(document).ready(function()
    
 </script>
 
+<div class="blue_background">All {{location}} Transit Agencies</div>
+<br>
+<span class="italic">
+	{{agency_count}} transit agencies in the {{location}}.
+	<span class="green"> {{public_count}} have public data.  </span>
+	<span class="red"> {{no_public_count}} do not. </span>
+</span>
+
+<select name="locaton_filter">
+  {% for s in states %}
+   <option value="{{s}}">{{s}}</option>
+  {% endfor %}
+</select>
 
 
 <table id="agency_list"> 
@@ -41,7 +54,7 @@ $(document).ready(function()
 <tbody> 
 {% for a in agencies %}
 <tr> 
-    <td>{{a.external_id}}</td>
+    <td>{{a.gtfs_data_exchange_id}}</td>
     <td><a href="/agencies/{{a.urlslug}}">{{a.name}}</a></a></td> 
     <td>{{a.tier}}</td> 
     <td>{{a.city}}</td> 
