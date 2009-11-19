@@ -4,26 +4,26 @@ from copy import copy
 from google.appengine.ext import db
 from opentransit.models import Agency, TransitApp
 from opentransit.utils.slug import slugify
-
+from datetime import datetime
 
 class TestAppAndAgency(unittest.TestCase):
     def setUp(self):
-        self.public_agency_1 = Agency(name="Public 1", city="San Francisco", state="CA", country="US", is_public = True)
+        self.public_agency_1 = Agency(name="Public 1", city="San Francisco", state="CA", country="US", date_opened = datetime.fromtimestamp(0))
         self.public_agency_1.put()
 
-        self.public_agency_2 = Agency(name="Public 2", city="Seattle", state="WA", country="US", is_public = True)
+        self.public_agency_2 = Agency(name="Public 2", city="Seattle", state="WA", country="US", date_opened = datetime.fromtimestamp(0))
         self.public_agency_2.put()
 
-        self.public_agency_3 = Agency(name="Public 3", city="Kokomo", state="IN", country="US", is_public = True)
+        self.public_agency_3 = Agency(name="Public 3", city="Kokomo", state="IN", country="US", date_opened = datetime.fromtimestamp(0))
         self.public_agency_3.put()
         
-        self.private_agency_1 = Agency(name="Private 1", city="Washington", state="DC", country="US", is_public = False)
+        self.private_agency_1 = Agency(name="Private 1", city="Washington", state="DC", country="US")
         self.private_agency_1.put()
 
-        self.private_agency_2 = Agency(name="Private 2", city="Philadelphia", state="PA", country="US", is_public = False)
+        self.private_agency_2 = Agency(name="Private 2", city="Philadelphia", state="PA", country="US")
         self.private_agency_2.put()
 
-        self.private_agency_3 = Agency(name="Private 3", city="Mars", state="PA", country="US", is_public = False)
+        self.private_agency_3 = Agency(name="Private 3", city="Mars", state="PA", country="US")
         self.private_agency_3.put()
         
         self.app_pub = TransitApp(title = "app_pub", supports_all_public_agencies = True)

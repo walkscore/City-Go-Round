@@ -27,7 +27,7 @@ class Agency(GeoModel):
     
     # bookkeeping
     updated         = db.DateTimeProperty()
-    date_opened     = db.FloatProperty() # not datetime because the FeedReference.date_added is a float
+    date_opened     = db.DateTimeProperty()
     
     # slugs
     nameslug        = db.StringProperty()
