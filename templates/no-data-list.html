@@ -1,9 +1,0 @@
-<ol class="agency-list">
-  {% for closed_agency in closed_agencies|slice:":4" %}
-  <li>
-    <h5><a href="agencies/{{closed_agency.urlslug}}">{{closed_agency.name}}</a></h5>
-    <p><a href="">{{closed_agency.executive_email}}</a> {% if twitter %}twitter: @{{closed_agency.twitter}}{% endif %}<br />
-      exec: {{closed_agency.executive}}</p>
-  </li>
-  {% endfor %}
-</ol>

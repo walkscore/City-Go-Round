@@ -1,72 +1,71 @@
-{% extends 'base.html' %}
+  {% extends 'base.html' %}
 
-{% block title %}Open Transit Data &raquo; Transit App Gallery{% endblock %}
+{% block title %}Transit App Gallery &mdash; CityGoRound.org{% endblock %}
 
 {% block content %}
-	<h2>Transit App Gallery</h2>
-  <h4 class="bluegreen floatleft"><em>24</em> transit apps use public data from <span><em>43</em> transit agencies.</span>&nbsp <a href="{% url apps_add_form %}">Add a new app</a></h4>
-  <div id="app-gallery" class="body-content">
-
-	  <div class="col-group">
-	  	<div class="narrow-col">
-			  <h3>Recently added</h3>  
-		    <div class="app-thumbs"> 
-			        
-			    {% for transit_app in transit_apps %}
-				    <div class="scroll-item-first"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
-				      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
-				      <p>{{transit_app.description}}</p>
-				    </div>
-			    {% endfor %}
-	
-				</div>
-			</div>
-		  
-		  <div class="narrow-col">
-			 	<h3>Featured</h3>
-		    <div class="app-thumbs">
-			        
-			    {% for transit_app in transit_apps %}
-				    <div class="scroll-item-first"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
-				      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
-				      <p>{{transit_app.description}}</p>
-				    </div>
-			    {% endfor %}
-	
-				</div>
-			</div>
-		</div>
-  
-	 	<div class="col-group">
-  		<h3>All transit apps</h3> 
-		  <div class="narrow-col"> 
-		    <div class="app-thumbs">   
+  <div class="col-group app-gallery body-content">
+  	<h2>Transit App Gallery</h2>
+    <h4 class="bluegreen floatleft"><em>24</em> transit apps use public data from <span><em>43</em> transit agencies.</span>&nbsp <a href="{% url apps_add_form %}">Add a new app</a></h4>
+  	<div class="narrow-col">
+		  <h3>Recently added</h3>  
+	    <div class="app-thumbs"> 
 		        
-			    {% for transit_app in transit_apps %}
-				    <div class="scroll-item-first"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
-				      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
-				      <p>{{transit_app.description}}</p>
-				    </div>
-			    {% endfor %}
+		    {% for transit_app in transit_apps %}
+			    <div class="app"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
+			      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
+			      <p>{{transit_app.description}}</p>
+			    </div>
+		    {% endfor %}
 
-				</div>
 			</div>
-		  <div class="narrow-col">
-		    <div class="app-thumbs">    
-			        
-			    {% for transit_app in transit_apps %}
-				    <div class="scroll-item-first"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
-				      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
-				      <p>{{transit_app.description}}</p>
-				    </div>
-			    {% endfor %}
-
-				</div>
+		</div>
+	  
+	  <div class="narrow-col">
+		 	<h3>Featured</h3>
+	    <div class="app-thumbs">
+		        
+		    {% for transit_app in transit_apps %}
+			    <div class="app"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
+			      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
+			      <p>{{transit_app.description}}</p>
+			    </div>
+		    {% endfor %}
 
 			</div>
 		</div>
 
-  </div>
+		<h3 class="clear-all">All transit apps</h3> 
+	  <div class="narrow-col"> 
+	    <div class="app-thumbs">   
+	        
+		    {% for transit_app in transit_apps %}
+			    <div class="app"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
+			      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
+			      <p>{{transit_app.description}}</p>
+			    </div>
+		    {% endfor %}
+
+			</div>
+		</div>
+	  <div class="narrow-col">
+	    <div class="app-thumbs">    
+		        
+		    {% for transit_app in transit_apps %}
+			    <div class="app"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
+			      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
+			      <p>{{transit_app.description}}</p>
+			    </div>
+		    {% endfor %}
+
+			</div>
+
+		</div>
+	</div>
+
+	<div class="wide-col rightmost">
+	  {% include "includes/mrec1.html" %}
+	</div>
+
 
 {% endblock %}
 

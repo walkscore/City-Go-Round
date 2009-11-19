@@ -7,10 +7,18 @@ from geo import geotypes
 
 from ..forms import AgencyForm
 from ..utils.view import render_to_response, redirect_to, not_implemented
-from ..models import Agency, FeedReference
+from ..models import Agency, FeedReference, TransitApp
 
 from django.http import HttpResponse
 from ..utils.slug import slugify
+
+
+def uniquify(seq): 
+    # not order preserving 
+    set = {} 
+    map(set.__setitem__, seq, []) 
+    return set.keys()
+
 
 def edit_agency(request, agency_id):
     agency = Agency.get_by_id( int(agency_id) )
@@ -33,7 +41,7 @@ def edit_agency(request, agency_id):
             agency.contact_email    = form.cleaned_data['contact_email'] if form.cleaned_data['contact_email'] != "" else None
             agency.updated          = form.cleaned_data['updated']
             agency.phone            = form.cleaned_data['phone']
-            agency.external_id      = form.cleaned_data['external_id']
+            agency.gtfs_data_exchange_id      = form.cleaned_data['gtfs_data_exchange_id']
             agency.put()
     else:
         form = AgencyForm(initial={'name':agency.name,
@@ -51,17 +59,32 @@ def edit_agency(request, agency_id):
                                'contact_email':agency.contact_email,
                                'updated':agency.updated,
                                'phone':agency.phone,
-                               'external_id':agency.external_id})
+                               'gtfs_data_exchange_id':agency.gtfs_data_exchange_id})
     
     return render_to_response( request, "edit_agency.html", {'agency':agency, 'form':form} )
     
 def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
-    
+
+    def get_state_list():
+        #factoring this out since we want all states all the time
+        #and because we want to memcache this
+        #todo: add other countries (return dict where value includes proper url)
+        mem_result = memcache.get('all_states')
+        if not mem_result:
+            states = uniquify([a.stateslug for a in Agency.all()])
+            states.sort()
+            mc_added = memcache.add('all_states', states, 60 * 1)
+        else:
+            states = mem_result
+
+        return states
+        
+
     if nameslug:
         urlslug = '/'.join([countryslug,stateslug,cityslug,nameslug])
         agency = Agency.all().filter('urlslug =', urlslug).get()
         
-        feeds = FeedReference.all().filter('external_id =', agency.external_id)
+        feeds = FeedReference.all().filter('gtfs_data_exchange_id =', agency.gtfs_data_exchange_id)
         
         template_vars = {
             'agency': agency,
@@ -69,21 +92,24 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
             }
     
         return render_to_response( request, "agency.html", template_vars)
-
+    location = 'system'
     
     agencies = Agency.all().order("name")
     mck = 'agencies'
     if countryslug:
         agencies = agencies.filter('countryslug =',countryslug)
         mck = 'agencies_%s' % countryslug
+        location = countryslug
     if stateslug:
         agencies = agencies.filter('stateslug =', stateslug)
         logging.debug('filtering by stateslug %s' % stateslug)
         mck = 'agencies_%s_%s' % (countryslug, stateslug)
+        location = stateslug 
     if cityslug:
         agencies = agencies.filter('cityslug =', cityslug)
         logging.debug('filtering by cityslug %s' % cityslug)
         mck = 'agencies_%s_%s_%s' % (countryslug, stateslug, cityslug)
+        location = cityslug
     
     mem_result = memcache.get(mck)
     if not mem_result:
@@ -91,11 +117,34 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         mc_added = memcache.add(mck, agencies, 60 * 1)
     else:
         agencies = mem_result
-        
+    
+    agency_list = []
+    public_count = no_public_count = 0
+    
+    for a in agencies:
+        if a.date_opened:
+            public_count += 1
+        else:
+            no_public_count += 1
+        agency_list.append(a)  #listify now so we dont have to do it again for count(), etc
+
     template_vars = {
-        'agencies': agencies,
+        'agencies': agency_list,
+        'location' : location,
+        'public_count' : public_count,
+        'no_public_count' : no_public_count,
+        'states' : get_state_list(),
+        'agency_count' : len(agency_list),
         'feed_references': FeedReference.all_by_most_recent(),
     }
+    
+    if request.GET.get( 'format' ) == 'json':
+        jsonable_list = []
+        
+        for agency in agencies:
+            jsonable_list.append( agency.to_jsonable() )
+        
+        return HttpResponse( content=json.dumps( jsonable_list, indent=2 ), mimetype="text/plain" )
     
     return render_to_response( request, "agency_list.html", template_vars)
     
@@ -116,15 +165,17 @@ def agencies_search(request):
      list of nearby (location) or matching (city) agencies, and their associated apps
     """
     def agencies_to_json(agencies):
-        ag = []
+        ag = {'agencies' : []}
         for a in agencies:
             ad = {}
             for k in 'name,city,urlslug,tier,state'.split(','):
                 ad[k] = getattr(a,k)
             #unsure how to get apps...
-            ad['apps'] = []
-            ag.append(ad)
+            ad['apps'] = list(TransitApp.iter_for_agency(a))
+            ag['agencies'].append(ad)
+        ag['apps'] = list(TransitApp.iter_for_agencies(agencies))
         return ag                
+
     def check_lat_lon(lat, lon):
         try:
             return float(lat), float(lon)
@@ -162,7 +213,7 @@ def agencies_search(request):
         agencies = agencies.filter('state =',state.upper()).filter('city =',city)
     
     if format == 'json':
-        return HttpResponse(json.dumps({'agencies' : agencies_to_json(agencies)}), mimetype='text/html')
+        return HttpResponse(json.dumps(agencies_to_json(agencies)), mimetype='text/html')
     else:
         return render_to_response( request, "agency_search.html", {'agencies' : agencies} )
         

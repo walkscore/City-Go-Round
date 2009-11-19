@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% block title %}{{location}} transit agencies on CityGoRound.org{% endblock %}
+
 {% block extra_head %}
 <script type="text/javascript" src="/js/jquery.tablesorter.min.js"></script>
 <script type="text/javascript" src="/js/jquery.tablesorter.pager.js"></script>
@@ -21,6 +23,24 @@ $(document).ready(function()
    
 </script>
 
+<div class="blue_background">All {{location|upper}} Transit Agencies</div>
+<br>
+<span class="italic">
+    {{agency_count}} transit agencies in the {{location}}.
+    <span class="green"> {{public_count}} have public data.  </span>
+    <span class="red"> {{no_public_count}} do not. </span>
+    </span>
+
+<select name="public_filter">
+   <option value="public">Public</option>
+   <option value="no_public">Not Public</option>
+</select>
+
+<select name="location_filter" onchange="window.location.replace(this.value)">
+  {% for s in states %}
+   <option value="/agencies/us/{{s}}"{% ifequal location s %} selected {% endifequal %}>{{s|upper}}
+  {% endfor %}
+</select>
 
 
 <table id="agency_list"> 
@@ -35,13 +55,13 @@ $(document).ready(function()
     <th>Website</th> 
     <th>Twitter</th> 
     <th>Email</th>
-    <th>Loc</th>
+    <th>Public</th>
 </tr> 
 </thead> 
 <tbody> 
 {% for a in agencies %}
 <tr> 
-    <td>{{a.external_id}}</td>
+    <td>{{a.gtfs_data_exchange_id}}</td>
     <td><a href="/agencies/{{a.urlslug}}">{{a.name}}</a></a></td> 
     <td>{{a.tier}}</td> 
     <td>{{a.city}}</td> 
@@ -50,7 +70,7 @@ $(document).ready(function()
     <td>{{a.agency_url}}</td> 
     <td>{{a.twitter}}</td> 
     <td>{{a.contact_email}}</td>
-    <td>{{a.location}}</td>
+    <td>{% if a.date_opened %}Yes{% else %}No{% endif %}</td>
     <td><a href="/agencies/edit/{{a.key.id}}">edit</a></td>
 </tr> 
 {% endfor %}

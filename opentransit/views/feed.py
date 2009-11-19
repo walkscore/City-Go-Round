@@ -36,9 +36,9 @@ def replace_feed_references(old_references, new_references):
         
         # be hopeful that the api call has the external id. If not, yank it from the url
         if 'external_id' in feed_reference_json:
-            fr.external_id = feed_reference_json['external_id']
+            fr.gtfs_data_exchange_id = feed_reference_json['external_id']
         else:
-            fr.external_id = id_from_gtfs_data_exchange_url( fr.dataexchange_url )
+            fr.gtfs_data_exchange_id = id_from_gtfs_data_exchange_url( fr.dataexchange_url )
             
         # be hopeful the api call includes is_official. It's True by default
         if 'is_official' in feed_reference_json:
@@ -47,7 +47,7 @@ def replace_feed_references(old_references, new_references):
         fr.put()
         
         # set the 'date_opened' for every feed reference newly opened
-        agency = Agency.all().filter("external_id =", fr.external_id).filter("date_opened =", None).get()
+        agency = Agency.all().filter("gtfs_data_exchange_id =", fr.gtfs_data_exchange_id).filter("date_opened =", None).get()
         
         if agency is not None:
             logging.info( "date opened: %s"%agency.date_opened )
