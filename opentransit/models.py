@@ -18,7 +18,6 @@ class Agency(GeoModel):
     gtfs_data_exchange_id = db.StringProperty()
     name                  = db.StringProperty(required=True)
     short_name            = db.StringProperty()
-    tier                  = db.IntegerProperty()
     city            = db.StringProperty(required=True)
     state           = db.StringProperty(required=True)
     country         = db.StringProperty(default="us")
@@ -61,6 +60,13 @@ class Agency(GeoModel):
         # set the external_id if it has not already been set
         if self.gtfs_data_exchange_id is None:
             self.gtfs_data_exchange_id = self.nameslug
+    
+    def to_jsonable(self):
+        return {'ntd_id':self.ntd_id,
+                'name':self.name,
+                'gtfs_data_exchange_id':self.gtfs_data_exchange_id,
+                'date_opened':self.date_opened,
+                'passenger_miles':self.passenger_miles}
         
     @staticmethod
     def all_public_agencies():
