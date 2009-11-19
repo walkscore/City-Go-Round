@@ -61,7 +61,7 @@ TRANSIT_APP_IMAGE_WIDTH = 180
 TRANSIT_APP_IMAGE_HEIGHT = 180
 
 #override in local_settings.py, not here
-GOOGLE_API_KEY='ABQIAAAAOtgwyX124IX2Zpe7gGhBsxTz6YtX4DvCXuRZKs5NV4Iafw-YMRSFKCvmwc0zxsAPANYpNL1uiCmf_w'
+GOOGLE_API_KEY='ABQIAAAAOtgwyX124IX2Zpe7gGhBsxScRvQHjv9UbfX2QLoR8lJzqlEEMhQOYVWJMRvlY9Hz-bSACEukjIPCWA'
 
 # only use local_settings.py if we're running debug server
 if RUNNING_APP_ENGINE_LOCAL_SERVER:

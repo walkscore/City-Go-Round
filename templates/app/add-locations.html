@@ -79,15 +79,28 @@
 		}
 		
 		function dbug(str){
-		  $("#dbug").append(str);
+		  $("#dbug").append(str + "<br />");
 		}
 		
 		function updateUI(){
 		  var str = "";
-		  str += ($("#global").checked) ? "global <br />":"not global <br />";
-	    //str += (document.getElementById("global").checked) ? "global <br />":"not global <br />";
-	    dbug(str);
-		}
+		  
+		  //when global is checked, others should be disabled
+		  if ( $("#global").eq(0).is(":checked") ){
+		    $("#entire-us").attr("disabled", true);
+		    $("#choose-locations").attr("disabled", true);	    
+		  }
+		  else {
+		    $("#entire-us").attr("disabled", false);
+		    $("#choose-locations").attr("disabled", false);
+		  }
+		  
+		  //show the location picker?
+		  if ( !$("#global").eq(0).is(":checked") && $("#choose-locations").eq(0).is(":checked") )
+		    $("#locations").eq(0).css("display", "block");		   
+		  else
+		    $("#locations").eq(0).css("display", "none");	
+		  }
 	
 </script>
 {% endblock %}
@@ -95,11 +108,11 @@
 
 {% block content %}
 <div class="body-content">
-  <h2>Select locations where your app works:</h2>
+  <h2>Where does your app work?</h2>
   <form>
-    <p><input type="checkbox" name="global" id="global" onchange="updateUI()" />Globally</p>
-    <p><input type="checkbox" name="entire-us" id="entire-us" onchange="updateUI()" />Entire U.S.</p>
-    <p><input type="checkbox" name="choose-locations" id="choose-locations" onchange="updateUI()" />Select countries or cities</p>
+    <p><input type="checkbox" name="global" id="global" onchange="updateUI()" /> Globally</p>
+    <p><input type="checkbox" name="entire-us" id="entire-us" onchange="updateUI()" /> Entire U.S.</p>
+    <p><input type="checkbox" name="choose-locations" id="choose-locations" onchange="updateUI()" /> Select countries or cities</p>
     <div id="locations">
       <div id="location0">
         <label>Enter a city or Country name:</label>
@@ -107,6 +120,7 @@
         <input type="button" value="Add" />
       </div>
     </div>
+    <input type="submit" value="Done" />
   </form>
 </div>
 <div id="dbug"></div>
