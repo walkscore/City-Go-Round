@@ -46,8 +46,11 @@ django.newforms = django.forms
 
 # Django signal handler to log an exception
 def log_exception(*args, **kwds):
-  cls, err = sys.exc_info()[:2]
-  logging.exception('Exception in request: %s: %s', cls.__name__, err)
+  if sys is None:
+      pass
+  else:
+      cls, err = sys.exc_info()[:2]
+      logging.exception('Exception in request: %s: %s', cls.__name__, err)
 
 # Log all exceptions detected by Django.
 django.core.signals.got_request_exception.connect(log_exception)
