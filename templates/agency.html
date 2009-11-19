@@ -2,9 +2,11 @@
 
 {% block content %}
 
+ntd_id: {{agency.ntd_id}}<br>
 long name: {{agency.name}}<br>
 short name: {{agency.short_name}}<br>
 web page: <a href="{{agency.agency_url}}">{{agency.agency_url}}</a><br>
+service_area_population: {{agency.service_area_population}}<br>
 gtfs_data_exchange_id: {{agency.gtfs_data_exchange_id}}<br>
 <h3>feeds</h3>
 opened {{agency.date_opened}}<br>
