@@ -1,5 +1,6 @@
 import time
 import logging
+from datetime import datetime
 from django.utils import simplejson as json
 from google.appengine.ext import db
 from google.appengine.api import memcache
@@ -83,10 +84,12 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         agency = Agency.all().filter('urlslug =', urlslug).get()
         
         feeds = FeedReference.all().filter('gtfs_data_exchange_id =', agency.gtfs_data_exchange_id)
+        apps = TransitApp.iter_for_agency(agency)
         
         template_vars = {
             'agency': agency,
             'feeds': feeds,
+            'apps': apps,
             }
     
         return render_to_response( request, "agency.html", template_vars)
@@ -122,6 +125,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
     for a in agencies:
         if a.date_opened:
             public_count += 1
+            a.date_opened_formatted = datetime.fromtimestamp(a.date_opened)
         else:
             no_public_count += 1
         agency_list.append(a)  #listify now so we dont have to do it again for count(), etc

@@ -46,7 +46,7 @@ urlpatterns += patterns(
 )
 
 
-# Agency Views -- Full URL structure for viewing transit apps, and for adding/editing them
+# Apps Views -- Full URL structure for viewing transit apps, and for adding/editing them
 urlpatterns += patterns(
     'opentransit.views.app',
     url(r'^apps/$', 'gallery', name='apps_gallery'),

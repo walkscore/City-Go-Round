@@ -18,6 +18,7 @@ table  thead tr .header {
 	background-repeat: no-repeat;
 	background-position: center right;
 	cursor: pointer;
+        padding-right:20px;
 }
 table  tbody td {
 	color: #3D3D3D;

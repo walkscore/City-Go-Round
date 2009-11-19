@@ -1,5 +1,11 @@
 from google.appengine.ext import db
 
+def key_and_entity(entity_or_key, entity_class):
+    if isinstance(entity_or_key, db.Model):
+        return (entity_or_key.key(), entity_or_key)
+    else:
+        return (entity_or_key, entity_class.get([entity_or_key]))
+
 def normalize_to_key(entity_or_key):
     return entity_or_key.key() if isinstance(entity_or_key, db.Model) else entity_or_key
 
