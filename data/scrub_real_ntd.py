@@ -52,13 +52,15 @@ def get_service_level( filename ):
             
     return sums
     
-def get_gtfs_data_exchange_ids( db_snapshot_json_filename ):
+def get_gtfs_data_exchange_ids( gtfs_data_exchange_id_filename ):
     """use agency database snapshot to find dict of ntdid:gtfs_data_exchange_id"""
     
-    db_snapshot = json.loads( open( db_snapshot_json_filename ).read() )
+    NTDID_COL = 0
+    GTFSDEID_COL = 3
     
-    # derive dict of ntd_id:gtfs_data_exchange_id
-    ret = dict( [ (agency['ntd_id'], agency['gtfs_data_exchange_id']) for agency in db_snapshot ] )
+    cr = csv.reader( open( gtfs_data_exchange_id_filename ) )
+    
+    ret = dict( [ (row[NTDID_COL], row[GTFSDEID_COL]) for row in cr ] )
     
     return ret
     
@@ -91,11 +93,11 @@ def name_to_base_name(name):
 IN_FILENAME = "ntd_agencies.csv"
 SERVICE_LEVEL_FILENAME = "service.csv"
 OUT_FILENAME = "agencies.csv"
-DB_SNAPSHOT_FILENAME = "agency_snapshot.json"
+GTFS_IDS_FILENAME = "gtfs_data_exchange_ids.csv"
 SCREENSCRAPE_FILENAME = "ntdprogram.csv"
 
 service_level = get_service_level( SERVICE_LEVEL_FILENAME )
-data_exchange_ids = get_gtfs_data_exchange_ids( DB_SNAPSHOT_FILENAME )
+data_exchange_ids = get_gtfs_data_exchange_ids( GTFS_IDS_FILENAME )
 contact_information = get_contact_information( SCREENSCRAPE_FILENAME )
 
 cr = csv.reader( open( IN_FILENAME ) )

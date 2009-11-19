@@ -56,10 +56,6 @@ class Agency(GeoModel):
         self.stateslug = slugify(self.state)
         self.countryslug = slugify(self.country)
         self.urlslug = "%s/%s/%s/%s"%(self.countryslug,self.stateslug,self.cityslug,self.nameslug)
-        
-        # set the external_id if it has not already been set
-        if self.gtfs_data_exchange_id is None:
-            self.gtfs_data_exchange_id = self.nameslug
     
     def to_jsonable(self):
         return {'ntd_id':self.ntd_id,

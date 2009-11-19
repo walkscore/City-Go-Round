@@ -47,7 +47,6 @@ class AgencyForm(forms.Form):
     name            = forms.CharField()
     gtfs_data_exchange_id     = forms.CharField(required=False)
     short_name      = forms.CharField(required=False)
-    tier            = forms.IntegerField(required=False)
     city            = forms.CharField(required=False)
     state           = forms.CharField(max_length=2,required=False)
     country         = forms.CharField(required=False)
