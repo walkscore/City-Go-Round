@@ -9,7 +9,7 @@ class FeedReference(db.Model):
     """feed reference models a GTFS Data Exchange entity"""
     
     gtfs_data_exchange_id = db.StringProperty()
-    date_last_updated = db.FloatProperty()
+    date_last_updated = db.DateTimeProperty()
     feed_baseurl      = db.LinkProperty()
     name              = db.StringProperty()
     area              = db.StringProperty()
@@ -18,7 +18,7 @@ class FeedReference(db.Model):
     dataexchange_url  = db.LinkProperty()
     state             = db.StringProperty()
     license_url       = db.LinkProperty()
-    date_added        = db.FloatProperty()
+    date_added        = db.DateTimeProperty()
     is_official       = db.BooleanProperty(default=True)
     
     @staticmethod

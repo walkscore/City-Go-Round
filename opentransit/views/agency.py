@@ -125,7 +125,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
     for a in agencies:
         if a.date_opened:
             public_count += 1
-            a.date_opened_formatted = datetime.fromtimestamp(a.date_opened)
+            a.date_opened_formatted = a.date_opened
         else:
             no_public_count += 1
         agency_list.append(a)  #listify now so we dont have to do it again for count(), etc

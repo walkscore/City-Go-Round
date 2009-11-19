@@ -8,6 +8,7 @@ from ..utils.prettyprint import pretty_print_time_elapsed
 from ..models import FeedReference, Agency
 from urlparse import urlparse
 import re
+from datetime import datetime
 
 def id_from_gtfs_data_exchange_url(url):
     return re.findall( "/agency/(.*)/", urlparse( url )[2] )[0]
@@ -23,7 +24,7 @@ def replace_feed_references(old_references, new_references):
     for feed_reference_json in new_references:
         fr = FeedReference(parent=parentKey)
         
-        fr.date_last_updated = feed_reference_json['date_last_updated']
+        fr.date_last_updated = datetime.fromtimestamp( feed_reference_json['date_last_updated'] )
         fr.feed_baseurl      = feed_reference_json['feed_baseurl'].strip() if feed_reference_json['feed_baseurl'] != "" else None
         fr.name              = feed_reference_json['name']
         fr.area              = feed_reference_json['area']
@@ -32,7 +33,7 @@ def replace_feed_references(old_references, new_references):
         fr.dataexchange_url  = feed_reference_json['dataexchange_url'].strip()
         fr.state             = feed_reference_json['state']
         fr.license_url       = feed_reference_json['license_url'].strip() if feed_reference_json['license_url'] != "" else None
-        fr.date_added        = feed_reference_json['date_added']
+        fr.date_added        = datetime.fromtimestamp( feed_reference_json['date_added'] )
         
         # be hopeful that the api call has the external id. If not, yank it from the url
         if 'external_id' in feed_reference_json:
@@ -72,9 +73,9 @@ def feed_references(request):
     all_references = FeedReference.all().order("-date_added")
     
     refs_with_elapsed = []
-    present_moment = time.time()
+    present_moment = datetime.now()
     for ref in all_references:
-        refs_with_elapsed.append( {'ref':ref, 'ago':pretty_print_time_elapsed(present_moment-ref.date_added)} )
+        refs_with_elapsed.append( {'ref':ref, 'ago':str(present_moment-ref.date_added)} )
     
     return render_to_response( request, "feed_references.html", {'all_references':refs_with_elapsed} )
 
