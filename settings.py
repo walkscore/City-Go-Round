@@ -57,6 +57,9 @@ SITE_WIDE_USERNAME = "transit"
 SITE_WIDE_PASSWORD = "appsnearyou"
 SITE_WIDE_REALM = "Open Transit Data"
 
+TRANSIT_APP_IMAGE_WIDTH = 180
+TRANSIT_APP_IMAGE_HEIGHT = 180
+
 #override in local_settings.py, not here
 GOOGLE_API_KEY='ABQIAAAAOtgwyX124IX2Zpe7gGhBsxTz6YtX4DvCXuRZKs5NV4Iafw-YMRSFKCvmwc0zxsAPANYpNL1uiCmf_w'
 
