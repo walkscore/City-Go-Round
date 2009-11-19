@@ -26,14 +26,14 @@ $(document).ready(function()
 <div class="blue_background">All {{location}} Transit Agencies</div>
 <br>
 <span class="italic">
-	{{agency_count}} transit agencies in the {{location}}.
-	<span class="green"> {{public_count}} have public data.  </span>
-	<span class="red"> {{no_public_count}} do not. </span>
-</span>
+    {{agency_count}} transit agencies in the {{location}}.
+    <span class="green"> {{public_count}} have public data.  </span>
+    <span class="red"> {{no_public_count}} do not. </span>
+    </span>
 
-<select name="locaton_filter">
+<select name="locaton_filter" onchange="window.location.replace(this.value)">
   {% for s in states %}
-   <option value="{{s}}">{{s}}</option>
+   <option value="/agencies/us/{{s}}">{{s|upper}}</option>
   {% endfor %}
 </select>
 
@@ -50,7 +50,7 @@ $(document).ready(function()
     <th>Website</th> 
     <th>Twitter</th> 
     <th>Email</th>
-    <th>Loc</th>
+    <th>Public</th>
 </tr> 
 </thead> 
 <tbody> 
@@ -65,7 +65,7 @@ $(document).ready(function()
     <td>{{a.agency_url}}</td> 
     <td>{{a.twitter}}</td> 
     <td>{{a.contact_email}}</td>
-    <td>{{a.location}}</td>
+    <td>{% if a.date_opened %}Yes{% else %}No{% endif %}</td>
     <td><a href="/agencies/edit/{{a.key.id}}">edit</a></td>
 </tr> 
 {% endfor %}
