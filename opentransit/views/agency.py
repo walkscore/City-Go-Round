@@ -220,8 +220,10 @@ def agencies_search(request):
         return render_to_response( request, "agency_search.html", {'agencies' : agencies} )
         
 def delete_all_agencies(request):
-    for agency in Agency.all():
-        agency.delete()
+    todelete = list(Agency.all(keys_only=True))
+    
+    for i in range(0, len(todelete), 500):
+        db.delete( todelete[i:i+500] )
         
     return HttpResponse( "deleted all agencies")
     
