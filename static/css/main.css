@@ -622,6 +622,7 @@
 		display: none;
 	}
 	#locations div {
+	 height: 30px;
 		clear: both;
 	}
 	#locations p, #locations a {
