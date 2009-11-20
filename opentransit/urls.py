@@ -27,6 +27,7 @@ urlpatterns += patterns(
 urlpatterns += patterns(
     'opentransit.views.feed',
     url(r'^admin/feeds/update$', 'update_feed_references', name='update_feed_references'),
+    url(r'^admin/feeds/merge$', 'merge_feeds', name='merge_feeds'),
     url(r'^feed-references$', 'feed_references', name='feed_references'),
 )
 

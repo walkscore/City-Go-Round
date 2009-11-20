@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}merge some feeds{% endblock %}
+
+{% block content %}
+
+<h3>unmatched feeds</h3>
+<table>
+{% for feed in feeds %}
+<tr>
+<td>{{feed.gtfs_data_exchange_id}}</td><td>{{feed.name}}</td><td>{{feed.url}}</td><td>{{feed.area}}</td><td>{{feed.state}}</td>
+<tr>
+{% endfor %}
+</table>
+
+<h3>unmatched agencies</h3>
+<table>
+
+{% for agency in agencies %}
+<tr>
+<td>{{ agency.name }}</td><td>{{agency.short_name}}</td><td>{{agency.agency_url}}</td><td>{{agency.city}}</td><td>{{agency.state}}</td>
+</tr>
+{% endfor %}
+
+</table>
+    
+{% endblock %}
