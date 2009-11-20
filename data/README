@@ -13,3 +13,6 @@ use the bulk importer to load everything into the db
 $ cd ..
 $ export PYTHONPATH=/path/to/opentransitdata:path/to/opentransitdata/opentransit
 $ /path/to/google_appengine/appcfg.py upload_data . --filename=./data/agencies.csv --kind=Agency --config_file=./data/agency_loader.py --url=http://localhost:8080/remote_api --has_header
+
+After you've imported, hit:
+    http://localhost:8080/admin/feeds/update/
