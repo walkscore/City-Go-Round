@@ -215,7 +215,7 @@
 			
 			this.addLocation = function(){
 				var htmlStr = '<div id="location' + this.numLocations + '">';
-				htmlStr += '<label id="label' + this.numLocations + '"></label><span id="name' + this.numLocations + '"></span>';
+				htmlStr += '<p id="name' + this.numLocations + '"><span id="label' + this.numLocations + '"></span></p>';
 				htmlStr += '<a id="removelink' + this.numLocations + '" onclick="dataManager.removeQuery(' + this.numLocations + ')">remove</a>';
 				htmlStr += '</p></div>';
 				$("#locations").append(htmlStr);
@@ -264,6 +264,10 @@
 			this.getDataString = function(){
 				return this.queryDataList.getDataString();
 			}
+			
+			this.sendDataString = function(){
+				$(id_location_list).eq(0).val(this.queryDataList.getDataString());
+			}
 		}
 
 
@@ -307,7 +311,7 @@
 
   <h3>ADD A NEW TRANSIT APP [Step 2 of 2: Where Your App Works]</h3>    
   <h2>Select locations where your app works:</h2>
-  <form id="add-locations-form" action="" method="POST" onkeypress="return event.keyCode!=13">
+  <form id="add-locations-form" action="" method="POST" onkeypress="return event.keyCode!=13" onsubmit="dataManager.sendDataString()">
     <p><input type="checkbox" name="global" id="global" onchange="updateUI()" />Globally</p>
     <p><input type="checkbox" name="entire-us" id="entire-us" onchange="updateUI()" />Entire U.S.</p>
     <p><input type="checkbox" name="choose-locations" id="choose-locations" onchange="updateUI()" />Select countries or cities</p>
