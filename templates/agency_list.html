@@ -16,7 +16,6 @@
 function update_filters(){
     var pd = jQuery("#public_filter option:selected").val();
     var location = jQuery("#location_filter option:selected").val();
-    console.log(pd, location)
     window.location.replace(location + '?public=' + pd)
     
     }
