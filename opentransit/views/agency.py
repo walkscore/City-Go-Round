@@ -21,7 +21,6 @@ def uniquify(seq):
     map(set.__setitem__, seq, []) 
     return set.keys()
 
-
 def edit_agency(request, agency_id):
     agency = Agency.get_by_id( int(agency_id) )
     
@@ -97,51 +96,49 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
             }
     
         return render_to_response( request, "agency.html", template_vars)
+    
     location = ''
     
-        
+    public_filter = request.GET.get('public','')
+    public_count = no_public_count = 0
+    
+    agencies = Agency.all().order("name") 
+
     mck = 'agencies'
     if cityslug:
+        agencies = agencies.filter('cityslug =', cityslug)
         logging.debug('filtering by cityslug %s' % cityslug)
-        mck = 'agencies_%s_%s_%s' % (countryslug, stateslug, cityslug)
+        mck = 'agencies_%s_%s_%s_%s' % (public_filter, countryslug, stateslug, cityslug)
         location = cityslug
     elif stateslug:
+        agencies = agencies.filter('stateslug =', stateslug)
         logging.debug('filtering by stateslug %s' % stateslug)
-        mck = 'agencies_%s_%s' % (countryslug, stateslug)
+        mck = 'agencies_%s_%s_%s' % (public_filter, countryslug, stateslug)
         location = stateslug 
     elif countryslug:
-        mck = 'agencies_%s' % countryslug
+        agencies = agencies.filter('countryslug =',countryslug)
+        mck = 'agencies_%s_%s' % (public_filter, countryslug)
         location = countryslug
-    
+
     mem_result = memcache.get(mck)
     if mem_result:
-        agencies = mem_result    
+        agency_list = mem_result  
     else:
-        agencies = Agency.all().order("name")    
-        if cityslug:
-            agencies = agencies.filter('cityslug =', cityslug)
-        elif stateslug:
-            agencies = agencies.filter('stateslug =', stateslug)
-        elif countryslug:
-            agencies = agencies.filter('countryslug =',countryslug)
+        agency_list = []
+        
+        for a in agencies:
+            if a.date_opened:
+                public_count += 1
+                a.date_opened_formatted = a.date_opened
+                if public_filter == 'no_public':
+                    a.hide = True
+            else:
+                no_public_count += 1
+                if public_filter == 'public':
+                    a.hide = True
+            agency_list.append(a)  #listify now so we dont have to do it again for count(), etc
 
-        mc_added = memcache.add(mck, agencies, 60 * 1)
-    
-    agency_list = []
-    public_count = no_public_count = 0
-    public_filter = request.GET.get('public','')
-    
-    for a in agencies:
-        if a.date_opened:
-            public_count += 1
-            a.date_opened_formatted = a.date_opened
-            if public_filter == 'no_public':
-                a.hide = True
-        else:
-            no_public_count += 1
-            if public_filter == 'public':
-                a.hide = True
-        agency_list.append(a)  #listify now so we dont have to do it again for count(), etc
+        mc_added = memcache.add(mck, agency_list, 60 * 60)
 
     template_vars = {
         'agencies': agency_list,
