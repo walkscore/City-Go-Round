@@ -24,7 +24,7 @@ For each transit agency in the 'unmatched feeds' list:
 
 {% for agency in agencies %}
 <tr>
-<td>{{ agency.name }}</td><td>{{agency.short_name}}</td><td>{{agency.agency_url}}</td><td>{{agency.city}}</td><td>{{agency.state}}</td><td><a href="/agencies/edit/{{agency.key.id}}">edit</a></td>
+<td>{{ agency.name }}</td><td>{{agency.short_name}}</td><td>{{agency.agency_url}}</td><td>{{agency.city}}</td><td>{{agency.state}}</td><td>{{agency.gtfs_data_exchange_id}}</td><td><a href="/agencies/edit/{{agency.key.id}}">edit</a></td>
 </tr>
 {% endfor %}
 
