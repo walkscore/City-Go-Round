@@ -9,6 +9,7 @@ from google.appengine.api import memcache
 from ..forms import AgencyForm
 from ..models import Agency, FeedReference, TransitApp
 from ..utils.view import render_to_response, redirect_to, not_implemented, bad_request, render_to_json
+from ..utils.misc import uniquify
 
 from StringIO import StringIO
 import csv
