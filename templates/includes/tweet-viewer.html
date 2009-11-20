@@ -3,16 +3,36 @@
     
     var search_term = "citygoround";
     
+    function mil_to_standard(mil){
+        try{
+            var ix = mil.indexOf(':');
+            var date_created = mil.slice(0,ix-3);
+            var time = mil.slice(ix-2,ix+3);
+            var hour = parseInt(time.slice(0,2))
+            var ap = 'am';
+            if (hour > 12){ap = 'pm';}
+            if (hour > 14) { 
+                hour = (hour-2) + '';
+                if (hour >= 20){
+                    hour = '1' + hour.charAt(1);
+                    }
+                else 
+                    hour = hour.charAt(1);
+                }
+            if (hour == 0) {hour = 12;}
+            return date_created + ' ' + hour + time.slice(2,5) + ap;
+            }
+        catch(e){return}
+        }
+        
     function react_to_twitter( data ) {
       for(i=0; i<data.results.length; i++) {
         var result = data.results[i];
-        var ix = result.created_at.indexOf(':');
-        var created_at = result.created_at.slice(0,ix-3);
         
         
         $("#tweet-viewer").append("<div class='tweet'><a href='http://twitter.com/"+result.from_user+"'><img src="+result.profile_image_url+
                                   " width=50px height=50px></a><blockquote><cite>@"+result.from_user+
-                                  " said:</cite> '"+result.text+"'</blockquote><label>"+created_at+"</label></div>")
+                                  " said:</cite> '"+result.text+"'</blockquote><label>"+mil_to_standard(result.created_at)+"</label></div>")
         
       }
     }

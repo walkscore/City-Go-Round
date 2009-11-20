@@ -47,9 +47,9 @@ $(document).ready(function() {
 </div>
 <br>
 <span class="italic">
-    Out of {{agency_count}} total transit agencies,
-    <span class="green"> {{public_count}} ha{% ifequal public_count 1 %}s{%else%}ve{%endifequal%} public data.  </span>
-    <span class="red"> {{no_public_count}} do{% ifequal no_public_count 1 %}es{%endifequal%} not. </span>
+    Out of <b>{{agency_count}}</b> total transit agencies,
+    <span class="green"> <b>{{public_count}}</b></span> ha{% ifequal public_count 1 %}s{%else%}ve{%endifequal%} public data.  
+    <span class="red"> <b>{{no_public_count}}</b></span> do{% ifequal no_public_count 1 %}es{%endifequal%} not. 
 </span>
 <br>
 <select id="public_filter" name="public_filter" onchange="update_filters();">
