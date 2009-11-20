@@ -41,4 +41,4 @@ class NewAppAgencyForm(forms.Form):
 class NewAppLocationForm(forms.Form):
     progress_uuid = forms.CharField(required = True, widget = forms.widgets.HiddenInput)
     location_list = LocationListField(required = True, widget = forms.widgets.HiddenInput)
-    
+    available_globally = forms.BooleanField(required = False, label = u"Globally", widget = forms.widgets.CheckboxInput(attrs={'onchange': 'updateUI()', 'id': 'global'}))

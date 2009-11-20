@@ -312,7 +312,9 @@
   <h3>ADD A NEW TRANSIT APP [Step 2 of 2: Where Your App Works]</h3>    
   <h2>Select locations where your app works:</h2>
   <form id="add-locations-form" action="" method="POST" onkeypress="return event.keyCode!=13" onsubmit="dataManager.sendDataString()">
-    <p><input type="checkbox" name="global" id="global" onchange="updateUI()" />Globally</p>
+    {# This will mostly spit out hidden fields, but it also spits out the global field. #}
+    {{form.as_p}}    
+    {# <p><input type="checkbox" name="global" id="global" onchange="updateUI()" />Globally</p> #}
     <p><input type="checkbox" name="entire-us" id="entire-us" onchange="updateUI()" />Entire U.S.</p>
     <p><input type="checkbox" name="choose-locations" id="choose-locations" onchange="updateUI()" />Select countries or cities</p>
     <div id="location-list">		
@@ -323,8 +325,6 @@
 			<input type="button" id="add" value="Add" onclick="dataManager.addQuery()"/>
 		</div>
     
-    {# This is only going to spew out hidden input fields, so... whatever. #}
-    {{form.as_p}}    
     <input type="submit" value="Add The App!"></input>    
   </form>
 </div>
