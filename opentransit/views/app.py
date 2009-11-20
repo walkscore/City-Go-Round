@@ -68,7 +68,7 @@ def add_form(request):
                 "platform_list": form.platform_list,
                 "category_list": form.category_list,
                 "tag_list": form.tag_list,
-                "gtfs_choice": form.cleaned_data['gtfs_choice'],
+                "supports_gtfs": form.cleaned_data['supports_gtfs'],
             }
             progress.info_form_pickle = pickle.dumps(info_form, pickle.HIGHEST_PROTOCOL)
             
@@ -81,7 +81,7 @@ def add_form(request):
             # Redirect to the appropriate next page, based on whether 
             # they want to associate with agencies, or just associate 
             # with cities and countries.
-            if form.cleaned_data["gtfs_choice"] == "yes_gtfs":
+            if form.cleaned_data["supports_gtfs"]:
                 return redirect_to("apps_add_agencies", progress_uuid = progress.progress_uuid)
             else:
                 return redirect_to("apps_add_locations", progress_uuid = progress.progress_uuid)                    
@@ -104,6 +104,21 @@ def _process_and_remove_progress(progress_uuid):
     transit_app.platforms = info_form['platform_list']
     transit_app.categories = info_form['category_list']
     return transit_app
+
+@requires_valid_progress_uuid
+def add_agencies(request, progress_uuid):
+    if request.method == "POST":
+        form = NewAppAgencyForm(request.POST)
+        if form.is_valid():
+            # TODO davepeck: process this ish!
+            return redirect_to("apps_add_locations", progress_uuid = progress.progress_uuid)
+    else:
+        form = NewAppAgencyForm(initial = {"progress_uuid": progress_uuid})
+
+    template_vars = {
+        "form": form,
+    }
+    return render_to_response(request, 'app/add-agencies.html', template_vars)
     
 @requires_valid_progress_uuid
 def add_locations(request, progress_uuid):
@@ -120,20 +135,6 @@ def add_locations(request, progress_uuid):
     }
     return render_to_response(request, 'app/add-locations.html', template_vars)
     
-@requires_valid_progress_uuid
-def add_agencies(request, progress_uuid):
-    if request.method == "POST":
-        form = NewAppAgencyForm(request.POST)
-        if form.is_valid():
-            # TODO davepeck: process this ish!
-            return redirect_to("apps_add_success")
-    else:
-        form = NewAppAgencyForm(initial = {"progress_uuid": progress_uuid})
-    
-    template_vars = {
-        "form": form,
-    }
-    return render_to_response(request, 'app/add-agencies.html', template_vars)
     
 def add_success(request):
     return render_to_response(request, 'app/add-success.html')

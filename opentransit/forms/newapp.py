@@ -15,7 +15,7 @@ class NewAppGeneralInfoForm(forms.Form):
     categories          = forms.MultipleChoiceField(choices = TransitApp.category_choices(), label = u"Categories (choose at least one):")
     tags                = forms.CharField(required = False, max_length = 1024, min_length = 0, label = u"Extra Tags (comma separated)")
     screen_shot         = AppEngineImageField(required = False, label = u"Screen Shot (optional)")
-    gtfs_choice         = forms.ChoiceField(choices = TransitApp.gtfs_choices(), widget = forms.widgets.RadioSelect(), label = u"Uses Feeds?", initial = "yes_gtfs")    
+    supports_gtfs       = forms.BooleanField(required = False, label = u"My app uses GTFS feeds or other data from specific transit agencies.") 
     
     def clean_title(self):
         if not self.is_unique_slug:

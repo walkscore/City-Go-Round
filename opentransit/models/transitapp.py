@@ -99,10 +99,6 @@ class TransitApp(db.Model):
         return choices
         
     @staticmethod
-    def gtfs_choices():
-        return [("yes_gtfs", "My application makes use of GTFS feeds."), ("no_gtfs", "My application does not make use of GTFS feeds.")]
-    
-    @staticmethod
     def gtfs_public_choices():
         return [("yes_public", "My application supports all publicly available GTFS feeds."), ("no_public", "My application supports specific GTFS feeds. Let me choose them.")]
         
@@ -247,6 +243,7 @@ class TransitAppFormProgress(db.Model):
     progress_uuid = db.StringProperty(indexed = True, required = True)
     last_updated = db.DateTimeProperty(auto_now = True)    
     info_form_pickle = db.BlobProperty() # dictionary of stuff from original form, pickled.
+    agency_form_pickle = db.BlobProperty() # dictionary of stuff from agency form, pickled.
     screen_shot = db.BlobProperty()
 
     @staticmethod
