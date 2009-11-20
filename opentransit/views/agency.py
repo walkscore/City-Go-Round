@@ -89,34 +89,37 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         return render_to_response( request, "agency.html", template_vars)
     location = ''
     
-    agencies = Agency.all().order("name")
-    
-    public_filter = request.GET.get('public','')
-    
+        
     mck = 'agencies'
-    if countryslug:
-        agencies = agencies.filter('countryslug =',countryslug)
-        mck = 'agencies_%s' % countryslug
-        location = countryslug
-    if stateslug:
-        agencies = agencies.filter('stateslug =', stateslug)
-        logging.debug('filtering by stateslug %s' % stateslug)
-        mck = 'agencies_%s_%s' % (countryslug, stateslug)
-        location = stateslug 
     if cityslug:
-        agencies = agencies.filter('cityslug =', cityslug)
         logging.debug('filtering by cityslug %s' % cityslug)
         mck = 'agencies_%s_%s_%s' % (countryslug, stateslug, cityslug)
         location = cityslug
+    elif stateslug:
+        logging.debug('filtering by stateslug %s' % stateslug)
+        mck = 'agencies_%s_%s' % (countryslug, stateslug)
+        location = stateslug 
+    elif countryslug:
+        mck = 'agencies_%s' % countryslug
+        location = countryslug
     
     mem_result = memcache.get(mck)
-    if not mem_result:
-        mc_added = memcache.add(mck, agencies, 60 * 1)
+    if mem_result:
+        agencies = mem_result    
     else:
-        agencies = mem_result
+        agencies = Agency.all().order("name")    
+        if cityslug:
+            agencies = agencies.filter('cityslug =', cityslug)
+        elif stateslug:
+            agencies = agencies.filter('stateslug =', stateslug)
+        elif countryslug:
+            agencies = agencies.filter('countryslug =',countryslug)
+
+        mc_added = memcache.add(mck, agencies, 60 * 1)
     
     agency_list = []
     public_count = no_public_count = 0
+    public_filter = request.GET.get('public','')
     
     for a in agencies:
         if a.date_opened:

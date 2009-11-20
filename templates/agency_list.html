@@ -17,7 +17,7 @@ var agency_count = {{agency_count}};
 function update_filters(){
     var pd = jQuery("#public_filter option:selected").val();
     var location = jQuery("#location_filter option:selected").val();
-    window.location.replace(location + '?public=' + pd)
+    document.location = (location + '?public=' + pd)
     }
 
 $(document).ready(function() { 
