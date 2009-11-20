@@ -18,17 +18,17 @@ urlpatterns += patterns(
 # Petition Views -- Currently only has examples
 urlpatterns += patterns(
     'opentransit.views.petition',
-    url(r'^example_petition_form$', 'example_petition_form', name='example_petition_form'),
-    url(r'^example_petition_success$', 'example_petition_success', name='example_petition_success'),
+    url(r'^example_petition_form/$', 'example_petition_form', name='example_petition_form'),
+    url(r'^example_petition_success/$', 'example_petition_success', name='example_petition_success'),
 )
 
 
 # Feed Views -- Lists, Update Hooks, etc.
 urlpatterns += patterns(
     'opentransit.views.feed',
-    url(r'^admin/feeds/update$', 'update_feed_references', name='update_feed_references'),
-    url(r'^admin/feeds/merge$', 'merge_feeds', name='merge_feeds'),
-    url(r'^feed-references$', 'feed_references', name='feed_references'),
+    url(r'^admin/feeds/update/$', 'update_feed_references', name='update_feed_references'),
+    url(r'^admin/feeds/merge/$', 'merge_feeds', name='merge_feeds'),
+    url(r'^feed-references/$', 'feed_references', name='feed_references'),
 )
 
 

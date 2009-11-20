@@ -8,7 +8,7 @@ from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_key
 class Agency(GeoModel):
     # properties straight out of the NTD import
     ntd_id                = db.StringProperty()
-    gtfs_data_exchange_id = db.StringProperty()
+    gtfs_data_exchange_id = db.ListProperty(unicode)
     name                  = db.StringProperty(required=True)
     short_name            = db.StringProperty()
     city            = db.StringProperty(required=True)
@@ -39,7 +39,11 @@ class Agency(GeoModel):
     def __init__(self, *args, **kwargs):
         # this loads everything to self that's passed as a kwarg, making required and default attribs safe to use
         GeoModel.__init__(self, *args, **kwargs)
+        if "location" in kwargs:
+            self.update_location()
+        self.update_slugs()
         
+    def update_slugs(self):
         self.nameslug = slugify(self.name)
         self.cityslug = slugify(self.city)
         self.stateslug = slugify(self.state)
@@ -76,35 +80,35 @@ class Agency(GeoModel):
             yield agency
         
     @staticmethod
-    def fetch_for_transit_app(transit_app, uniqify = True):
+    def fetch_for_transit_app(transit_app, uniquify = True):
         """Return a list of Agency entities, by default unique, that the given transit app supports"""
-        return [agency for agency in Agency.iter_for_transit_app(transit_app, uniqify)]
+        return [agency for agency in Agency.iter_for_transit_app(transit_app, uniquify)]
         
     @staticmethod
-    def iter_for_transit_app(transit_app, uniqify = True):
+    def iter_for_transit_app(transit_app, uniquify = True):
         """Return an iterator over Agency entities, by default unique, that the given transit app supports"""
         seen = {}
         for explicit_agency in Agency.iter_explicitly_supported_for_transit_app(transit_app):
-            if (not uniqify) or (explicit_agency.key() not in seen):
-                if uniqify: seen[explicit_agency.key()] = True
+            if (not uniquify) or (explicit_agency.key() not in seen):
+                if uniquify: seen[explicit_agency.key()] = True
                 yield explicit_agency
         if transit_app.supports_all_public_agencies:
             for public_agency in Agency.all_public_agencies():
-                if (not uniqify) or (public_agency.key() not in seen):
-                    if uniqify: seen[public_agency.key()] = True
+                if (not uniquify) or (public_agency.key() not in seen):
+                    if uniquify: seen[public_agency.key()] = True
                     yield public_agency
         
     @staticmethod
-    def fetch_for_transit_apps(transit_apps, uniqify = True):
+    def fetch_for_transit_apps(transit_apps, uniquify = True):
         """Return a list of Agency entities, by default unique, that at least one transit application in the transit_apps list supports."""
-        return [agency for agency in Agency.iter_for_transit_apps(transit_apps, uniqify)]
+        return [agency for agency in Agency.iter_for_transit_apps(transit_apps, uniquify)]
 
     @staticmethod
-    def iter_for_transit_apps(transit_apps, uniqify = True):
+    def iter_for_transit_apps(transit_apps, uniquify = True):
         """Return an iterator over Agency entities, by default unique, that at least one transit application in the transit_apps list supports."""
         seen = {}
         for transit_app in transit_apps:
-            for agency in Agency.iter_for_transit_app(transit_app, uniqify = False):
-                if (not uniqify) or (agency.key() not in seen):
-                    if uniqify: seen[agency.key()] = True
+            for agency in Agency.iter_for_transit_app(transit_app, uniquify = False):
+                if (not uniquify) or (agency.key() not in seen):
+                    if uniquify: seen[agency.key()] = True
                     yield agency        

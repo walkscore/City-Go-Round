@@ -1,6 +1,7 @@
 from django import forms
 from ..models import TransitApp
 from ..utils.slug import slugify
+from ..utils.misc import uniquify
 from ..formfields import AppEngineImageField, LocationListField, AgencyListField
 
 class NewAppGeneralInfoForm(forms.Form):
@@ -14,7 +15,7 @@ class NewAppGeneralInfoForm(forms.Form):
     categories          = forms.MultipleChoiceField(choices = TransitApp.category_choices(), label = u"Categories (choose at least one):")
     tags                = forms.CharField(required = False, max_length = 1024, min_length = 0, label = u"Extra Tags (comma separated)")
     screen_shot         = AppEngineImageField(required = False, label = u"Screen Shot (optional)")
-    gtfs_choice         = forms.ChoiceField(choices = TransitApp.gtfs_choices(), widget = forms.widgets.RadioSelect(), label = u"Uses Feeds?", initial = "yes_gtfs")    
+    supports_gtfs       = forms.BooleanField(required = False, label = u"My app uses GTFS feeds or other data from specific transit agencies.") 
     
     def clean_title(self):
         if not self.is_unique_slug:
@@ -31,7 +32,15 @@ class NewAppGeneralInfoForm(forms.Form):
         
     @property
     def tag_list(self):
-        return [tag.strip() for tag in self.cleaned_data['tags'].split(',')]
+        return uniquify([tag.strip() for tag in self.cleaned_data['tags'].split(',')] + self.platform_list + self.category_list)
+        
+    @property
+    def platform_list(self):
+        return uniquify([TransitApp.PLATFORMS[platform_choice] for platform_choice in platforms])
+        
+    @property
+    def category_list(self):
+        return uniquify([TransitApp.PLATFORMS[category_choice] for category_choice in categories])        
 
 class NewAppAgencyForm(forms.Form):
     progress_uuid = forms.CharField(required = True, widget = forms.widgets.HiddenInput)

@@ -71,7 +71,7 @@ jQuery(document).ready(function() {
                 var coords = p.Point.coordinates;
                 var lon = coords[0];
                 var lat = coords[1];
-                var nearby_url = '/agencies/search/?type=location&format=json';
+                var nearby_url = '/agencies/search/?type=location&showapps=yes&format=json';
                 nearby_url += '&lat=' + lat + '&lon=' + lon;
                 jQuery.getJSON(nearby_url, display_apps);
                 }
