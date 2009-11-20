@@ -1,6 +1,5 @@
 import time
 import logging
-from datetime import datetime
 from google.appengine.ext import db
 from google.appengine.api import memcache
 from geo import geotypes
