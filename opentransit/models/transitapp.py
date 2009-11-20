@@ -69,11 +69,11 @@ class TransitAppFormProgress(db.Model):
     
 class TransitApp(db.Model):
     PLATFORMS = { 
-        "mobile_web": "Mobile Web",
-        "iphone": "iPhone", 
         "android": "Android", 
-        "palm_webos": "Palm WebOS", 
         "blackberry": "Blackberry",
+        "iphone": "iPhone", 
+        "mobile_web": "Mobile Web",
+        "palm_webos": "Palm WebOS", 
         "sms": "SMS",
         "other": "Other",
     }
@@ -85,13 +85,32 @@ class TransitApp(db.Model):
         "walking": "Walking",
     }
     
+    GTFS = {
+        "yes_gtfs": "My application makes use of GTFS feeds.",
+        "no_gtfs": "My application does not make use of GTFS feeds.",
+    }
+    
     @staticmethod 
     def platform_choices():
-        return [(short_name, label) for short_name, label in TransitApp.PLATFORMS.iteritems()]
+        if hasattr(TransitApp, '_platform_choices'):
+            return TransitApp._platform_choices
+        choices = [(short_name, label) for short_name, label in TransitApp.PLATFORMS.iteritems()]
+        choices.sort()
+        TransitApp._platform_choices = choices
+        return choices
     
     @staticmethod
     def category_choices():
-        return [(short_name, label) for short_name, label in TransitApp.CATEGORIES.iteritems()]
+        if hasattr(TransitApp, '_category_choices'):
+            return TransitApp._category_choices
+        choices = [(short_name, label) for short_name, label in TransitApp.CATEGORIES.iteritems()]
+        choices.sort()
+        TransitApp._category_choices = choices
+        return choices
+        
+    @staticmethod
+    def gtfs_choices():
+        return [("yes_gtfs", "My application makes use of GTFS feeds."), ("no_gtfs", "My application does not make use of GTFS feeds.")]
     
     slug                = db.StringProperty(indexed = True)
     title               = db.StringProperty(required = True)
@@ -224,6 +243,6 @@ class TransitApp(db.Model):
                 yield transit_app
 
     
-# class TransitAppLocation(GeoModel):
-#     transit_app = db.ReferenceProperty(TransitApp, collection="explicitly_supported_locations")
+class TransitAppLocation(GeoModel):
+    transit_app = db.ReferenceProperty(TransitApp, collection_name = "explicitly_supported_locations")
 

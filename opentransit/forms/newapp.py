@@ -10,8 +10,11 @@ class NewAppGeneralInfoForm(forms.Form):
     author_name         = forms.CharField(max_length = 128, min_length = 6, label = u"Author's Name")
     author_email        = forms.EmailField(label = u"Author's Email (kept private)")
     long_description    = forms.CharField(min_length = 0, max_length = 2048, widget = forms.widgets.Textarea(attrs = {'rows': 6, 'cols': 32}), label = u"Extended Description")
-    tags                = forms.CharField(max_length = 256, min_length = 0, label = u"Tags (comma separated)")
+    platforms           = forms.MultipleChoiceField(choices = TransitApp.platform_choices(), label = u"Platforms supported:")
+    categories          = forms.MultipleChoiceField(choices = TransitApp.category_choices(), label = u"Categories (choose at least one):")
+    tags                = forms.CharField(max_length = 256, min_length = 0, label = u"Extra Tags (comma separated)")
     screen_shot         = AppEngineImageField(required = False, label = u"Screen Shot (optional)")
+    uses_gtfs           = forms.ChoiceField(choices = TransitApp.gtfs_choices(), widget = forms.widgets.RadioSelect(), label = u"Uses Feeds?", initial = "yes_gtfs")    
     
     def clean_title(self):
         if not self.is_unique_slug:
