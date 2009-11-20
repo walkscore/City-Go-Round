@@ -1,9 +1,15 @@
 How to bootstrap data into the database from complete scratch
 
-(1) Have Jehiah screen-scrape the NTD list. Save the file as ntdprogram.csv. We already have that.
-(2) Get jehiah's spreadsheet of agencies to GTFS-data-exchange ids. Here: https://spreadsheets.google.com/ccc?key=0Atow-tNx-NwbdGRkWmstaS1pRDl3UVpqdDBUUzUybUE&hl=en&invite=CID1xf4M.
-   - save it as "merged-agencies.csv"
-(3) Run "$ python scrub_ntd.py". This will spit out "agencies.csv".
-(4) Go to the directory where app.yaml is
-(5) $ export PYTHONPATH=/path/to/opentransitdata:path/to/opentransitdata/opentransit
-(6) $ /path/to/google_appengine/appcfg.py upload_data . --filename=./data/agencies.csv --kind=Agency --config_file=./data/agency_loader.py --url=http://localhost:8080/remote_api --has_header
+Input files:
+  service.csv - ntdid => passenger_miles
+  ntdprogram.csv - canonical agency name => agency contact information
+  ntd_agencies.csv - base NTD agency list
+  gtfs_data_exchange_ids.csv - ntdid => gtfs_data_exchange_id
+  
+build agencies.csv from input files. This takes a while, because geocoding is fairly slow.
+$ python compile_importable_csv.py
+
+use the bulk importer to load everything into the db
+$ cd ..
+$ export PYTHONPATH=/path/to/opentransitdata:path/to/opentransitdata/opentransit
+$ /path/to/google_appengine/appcfg.py upload_data . --filename=./data/agencies.csv --kind=Agency --config_file=./data/agency_loader.py --url=http://localhost:8080/remote_api --has_header
