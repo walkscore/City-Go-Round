@@ -427,6 +427,15 @@
         border: 0;
     }
     
+    #add-app-form table ul {
+        list-style-type: none;
+    }
+    
+    #add-app-form table input[type="radio"] {
+        border: 0;
+        width: 20px;
+    }
+    
     #add-app-form .button {
     	margin: 8px 0 6px 75px;
     }

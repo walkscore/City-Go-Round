@@ -85,6 +85,11 @@ class TransitApp(db.Model):
         "walking": "Walking",
     }
     
+    GTFS = {
+        "yes_gtfs": "My application makes use of GTFS feeds.",
+        "no_gtfs": "My application does not make use of GTFS feeds.",
+    }
+    
     @staticmethod 
     def platform_choices():
         if hasattr(TransitApp, '_platform_choices'):
@@ -102,6 +107,10 @@ class TransitApp(db.Model):
         choices.sort()
         TransitApp._category_choices = choices
         return choices
+        
+    @staticmethod
+    def gtfs_choices():
+        return [("yes_gtfs", "My application makes use of GTFS feeds."), ("no_gtfs", "My application does not make use of GTFS feeds.")]
     
     slug                = db.StringProperty(indexed = True)
     title               = db.StringProperty(required = True)
