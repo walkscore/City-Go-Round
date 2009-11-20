@@ -13,17 +13,32 @@
 {% block content %}
 <script type="text/javascript">
 
-$(document).ready(function() 
-    { 
-        $("#agency_list")
-        .tablesorter()
-        .tablesorterPager({container : $('#pager'), size:40}); 
-    } 
-); 
+function update_filters(){
+    var pd = jQuery("#public_filter option:selected").val();
+    var location = jQuery("#location_filter option:selected").val();
+    window.location.replace(location + '?public=' + pd)
+    
+    }
+$(document).ready(function() { 
+    //make sure public dropdown selected appropriately
+    var po = getUrlParam('public');
+    jQuery("#public_filter option[value=" + po + "]").attr('selected','selected')
+
+    jQuery("#agency_list")
+    .tablesorter()
+    .tablesorterPager({container : $('#pager'), size:40}); 
+    
+    }); 
    
+
 </script>
 
-<div class="blue_background">All {{location|upper}} Transit Agencies</div>
+<div class="blue_background">
+All {{location|upper}} Transit Agencies
+{% ifequal public_filter 'public' %} with Public Data 
+{% else %} {% ifequal public_filter 'no_public' %} without Public Data 
+{% endifequal %}{% endifequal %}
+</div>
 <br>
 <span class="italic">
     {{agency_count}} transit agencies in the {{location}}.
@@ -31,13 +46,13 @@ $(document).ready(function()
     <span class="red"> {{no_public_count}} do not. </span>
     </span>
 
-<select name="public_filter">
+<select id="public_filter" name="public_filter" onchange="update_filters();">
    <option value="all">Public Data</option>
    <option value="public">Has Public Data</option>
    <option value="no_public">No Public Data</option>
 </select>
 
-<select name="location_filter" onchange="window.location.replace(this.value)">
+<select id="location_filter" name="location_filter" onchange="update_filters()">
    <option value="/agencies/us/">All States
   {% for s in states %}
    <option value="/agencies/us/{{s}}"{% ifequal location s %} selected {% endifequal %}>{{s|upper}}
@@ -60,6 +75,7 @@ $(document).ready(function()
 </thead> 
 <tbody> 
 {% for a in agencies %}
+{% if a.hide %}{% else %}
 <tr class="{% if a.date_opened %}agency_public{% else %}agency_no_public {%endif %}"> 
     <td><a href="/agencies/{{a.urlslug}}">{{a.name}}</a></a></td> 
     <td>{% if a.date_opened %}Yes{% else %}No{% endif %}</td>
@@ -70,6 +86,7 @@ $(document).ready(function()
     <td>{{a.twitter}}</td> 
     <td><a href="{{a.agency_url}}" target="_blank">{{a.agency_url}}</a></td> 
 </tr> 
+{% endif %}
 {% endfor %}
 </tbody> 
 </table>

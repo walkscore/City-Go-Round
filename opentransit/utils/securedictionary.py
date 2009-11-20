@@ -13,6 +13,8 @@ import django.shortcuts
 from django.conf import settings
 from datetime import datetime
 
+from .quote import url_quote, url_quote_plus, url_unquote, url_unquote_plus
+
 try:
     from functools import update_wrapper
 except ImportError:

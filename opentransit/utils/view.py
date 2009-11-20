@@ -22,10 +22,8 @@ def redirect_to(view, *args, **kwargs):
     Similar to urlresolvers.reverse, but returns an HttpResponseRedirect for the
     URL.
     """
-    url = reverse(view, *args, **kwargs)
-    response = HttpResponseRedirect(url)
-    
-    return response
+    url = reverse(view, args = args, kwargs = kwargs)
+    return HttpResponseRedirect(url)
     
 def not_implemented(request):
     return render_to_response(request, "not-implemented.html")

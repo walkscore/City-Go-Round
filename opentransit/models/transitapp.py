@@ -243,11 +243,11 @@ class TransitAppFormProgress(db.Model):
     """Holds on to key pieces of form progress that cannot be sent through invisible input fields."""
     progress_uuid = db.StringProperty(indexed = True, required = True)
     last_updated = db.DateTimeProperty(auto_now = True)    
-    general_info_form = db.BlobProperty() # pickled django form object, post-validation
+    info_form_pickle = db.BlobProperty() # dictionary of stuff from original form, pickled.
     screen_shot = db.BlobProperty()
 
     @staticmethod
     def new_with_uuid():
-        return TransitAppFormProgress(progress_uuid = uuid4())
+        return TransitAppFormProgress(progress_uuid = str(uuid4()).replace('-', ''))
     
 

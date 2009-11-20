@@ -1,6 +1,7 @@
 from django.http import Http404
 from .models import TransitApp
 from .utils.httpbasicauth import authenticate_request
+from .utils.progressuuid import is_progress_uuid_valid
 
 def requires_http_basic_authentication(view_function, correct_username, correct_password, realm = None):
     def wrapper(request, *args, **kwargs):
@@ -16,4 +17,11 @@ def requires_valid_transit_app_slug(view_function):
             return view_function(request, transit_app, *args, **kwargs)
         else:
             raise Http404
+    return wrapper
+    
+def requires_valid_progress_uuid(view_function):
+    def wrapper(request, progress_uuid, *args, **kwargs):
+        if not is_progress_uuid_valid(request, progress_uuid):
+            raise Http404
+        return view_function(request, progress_uuid, *args, **kwargs)
     return wrapper

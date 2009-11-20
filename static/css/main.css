@@ -434,6 +434,10 @@
         list-style-type: none;
     }
     
+    #add-app-form table ul.errorlist li {
+        color: red;
+    }
+    
     #add-app-form table input[type="radio"] {
         border: 0;
         width: 20px;
@@ -614,9 +618,16 @@
 	#choose-locations {
 		/*display: none;*/
 	}
-	#locations p
-
-
+	#locations label {
+	 width: 120px;
+	 text-align: right;
+	 margin-right: 5px;
+	 background: url(/images/confirmed.gif) 0 0 no-repeat;
+	}
+  #locations span {
+	 width: 80px;
+	 margin-right: 15px;
+	}
 	
 /*********** CUSTOM STUFF ************/
 	.bluegreen {
