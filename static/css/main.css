@@ -43,6 +43,9 @@
 		border-color: #ccc;
 		background-color: #f7f7f7;
 	}
+	.hidden {
+		display: none;
+	}
 	
 /*********** Fonts ****************/
 	h1,h2,h3,h4,h5,h6 { 
@@ -89,7 +92,7 @@
 	#recently-added-list h3 { color: #18b541; font-size: 18px; }
 
 	
-  p, a, ul, ol, blockquote, label {
+  p, a, ul, ol, blockquote, label, span {
 		font:12px Verdana, Arial, Helvetica, sans-serif;
 		color: #555;
 	}
@@ -612,11 +615,32 @@
 	
 /*********** APP ADD FORMS ************/
 	
-	#locations {
-	 display: none;
+	#choose-locations {
+		/*display: none;*/
 	}
-
-
+	#locations p {
+		min-width: 140px;
+		margin-right: 6px;
+		float: left;
+		display: block;
+		clear: both;
+		height: 20px;
+	}
+	#locations span {
+		margin-right: 8px;
+		color: #888;
+		background: url(/images/confirmed.gif) 0 0 no-repeat;
+		text-indent: 30px;
+		font-size: 10px;
+		height: 20px;
+	}
+	#locations a {
+		font-size: 10px;
+		height: 20px;
+	}
+	#location-list label {
+		clear: both;
+	}
 	
 /*********** CUSTOM STUFF ************/
 	.bluegreen {
