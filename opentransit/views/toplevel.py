@@ -52,12 +52,7 @@ def contact_thanks(request):
     }    
 
     return render_to_response(request, 'contact-thanks.html', template_vars)
-    
-def faq(request):  
-    return render_to_response(request, 'faq.html')
 
-def about(request):  
-    return render_to_response(request, 'about.html')
+def static(request, template):
+    return render_to_response(request, template)
     
-def petition_signed(request):  
-    return render_to_response(request, 'petition_signed.html')
