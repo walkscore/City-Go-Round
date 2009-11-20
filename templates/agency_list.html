@@ -31,6 +31,8 @@ $(document).ready(function() {
         .tablesorterPager({container : $('#pager'), size:40}); 
         }
     else {
+        jQuery("#agency_list")
+        .tablesorter()
         jQuery('#pager')[0].style.display='none';
         }
     }); 
@@ -47,9 +49,9 @@ $(document).ready(function() {
 </div>
 <br>
 <span class="italic">
-    Out of <b>{{agency_count}}</b> total transit agencies,
-    <span class="green"> <b>{{public_count}}</b></span> ha{% ifequal public_count 1 %}s{%else%}ve{%endifequal%} public data.  
-    <span class="red"> <b>{{no_public_count}}</b></span> do{% ifequal no_public_count 1 %}es{%endifequal%} not. 
+    Transit agencies in {% ifequal location "us" %}the {%endifequal %}{{location|upper}}: <b>{{agency_count}}</b>
+    Agencies with public data: <span class="green"> <b>{{public_count}}</b></span>.
+    Agencies with no public data: <span class="red"> <b>{{no_public_count}}</b></span>.
 </span>
 <br>
 <select id="public_filter" name="public_filter" onchange="update_filters();">
