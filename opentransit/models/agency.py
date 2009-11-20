@@ -51,7 +51,8 @@ class Agency(GeoModel):
                 'name':self.name,
                 'gtfs_data_exchange_id':self.gtfs_data_exchange_id,
                 'date_opened':self.date_opened.isoformat(" ") if self.date_opened else None,
-                'passenger_miles':self.passenger_miles}
+                'passenger_miles':self.passenger_miles,
+                'is_public':self.is_public}
                 
     @property
     def is_public(self):
