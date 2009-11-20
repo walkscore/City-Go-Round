@@ -9,6 +9,7 @@ from ..models import FeedReference, Agency
 from urlparse import urlparse
 import re
 from datetime import datetime
+from django.http import HttpResponse
 
 def id_from_gtfs_data_exchange_url(url):
     return re.findall( "/agency/(.*)/", urlparse( url )[2] )[0]
@@ -79,3 +80,27 @@ def feed_references(request):
     
     return render_to_response( request, "feed_references.html", {'all_references':refs_with_elapsed} )
 
+def merge_feeds(request):
+    matched_gtfs_data_exchange_ids = set()
+    unmatched_agencies = set()
+    unmatched_feeds = set()
+    
+    # get all agencies
+    for agency in Agency.all():
+        # collect the gtfs_data_exchange_id of the ones that have them
+        if agency.gtfs_data_exchange_id is not None:
+            matched_gtfs_data_exchange_ids.add( agency.gtfs_data_exchange_id )
+        # the rest go into the 'unmatched agencies' bucket
+        else:
+            unmatched_agencies.add( agency )
+    
+    # get all feeds
+    for feed in FeedReference.all():
+        # the ones without ids in the matched agencies bucket go into the 'unmatched feeds' bucket
+        if feed.gtfs_data_exchange_id not in matched_gtfs_data_exchange_ids:
+            unmatched_feeds.add( feed )
+    
+    logging.info( unmatched_agencies )
+    logging.info( unmatched_feeds )
+    
+    return render_to_response( request, "feed-merge.html", {'agencies':unmatched_agencies,'feeds':unmatched_feeds} )
