@@ -1,17 +1,20 @@
 from django import forms
 from ..models import TransitApp
 from ..utils.slug import slugify
-from ..formfields import AppEngineImageField
+from ..formfields import AppEngineImageField, LocationListField, AgencyListField
 
-class AddAppForm(forms.Form):
+class NewAppGeneralInfoForm(forms.Form):
     title               = forms.CharField(max_length = 64, min_length = 6, label = u"Title")
     description         = forms.CharField(max_length = 140, min_length = 6, label = u"One Sentence Description")
     url                 = forms.URLField(verify_exists = False, min_length = 6, label = u"App URL")
     author_name         = forms.CharField(max_length = 128, min_length = 6, label = u"Author's Name")
     author_email        = forms.EmailField(label = u"Author's Email (kept private)")
     long_description    = forms.CharField(min_length = 0, max_length = 2048, widget = forms.widgets.Textarea(attrs = {'rows': 6, 'cols': 32}), label = u"Extended Description")
-    tags                = forms.CharField(max_length = 256, min_length = 0, label = u"Tags (comma separated)")
+    platforms           = forms.MultipleChoiceField(choices = TransitApp.platform_choices(), label = u"Platforms supported:")
+    categories          = forms.MultipleChoiceField(choices = TransitApp.category_choices(), label = u"Categories (choose at least one):")
+    tags                = forms.CharField(max_length = 256, min_length = 0, label = u"Extra Tags (comma separated)")
     screen_shot         = AppEngineImageField(required = False, label = u"Screen Shot (optional)")
+    gtfs_choice         = forms.ChoiceField(choices = TransitApp.gtfs_choices(), widget = forms.widgets.RadioSelect(), label = u"Uses Feeds?", initial = "yes_gtfs")    
     
     def clean_title(self):
         if not self.is_unique_slug:
@@ -29,3 +32,13 @@ class AddAppForm(forms.Form):
     @property
     def tag_list(self):
         return [tag.strip() for tag in self.cleaned_data['tags'].split(',')]
+
+class NewAppAgencyForm(forms.Form):
+    progress_uuid = forms.CharField(required = True, widget = forms.widgets.HiddenInput)
+    public_choice = forms.ChoiceField(choices = TransitApp.gtfs_public_choices(), widget = forms.widgets.RadioSelect(), label = u"", initial = "yes_public")
+    agency_list = AgencyListField(required = False, widget = forms.widgets.HiddenInput)
+    
+class NewAppLocationForm(forms.Form):
+    progress_uuid = forms.CharField(required = True, widget = forms.widgets.HiddenInput)
+    location_list = LocationListField(required = True, widget = forms.widgets.HiddenInput)
+    

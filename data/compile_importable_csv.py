@@ -4,6 +4,8 @@ try:
 except ImportError:
     import json
 import re
+from geocoder import geocode_name
+import time
 
 """
     'ntd_id': 'Trs_Id',
@@ -95,6 +97,8 @@ SERVICE_LEVEL_FILENAME = "service.csv"
 OUT_FILENAME = "agencies.csv"
 GTFS_IDS_FILENAME = "gtfs_data_exchange_ids.csv"
 SCREENSCRAPE_FILENAME = "ntdprogram.csv"
+API_KEY = "ABQIAAAARFBfEeey0ac5JKru_9nB4BRNy0I-ty1ceBzDzdazMPQQJBF-YBTicqpsbJEKspGxit8ea-iSAtSD9A"
+DELAY = 3
 
 service_level = get_service_level( SERVICE_LEVEL_FILENAME )
 data_exchange_ids = get_gtfs_data_exchange_ids( GTFS_IDS_FILENAME )
@@ -105,6 +109,8 @@ cw = csv.writer( open( OUT_FILENAME, "w" ) )
 
 header = cr.next()
 headerindex = dict( zip( header, range(len(header)) ) )
+
+cw.writerow( ('ntd_id', 'name', 'short_name', 'city', 'state', 'country', 'agency_url', 'address', 'service_area_population', 'agency_service_level', 'gtfs_data_exchange_id', 'contact_name', 'contact_email', 'location') ) 
 
 for row in cr:
     ntd_id = row[ headerindex["Trs_Id"] ].strip()
@@ -138,4 +144,9 @@ for row in cr:
     
     contact_info = contact_information.get( name, {} )
     
-    cw.writerow( (ntd_id, name, short_name, city, state, country, agency_url, address, service_area_population, agency_service_level, gtfs_data_exchange_id, contact_info.get('name'), contact_info.get('email')) )
+    coords = geocode_name( city, state, API_KEY )
+    location = str(coords[1]) + ',' + str(coords[0])
+    
+    cw.writerow( (ntd_id, name, short_name, city, state, country, agency_url, address, service_area_population, agency_service_level, gtfs_data_exchange_id, contact_info.get('name'), contact_info.get('email'), location) )
+    
+    time.sleep(0.5)

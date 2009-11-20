@@ -6,19 +6,22 @@ import logging
 # Log a message each time this module get loaded.
 logging.info('Loading %s, app version = %s', __name__, os.getenv('CURRENT_VERSION_ID'))
 
-# Declare the Django version we need.
-from google.appengine.dist import use_library
-use_library('django', '1.1')
+def bootstrap_django():
+    # Declare the Django version we need.
+    from google.appengine.dist import use_library
+    use_library('django', '1.1')
 
-# Fail early if we can't import Django 1.x.  Log identifying information.
-import django
-logging.info('django.__file__ = %r, django.VERSION = %r', django.__file__, django.VERSION)
-assert django.VERSION[0] >= 1, "This Django version is too old"
+    # Fail early if we can't import Django 1.x.  Log identifying information.
+    import django
+    logging.info('django.__file__ = %r, django.VERSION = %r', django.__file__, django.VERSION)
+    assert django.VERSION[0] >= 1, "This Django version is too old"
 
-# Custom Django configuration.
-os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
-from django.conf import settings
-settings._target = None
+    # Custom Django configuration.
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'settings'
+    from django.conf import settings
+    settings._target = None
+    
+bootstrap_django()
 
 # AppEngine imports.
 from google.appengine.ext.webapp import util
@@ -46,8 +49,11 @@ django.newforms = django.forms
 
 # Django signal handler to log an exception
 def log_exception(*args, **kwds):
-  cls, err = sys.exc_info()[:2]
-  logging.exception('Exception in request: %s: %s', cls.__name__, err)
+  if sys is None:
+      pass
+  else:
+      cls, err = sys.exc_info()[:2]
+      logging.exception('Exception in request: %s: %s', cls.__name__, err)
 
 # Log all exceptions detected by Django.
 django.core.signals.got_request_exception.connect(log_exception)

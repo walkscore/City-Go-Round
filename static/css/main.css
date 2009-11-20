@@ -409,9 +409,31 @@
     	width: 250px;
     	min-width: 250px;
     }
+
+    #add-app-form table textarea {
+    	font: 12px/12px Verdana, Arial, Helvetica, sans-serif;
+    	margin-bottom: 2px;
+    	border: 1px solid #999;
+    	width: 250px;
+    	min-width: 250px;
+    }
+    
+    #add-app-form table select {
+        width: 250px;
+        min-width: 250px;
+    }
     
     #add-app-form table input[type="file"] {
-        border: 1px solid #999;
+        border: 0;
+    }
+    
+    #add-app-form table ul {
+        list-style-type: none;
+    }
+    
+    #add-app-form table input[type="radio"] {
+        border: 0;
+        width: 20px;
     }
     
     #add-app-form .button {

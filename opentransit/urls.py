@@ -27,6 +27,7 @@ urlpatterns += patterns(
 urlpatterns += patterns(
     'opentransit.views.feed',
     url(r'^admin/feeds/update$', 'update_feed_references', name='update_feed_references'),
+    url(r'^admin/feeds/merge$', 'merge_feeds', name='merge_feeds'),
     url(r'^feed-references$', 'feed_references', name='feed_references'),
 )
 
@@ -43,7 +44,8 @@ urlpatterns += patterns(
     url(r'^agencies/(?P<countryslug>[-\w ]+)/(?P<stateslug>[-\w ]+)/(?P<cityslug>[-\w ]+)/(?P<nameslug>[-\w]+)/$', 'agencies'),
     url(r'^agencies/(?P<countryslug>[-\w ]+)/(?P<stateslug>[-\w ]+)/(?P<cityslug>[-\w ]+)/(?P<nameslug>[-\w]+)/edit/$', 'edit_agency'),
     url(r'^agencies/(?P<agency>\d+)/$', 'agencies'),
-    url(r'^admin/agencies/delete/$', 'delete_all_agencies')
+    url(r'^admin/agencies/delete/$', 'delete_all_agencies'),
+    url(r'^admin/agencies/create-from-feed/(?P<feed_id>[-\w ]+)/$', 'create_agency_from_feed')
 )
 
 
