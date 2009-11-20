@@ -8,7 +8,7 @@ from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_key
 class Agency(GeoModel):
     # properties straight out of the NTD import
     ntd_id                = db.StringProperty()
-    gtfs_data_exchange_id = db.StringProperty()
+    gtfs_data_exchange_id = db.ListProperty(unicode)
     name                  = db.StringProperty(required=True)
     short_name            = db.StringProperty()
     city            = db.StringProperty(required=True)

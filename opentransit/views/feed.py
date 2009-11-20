@@ -88,8 +88,9 @@ def merge_feeds(request):
     # get all agencies
     for agency in Agency.all():
         # collect the gtfs_data_exchange_id of the ones that have them
-        if agency.gtfs_data_exchange_id is not None:
-            matched_gtfs_data_exchange_ids.add( agency.gtfs_data_exchange_id )
+        if len( agency.gtfs_data_exchange_id ) != 0:
+            for gtfsdeid in agency.gtfs_data_exchange_id:
+                matched_gtfs_data_exchange_ids.add( gtfsdeid )
         # the rest go into the 'unmatched agencies' bucket
         else:
             unmatched_agencies.add( agency )
@@ -103,7 +104,7 @@ def merge_feeds(request):
     logging.info( unmatched_agencies )
     logging.info( unmatched_feeds )
     
-    return render_to_response( request, "feed-merge.html", {'agencies':unmatched_agencies,'feeds':unmatched_feeds} )
+    return render_to_response( request, "feed-merge.html", {'agencies':Agency.all(),'feeds':unmatched_feeds} )
     
 
     

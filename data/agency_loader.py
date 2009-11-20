@@ -11,6 +11,9 @@ from opentransit.models import Agency
 def smart_utf8(x):
     return unicode(x, encoding="utf_8") if x!="" else None
         
+def smart_list(x):
+    return [unicode(x, encoding="utf_8")] if x!="" else []
+        
 def smart_int(x):
     return int(x) if x!="" else None
 
@@ -32,7 +35,7 @@ class AgencyLoader(bulkloader.Loader):
                                         ('address', smart_utf8),
                                         ('service_area_population', smart_int),
                                         ('passenger_miles', smart_int),
-                                        ('gtfs_data_exchange_id', smart_utf8),
+                                        ('gtfs_data_exchange_id', smart_list),
                                         ('executive', smart_utf8),
                                         ('executive_email', smart_utf8),
                                         ('location',str),
