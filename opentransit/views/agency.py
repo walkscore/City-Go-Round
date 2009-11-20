@@ -6,7 +6,6 @@ from geo import geotypes
 
 from ..forms import AgencyForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, bad_request, render_to_json
-from ..utils.misc import uniquify
 from ..models import Agency, FeedReference, TransitApp
 
 from django.http import HttpResponse, HttpResponseRedirect
@@ -14,6 +13,14 @@ from ..utils.slug import slugify
 
 from StringIO import StringIO
 import csv
+
+
+def uniquify(seq): 
+    # not order preserving 
+    set = {} 
+    map(set.__setitem__, seq, []) 
+    return set.keys()
+
 
 def edit_agency(request, agency_id):
     agency = Agency.get_by_id( int(agency_id) )
@@ -36,6 +43,9 @@ def edit_agency(request, agency_id):
             agency.updated          = form.cleaned_data['updated']
             agency.phone            = form.cleaned_data['phone']
             agency.gtfs_data_exchange_id      = form.cleaned_data['gtfs_data_exchange_id'].split(",") if form.cleaned_data['gtfs_data_exchange_id'] != "" else []
+            
+            agency.update_slugs()
+            
             agency.put()
     else:
         form = AgencyForm(initial={'name':agency.name,
@@ -185,51 +195,36 @@ def agencies_search(request):
     params
      - type (location or city)
      - lat/lon [location]
-     - showapps [yes/no, default is no]
      - city/state [city]
     returns:
      list of nearby (location) or matching (city) agencies, and their associated apps
     """
-    def agencies_to_dictionary(agencies, include_apps):
-        # TODO XXX davepeck: how does this relate to Agency.jsonifiable()?        
+    def agencies_to_dictionary(agencies):
+        ag = {'agencies' : []}
+        for a in agencies:
+            ad = {}
+            for k in 'name,city,urlslug,state'.split(','):
+                ad[k] = getattr(a,k)
+            #unsure how to get apps...
+            ad['apps'] = list(TransitApp.iter_for_agency(a))
+            ag['agencies'].append(ad)
+        ag['apps'] = list(TransitApp.iter_for_agencies(agencies))
+        return ag                
 
-        # TODO XXX davepeck: the performance of this code is ABYSMAL where tranit apps are concerned. FIX!!!!!        
-        agency_dictionaries = []        
-        for agency in agencies:
-            agency_dictionary = {
-                "name": agency.name,
-                "city": agency.city,
-                "urlslug": agency.urlslug,
-                "state": agency.state,
-                "key_encoded": str(agency.key()),
-            }
-            if include_apps:
-                agency_dictionary["apps"] = list(TransitApp.iter_for_agency(agency)) # TODO DAVEPECK Not only bad perf, but is this truly jsonifiable?
-            else:
-                agency_dictionary["apps"] = []
-                
-            agency_dictionaries.append(agency_dictionary)
-            
-        dictionary = { "agencies": agency_dictionaries }        
-        if include_apps:
-            dictionary["apps"] = list(TransitApp.iter_for_agencies(agencies)) # TODO DAVEPECK Not only bad perf, but is this truly jsonifiable?
-        else:
-            dictionary["apps"] = []
-        return dictionary
+    def check_lat_lon(lat, lon):
+        try:
+            return float(lat), float(lon)
+        except:
+            return (0,0)
         
     #ensure location type search
     rg = request.GET.get
     search_type = rg('type','')
-    showapps = rg('showapps', 'no')
     lat = rg('lat','')
     lon = rg('lon','')
     city = rg('city','')
     state = rg('state','')
     format = rg('format','html')
-    
-    if not showapps in ['yes', 'no']:
-        return bad_request('invalid value for showapps')        
-    include_apps = (showapps == 'yes')
 
     if not search_type in ['location', 'city', 'state']:
         return bad_request('invalid search type')
@@ -241,11 +236,9 @@ def agencies_search(request):
     
     if search_type == 'location':
         #get all agencies that are nearby
-        try:
-            lat = float(lat)
-            lon = float(lon)
-        except:
-            return bad_request('invalid lat/lon')        
+        lat,lon = check_lat_lon(lat, lon)
+        if not (lat and lon):
+            return bad_request('invalid lat/lng')
         r = .25
         agencies = Agency.bounding_box_fetch(
             agencies,
@@ -263,7 +256,7 @@ def agencies_search(request):
         agencies = agencies.filter('state =', state.upper())        
     
     if format == 'json':
-        return render_to_json(agencies_to_dictionary(agencies, include_apps))
+        return render_to_json(agencies_to_dictionary(agencies))
     else:
         return not_implemented(request) # We haven't written "agency_search.html" yet.
         
@@ -281,11 +274,12 @@ def create_agency_from_feed(request, feed_id):
     
     # create an agency entity from it
     agency = Agency(name = feed.name,
+                    short_name = feed.name,
                     city = feed.area if feed.area!="" else "cowtown",
                     state = feed.state,
                     country = feed.country,
                     agency_url = feed.url,
-                    gtfs_data_exchange_id = feed_id)
+                    gtfs_data_exchange_id = [feed_id])
     agency.put()
     
     return HttpResponseRedirect( "/agencies/edit/%s/"%agency.key().id() )
