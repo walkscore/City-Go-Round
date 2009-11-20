@@ -36,7 +36,7 @@ urlpatterns += patterns(
 urlpatterns += patterns(
     'opentransit.views.agency',
     url('^agencies/edit/(?P<agency_id>\d+)/$', 'edit_agency', name='edit_agency'), #todo: move this to /agencies/..../edit url
-    url(r'^agencies/$', 'agencies'),
+    url(r'^agencies/$', 'agencies', name='agencies'),
     url(r'^agencies/(?P<countryslug>[\w-]+)/$', 'agencies'),
     url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/$', 'agencies'),
     url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/(?P<cityslug>[\w-]+)/$', 'agencies'),

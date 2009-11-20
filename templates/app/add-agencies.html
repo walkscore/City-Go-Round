@@ -9,8 +9,12 @@
         <h2>Select agencies that your application supports:</h2>
         <form id="add-agencies-form" action="" method="POST">
           {# This is only going to spew out hidden input fields, so... whatever. #}
-          {{form.as_p}}    
-          <input type="submit" value="Add The App!"></input>    
+          {{form.as_p}}
+          <input type="submit" value="Add The App!"></input>
+          
+          <div id="agency-list">
+            
+          </div>    
         </form>
     </div>
 {% endblock %}
