@@ -23,12 +23,14 @@
 <div id="header">
   {% block header %}
     <h1 onclick="document.location='{% url home %}'">Open Transit Data</h1>
-    <h2>Transportation apps to help you get around</h2>
+    <h2>Apps that help you get around</h2>
     <a id="front-seat-logo" href="http://www.frontseat.org"><img src="{% static_url /images/front-seat-logo.gif %}" /></a>
     <p id="nav">
-        <a href="{% url about %}">About</a> &nbsp;&nbsp; 
-        <a href="{% url contact %}">Contact</a> &nbsp;&nbsp; 
-        <a href="{% url opensource %}">Open Source</a> &nbsp;&nbsp; 
+        <a href="{% url about %}">About</a> &nbsp; | &nbsp;
+        <a href="{% url contact %}">Contact</a> &nbsp; | &nbsp;
+        <a href="{% url opensource %}">Open Source</a> &nbsp; | &nbsp;
+        <a href="{% url apps_gallery %}">Apps</a> &nbsp; | &nbsp;
+        <a href="{% url agencies %}">Agencies</a> &nbsp; 
     <div id="friends-and-followers">
       <div class="clickable2 friend-twitter" onclick='trackNavigationNewWindow("http://twitter.com/citygoround", "header", "follow us", "twitter")'>
         <p>Follow us</p>
