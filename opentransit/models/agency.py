@@ -41,6 +41,9 @@ class Agency(GeoModel):
         GeoModel.__init__(self, *args, **kwargs)
         if "location" in kwargs:
             self.update_location()
+        self.update_slugs()
+        
+    def update_slugs(self):
         self.nameslug = slugify(self.name)
         self.cityslug = slugify(self.city)
         self.stateslug = slugify(self.state)
