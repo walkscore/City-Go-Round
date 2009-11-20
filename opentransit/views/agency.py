@@ -10,7 +10,7 @@ from ..forms import AgencyForm
 from ..utils.view import render_to_response, redirect_to, not_implemented
 from ..models import Agency, FeedReference, TransitApp
 
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from ..utils.slug import slugify
 
 
@@ -227,3 +227,17 @@ def delete_all_agencies(request):
         
     return HttpResponse( "deleted all agencies")
     
+def create_agency_from_feed(request, feed_id):
+    # get feed entity
+    feed = FeedReference.all().filter("gtfs_data_exchange_id =", feed_id).get()
+    
+    # create an agency entity from it
+    agency = Agency(name = feed.name,
+                    city = feed.area if feed.area!="" else "cowtown",
+                    state = feed.state,
+                    country = feed.country,
+                    agency_url = feed.url,
+                    gtfs_data_exchange_id = feed_id)
+    agency.put()
+    
+    return HttpResponseRedirect( "/agencies/edit/%s/"%agency.key().id() )
