@@ -1,9 +1,11 @@
 import logging
 from google.appengine.ext import db
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from geo.geomodel import GeoModel
 from ..utils.slug import slugify
 from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_keys, unique_entities
+from ..utils.geohelpers import square_bounding_box_centered_at
 
 class Agency(GeoModel):
     # properties straight out of the NTD import
@@ -51,16 +53,29 @@ class Agency(GeoModel):
         self.urlslug = "%s/%s/%s/%s"%(self.countryslug,self.stateslug,self.cityslug,self.nameslug)
     
     def to_jsonable(self):
-        return {'ntd_id':self.ntd_id,
-                'name':self.name,
-                'gtfs_data_exchange_id':self.gtfs_data_exchange_id,
-                'date_opened':self.date_opened.isoformat(" ") if self.date_opened else None,
-                'passenger_miles':self.passenger_miles,
-                'is_public':self.is_public}
+        return {
+            'ntd_id':self.ntd_id,
+            'gtfs_data_exchange_id':self.gtfs_data_exchange_id,
+            'date_opened':self.date_opened.isoformat(" ") if self.date_opened else None,
+            'passenger_miles':self.passenger_miles,
+            'is_public':self.is_public,
+            'name': self.name,
+            'city': self.city,
+            'urlslug': self.urlslug,
+            'state': self.state,
+            'key_encoded': str(self.key()),            
+        }
                 
     @property
     def is_public(self):
         return (self.date_opened != None)
+
+    @staticmethod
+    def fetch_agencies_near(latitude, longitude, query = None, max_results = 50):
+        bounding_box = square_bounding_box_centered_at(latitude, longitude, settings.SIDE_OF_NEARBY_BOUNDING_BOX_IN_MILES)        
+        if query is None:
+            query = Agency.all()
+        return Agency.bounding_box_fetch(query, bounding_box, max_results = max_results)        
         
     @staticmethod
     def all_public_agencies():

@@ -2,7 +2,6 @@ import time
 import logging
 from google.appengine.ext import db
 from google.appengine.api import memcache
-from geo import geotypes
 
 from ..forms import AgencyForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, bad_request, render_to_json
@@ -187,76 +186,6 @@ def generate_locations(request):
        
     pass
 
-def agencies_search(request):
-    """
-    params
-     - type (location or city)
-     - lat/lon [location]
-     - city/state [city]
-    returns:
-     list of nearby (location) or matching (city) agencies, and their associated apps
-    """
-    def agencies_to_dictionary(agencies):
-        ag = {'agencies' : []}
-        for a in agencies:
-            ad = {}
-            for k in 'name,city,urlslug,state'.split(','):
-                ad[k] = getattr(a,k)
-            #unsure how to get apps...
-            ad['apps'] = list(TransitApp.iter_for_agency(a))
-            ag['agencies'].append(ad)
-        ag['apps'] = list(TransitApp.iter_for_agencies(agencies))
-        return ag                
-
-    def check_lat_lon(lat, lon):
-        try:
-            return float(lat), float(lon)
-        except:
-            return (0,0)
-        
-    #ensure location type search
-    rg = request.GET.get
-    search_type = rg('type','')
-    lat = rg('lat','')
-    lon = rg('lon','')
-    city = rg('city','')
-    state = rg('state','')
-    format = rg('format','html')
-
-    if not search_type in ['location', 'city', 'state']:
-        return bad_request('invalid search type')
-        
-    if not format in ['html', 'json']:
-        return bad_request('invalid format')
-    
-    agencies = Agency.all()
-    
-    if search_type == 'location':
-        #get all agencies that are nearby
-        lat,lon = check_lat_lon(lat, lon)
-        if not (lat and lon):
-            return bad_request('invalid lat/lng')
-        r = .25
-        agencies = Agency.bounding_box_fetch(
-            agencies,
-            geotypes.Box(lat+r, lon+r, lat-r, lon-r),
-            max_results = 50)        
-    else:
-        if search_type == 'city':
-            if not city:
-                return bad_request('you must include a city')
-            # NOTE davepeck: we used to search for 'city =', city... but that didn't really
-            # work because of differences in capitalization. Use slugs instead.
-            agencies = agencies.filter('cityslug =', slugify(city))
-        if not state:
-            return bad_request('you must include a state')
-        agencies = agencies.filter('state =', state.upper())        
-    
-    if format == 'json':
-        return render_to_json(agencies_to_dictionary(agencies))
-    else:
-        return not_implemented(request) # We haven't written "agency_search.html" yet.
-        
 def delete_all_agencies(request):
     todelete = list(Agency.all(keys_only=True))
     
