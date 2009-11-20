@@ -185,10 +185,11 @@
 			this.getDataString = function(){
 				var str = '';
 				for (var i = 0; i<this.list.length; i++){
-					if ( !this.list[i].isCancelled() && this.list[i].hasData() )
+					if ( !this.list[i].isCancelled() && this.list[i].hasData() ) {
 						if (i>0)
 							str += " | ";
 						str += this.list[i].getDataString();
+					}
 				}		
 				return str;
 			}
@@ -199,50 +200,31 @@
 		function DataManager() {
 			this.geocoder = new Geocoder();
 			this.queryDataList = new QueryDataList();
-			this.numFields = 1;
+			this.numLocations = 0;
 			this.activeQueryKey = -1;
 
-			this.handleQuery = function(key){
-				var query = $("#query"+key).get(0).value;
-				
-				if (this.queryDataList.addOrUpdateQuery(key, query) )
-					this.addField();
+			this.addQuery = function(key){
+				var query = $("#query").get(0).value;
+								
+				if (this.queryDataList.addOrUpdateQuery(this.numLocations, query) ) { //will always add, we don't allow editing old ones
+					this.addLocation();
+					this.numLocations++;
+				}
 				this.geocodeQueuedQueries();
 			}
 			
-			this.addField = function(){
-				var htmlStr = '<div id="location' + this.numFields + '">';
-				htmlStr += '<label>+</label>';
-				htmlStr += ' <input type="text" id="query' + this.numFields + '" onkeypress="handleKeyCodes(' + this.numFields + ', event)" />';
-				htmlStr += ' <input type="button" id="add' + this.numFields + '" value="Add" onclick="dataManager.handleQuery(' + this.numFields + ')"/>';
-				htmlStr += '<span id="response' + this.numFields + '"></span>';
-				htmlStr += '<a class="hidden" id="removelink' + this.numFields + '" onclick="dataManager.removeQuery(' + this.numFields + ')">remove</a>';
-				htmlStr += '</div>';
+			this.addLocation = function(){
+				var htmlStr = '<div id="location' + this.numLocations + '">';
+				htmlStr += '<label id="label' + this.numLocations + '"></label><span id="name' + this.numLocations + '"></span>';
+				htmlStr += '<a id="removelink' + this.numLocations + '" onclick="dataManager.removeQuery(' + this.numLocations + ')">remove</a>';
+				htmlStr += '</p></div>';
 				$("#locations").append(htmlStr);
-				$( "#query" + this.numFields ).focus();
-				this.numFields++;
+				$("#query").focus().val("");
 			}
 			
 			this.removeQuery = function(key){
 				this.queryDataList.cancelQuery(key);
 				$("#location"+key).hide();
-			}
-			
-			this.handleGeocodeResponse = function(latLng, countryCode, formattedAddress, administrativeArea, thoroughfare, locality, postalCode){
-				this.geocoder.confirmSuccess();
-			
-				var currentQueryDataItem = this.queryDataList.getByKey(this.activeQueryKey);
-				if (currentQueryDataItem ) {
-					currentQueryDataItem.setData(locality, countryCode, latLng);
-					var feedback = (locality) ? "City: " + locality + ", " + administrativeArea + ", " + countryCode : "Country: " + countryCode;
-					$( "#add" + this.activeQueryKey ).val("redo");
-					$( "#response" + this.activeQueryKey ).html(feedback);
-					$( "#removelink" + this.activeQueryKey ).show();
-				}
-				else
-					alert("couldn't find item to set data on");
-					
-				this.geocodeQueuedQueries
 			}
 			
 			this.geocodeQueuedQueries = function() {
@@ -251,16 +233,32 @@
 				}
 				//else, see if we have more to geocode:
 				var nextQueryItem = this.queryDataList.getNextQuery();
-				if ( nextQueryItem ) {
-					this.geocoder.geocode( nextQueryItem.getQuery() );	
+				if ( nextQueryItem ) {	
 					this.activeQueryKey = nextQueryItem.getKey();
+					this.geocoder.geocode( nextQueryItem.getQuery() );
 				}
 			}
-			
+
+			this.handleGeocodeResponse = function(latLng, countryCode, formattedAddress, administrativeArea, thoroughfare, locality, postalCode){
+				this.geocoder.confirmSuccess();
+				
+				var currentQueryDataItem = this.queryDataList.getByKey(this.activeQueryKey);
+				if (currentQueryDataItem ) {
+					currentQueryDataItem.setData(locality, countryCode, latLng);
+					var label = (locality) ? "City:" : "Country:";
+					var name = (locality) ? locality + ", " + administrativeArea + ", " + countryCode : countryCode;
+					$( "#label" + this.activeQueryKey ).html(label);
+					$( "#name" + this.activeQueryKey ).html(name);
+				}
+				else
+					alert("couldn't find item to set data on");
+					
+				this.geocodeQueuedQueries
+			}
+						
 			this.handleGeocodeTimeout = function(){
 				this.geocoder.timeOut();
 				//retry the failed geocode?
-				dbug("Time out!  Verification timed out, please try again.");
 			}
 			
 			this.getDataString = function(){
@@ -282,9 +280,9 @@
 			
 			//show the location picker?
 			if ( !$("#global").eq(0).is(":checked") && $("#choose-locations").eq(0).is(":checked") )
-				$("#locations").eq(0).show();
+				$("#location-list").eq(0).show();
 			else
-				$("#locations").eq(0).hide();	
+				$("#location-list").eq(0).hide();	
 		}
 		
 		function dbug(str){
@@ -294,9 +292,9 @@
 			dbug(Array.prototype.join.call(arguments, " :: "));
 		}
 	
-		function handleKeyCodes(itemKey, keyEvent){
+		function handleKeyCodes(keyEvent){
 			if (keyEvent.keyCode==13){
-				dataManager.handleQuery(itemKey);
+				dataManager.addQuery();
 				return false;
 			};
 		}
@@ -311,15 +309,12 @@
 		<p><input type="checkbox" name="global" id="global" onchange="updateUI()" /> Globally</p>
 		<p><input type="checkbox" name="entire-us" id="entire-us" onchange="updateUI()" /> Entire U.S.</p>
 		<p><input type="checkbox" name="choose-locations" id="choose-locations" onchange="updateUI()" /> Select countries or cities</p>
-		<div id="locations">
-
-			<div id="input">
-				<label>Enter a city or Country name: </label>
-				<input type="text" id="query0" onkeypress="handleKeyCodes(0,event)" />
-				<input type="button" id="add0" value="Add" onclick="dataManager.handleQuery(0)"/>
-				<span id="response0"></span>
+		<div id="location-list">		
+			<div id="locations">
 			</div>
-
+			<label>Enter a city or Country name: </label>
+			<input type="text" id="query" onkeypress="handleKeyCodes(event)" />
+			<input type="button" id="add" value="Add" onclick="dataManager.addQuery()"/>
 		</div>
 		<input type="submit" value="Done" />
 	</form>

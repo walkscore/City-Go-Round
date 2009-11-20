@@ -92,7 +92,7 @@
 	#recently-added-list h3 { color: #18b541; font-size: 18px; }
 
 	
-  p, a, ul, ol, blockquote, label {
+  p, a, ul, ol, blockquote, label, span {
 		font:12px Verdana, Arial, Helvetica, sans-serif;
 		color: #555;
 	}
@@ -611,9 +611,10 @@
 	
 /*********** APP ADD FORMS ************/
 	
-	#locations {
-	 /*display: none;*/
+	#choose-locations {
+		/*display: none;*/
 	}
+	#locations p
 
 
 	
