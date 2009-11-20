@@ -4,6 +4,7 @@ from google.appengine.ext import db
 from django.utils.translation import ugettext_lazy as _
 from .utils.image import image_bytes_are_valid
 from .nameddict import nameddict
+# from bootstrap import BREAKPOINT
 
 class AppEngineImageField(forms.FileField):
     # Django's built-in ImageField doesn't work on AppEngine because
@@ -13,8 +14,8 @@ class AppEngineImageField(forms.FileField):
         'invalid_image': _(u"Upload a valid image. The file you uploaded was either not an image or was a corrupted image."),
     }
     
-    def clean(self, data, initial=None):
-        raw_file = super(AppEngineImageField, self).clean(data, initial)
+    def clean(self, data):
+        raw_file = super(AppEngineImageField, self).clean(data)
         if raw_file is None:
             return None
         elif not data and initial:
@@ -69,6 +70,7 @@ class LocationListField(forms.CharField):
     }
     
     def _clean_country_code(self, country_code_x):
+        country_code = country_code_x.strip()
         if len(country_code) != 2:
             raise forms.ValidationError(self.location_error_messages['invalid_country_code'])
         return CountryInfo(country_code = country_code)
@@ -76,7 +78,7 @@ class LocationListField(forms.CharField):
     def _clean_city(self, latitude_x, longitude_x, city_name_x, state_code_x, country_code_x):
         try:
             latitude = float(latitude_x)
-            longitude = float(longiude_x)
+            longitude = float(longitude_x)
         except:
             raise forms.ValidationError(self.location_error_messages['malformed_city_info'])    
                     
@@ -94,8 +96,9 @@ class LocationListField(forms.CharField):
             
         return CityInfo(latitude = latitude, longitude = longitude, name = city_name, state_code = state_code, country_code = country_code)
             
-    def clean(self, value, initial=None):
-        super(LocationListField, self).clean(data, initial)         
+    def clean(self, value):
+        super(LocationListField, self).clean(value)   
+        
         if (value is None):
             raise forms.ValidationError(self.location_error_messages['no_locations'])
         
