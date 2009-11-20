@@ -1,13 +1,12 @@
 import time
 import logging
 from datetime import datetime
-from django.utils import simplejson as json
 from google.appengine.ext import db
 from google.appengine.api import memcache
 from geo import geotypes
 
 from ..forms import AgencyForm
-from ..utils.view import render_to_response, redirect_to, not_implemented
+from ..utils.view import render_to_response, redirect_to, not_implemented, bad_request, render_to_json
 from ..models import Agency, FeedReference, TransitApp
 
 from django.http import HttpResponse, HttpResponseRedirect
@@ -153,7 +152,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         for agency in agencies:
             jsonable_list.append( agency.to_jsonable() )
         
-        return HttpResponse( content=json.dumps( jsonable_list, indent=2 ), mimetype="text/plain" )
+        return render_to_json(jsonable_list)
     
     return render_to_response( request, "agency_list.html", template_vars)
     
@@ -162,7 +161,6 @@ def generate_locations(request):
        during import. This is easier than writing a bulk uploader that does."""
        
     pass
-    return HttpResponse( "locations NOT generated" )
 
 def agencies_search(request):
     """
@@ -173,7 +171,7 @@ def agencies_search(request):
     returns:
      list of nearby (location) or matching (city) agencies, and their associated apps
     """
-    def agencies_to_json(agencies):
+    def agencies_to_dictionary(agencies):
         ag = {'agencies' : []}
         for a in agencies:
             ad = {}
@@ -202,12 +200,12 @@ def agencies_search(request):
     
     agencies = Agency.all()
     if not search_type in ['location', 'city']:
-        return HttpResponse('404 - invalid search type')
+        return bad_request('invalid search type')
     if search_type == 'location':
         #get all agencies that are nearby
         lat,lon = check_lat_lon(lat, lon)
         if not (lat and lon):
-            return HttpResponse('404 - invalid lat/lng')
+            return bad_request('invalid lat/lng')
         r = .25
         agencies = Agency.bounding_box_fetch(
             agencies,
@@ -217,12 +215,12 @@ def agencies_search(request):
     if search_type == 'city':
         logging.debug('filtering by city %s' % city)
         if not (city and state):
-            return HttpResponse('404 - you must include city and state params')
+            return bad_request('you must include city and state params')
         #get all agencies matching a state and city
         agencies = agencies.filter('state =',state.upper()).filter('city =',city)
     
     if format == 'json':
-        return HttpResponse(json.dumps(agencies_to_json(agencies)), mimetype='text/html')
+        return render_to_json(agencies_to_dictionary(agencies))
     else:
         return render_to_response( request, "agency_search.html", {'agencies' : agencies} )
         

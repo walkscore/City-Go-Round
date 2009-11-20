@@ -1,7 +1,8 @@
 import django
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, Http404, HttpResponse
+from django.utils import simplejson as json
+from django.http import HttpResponseRedirect, Http404, HttpResponse, HttpResponseBadRequest
 
 def render_to_response(request, template_name, dictionary={}, **kwargs):
     """
@@ -34,5 +35,11 @@ def render_image_response(request, image_bytes, mimetype = 'image/png'):
 def redirect_to_url(url):
     return HttpResponseRedirect(url)
 
+def bad_request(message = ''):
+    return HttpResponseBadRequest(message)
+    
+def render_to_json(jsonable):
+    return HttpResopnse(json.dumps(jsonable), mimetype = 'application/json')
+    
 def raise_404():
     raise Http404
