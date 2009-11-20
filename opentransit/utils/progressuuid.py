@@ -1,3 +1,4 @@
+from django.conf import settings
 from ..models import TransitAppFormProgress
 
 def add_progress_uuid_to_session(request, progress_uuid):
@@ -24,9 +25,15 @@ def is_progress_uuid_in_datastore(progress_uuid):
     return TransitAppFormProgress.all().filter('progress_uuid =', progress_uuid).get() is not None
     
 def is_progress_uuid_valid(request, progress_uuid):
-    # Basic sanity checks
+    # Basic sanity check
     if progress_uuid is None:
         return False
+        
+    # Support accessing via /DEBUG/ if DEBUG is turned on
+    if progress_uuid == settings.PROGRESS_DEBUG_MAGIC:
+        return True
+    
+    # Another basic sanity check (these first three checks MUST happen in this order.)
     if len(progress_uuid) != 32:
         return False
         

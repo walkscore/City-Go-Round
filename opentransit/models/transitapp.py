@@ -51,6 +51,7 @@ from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_key
 #       And then, what transit apps support those agencies?
 # 2. What transit apps are nearby lat/lon?
 # 3. What transit apps support that country code?
+# 4. What transit apps support the entire GLOBE?
 # 
 # Can we simplify this? It seems like #1 and #2 are basically the same. But the trick is
 # that we have the `supports_all_public_agencies` flag. If a public agency is nearby, this
@@ -144,6 +145,7 @@ class TransitApp(db.Model):
     explicitly_supported_cities = db.StringListProperty(indexed = True)   # ["Seattle", "San Francisco", ...]
     explicitly_supported_city_details = db.StringListProperty() # ["Seattle,WA,US", "San Francisco,CA,US", ...]
     explicitly_supported_countries = db.StringListProperty()
+    explicitly_supports_globally = db.BooleanProperty(indexed = True)
                 
     @staticmethod
     def all_supporting_public_agencies():
