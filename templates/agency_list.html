@@ -13,43 +13,49 @@
 {% block content %}
 <script type="text/javascript">
 
+var agency_count = {{agency_count}}; 
 function update_filters(){
     var pd = jQuery("#public_filter option:selected").val();
     var location = jQuery("#location_filter option:selected").val();
     window.location.replace(location + '?public=' + pd)
-    
     }
+
 $(document).ready(function() { 
     //make sure public dropdown selected appropriately
     var po = getUrlParam('public');
     jQuery("#public_filter option[value=" + po + "]").attr('selected','selected')
 
-    jQuery("#agency_list")
-    .tablesorter()
-    .tablesorterPager({container : $('#pager'), size:40}); 
-    
+    if (agency_count > 50){
+        jQuery("#agency_list")
+        .tablesorter()
+        .tablesorterPager({container : $('#pager'), size:40}); 
+        }
+    else {
+        jQuery('#pager')[0].style.display='none';
+        }
     }); 
    
 
 </script>
 
 <div class="blue_background">
-All {{location|upper}} Transit Agencies
+<h2>All {{location|upper}} Transit Agencies
 {% ifequal public_filter 'public' %} with Public Data 
 {% else %} {% ifequal public_filter 'no_public' %} without Public Data 
 {% endifequal %}{% endifequal %}
+</h2>
 </div>
 <br>
 <span class="italic">
-    {{agency_count}} transit agencies in the {{location}}.
-    <span class="green"> {{public_count}} have public data.  </span>
-    <span class="red"> {{no_public_count}} do not. </span>
-    </span>
-
+    Out of {{agency_count}} total transit agencies,
+    <span class="green"> {{public_count}} ha{% ifequal public_count 1 %}s{%else%}ve{%endifequal%} public data.  </span>
+    <span class="red"> {{no_public_count}} do{% ifequal no_public_count 1 %}es{%endifequal%} not. </span>
+</span>
+<br>
 <select id="public_filter" name="public_filter" onchange="update_filters();">
-   <option value="all">Public Data</option>
-   <option value="public">Has Public Data</option>
-   <option value="no_public">No Public Data</option>
+   <option value="all">All Agencies</option>
+   <option value="public">With Public Data</option>
+   <option value="no_public">Without Public Data</option>
 </select>
 
 <select id="location_filter" name="location_filter" onchange="update_filters()">

@@ -92,7 +92,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
             }
     
         return render_to_response( request, "agency.html", template_vars)
-    location = 'system'
+    location = ''
     
     agencies = Agency.all().order("name")
     
