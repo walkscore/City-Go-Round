@@ -215,9 +215,9 @@
 			
 			this.addLocation = function(){
 				var htmlStr = '<div id="location' + this.numLocations + '">';
-				htmlStr += '<p id="name' + this.numLocations + '"><span id="label' + this.numLocations + '"></span></p>';
+				htmlStr += '<p id="name' + this.numLocations + '"></p>';
 				htmlStr += '<a id="removelink' + this.numLocations + '" onclick="dataManager.removeQuery(' + this.numLocations + ')">remove</a>';
-				htmlStr += '</p></div>';
+				htmlStr += '</div>';
 				$("#locations").append(htmlStr);
 				$("#query").focus().val("");
 			}
@@ -245,10 +245,10 @@
 				var currentQueryDataItem = this.queryDataList.getByKey(this.activeQueryKey);
 				if (currentQueryDataItem ) {
 					currentQueryDataItem.setData(locality, countryCode, latLng);
-					var label = (locality) ? "City:" : "Country:";
+					var label = (locality) ? "City" : "Country";
 					var name = (locality) ? locality + ", " + administrativeArea + ", " + countryCode : countryCode;
-					$( "#label" + this.activeQueryKey ).html(label);
-					$( "#name" + this.activeQueryKey ).html(name);
+					var entryText = name + " <span>(" + label + ")</span>"
+					$( "#name" + this.activeQueryKey ).html(entryText);
 				}
 				else
 					alert("couldn't find item to set data on");
@@ -262,11 +262,13 @@
 			}
 			
 			this.getDataString = function(){
-				return this.queryDataList.getDataString();
+				var data = this.queryDataList.getDataString();
+				var append = ( $("#entire-us").eq(0).is(":checked") ) ? (( data.length > 0 ) ? " | US" : "US") : "";
+				return data + append;
 			}
 			
 			this.sendDataString = function(){
-				$(id_location_list).eq(0).val(this.queryDataList.getDataString());
+				$(id_location_list).eq(0).val( this.getDataString() );
 			}
 		}
 
@@ -320,15 +322,17 @@
     <div id="location-list">		
 			<div id="locations">
 			</div>
-			<label>Enter a city or Country name: </label>
-			<input type="text" id="query" onkeypress="handleKeyCodes(event)" />
-			<input type="button" id="add" value="Add" onclick="dataManager.addQuery()"/>
+			<div id="location-entry">
+  			<label>Enter a city or Country name: </label>
+  			<input type="text" id="query" onkeypress="handleKeyCodes(event)" />
+  			<input type="button" id="add" value="Add" onclick="dataManager.addQuery()"/>
+			</div>
 		</div>
     
     <input type="submit" value="Add The App!"></input>    
   </form>
 </div>
-<input type="button" value="Get Data String" onclick="dbug(dataManager.getDataString())"/>
+<input style="margin-top: 20px;" type="button" value="DEBUG: Show Data String" onclick="dbug(dataManager.getDataString())"/>
 <div id="dbug"></div>
 {% endblock %}
 
