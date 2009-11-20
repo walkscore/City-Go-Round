@@ -1,25 +1,17 @@
 import time
 import logging
+
+from django.http import HttpResponse, HttpResponseRedirect
+
 from google.appengine.ext import db
 from google.appengine.api import memcache
 
 from ..forms import AgencyForm
-from ..utils.view import render_to_response, redirect_to, not_implemented, bad_request, render_to_json
 from ..models import Agency, FeedReference, TransitApp
-
-from django.http import HttpResponse, HttpResponseRedirect
-from ..utils.slug import slugify
+from ..utils.view import render_to_response, redirect_to, not_implemented, bad_request, render_to_json
 
 from StringIO import StringIO
 import csv
-
-
-def uniquify(seq): 
-    # not order preserving 
-    set = {} 
-    map(set.__setitem__, seq, []) 
-    return set.keys()
-
 
 def edit_agency(request, agency_id):
     agency = Agency.get_by_id( int(agency_id) )
