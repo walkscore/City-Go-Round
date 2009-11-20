@@ -11,7 +11,7 @@
             var hour = parseInt(time.slice(0,2))
             var ap = 'am';
             if (hour > 12){ap = 'pm';}
-            if (hour > 14) { 
+            if (hour > 12) { 
                 hour = (hour-2) + '';
                 if (hour >= 20){
                     hour = '1' + hour.charAt(1);
