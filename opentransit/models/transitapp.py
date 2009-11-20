@@ -1,4 +1,5 @@
 import logging
+from uuid import uuid4
 from google.appengine.ext import db
 from django.core.urlresolvers import reverse
 from geo.geomodel import GeoModel
@@ -60,13 +61,6 @@ from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_key
 # problematic in other ways...)
 #
 
-class TransitAppFormProgress(db.Model):
-    """Holds on to key pieces of form progress that cannot be sent through invisible input fields."""
-    progress_unique_id = db.StringProperty(indexed = True)
-    last_updated = db.DateTimeProperty(auto_now = True)    
-    general_info_form = db.BlobProperty() # pickled django form object, post-validation
-    screen_shot = db.BlobProperty()
-    
 class TransitApp(db.Model):
     PLATFORMS = { 
         "android": "Android", 
@@ -84,12 +78,7 @@ class TransitApp(db.Model):
         "biking": "Biking", 
         "walking": "Walking",
     }
-    
-    GTFS = {
-        "yes_gtfs": "My application makes use of GTFS feeds.",
-        "no_gtfs": "My application does not make use of GTFS feeds.",
-    }
-    
+        
     @staticmethod 
     def platform_choices():
         if hasattr(TransitApp, '_platform_choices'):
@@ -112,6 +101,10 @@ class TransitApp(db.Model):
     def gtfs_choices():
         return [("yes_gtfs", "My application makes use of GTFS feeds."), ("no_gtfs", "My application does not make use of GTFS feeds.")]
     
+    @staticmethod
+    def gtfs_public_choices():
+        return [("yes_public", "My application supports all publicly available GTFS feeds."), ("no_public", "My application supports specific GTFS feeds. Let me choose them.")]
+        
     slug                = db.StringProperty(indexed = True)
     title               = db.StringProperty(required = True)
     description         = db.StringProperty()
@@ -241,8 +234,20 @@ class TransitApp(db.Model):
         for transit_app in TransitApp.all_for_country(country_code):
             if transit_app.key() in seen_city:
                 yield transit_app
-
     
 class TransitAppLocation(GeoModel):
+    """Represents a many-many relationship between TransitApps and explcitly named cities where they work."""
     transit_app = db.ReferenceProperty(TransitApp, collection_name = "explicitly_supported_locations")
+
+class TransitAppFormProgress(db.Model):
+    """Holds on to key pieces of form progress that cannot be sent through invisible input fields."""
+    progress_uuid = db.StringProperty(indexed = True, required = True)
+    last_updated = db.DateTimeProperty(auto_now = True)    
+    general_info_form = db.BlobProperty() # pickled django form object, post-validation
+    screen_shot = db.BlobProperty()
+
+    @staticmethod
+    def new_with_uuid():
+        return TransitAppFormProgress(progress_uuid = uuid4())
+    
 
