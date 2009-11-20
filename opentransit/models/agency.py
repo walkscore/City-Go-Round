@@ -29,6 +29,12 @@ class Agency(GeoModel):
     updated         = db.DateTimeProperty()
     date_opened     = db.DateTimeProperty()
     
+    # developer amenities
+    dev_site         = db.LinkProperty() #None if no developer site
+    arrival_data     = db.LinkProperty() #Link to arrival data source; None if no arrival data
+    position_data    = db.LinkProperty() #Link to position data source; None if no position data
+    standard_license = db.StringProperty() #String of standard license like "GPL"; None if no standard license    
+    
     # slugs
     nameslug        = db.StringProperty()
     cityslug        = db.StringProperty()
@@ -61,6 +67,10 @@ class Agency(GeoModel):
     @property
     def is_public(self):
         return (self.date_opened != None)
+        
+    @property
+    def has_real_time_data(self):
+        return (self.arrival_data != None) or (self.position_data != None)
         
     @staticmethod
     def all_public_agencies():
