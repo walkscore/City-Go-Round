@@ -19,12 +19,6 @@
 				var c = table.config;
 				if(!c.pagerPositionSet && c.positionFixed) {
 					var c = table.config, o = $(table);
-					if(o.offset) {
-						c.container.css({
-							top: o.offset().top + o.height() - 110 + 'px',
-							position: 'absolute'
-						});
-					}
 					c.pagerPositionSet = true;
 				}
 			}
