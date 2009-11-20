@@ -5,8 +5,9 @@
 {% block content %}
 
 For each transit agency in the 'unmatched feeds' list:
-<li>look in the 'unmatched agencies' list to see if there's a corresponding agency
+<li>look in the 'all agencies' list to see if there's a corresponding agency
 <li>if so, 'edit' that agency and set the gtfs_data_exchange_id to the correct value
+<li>an agency can have more than one gtfs_data_exchange_id - just separate them with commas like 'bart,airbart'
 <li>else, click the 'create' button next to the unmatched feed to create an agency for that feed
 <li>Make sure the city is set and the state uses the two-letter code
 
@@ -19,7 +20,7 @@ For each transit agency in the 'unmatched feeds' list:
 {% endfor %}
 </table>
 
-<h2>unmatched agencies</h2>
+<h2>all agencies</h2>
 <table>
 
 {% for agency in agencies %}
