@@ -615,33 +615,39 @@
 	
 /*********** APP ADD FORMS ************/
 	
-	#choose-locations {
-		/*display: none;*/
+	#add-locations-form p input {
+		margin-right: 5px;
 	}
-	#locations p {
-		min-width: 140px;
-		margin-right: 6px;
+	#location-list {
+		display: none;
+	}
+	#locations div {
+		clear: both;
+	}
+	#locations p, #locations a {
 		float: left;
 		display: block;
-		clear: both;
-		height: 20px;
+		height: 20px;		
 	}
-	#locations span {
+	#locations p {
+		min-width: 200px;
+		margin-right: 6px;
+		text-indent: 30px;
+		background: url(/images/check.gif) 5px 0px no-repeat;
+	}
+	#locations p span {
 		margin-right: 8px;
 		color: #888;
-		background: url(/images/confirmed.gif) 0 0 no-repeat;
-		text-indent: 30px;
-		font-size: 10px;
-		height: 20px;
 	}
 	#locations a {
+		float: left;
+		display: block;
 		font-size: 10px;
 		height: 20px;
 	}
-	#location-list label {
+	#location-entry {
 		clear: both;
 	}
-	
 /*********** CUSTOM STUFF ************/
 	.bluegreen {
 		color: #028dc7;
