@@ -43,6 +43,9 @@ def edit_agency(request, agency_id):
             agency.updated          = form.cleaned_data['updated']
             agency.phone            = form.cleaned_data['phone']
             agency.gtfs_data_exchange_id      = form.cleaned_data['gtfs_data_exchange_id'].split(",") if form.cleaned_data['gtfs_data_exchange_id'] != "" else []
+            
+            agency.update_slugs()
+            
             agency.put()
     else:
         form = AgencyForm(initial={'name':agency.name,
