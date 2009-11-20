@@ -4,21 +4,27 @@
 
 {% block content %}
 
-<h3>unmatched feeds</h3>
+For each transit agency in the 'unmatched feeds' list:
+<li>look in the 'unmatched agencies' list to see if there's a corresponding agency
+<li>if so, 'edit' that agency and set the gtfs_data_exchange_id to the correct value
+<li>else, click the 'create' button next to the unmatched feed to create an agency for that feed
+<li>Make sure the city is set and the state uses the two-letter code
+
+<h2>unmatched feeds</h2>
 <table>
 {% for feed in feeds %}
 <tr>
-<td>{{feed.gtfs_data_exchange_id}}</td><td>{{feed.name}}</td><td>{{feed.url}}</td><td>{{feed.area}}</td><td>{{feed.state}}</td>
+<td>{{feed.gtfs_data_exchange_id}}</td><td>{{feed.name}}</td><td>{{feed.url}}</td><td>{{feed.area}}</td><td>{{feed.state}}</td><td><a href="/admin/agencies/create-from-feed/{{feed.gtfs_data_exchange_id}}/">create</a></td>
 <tr>
 {% endfor %}
 </table>
 
-<h3>unmatched agencies</h3>
+<h2>unmatched agencies</h2>
 <table>
 
 {% for agency in agencies %}
 <tr>
-<td>{{ agency.name }}</td><td>{{agency.short_name}}</td><td>{{agency.agency_url}}</td><td>{{agency.city}}</td><td>{{agency.state}}</td>
+<td>{{ agency.name }}</td><td>{{agency.short_name}}</td><td>{{agency.agency_url}}</td><td>{{agency.city}}</td><td>{{agency.state}}</td><td><a href="/agencies/edit/{{agency.key.id}}">edit</a></td>
 </tr>
 {% endfor %}
 
