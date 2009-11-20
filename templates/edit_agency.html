@@ -6,6 +6,11 @@
 
     <p>
         <form action="" method="POST">
+            data format:
+            <li>Gtfs data exchange id: comma-separated values, no spaces between values
+            <li>State: two-letter state code, use capital letters like 'WA'
+            <li>Country: two-letter ISO country code. 'us' for us.
+            <br><br>
             <table>
             <tr><td>agency</td><td>{{agency.key.id}}</td></tr>
     {% for field in form %}
