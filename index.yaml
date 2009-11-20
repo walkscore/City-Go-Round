@@ -55,3 +55,8 @@ indexes:
   properties:
   - name: state
   - name: name
+
+- kind: Agency
+  properties:
+  - name: stateslug
+  - name: name
