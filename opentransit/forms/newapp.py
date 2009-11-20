@@ -14,7 +14,7 @@ class NewAppGeneralInfoForm(forms.Form):
     categories          = forms.MultipleChoiceField(choices = TransitApp.category_choices(), label = u"Categories (choose at least one):")
     tags                = forms.CharField(max_length = 256, min_length = 0, label = u"Extra Tags (comma separated)")
     screen_shot         = AppEngineImageField(required = False, label = u"Screen Shot (optional)")
-    uses_gtfs           = forms.ChoiceField(choices = TransitApp.gtfs_choices(), widget = forms.widgets.RadioSelect(), label = u"Uses Feeds?", initial = "yes_gtfs")    
+    gtfs_choice         = forms.ChoiceField(choices = TransitApp.gtfs_choices(), widget = forms.widgets.RadioSelect(), label = u"Uses Feeds?", initial = "yes_gtfs")    
     
     def clean_title(self):
         if not self.is_unique_slug:
@@ -33,9 +33,12 @@ class NewAppGeneralInfoForm(forms.Form):
     def tag_list(self):
         return [tag.strip() for tag in self.cleaned_data['tags'].split(',')]
 
-
 class NewAppAgencyForm(forms.Form):
-    pass
+    progress_uuid = forms.CharField(required = True, widget = forms.widgets.HiddenInput)
+    public_choice = forms.ChoiceField(choices = TransitApp.gtfs_public_choices(), widget = forms.widgets.RadioSelect(), label = u"", initial = "yes_public")
+    agency_list = AgencyListField(required = False, widget = forms.widgets.HiddenInput)
     
 class NewAppLocationForm(forms.Form):
-    pass
+    progress_uuid = forms.CharField(required = True, widget = forms.widgets.HiddenInput)
+    location_list = LocationListField(required = True, widget = forms.widgets.HiddenInput)
+    
