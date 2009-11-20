@@ -8,7 +8,7 @@ from google.appengine.ext import db
 from ..forms import NewAppGeneralInfoForm, NewAppAgencyForm, NewAppLocationForm, PetitionForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, render_image_response, redirect_to_url
 from ..utils.image import crop_and_resize_image_to_square
-from ..decorators import requires_valid_transit_app_slug
+from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid
 from ..models import TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress
 
 def nearby(request):
@@ -90,9 +90,11 @@ def add_form(request):
         form = NewAppGeneralInfoForm()        
     return render_to_response(request, 'app/add-form.html', {'form': form})
     
+@requires_valid_progress_uuid
 def add_locations(request, progress_uuid):
     return render_to_response(request, 'app/add-locations.html')
     
+@requires_valid_progress_uuid
 def add_agencies(request, progress_uuid):
     return render_to_response(request, 'app/add-agencies.html')
     
