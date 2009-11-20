@@ -109,11 +109,12 @@
 			this.hasData = function(){
 				return this.geoLatLng != null;
 			}
-			this.setData = function(city, country, latlng){			
+			this.setData = function(city, administrativeArea, country, latlng){			
 				this.geocoded = true;
 
 				//if succeeded
 				if ( country && latlng ){
+				    this.administrativeArea = administrativeArea;
 					this.country = country;
 					this.geoLatLng = latlng;
 					if (city)					
@@ -139,7 +140,7 @@
 				if ( this.city == null )
 					return this.country;
 				else 
-					return this.geoLatLng.lat() + ", " + this.geoLatLng.lng() + ", " + this.city + ", " + this.country;
+					return this.geoLatLng.lat() + ", " + this.geoLatLng.lng() + ", " + this.city + ", " + this.administrativeArea + ", " + this.country;
 			}
 		}
 		
@@ -244,7 +245,7 @@
 				
 				var currentQueryDataItem = this.queryDataList.getByKey(this.activeQueryKey);
 				if (currentQueryDataItem ) {
-					currentQueryDataItem.setData(locality, countryCode, latLng);
+					currentQueryDataItem.setData(locality, administrativeArea, countryCode, latLng);
 					var label = (locality) ? "City" : "Country";
 					var name = (locality) ? locality + ", " + administrativeArea + ", " + countryCode : countryCode;
 					var entryText = name + " <span>(" + label + ")</span>"
