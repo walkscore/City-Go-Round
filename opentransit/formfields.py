@@ -137,10 +137,10 @@ class AgencyListField(forms.CharField):
         'invalid_agency_key': _(u"Invalid agency key."),        
     }
     
-    def clean(self, value, initial=None):
-        super(AgencyListField, self).clean(data, initial)         
+    def clean(self, value):
+        super(AgencyListField, self).clean(value)         
         if (value is None):
-            raise forms.ValidationError(self.agency_error_messages['invalid_agency_list'])
+            raise forms.ValidationError(self.agency_error_messages['malformed_agency_list'])
             
         if len(value.strip()) < 1:
             return []
