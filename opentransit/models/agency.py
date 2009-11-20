@@ -39,7 +39,8 @@ class Agency(GeoModel):
     def __init__(self, *args, **kwargs):
         # this loads everything to self that's passed as a kwarg, making required and default attribs safe to use
         GeoModel.__init__(self, *args, **kwargs)
-        
+        if "location" in kwargs:
+            self.update_location()
         self.nameslug = slugify(self.name)
         self.cityslug = slugify(self.city)
         self.stateslug = slugify(self.state)
