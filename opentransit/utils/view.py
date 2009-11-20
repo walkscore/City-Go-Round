@@ -1,4 +1,5 @@
 import django
+from django.conf import settings
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
 from django.utils import simplejson as json
@@ -39,7 +40,10 @@ def bad_request(message = ''):
     return HttpResponseBadRequest(message)
     
 def render_to_json(jsonable):
-    return HttpResopnse(json.dumps(jsonable), mimetype = 'application/json')
+    # For sanity's sake, when debugging use text/x-json...
+    # ...but in production, the one true JSON mimetype is application/json. 
+    # Ask IANA if you don't believe me.
+    return HttpResponse(json.dumps(jsonable), mimetype = 'text/x-json' if settings.DEBUG else 'application/json' )
     
 def raise_404():
     raise Http404
