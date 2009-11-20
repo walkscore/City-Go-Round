@@ -90,7 +90,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         urlslug = '/'.join([countryslug,stateslug,cityslug,nameslug])
         agency = Agency.all().filter('urlslug =', urlslug).get()
         
-        feeds = FeedReference.all().filter('gtfs_data_exchange_id =', agency.gtfs_data_exchange_id)
+        feeds = FeedReference.all().filter('gtfs_data_exchange_id IN', agency.gtfs_data_exchange_id)
         apps = TransitApp.iter_for_agency(agency)
         
         template_vars = {
