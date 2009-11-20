@@ -10,9 +10,11 @@ from ..decorators import requires_valid_transit_app_slug
 from ..models import TransitApp, TransitAppStats, FeedReference
 
 def nearby(request):
-    petition_form = PetitionForm()    
+    petition_form = PetitionForm()
+    location_query = request.GET.get('location_query','')
     template_vars = {
-        'petition_form': petition_form
+        'petition_form': petition_form,
+        'location_query': location_query
     }    
     return render_to_response(request, 'app/nearby.html', template_vars)
 

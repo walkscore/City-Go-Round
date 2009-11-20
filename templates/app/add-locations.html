@@ -125,7 +125,7 @@
 				this.cancelled = true;
 				return false;	
 			}
-			this.cancelEntry = function(){ this.cancelled = true; }
+			this.cancel = function(){ this.cancelled = true; }
 			this.restoreEntry = function(){ this.cancelled = false; }
 			this.isGeocoded = function(){ return this.geocoded }
 			this.isCancelled = function(){ return this.cancelled }
@@ -133,10 +133,17 @@
 			this.getQuery = function(){ return this.query }
 			this.getCity = function(){ return this.city }
 			this.getCountry = function(){ return this.country }
-			this.getLat = function(){ return this.lat }
-			this.getLng = function(){ return this.lng }
+			this.getLat = function(){ return this.geoLatLng.lat() }
+			this.getLng = function(){ return this.geoLatLng.lng() }
+			this.getDataString = function(){ 
+				if ( this.city == null )
+					return this.country;
+				else 
+					return this.geoLatLng.lat() + ", " + this.geoLatLng.lng() + ", " + this.city + ", " + this.country;
+			}
 		}
 		
+		//manages the array of GeoQueryData
 		function QueryDataList(){
 			this.list = [];
 			
@@ -152,21 +159,17 @@
 			this.addOrUpdateQuery = function(key, query){
 				var item = this.getByKey(key);
 				if (item){
-dbug("update existing");
 					item.updateQuery(query);
 					return 0;
 				}
 				else{
-dbug("add new");
 					this.list.push( new GeoQueryData(key, query) );
 					return 1;
 				}
 			}
 			
 			this.getNextQuery = function(){
-//dbug("searching... ");
 				for (var i = 0; i<this.list.length; i++){
-//dbugThese( this.list[i].isGeocoded(), this.list[i].isCancelled(), this.list[i].query)
 					if ( !this.list[i].isGeocoded() && !this.list[i].isCancelled() )
 						return this.list[i];
 				}		
@@ -178,19 +181,30 @@ dbug("add new");
 				if (item)
 					item.cancel();
 			}
+			
+			this.getDataString = function(){
+				var str = '';
+				for (var i = 0; i<this.list.length; i++){
+					if ( !this.list[i].isCancelled() && this.list[i].hasData() )
+						if (i>0)
+							str += " | ";
+						str += this.list[i].getDataString();
+				}		
+				return str;
+			}
 
 		}
 
-	
+		//the main control class, this one runs the show
 		function DataManager() {
 			this.geocoder = new Geocoder();
 			this.queryDataList = new QueryDataList();
 			this.numFields = 1;
 			this.activeQueryKey = -1;
-			
+
 			this.handleQuery = function(key){
 				var query = $("#query"+key).get(0).value;
-				$( "#add" + (this.numFields-1) ).val("redo");
+				
 				if (this.queryDataList.addOrUpdateQuery(key, query) )
 					this.addField();
 				this.geocodeQueuedQueries();
@@ -198,18 +212,20 @@ dbug("add new");
 			
 			this.addField = function(){
 				var htmlStr = '<div id="location' + this.numFields + '">';
-				htmlStr += '<label>Enter a city or Country name:</label>';
-				htmlStr += ' <input type="text" id="query' + this.numFields + '" />';
+				htmlStr += '<label>+</label>';
+				htmlStr += ' <input type="text" id="query' + this.numFields + '" onkeypress="handleKeyCodes(' + this.numFields + ', event)" />';
 				htmlStr += ' <input type="button" id="add' + this.numFields + '" value="Add" onclick="dataManager.handleQuery(' + this.numFields + ')"/>';
 				htmlStr += '<span id="response' + this.numFields + '"></span>';
-				htmlStr += '<a onclick="dataManager.removeQuery(' + this.numFields + ')">remove</a>';
+				htmlStr += '<a class="hidden" id="removelink' + this.numFields + '" onclick="dataManager.removeQuery(' + this.numFields + ')">remove</a>';
 				htmlStr += '</div>';
 				$("#locations").append(htmlStr);
+				$( "#query" + this.numFields ).focus();
 				this.numFields++;
 			}
 			
-			this.cancelQuery = function(key){
+			this.removeQuery = function(key){
 				this.queryDataList.cancelQuery(key);
+				$("#location"+key).hide();
 			}
 			
 			this.handleGeocodeResponse = function(latLng, countryCode, formattedAddress, administrativeArea, thoroughfare, locality, postalCode){
@@ -218,7 +234,10 @@ dbug("add new");
 				var currentQueryDataItem = this.queryDataList.getByKey(this.activeQueryKey);
 				if (currentQueryDataItem ) {
 					currentQueryDataItem.setData(locality, countryCode, latLng);
-					$( "#response" + this.activeQueryKey ).html(locality + ", " + countryCode + ", " + latLng);
+					var feedback = (locality) ? "City: " + locality + ", " + administrativeArea + ", " + countryCode : "Country: " + countryCode;
+					$( "#add" + this.activeQueryKey ).val("redo");
+					$( "#response" + this.activeQueryKey ).html(feedback);
+					$( "#removelink" + this.activeQueryKey ).show();
 				}
 				else
 					alert("couldn't find item to set data on");
@@ -233,7 +252,6 @@ dbug("add new");
 				//else, see if we have more to geocode:
 				var nextQueryItem = this.queryDataList.getNextQuery();
 				if ( nextQueryItem ) {
-dbug("found another query to execute: " + nextQueryItem.getQuery());
 					this.geocoder.geocode( nextQueryItem.getQuery() );	
 					this.activeQueryKey = nextQueryItem.getKey();
 				}
@@ -246,6 +264,7 @@ dbug("found another query to execute: " + nextQueryItem.getQuery());
 			}
 			
 			this.getDataString = function(){
+				return this.queryDataList.getDataString();
 			}
 		}
 
@@ -263,9 +282,9 @@ dbug("found another query to execute: " + nextQueryItem.getQuery());
 			
 			//show the location picker?
 			if ( !$("#global").eq(0).is(":checked") && $("#choose-locations").eq(0).is(":checked") )
-				$("#locations").eq(0).css("display", "block");			 
+				$("#locations").eq(0).show();
 			else
-				$("#locations").eq(0).css("display", "none");	
+				$("#locations").eq(0).hide();	
 		}
 		
 		function dbug(str){
@@ -275,6 +294,12 @@ dbug("found another query to execute: " + nextQueryItem.getQuery());
 			dbug(Array.prototype.join.call(arguments, " :: "));
 		}
 	
+		function handleKeyCodes(itemKey, keyEvent){
+			if (keyEvent.keyCode==13){
+				dataManager.handleQuery(itemKey);
+				return false;
+			};
+		}
 </script>
 {% endblock %}
 
@@ -282,15 +307,15 @@ dbug("found another query to execute: " + nextQueryItem.getQuery());
 {% block content %}
 <div class="body-content">
 	<h2>Where does your app work?</h2>
-	<form>
+	<form onkeypress="return event.keyCode!=13">
 		<p><input type="checkbox" name="global" id="global" onchange="updateUI()" /> Globally</p>
 		<p><input type="checkbox" name="entire-us" id="entire-us" onchange="updateUI()" /> Entire U.S.</p>
 		<p><input type="checkbox" name="choose-locations" id="choose-locations" onchange="updateUI()" /> Select countries or cities</p>
 		<div id="locations">
 
-			<div id="location0">
+			<div id="input">
 				<label>Enter a city or Country name: </label>
-				<input type="text" id="query0" />
+				<input type="text" id="query0" onkeypress="handleKeyCodes(0,event)" />
 				<input type="button" id="add0" value="Add" onclick="dataManager.handleQuery(0)"/>
 				<span id="response0"></span>
 			</div>
@@ -299,6 +324,7 @@ dbug("found another query to execute: " + nextQueryItem.getQuery());
 		<input type="submit" value="Done" />
 	</form>
 </div>
+<input type="button" value="Get Data String" onclick="dbug(dataManager.getDataString())"/>
 <div id="dbug"></div>
 {% endblock %}
 
