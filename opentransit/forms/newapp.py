@@ -1,6 +1,7 @@
 from django import forms
 from ..models import TransitApp
 from ..utils.slug import slugify
+from ..utils.misc import uniquify
 from ..formfields import AppEngineImageField, LocationListField, AgencyListField
 
 class NewAppGeneralInfoForm(forms.Form):
@@ -31,7 +32,15 @@ class NewAppGeneralInfoForm(forms.Form):
         
     @property
     def tag_list(self):
-        return [tag.strip() for tag in self.cleaned_data['tags'].split(',')]
+        return uniquify([tag.strip() for tag in self.cleaned_data['tags'].split(',')] + self.platform_list + self.category_list)
+        
+    @property
+    def platform_list(self):
+        return uniquify([TransitApp.PLATFORMS[platform_choice] for platform_choice in platforms])
+        
+    @property
+    def category_list(self):
+        return uniquify([TransitApp.PLATFORMS[category_choice] for category_choice in categories])        
 
 class NewAppAgencyForm(forms.Form):
     progress_uuid = forms.CharField(required = True, widget = forms.widgets.HiddenInput)

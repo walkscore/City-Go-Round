@@ -109,13 +109,14 @@ class TransitApp(db.Model):
     slug                = db.StringProperty(indexed = True)
     title               = db.StringProperty(required = True)
     description         = db.StringProperty()
-    platform            = db.StringProperty()
     url                 = db.LinkProperty()
     author_name         = db.StringProperty()
     author_email        = db.EmailProperty()
     long_description    = db.TextProperty()
     tags                = db.StringListProperty()
     screen_shot         = db.BlobProperty()
+    platforms           = db.StringListProperty() # These also go into tags, automatically
+    categories          = db.StringListProperty() # These also go into tags, automatically    
     
     def __init__(self, *args, **kwargs):
         super(TransitApp, self).__init__(*args, **kwargs)
@@ -145,7 +146,7 @@ class TransitApp(db.Model):
     explicitly_supported_cities = db.StringListProperty(indexed = True)   # ["Seattle", "San Francisco", ...]
     explicitly_supported_city_details = db.StringListProperty() # ["Seattle,WA,US", "San Francisco,CA,US", ...]
     explicitly_supported_countries = db.StringListProperty()
-    explicitly_supports_globally = db.BooleanProperty(indexed = True)
+    explicitly_supports_the_entire_world = db.BooleanProperty(indexed = True)
                 
     @staticmethod
     def all_supporting_public_agencies():
@@ -153,38 +154,38 @@ class TransitApp(db.Model):
         return TransitApp.all().filter('supports_all_public_agencies = ', True)
         
     @staticmethod
-    def fetch_for_agency(agency_or_key, uniqify = True):
+    def fetch_for_agency(agency_or_key, uniquify = True):
         """Return a list of TransitApp entities, by default unique, that support the given agency."""
-        return [transit_app for transit_app in TransitApp.iter_for_agency(agency_or_key, uniqify)]
+        return [transit_app for transit_app in TransitApp.iter_for_agency(agency_or_key, uniquify)]
         
     @staticmethod
-    def iter_for_agency(agency_or_key, uniqify = True):
+    def iter_for_agency(agency_or_key, uniquify = True):
         """Return an iterator over TransitApp entities, by default unique, that support the given agency."""
         seen = {}
         agency_key, agency = key_and_entity(agency_or_key, Agency)
         for transit_app_with_explicit_support in TransitApp.gql('WHERE explicitly_supported_agency_keys = :1', agency_key):
-            if (not uniqify) or (transit_app_with_explicit_support.key() not in seen):
-                if uniqify: seen[transit_app_with_explicit_support.key()] = True
+            if (not uniquify) or (transit_app_with_explicit_support.key() not in seen):
+                if uniquify: seen[transit_app_with_explicit_support.key()] = True
                 yield transit_app_with_explicit_support        
         if agency.is_public:
             for transit_app_with_public_support in TransitApp.all_supporting_public_agencies():
-                if (not uniqify) or (transit_app_with_public_support.key() not in seen):
-                    if uniqify: seen[transit_app_with_public_support.key()] = True
+                if (not uniquify) or (transit_app_with_public_support.key() not in seen):
+                    if uniquify: seen[transit_app_with_public_support.key()] = True
                     yield transit_app_with_public_support
 
     @staticmethod
-    def fetch_for_agencies(agencies_or_keys, uniqify = True):
+    def fetch_for_agencies(agencies_or_keys, uniquify = True):
         """Return a list of TransitApp entities, by default unique, that support at least one of the given agencies."""
-        return [transit_app for transit_app in TransitApp.iter_for_agencies(agencies_or_keys, uniqify)]
+        return [transit_app for transit_app in TransitApp.iter_for_agencies(agencies_or_keys, uniquify)]
         
     @staticmethod
-    def iter_for_agencies(agencies_or_keys, uniqify = True):
+    def iter_for_agencies(agencies_or_keys, uniquify = True):
         """Return an iterator over TransitApp entities, by default unique, that support at least one of the given agencies."""
         seen = {}
         for agency_or_key in agencies_or_keys:
-            for transit_app in TransitApp.iter_for_agency(agency_or_key, uniqify = False):
-                if (not uniqify) or (transit_app.key() not in seen):
-                    if uniqify: seen[transit_app.key()] = True
+            for transit_app in TransitApp.iter_for_agency(agency_or_key, uniquify = False):
+                if (not uniquify) or (transit_app.key() not in seen):
+                    if uniquify: seen[transit_app.key()] = True
                     yield transit_app
 
     def add_explicitly_supported_agencies(self, agencies_or_keys):
@@ -215,17 +216,17 @@ class TransitApp(db.Model):
         return TransitApp.gql('WHERE supported_cities = :1', city)
     
     @staticmethod
-    def iter_for_country_or_city(country_code = None, city = None, uniqify = True):
+    def iter_for_country_or_city(country_code = None, city = None, uniquify = True):
         seen = {}        
         if city:
             for transit_app in TransitApp.all_for_city(city):
-                if (not uniqify) or (transit_app.key() not in seen):
-                    if uniqify: seen[transit_app.key()] = True
+                if (not uniquify) or (transit_app.key() not in seen):
+                    if uniquify: seen[transit_app.key()] = True
                     yield transit_app
         if country:
             for transit_app in TransitApp.all_for_country(country_code):
-                if (not uniqify) or (transit_app.key() not in seen):
-                    if uniqify: seen[transit_app.key()] = True
+                if (not uniquify) or (transit_app.key() not in seen):
+                    if uniquify: seen[transit_app.key()] = True
                     yield transit_app
     
     @staticmethod
@@ -252,4 +253,7 @@ class TransitAppFormProgress(db.Model):
     def new_with_uuid():
         return TransitAppFormProgress(progress_uuid = str(uuid4()).replace('-', ''))
     
+    @staticmethod
+    def get_with_uuid(uuid):
+        return TransitAppFormProgress.all().filter('progress_uuid =', uuid).get()
 
