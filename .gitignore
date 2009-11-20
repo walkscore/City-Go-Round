@@ -19,3 +19,6 @@ Release-iphonesimulator/
 Release-toolchain/
 Release-iphoneos/
 .sass-cache/
+bulkloader-log-*
+bulkloader-progress-*
+

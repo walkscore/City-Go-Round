@@ -196,11 +196,16 @@ def agencies_search(request):
     lon = rg('lon','')
     city = rg('city','')
     state = rg('state','')
-    format = rg('format','')
+    format = rg('format','html')
+
+    if not search_type in ['location', 'city', 'state']:
+        return bad_request('invalid search type')
+        
+    if not format in ['html', 'json']:
+        return bad_request('invalid format')
     
     agencies = Agency.all()
-    if not search_type in ['location', 'city']:
-        return bad_request('invalid search type')
+    
     if search_type == 'location':
         #get all agencies that are nearby
         lat,lon = check_lat_lon(lat, lon)
@@ -210,20 +215,22 @@ def agencies_search(request):
         agencies = Agency.bounding_box_fetch(
             agencies,
             geotypes.Box(lat+r, lon+r, lat-r, lon-r),
-            max_results = 50)
-        
-    if search_type == 'city':
-        logging.debug('filtering by city %s' % city)
-        if not (city and state):
-            return bad_request('you must include city and state params')
-        #get all agencies matching a state and city
-        agencies = agencies.filter('state =',state.upper()).filter('city =',city)
+            max_results = 50)        
+    else:
+        if search_type == 'city':
+            if not city:
+                return bad_request('you must include a city')
+            # NOTE davepeck: we used to search for 'city =', city... but that didn't really
+            # work because of differences in capitalization. Use slugs instead.
+            agencies = agencies.filter('cityslug =', slugify(city))
+        if not state:
+            return bad_request('you must include a state')
+        agencies = agencies.filter('state =', state.upper())        
     
     if format == 'json':
         return render_to_json(agencies_to_dictionary(agencies))
     else:
-        return not_implemented(request)
-        # return render_to_response( request, "agency_search.html", {'agencies' : agencies} )
+        return not_implemented(request) # We haven't written "agency_search.html" yet.
         
 def delete_all_agencies(request):
     todelete = list(Agency.all(keys_only=True))
