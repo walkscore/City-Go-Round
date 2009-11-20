@@ -222,7 +222,8 @@ def agencies_search(request):
     if format == 'json':
         return render_to_json(agencies_to_dictionary(agencies))
     else:
-        return render_to_response( request, "agency_search.html", {'agencies' : agencies} )
+        return not_implemented(request)
+        # return render_to_response( request, "agency_search.html", {'agencies' : agencies} )
         
 def delete_all_agencies(request):
     todelete = list(Agency.all(keys_only=True))
