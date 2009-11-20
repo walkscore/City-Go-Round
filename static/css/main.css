@@ -431,6 +431,10 @@
         list-style-type: none;
     }
     
+    #add-app-form table ul.errorlist li {
+        color: red;
+    }
+    
     #add-app-form table input[type="radio"] {
         border: 0;
         width: 20px;

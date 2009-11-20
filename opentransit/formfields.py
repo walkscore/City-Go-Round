@@ -14,8 +14,8 @@ class AppEngineImageField(forms.FileField):
         'invalid_image': _(u"Upload a valid image. The file you uploaded was either not an image or was a corrupted image."),
     }
     
-    def clean(self, data):
-        raw_file = super(AppEngineImageField, self).clean(data)
+    def clean(self, data, initial = None):
+        raw_file = super(AppEngineImageField, self).clean(data, initial)
         if raw_file is None:
             return None
         elif not data and initial:
