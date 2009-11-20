@@ -5,25 +5,36 @@
 
 {% block headscripts %}
 <script type="text/javascript">
-	google.load("maps", "2.167");
+	
+		//load maps API
+		google.load("maps", "2.167");
+
+
 	
 	//********** GEOCODER ****************
 
 		//*********** set onload callback ***********
-    function init() {
-			geocoder = new Geocoder();
+		function init() {
+			dataManager = new DataManager();
 		}
 				
 		function Geocoder() {
 			googleCoder = new GClientGeocoder();
-  		
-  		this.geocode = function(input){
-  			googleCoder.getLocations( input, geocodeReturn );
-  			geoTimeout = setTimeout("geocodeTimeout()", 15000);
-  		}
-		}		
+			this.geocoding = false;
+			
+			this.isGeocoding = function() {return this.geocoding; }
+			this.confirmSuccess = function() { this.geocoding = false; clearTimeout(this.geoTimeout); }
+			this.timeOut = function() {	this.geocoding = false; clearTimeout(this.geoTimeout); }
+			
+			this.geocode = function(query){
+				this.geocoding = true;
+				googleCoder.getLocations( query, geocodeReturn );
+				this.geoTimeout = setTimeout("geocodeTimeout()", 15000);
+			}
+		}	
+			
 		function geocodeTimeout() {
-			alert("verification timed out, please try again.  If you continue to have problems, please check that your internet connection is working.");
+			dataManager.handleGeocodeTimeout();
 		}
 		
 		function geocodeReturn(response) {
@@ -64,51 +75,272 @@
 								postalCode = String(adminArea.Locality.PostalCode.PostalCodeNumber);
 						}
 					}
-					queryStatus = QUERY_LOCATION_SETUP;
 				} 
 			}
+	
+			dataManager.handleGeocodeResponse(latLng, countryCode, formattedAddress, administrativeArea, thoroughfare, locality, postalCode);
+		}
+		
+		//we keep a list of these, created when a user clicks "Add"
+		//on geoQuery return, we fill in the returned data into the existing object
+		//we also check to see if new objects have been added (serves as a queue)
+		
+		//when a geocode doesn't get a country, we mark its entry as cancelled
+		//when a user resubmits that entry we overwrite the existing data and uncancel it
+		
+		//when a user deletes an entry, we keep it in the list, but mark its entry as cancelled and delete the UI panel
+		function GeoQueryData(key, query) {
+			this.key = key;
+			this.query = query;
+			this.geocoded = false;
+			this.cancelled = false;
+			this.city = null;
+			this.country = null;
+			this.geoLatLng = null;
+		
+			this.updateQuery = function(query){
+				this.query = query;
+				this.geocoded = false;			
+				//reset data:
+				this.city = null;
+				this.country = null;
+				this.geoLatLng = null;
+			}
+			this.hasData = function(){
+				return this.geoLatLng != null;
+			}
+			this.setData = function(city, administrativeArea, country, latlng){			
+				this.geocoded = true;
 
-      /*package up the results:
-			geoData.geoLatLng = latLng;
-			geoData.locCountryCode = countryCode;
-			geoData.locFormattedAddress = formattedAddress;
-			geoData.locAdministrativeArea = administrativeArea;
-			geoData.locThoroughfare = thoroughfare;
-			geoData.locLocality = locality;
-			geoData.locPostalCode = postalCode;*/
+				//if succeeded
+				if ( country && latlng ){
+				    this.administrativeArea = administrativeArea;
+					this.country = country;
+					this.geoLatLng = latlng;
+					if (city)					
+						this.city = city;			
+					this.cancelled = false;
+					return true;
+				}
+				//geocode failed
+				this.cancelled = true;
+				return false;	
+			}
+			this.cancel = function(){ this.cancelled = true; }
+			this.restoreEntry = function(){ this.cancelled = false; }
+			this.isGeocoded = function(){ return this.geocoded }
+			this.isCancelled = function(){ return this.cancelled }
+			this.getKey = function(){ return this.key }
+			this.getQuery = function(){ return this.query }
+			this.getCity = function(){ return this.city }
+			this.getCountry = function(){ return this.country }
+			this.getLat = function(){ return this.geoLatLng.lat() }
+			this.getLng = function(){ return this.geoLatLng.lng() }
+			this.getDataString = function(){ 
+				if ( this.city == null )
+					return this.country;
+				else 
+					return this.geoLatLng.lat() + ", " + this.geoLatLng.lng() + ", " + this.city + ", " + this.administrativeArea + ", " + this.country;
+			}
+		}
+		
+		//manages the array of GeoQueryData
+		function QueryDataList(){
+			this.list = [];
+			
+			this.length = function() { return this.list.length }
+			this.getByKey = function(key) { 
+				for (var i = 0; i<this.list.length; i++){
+					if (this.list[i].key == key)
+						return this.list[i];
+				}
+				return null;
+			}
+			
+			this.addOrUpdateQuery = function(key, query){
+				var item = this.getByKey(key);
+				if (item){
+					item.updateQuery(query);
+					return 0;
+				}
+				else{
+					this.list.push( new GeoQueryData(key, query) );
+					return 1;
+				}
+			}
+			
+			this.getNextQuery = function(){
+				for (var i = 0; i<this.list.length; i++){
+					if ( !this.list[i].isGeocoded() && !this.list[i].isCancelled() )
+						return this.list[i];
+				}		
+				return null;		
+			}
+			
+			this.cancelQuery = function(key){
+				var item = this.getByKey(key);
+				if (item)
+					item.cancel();
+			}
+			
+			this.getDataString = function(){
+				var str = '';
+				for (var i = 0; i<this.list.length; i++){
+					if ( !this.list[i].isCancelled() && this.list[i].hasData() ) {
+						if (i>0)
+							str += " | ";
+						str += this.list[i].getDataString();
+					}
+				}		
+				return str;
+			}
+
+		}
+
+		//the main control class, this one runs the show
+		function DataManager() {
+			this.geocoder = new Geocoder();
+			this.queryDataList = new QueryDataList();
+			this.numLocations = 0;
+			this.activeQueryKey = -1;
+
+			this.addQuery = function(key){
+				var query = $("#query").get(0).value;
+								
+				if (this.queryDataList.addOrUpdateQuery(this.numLocations, query) ) { //will always add, we don't allow editing old ones
+					this.addLocation();
+					this.numLocations++;
+				}
+				this.geocodeQueuedQueries();
+			}
+			
+			this.addLocation = function(){
+				var htmlStr = '<div id="location' + this.numLocations + '">';
+				htmlStr += '<p id="name' + this.numLocations + '"></p>';
+				htmlStr += '<a id="removelink' + this.numLocations + '" onclick="dataManager.removeQuery(' + this.numLocations + ')">remove</a>';
+				htmlStr += '</div>';
+				$("#locations").append(htmlStr);
+				$("#query").focus().val("");
+			}
+			
+			this.removeQuery = function(key){
+				this.queryDataList.cancelQuery(key);
+				$("#location"+key).hide();
+			}
+			
+			this.geocodeQueuedQueries = function() {
+				if ( this.geocoder.isGeocoding() ) {
+					return;
+				}
+				//else, see if we have more to geocode:
+				var nextQueryItem = this.queryDataList.getNextQuery();
+				if ( nextQueryItem ) {	
+					this.activeQueryKey = nextQueryItem.getKey();
+					this.geocoder.geocode( nextQueryItem.getQuery() );
+				}
+			}
+
+			this.handleGeocodeResponse = function(latLng, countryCode, formattedAddress, administrativeArea, thoroughfare, locality, postalCode){
+				this.geocoder.confirmSuccess();
+				
+				var currentQueryDataItem = this.queryDataList.getByKey(this.activeQueryKey);
+				if (currentQueryDataItem ) {
+					currentQueryDataItem.setData(locality, administrativeArea, countryCode, latLng);
+					var label = (locality) ? "City" : "Country";
+					var name = (locality) ? locality + ", " + administrativeArea + ", " + countryCode : countryCode;
+					var entryText = name + " <span>(" + label + ")</span>"
+					$( "#name" + this.activeQueryKey ).html(entryText);
+				}
+				else
+					alert("couldn't find item to set data on");
+					
+				this.geocodeQueuedQueries
+			}
+						
+			this.handleGeocodeTimeout = function(){
+				this.geocoder.timeOut();
+				//retry the failed geocode?
+			}
+			
+			this.getDataString = function(){
+				var data = this.queryDataList.getDataString();
+				var append = ( $("#entire-us").eq(0).is(":checked") ) ? (( data.length > 0 ) ? " | US" : "US") : "";
+				return data + append;
+			}
+			
+			this.sendDataString = function(){
+				$(id_location_list).eq(0).val( this.getDataString() );
+			}
+		}
+
+
+		function updateUI(){			
+			//when global is checked, others should be disabled
+			if ( $("#global").eq(0).is(":checked") ){
+				$("#entire-us").attr("disabled", true);
+				$("#choose-locations").attr("disabled", true);			 
+			}
+			else {
+				$("#entire-us").attr("disabled", false);
+				$("#choose-locations").attr("disabled", false);
+			}
+			
+			//show the location picker?
+			if ( !$("#global").eq(0).is(":checked") && $("#choose-locations").eq(0).is(":checked") )
+				$("#location-list").eq(0).show();
+			else
+				$("#location-list").eq(0).hide();	
 		}
 		
 		function dbug(str){
-		  $("#dbug").append(str);
+			$("#dbug").append(str + "<br />");
 		}
-		
-		function updateUI(){
-		  var str = "";
-		  str += ($("#global").checked) ? "global <br />":"not global <br />";
-	    //str += (document.getElementById("global").checked) ? "global <br />":"not global <br />";
-	    dbug(str);
+		function dbugThese(){
+			dbug(Array.prototype.join.call(arguments, " :: "));
 		}
 	
+		function handleKeyCodes(keyEvent){
+			if (keyEvent.keyCode==13){
+				dataManager.addQuery();
+				return false;
+			};
+		}
 </script>
 {% endblock %}
 
 
 {% block content %}
 <div class="body-content">
+
+  <h3>ADD A NEW TRANSIT APP [Step 2 of 2: Where Your App Works]</h3>    
   <h2>Select locations where your app works:</h2>
-  <form>
-    <p><input type="checkbox" name="global" id="global" onchange="updateUI()" />Globally</p>
+  <form id="add-locations-form" action="" method="POST" onkeypress="return event.keyCode!=13" onsubmit="dataManager.sendDataString()">
+    {# This will mostly spit out hidden fields, but it also spits out the global field. #}
+    {{form.as_p}}    
+    {# <p><input type="checkbox" name="global" id="global" onchange="updateUI()" />Globally</p> #}
     <p><input type="checkbox" name="entire-us" id="entire-us" onchange="updateUI()" />Entire U.S.</p>
     <p><input type="checkbox" name="choose-locations" id="choose-locations" onchange="updateUI()" />Select countries or cities</p>
-    <div id="locations">
-      <div id="location0">
-        <label>Enter a city or Country name:</label>
-        <input type="text" />
-        <input type="button" value="Add" />
-      </div>
-    </div>
+    <div id="location-list">		
+			<div id="locations">
+			</div>
+			<div id="location-entry">
+  			<label>Enter a city or Country name: </label>
+  			<input type="text" id="query" onkeypress="handleKeyCodes(event)" />
+  			<input type="button" id="add" value="Add" onclick="dataManager.addQuery()"/>
+			</div>
+		</div>
+    
+    <input type="submit" value="Add The App!"></input>    
   </form>
 </div>
+<input style="margin-top: 20px;" type="button" value="DEBUG: Show Data String" onclick="dbug(dataManager.getDataString())"/>
 <div id="dbug"></div>
 {% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+	init();
+</script>
+{% endblock %}
+
 

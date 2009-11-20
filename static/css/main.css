@@ -43,6 +43,9 @@
 		border-color: #ccc;
 		background-color: #f7f7f7;
 	}
+	.hidden {
+		display: none;
+	}
 	
 /*********** Fonts ****************/
 	h1,h2,h3,h4,h5,h6 { 
@@ -89,7 +92,7 @@
 	#recently-added-list h3 { color: #18b541; font-size: 18px; }
 
 	
-  p, a, ul, ol, blockquote, label {
+  p, a, ul, ol, blockquote, label, span {
 		font:12px Verdana, Arial, Helvetica, sans-serif;
 		color: #555;
 	}
@@ -431,6 +434,10 @@
         list-style-type: none;
     }
     
+    #add-app-form table ul.errorlist li {
+        color: red;
+    }
+    
     #add-app-form table input[type="radio"] {
         border: 0;
         width: 20px;
@@ -608,12 +615,39 @@
 	
 /*********** APP ADD FORMS ************/
 	
-	#locations {
-	 display: none;
+	#add-locations-form p input {
+		margin-right: 5px;
 	}
-
-
-	
+	#location-list {
+		display: none;
+	}
+	#locations div {
+		clear: both;
+	}
+	#locations p, #locations a {
+		float: left;
+		display: block;
+		height: 20px;		
+	}
+	#locations p {
+		min-width: 200px;
+		margin-right: 6px;
+		text-indent: 30px;
+		background: url(/images/check.gif) 5px 0px no-repeat;
+	}
+	#locations p span {
+		margin-right: 8px;
+		color: #888;
+	}
+	#locations a {
+		float: left;
+		display: block;
+		font-size: 10px;
+		height: 20px;
+	}
+	#location-entry {
+		clear: both;
+	}
 /*********** CUSTOM STUFF ************/
 	.bluegreen {
 		color: #028dc7;
@@ -658,6 +692,8 @@
 .agency_detail_key{font-weight:bold; width:200px;}
 .agency_detail_value{}
 
+.green{color:green;}
+.red{color:red;}
 
 .big_red{font-size:2em;font-weight:bold; color:red}
 .big_green{font-size:2em; font-weight:bold; color:green;}

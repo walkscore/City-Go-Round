@@ -1,13 +1,12 @@
 import time
 import logging
 from datetime import datetime
-from django.utils import simplejson as json
 from google.appengine.ext import db
 from google.appengine.api import memcache
 from geo import geotypes
 
 from ..forms import AgencyForm
-from ..utils.view import render_to_response, redirect_to, not_implemented
+from ..utils.view import render_to_response, redirect_to, not_implemented, bad_request, render_to_json
 from ..models import Agency, FeedReference, TransitApp
 
 from django.http import HttpResponse, HttpResponseRedirect
@@ -96,9 +95,12 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
             }
     
         return render_to_response( request, "agency.html", template_vars)
-    location = 'system'
+    location = ''
     
     agencies = Agency.all().order("name")
+    
+    public_filter = request.GET.get('public','')
+    
     mck = 'agencies'
     if countryslug:
         agencies = agencies.filter('countryslug =',countryslug)
@@ -117,7 +119,6 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
     
     mem_result = memcache.get(mck)
     if not mem_result:
-        agencies = agencies.order("name")
         mc_added = memcache.add(mck, agencies, 60 * 1)
     else:
         agencies = mem_result
@@ -129,14 +130,19 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         if a.date_opened:
             public_count += 1
             a.date_opened_formatted = a.date_opened
+            if public_filter == 'no_public':
+                a.hide = True
         else:
             no_public_count += 1
+            if public_filter == 'public':
+                a.hide = True
         agency_list.append(a)  #listify now so we dont have to do it again for count(), etc
 
     template_vars = {
         'agencies': agency_list,
         'location' : location,
         'public_count' : public_count,
+        'public_filter' : public_filter,
         'no_public_count' : no_public_count,
         'states' : get_state_list(),
         'agency_count' : len(agency_list),
@@ -149,7 +155,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         for agency in agencies:
             jsonable_list.append( agency.to_jsonable() )
         
-        return HttpResponse( content=json.dumps( jsonable_list, indent=2 ), mimetype="text/plain" )
+        return render_to_json(jsonable_list)
         
     if request.GET.get( 'format' ) == 'csv':
         jsonable_list = []
@@ -178,7 +184,6 @@ def generate_locations(request):
        during import. This is easier than writing a bulk uploader that does."""
        
     pass
-    return HttpResponse( "locations NOT generated" )
 
 def agencies_search(request):
     """
@@ -189,7 +194,7 @@ def agencies_search(request):
     returns:
      list of nearby (location) or matching (city) agencies, and their associated apps
     """
-    def agencies_to_json(agencies):
+    def agencies_to_dictionary(agencies):
         ag = {'agencies' : []}
         for a in agencies:
             ad = {}
@@ -214,33 +219,41 @@ def agencies_search(request):
     lon = rg('lon','')
     city = rg('city','')
     state = rg('state','')
-    format = rg('format','')
+    format = rg('format','html')
+
+    if not search_type in ['location', 'city', 'state']:
+        return bad_request('invalid search type')
+        
+    if not format in ['html', 'json']:
+        return bad_request('invalid format')
     
     agencies = Agency.all()
-    if not search_type in ['location', 'city']:
-        return HttpResponse('404 - invalid search type')
+    
     if search_type == 'location':
         #get all agencies that are nearby
         lat,lon = check_lat_lon(lat, lon)
         if not (lat and lon):
-            return HttpResponse('404 - invalid lat/lng')
+            return bad_request('invalid lat/lng')
         r = .25
         agencies = Agency.bounding_box_fetch(
             agencies,
             geotypes.Box(lat+r, lon+r, lat-r, lon-r),
-            max_results = 50)
-        
-    if search_type == 'city':
-        logging.debug('filtering by city %s' % city)
-        if not (city and state):
-            return HttpResponse('404 - you must include city and state params')
-        #get all agencies matching a state and city
-        agencies = agencies.filter('state =',state.upper()).filter('city =',city)
+            max_results = 50)        
+    else:
+        if search_type == 'city':
+            if not city:
+                return bad_request('you must include a city')
+            # NOTE davepeck: we used to search for 'city =', city... but that didn't really
+            # work because of differences in capitalization. Use slugs instead.
+            agencies = agencies.filter('cityslug =', slugify(city))
+        if not state:
+            return bad_request('you must include a state')
+        agencies = agencies.filter('state =', state.upper())        
     
     if format == 'json':
-        return HttpResponse(json.dumps(agencies_to_json(agencies)), mimetype='text/html')
+        return render_to_json(agencies_to_dictionary(agencies))
     else:
-        return render_to_response( request, "agency_search.html", {'agencies' : agencies} )
+        return not_implemented(request) # We haven't written "agency_search.html" yet.
         
 def delete_all_agencies(request):
     todelete = list(Agency.all(keys_only=True))

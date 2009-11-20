@@ -69,7 +69,7 @@ class TestLocationListField(unittest.TestCase):
         self.assertEqual(city.name, 'Seattle')
         self.assertEqual(city.latitude, float('47.6062'))
         self.assertEqual(city.longitude, float('-122.3320'))
-        self.assertEqual(city.state_code, 'WA')
+        self.assertEqual(city.administrative_area, 'WA')
         self.assertEqual(city.country_code, 'US')
         
     def test_multiple_cities(self):
@@ -80,15 +80,15 @@ class TestLocationListField(unittest.TestCase):
             self.assertEqual(city.name, 'Seattle')
             self.assertEqual(city.latitude, float('47.6062'))
             self.assertEqual(city.longitude, float('-122.3320'))
-            self.assertEqual(city.state_code, 'WA')
+            self.assertEqual(city.administrative_area, 'WA')
             self.assertEqual(city.country_code, 'US')
             
     def test_invalid_city(self):
         self.try_invalidate('47.6062, -122.GOOBER3320, Seattle, WA, US')    
         self.try_invalidate('47.6062,, Seattle, WA, US')    
-        self.try_invalidate('47.6062, -122.3320, Seattle, WAXY, US')    
-        self.try_invalidate('47.6062, -122.3320, Seattle, WAXY, USZZZ')    
-        self.try_invalidate('47.6062, -122.3320, Seattle, WAXY, USZZZ')    
+        self.try_invalidate('47.6062, -122.3320, Seattle, W, US')    
+        self.try_invalidate('47.6062, -122.3320, Seattle, WA, USZZZ')    
+        self.try_invalidate('47.6062, -122.3320, Seattle, W, USZZZ')    
         
     def test_invalid_cities(self):
         self.try_invalidate('47.6062, -122.3320, Seattle, WA, US|47.6062,, Seattle, WA, US')    
@@ -102,7 +102,7 @@ class TestLocationListField(unittest.TestCase):
         self.assertEqual(city.name, 'Seattle')
         self.assertEqual(city.latitude, float('47.6062'))
         self.assertEqual(city.longitude, float('-122.3320'))
-        self.assertEqual(city.state_code, 'WA')
+        self.assertEqual(city.administrative_area, 'WA')
         self.assertEqual(city.country_code, 'US')
         self.assertEqual(info.countries[0].country_code, 'GB')
         
