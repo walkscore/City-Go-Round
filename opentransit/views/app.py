@@ -40,7 +40,6 @@ def screenshot(request, transit_app):
     return redirect_to_url("/images/default-transit-app.png")
 
 def add_form(request):
-    # TODO davepeck
     if request.method == 'POST':
         form = NewAppGeneralInfoForm(request.POST, request.FILES)
         if form.is_valid():
@@ -85,18 +84,40 @@ def add_form(request):
             if form.cleaned_data["gtfs_choice"] == "yes_gtfs":
                 return redirect_to("apps_add_agencies", progress_uuid = form_progress.progress_uuid)
             else:
-                return redirect_to("apps_and_locations", progress_uuid = form_progress.progress_uuid)                    
+                return redirect_to("apps_add_locations", progress_uuid = form_progress.progress_uuid)                    
     else:
         form = NewAppGeneralInfoForm()        
     return render_to_response(request, 'app/add-form.html', {'form': form})
     
 @requires_valid_progress_uuid
 def add_locations(request, progress_uuid):
-    return render_to_response(request, 'app/add-locations.html')
+    if request.method == "POST":
+        form = NewAppLocationForm(request.POST)
+        if form.is_valid():
+            # TODO davepeck: process this ish!
+            return redirect_to("apps_add_success")
+    else:
+        form = NewAppLocationForm(initial = {"progress_uuid": progress_uuid})
+    
+    template_vars = {
+        "form": form,
+    }
+    return render_to_response(request, 'app/add-locations.html', template_vars)
     
 @requires_valid_progress_uuid
 def add_agencies(request, progress_uuid):
-    return render_to_response(request, 'app/add-agencies.html')
+    if request.method == "POST":
+        form = NewAppAgencyForm(request.POST)
+        if form.is_valid():
+            # TODO davepeck: process this ish!
+            return redirect_to("apps_add_success")
+    else:
+        form = NewAppAgencyForm(initial = {"progress_uuid": progress_uuid})
+    
+    template_vars = {
+        "form": form,
+    }
+    return render_to_response(request, 'app/add-agencies.html', template_vars)
     
 def add_success(request):
     return render_to_response(request, 'app/add-success.html')
