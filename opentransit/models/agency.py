@@ -50,7 +50,7 @@ class Agency(GeoModel):
         return {'ntd_id':self.ntd_id,
                 'name':self.name,
                 'gtfs_data_exchange_id':self.gtfs_data_exchange_id,
-                'date_opened':list(self.date_opened.timetuple()) if self.date_opened else None,
+                'date_opened':self.date_opened.isoformat(" ") if self.date_opened else None,
                 'passenger_miles':self.passenger_miles}
                 
     @property
