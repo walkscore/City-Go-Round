@@ -40,7 +40,7 @@ class AppEngineImageField(forms.FileField):
             
         return raw_file
 
-CityInfo = nameddict("CityInfo", keys=["latitude", "longitude", "name", "state_code", "country_code"])
+CityInfo = nameddict("CityInfo", keys=["latitude", "longitude", "name", "administrative_area", "country_code"])
 CountryInfo = nameddict("CountryInfo", keys=["country_code"])
 CitiesAndCountries = nameddict("CitiesAndCountries", keys=["cities", "countries"])
                 
@@ -75,7 +75,7 @@ class LocationListField(forms.CharField):
             raise forms.ValidationError(self.location_error_messages['invalid_country_code'])
         return CountryInfo(country_code = country_code)
         
-    def _clean_city(self, latitude_x, longitude_x, city_name_x, state_code_x, country_code_x):
+    def _clean_city(self, latitude_x, longitude_x, city_name_x, administrative_area_x, country_code_x):
         try:
             latitude = float(latitude_x)
             longitude = float(longitude_x)
@@ -86,15 +86,15 @@ class LocationListField(forms.CharField):
         if len(city_name) < 2:
             raise forms.ValidationError(self.location_error_messages['malformed_city_info'])
                     
-        state_code = state_code_x.strip()
-        if len(state_code) != 2:
+        administrative_area = administrative_area_x.strip()
+        if len(administrative_area) < 2:
             raise forms.ValidationError(self.location_error_messages['malformed_city_info'])
         
         country_code = country_code_x.strip()
         if len(country_code) != 2:
             raise forms.ValidationError(self.location_error_messages['malformed_city_info'])
             
-        return CityInfo(latitude = latitude, longitude = longitude, name = city_name, state_code = state_code, country_code = country_code)
+        return CityInfo(latitude = latitude, longitude = longitude, name = city_name, administrative_area = administrative_area, country_code = country_code)
             
     def clean(self, value):
         super(LocationListField, self).clean(value)   

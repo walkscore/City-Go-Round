@@ -695,6 +695,8 @@
 .agency_detail_key{font-weight:bold; width:200px;}
 .agency_detail_value{}
 
+.green{color:green;}
+.red{color:red;}
 
 .big_red{font-size:2em;font-weight:bold; color:red}
 .big_green{font-size:2em; font-weight:bold; color:green;}
