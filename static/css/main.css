@@ -633,6 +633,8 @@
 		min-width: 200px;
 		margin-right: 6px;
 		text-indent: 30px;
+	}
+	#locations p.goodresult {
 		background: url(/images/check.gif) 5px 0px no-repeat;
 	}
 	#locations p span {
@@ -644,6 +646,7 @@
 		display: block;
 		font-size: 10px;
 		height: 20px;
+		display: none;
 	}
 	#location-entry {
 		clear: both;

@@ -106,7 +106,7 @@
 				this.country = null;
 				this.geoLatLng = null;
 			}
-			this.hasData = function(){
+			this.hasValidData = function(){
 				return this.geoLatLng != null;
 			}
 			this.setData = function(city, administrativeArea, country, latlng){			
@@ -186,7 +186,7 @@
 			this.getDataString = function(){
 				var str = '';
 				for (var i = 0; i<this.list.length; i++){
-					if ( !this.list[i].isCancelled() && this.list[i].hasData() ) {
+					if ( !this.list[i].isCancelled() && this.list[i].hasValidData() ) {
 						if (i>0)
 							str += " | ";
 						str += this.list[i].getDataString();
@@ -225,7 +225,7 @@
 			
 			this.removeQuery = function(key){
 				this.queryDataList.cancelQuery(key);
-				$("#location"+key).hide();
+				$("#location"+key).hide("slide", { direction: "down" }, 1000);
 			}
 			
 			this.geocodeQueuedQueries = function() {
@@ -246,10 +246,18 @@
 				var currentQueryDataItem = this.queryDataList.getByKey(this.activeQueryKey);
 				if (currentQueryDataItem ) {
 					currentQueryDataItem.setData(locality, administrativeArea, countryCode, latLng);
-					var label = (locality) ? "City" : "Country";
-					var name = (locality) ? locality + ", " + administrativeArea + ", " + countryCode : countryCode;
-					var entryText = name + " <span>(" + label + ")</span>"
-					$( "#name" + this.activeQueryKey ).html(entryText);
+					if (currentQueryDataItem.hasValidData()) {
+						var label = (locality) ? "City" : "Country";
+						var name = (locality) ? locality + ", " + administrativeArea + ", " + countryCode : countryCode;
+						var entryText = name + " <span>(" + label + ")</span>"
+						$( "#name" + this.activeQueryKey ).html(entryText);
+						$( "#name" + this.activeQueryKey ).addClass("goodresult");
+						$( "#removelink" + this.activeQueryKey ).show();
+					}
+					else {
+						$( "#name" + this.activeQueryKey ).html(currentQueryDataItem.getQuery() + " was not recognized.  Please try again.");
+						setTimeout("dataManager.removeQuery(" + this.activeQueryKey + ")", 900);
+					}
 				}
 				else
 					alert("couldn't find item to set data on");
@@ -269,7 +277,8 @@
 			}
 			
 			this.sendDataString = function(){
-				$(id_location_list).eq(0).val( this.getDataString() );
+				if ( !$("#global").eq(0).is(":checked") && $("#choose-locations").eq(0).is(":checked") )
+					$(id_location_list).eq(0).val( this.getDataString() );
 			}
 		}
 
