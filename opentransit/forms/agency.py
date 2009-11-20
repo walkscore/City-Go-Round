@@ -16,3 +16,7 @@ class AgencyForm(forms.Form):
     contact_email   = forms.EmailField(required=False)
     updated         = forms.DateTimeField(required=False)
     phone           = forms.CharField(required=False)
+    dev_site         = forms.CharField(required=False)
+    arrival_data     = forms.CharField(required=False)
+    position_data    = forms.CharField(required=False)
+    standard_license = forms.CharField(required=False) 

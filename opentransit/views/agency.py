@@ -42,6 +42,11 @@ def edit_agency(request, agency_id):
             agency.updated          = form.cleaned_data['updated']
             agency.phone            = form.cleaned_data['phone']
             agency.gtfs_data_exchange_id      = form.cleaned_data['gtfs_data_exchange_id'].split(",") if form.cleaned_data['gtfs_data_exchange_id'] != "" else []
+            agency.dev_site         = form.cleaned_data['dev_site'] if form.cleaned_data['dev_site'] != "" else None
+            agency.arrival_data     = form.cleaned_data['arrival_data'] if form.cleaned_data['arrival_data'] != "" else None
+            agency.position_data    = form.cleaned_data['position_data'] if form.cleaned_data['position_data'] != "" else None
+            agency.standard_license = form.cleaned_data['standard_license'] if form.cleaned_data['standard_license'] != "" else None
+            
             
             agency.update_slugs()
             
@@ -61,7 +66,11 @@ def edit_agency(request, agency_id):
                                'contact_email':agency.contact_email,
                                'updated':agency.updated,
                                'phone':agency.phone,
-                               'gtfs_data_exchange_id':",".join(agency.gtfs_data_exchange_id)})
+                               'gtfs_data_exchange_id':",".join(agency.gtfs_data_exchange_id),
+                               'dev_site':agency.dev_site,
+                               'arrival_data':agency.arrival_data,
+                               'position_data':agency.position_data,
+                               'standard_license':agency.standard_license,})
     
     return render_to_response( request, "edit_agency.html", {'agency':agency, 'form':form} )
     
