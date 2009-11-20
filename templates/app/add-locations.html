@@ -5,25 +5,36 @@
 
 {% block headscripts %}
 <script type="text/javascript">
-	google.load("maps", "2.167");
+	
+		//load maps API
+		google.load("maps", "2.167");
+
+
 	
 	//********** GEOCODER ****************
 
 		//*********** set onload callback ***********
-    function init() {
-			geocoder = new Geocoder();
+		function init() {
+			dataManager = new DataManager();
 		}
 				
 		function Geocoder() {
 			googleCoder = new GClientGeocoder();
-  		
-  		this.geocode = function(input){
-  			googleCoder.getLocations( input, geocodeReturn );
-  			geoTimeout = setTimeout("geocodeTimeout()", 15000);
-  		}
-		}		
+			this.geocoding = false;
+			
+			this.isGeocoding = function() {return this.geocoding; }
+			this.confirmSuccess = function() { this.geocoding = false; clearTimeout(this.geoTimeout); }
+			this.timeOut = function() {	this.geocoding = false; clearTimeout(this.geoTimeout); }
+			
+			this.geocode = function(query){
+				this.geocoding = true;
+				googleCoder.getLocations( query, geocodeReturn );
+				this.geoTimeout = setTimeout("geocodeTimeout()", 15000);
+			}
+		}	
+			
 		function geocodeTimeout() {
-			alert("verification timed out, please try again.  If you continue to have problems, please check that your internet connection is working.");
+			dataManager.handleGeocodeTimeout();
 		}
 		
 		function geocodeReturn(response) {
@@ -64,43 +75,205 @@
 								postalCode = String(adminArea.Locality.PostalCode.PostalCodeNumber);
 						}
 					}
-					queryStatus = QUERY_LOCATION_SETUP;
 				} 
 			}
+	
+			dataManager.handleGeocodeResponse(latLng, countryCode, formattedAddress, administrativeArea, thoroughfare, locality, postalCode);
+		}
+		
+		//we keep a list of these, created when a user clicks "Add"
+		//on geoQuery return, we fill in the returned data into the existing object
+		//we also check to see if new objects have been added (serves as a queue)
+		
+		//when a geocode doesn't get a country, we mark its entry as cancelled
+		//when a user resubmits that entry we overwrite the existing data and uncancel it
+		
+		//when a user deletes an entry, we keep it in the list, but mark its entry as cancelled and delete the UI panel
+		function GeoQueryData(key, query) {
+			this.key = key;
+			this.query = query;
+			this.geocoded = false;
+			this.cancelled = false;
+			this.city = null;
+			this.country = null;
+			this.geoLatLng = null;
+		
+			this.updateQuery = function(query){
+				this.query = query;
+				this.geocoded = false;			
+				//reset data:
+				this.city = null;
+				this.country = null;
+				this.geoLatLng = null;
+			}
+			this.hasData = function(){
+				return this.geoLatLng != null;
+			}
+			this.setData = function(city, country, latlng){			
+				this.geocoded = true;
 
-      /*package up the results:
-			geoData.geoLatLng = latLng;
-			geoData.locCountryCode = countryCode;
-			geoData.locFormattedAddress = formattedAddress;
-			geoData.locAdministrativeArea = administrativeArea;
-			geoData.locThoroughfare = thoroughfare;
-			geoData.locLocality = locality;
-			geoData.locPostalCode = postalCode;*/
+				//if succeeded
+				if ( country && latlng ){
+					this.country = country;
+					this.geoLatLng = latlng;
+					if (city)					
+						this.city = city;			
+					this.cancelled = false;
+					return true;
+				}
+				//geocode failed
+				this.cancelled = true;
+				return false;	
+			}
+			this.cancelEntry = function(){ this.cancelled = true; }
+			this.restoreEntry = function(){ this.cancelled = false; }
+			this.isGeocoded = function(){ return this.geocoded }
+			this.isCancelled = function(){ return this.cancelled }
+			this.getKey = function(){ return this.key }
+			this.getQuery = function(){ return this.query }
+			this.getCity = function(){ return this.city }
+			this.getCountry = function(){ return this.country }
+			this.getLat = function(){ return this.lat }
+			this.getLng = function(){ return this.lng }
+		}
+		
+		function QueryDataList(){
+			this.list = [];
+			
+			this.length = function() { return this.list.length }
+			this.getByKey = function(key) { 
+				for (var i = 0; i<this.list.length; i++){
+					if (this.list[i].key == key)
+						return this.list[i];
+				}
+				return null;
+			}
+			
+			this.addOrUpdateQuery = function(key, query){
+				var item = this.getByKey(key);
+				if (item){
+dbug("update existing");
+					item.updateQuery(query);
+					return 0;
+				}
+				else{
+dbug("add new");
+					this.list.push( new GeoQueryData(key, query) );
+					return 1;
+				}
+			}
+			
+			this.getNextQuery = function(){
+//dbug("searching... ");
+				for (var i = 0; i<this.list.length; i++){
+//dbugThese( this.list[i].isGeocoded(), this.list[i].isCancelled(), this.list[i].query)
+					if ( !this.list[i].isGeocoded() && !this.list[i].isCancelled() )
+						return this.list[i];
+				}		
+				return null;		
+			}
+			
+			this.cancelQuery = function(key){
+				var item = this.getByKey(key);
+				if (item)
+					item.cancel();
+			}
+
+		}
+
+	
+		function DataManager() {
+			this.geocoder = new Geocoder();
+			this.queryDataList = new QueryDataList();
+			this.numFields = 1;
+			this.activeQueryKey = -1;
+			
+			this.handleQuery = function(key){
+				var query = $("#query"+key).get(0).value;
+				$( "#add" + (this.numFields-1) ).val("redo");
+				if (this.queryDataList.addOrUpdateQuery(key, query) )
+					this.addField();
+				this.geocodeQueuedQueries();
+			}
+			
+			this.addField = function(){
+				var htmlStr = '<div id="location' + this.numFields + '">';
+				htmlStr += '<label>Enter a city or Country name:</label>';
+				htmlStr += ' <input type="text" id="query' + this.numFields + '" />';
+				htmlStr += ' <input type="button" id="add' + this.numFields + '" value="Add" onclick="dataManager.handleQuery(' + this.numFields + ')"/>';
+				htmlStr += '<span id="response' + this.numFields + '"></span>';
+				htmlStr += '<a onclick="dataManager.removeQuery(' + this.numFields + ')">remove</a>';
+				htmlStr += '</div>';
+				$("#locations").append(htmlStr);
+				this.numFields++;
+			}
+			
+			this.cancelQuery = function(key){
+				this.queryDataList.cancelQuery(key);
+			}
+			
+			this.handleGeocodeResponse = function(latLng, countryCode, formattedAddress, administrativeArea, thoroughfare, locality, postalCode){
+				this.geocoder.confirmSuccess();
+			
+				var currentQueryDataItem = this.queryDataList.getByKey(this.activeQueryKey);
+				if (currentQueryDataItem ) {
+					currentQueryDataItem.setData(locality, countryCode, latLng);
+					$( "#response" + this.activeQueryKey ).html(locality + ", " + countryCode + ", " + latLng);
+				}
+				else
+					alert("couldn't find item to set data on");
+					
+				this.geocodeQueuedQueries
+			}
+			
+			this.geocodeQueuedQueries = function() {
+				if ( this.geocoder.isGeocoding() ) {
+					return;
+				}
+				//else, see if we have more to geocode:
+				var nextQueryItem = this.queryDataList.getNextQuery();
+				if ( nextQueryItem ) {
+dbug("found another query to execute: " + nextQueryItem.getQuery());
+					this.geocoder.geocode( nextQueryItem.getQuery() );	
+					this.activeQueryKey = nextQueryItem.getKey();
+				}
+			}
+			
+			this.handleGeocodeTimeout = function(){
+				this.geocoder.timeOut();
+				//retry the failed geocode?
+				dbug("Time out!  Verification timed out, please try again.");
+			}
+			
+			this.getDataString = function(){
+			}
+		}
+
+
+		function updateUI(){			
+			//when global is checked, others should be disabled
+			if ( $("#global").eq(0).is(":checked") ){
+				$("#entire-us").attr("disabled", true);
+				$("#choose-locations").attr("disabled", true);			 
+			}
+			else {
+				$("#entire-us").attr("disabled", false);
+				$("#choose-locations").attr("disabled", false);
+			}
+			
+			//show the location picker?
+			if ( !$("#global").eq(0).is(":checked") && $("#choose-locations").eq(0).is(":checked") )
+				$("#locations").eq(0).css("display", "block");			 
+			else
+				$("#locations").eq(0).css("display", "none");	
 		}
 		
 		function dbug(str){
-		  $("#dbug").append(str + "<br />");
+			$("#dbug").append(str + "<br />");
 		}
-		
-		function updateUI(){
-		  var str = "";
-		  
-		  //when global is checked, others should be disabled
-		  if ( $("#global").eq(0).is(":checked") ){
-		    $("#entire-us").attr("disabled", true);
-		    $("#choose-locations").attr("disabled", true);	    
-		  }
-		  else {
-		    $("#entire-us").attr("disabled", false);
-		    $("#choose-locations").attr("disabled", false);
-		  }
-		  
-		  //show the location picker?
-		  if ( !$("#global").eq(0).is(":checked") && $("#choose-locations").eq(0).is(":checked") )
-		    $("#locations").eq(0).css("display", "block");		   
-		  else
-		    $("#locations").eq(0).css("display", "none");	
-		  }
+		function dbugThese(){
+			dbug(Array.prototype.join.call(arguments, " :: "));
+		}
 	
 </script>
 {% endblock %}
@@ -108,21 +281,31 @@
 
 {% block content %}
 <div class="body-content">
-  <h2>Where does your app work?</h2>
-  <form>
-    <p><input type="checkbox" name="global" id="global" onchange="updateUI()" /> Globally</p>
-    <p><input type="checkbox" name="entire-us" id="entire-us" onchange="updateUI()" /> Entire U.S.</p>
-    <p><input type="checkbox" name="choose-locations" id="choose-locations" onchange="updateUI()" /> Select countries or cities</p>
-    <div id="locations">
-      <div id="location0">
-        <label>Enter a city or Country name:</label>
-        <input type="text" />
-        <input type="button" value="Add" />
-      </div>
-    </div>
-    <input type="submit" value="Done" />
-  </form>
+	<h2>Where does your app work?</h2>
+	<form>
+		<p><input type="checkbox" name="global" id="global" onchange="updateUI()" /> Globally</p>
+		<p><input type="checkbox" name="entire-us" id="entire-us" onchange="updateUI()" /> Entire U.S.</p>
+		<p><input type="checkbox" name="choose-locations" id="choose-locations" onchange="updateUI()" /> Select countries or cities</p>
+		<div id="locations">
+
+			<div id="location0">
+				<label>Enter a city or Country name: </label>
+				<input type="text" id="query0" />
+				<input type="button" id="add0" value="Add" onclick="dataManager.handleQuery(0)"/>
+				<span id="response0"></span>
+			</div>
+
+		</div>
+		<input type="submit" value="Done" />
+	</form>
 </div>
 <div id="dbug"></div>
 {% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+	init();
+</script>
+{% endblock %}
+
 
