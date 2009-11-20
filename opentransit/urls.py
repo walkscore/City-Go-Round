@@ -37,12 +37,11 @@ urlpatterns += patterns(
     'opentransit.views.agency',
     url('^agencies/edit/(?P<agency_id>\d+)/$', 'edit_agency', name='edit_agency'), #todo: move this to /agencies/..../edit url
     url(r'^agencies/$', 'agencies', name='agencies'),
-    url(r'^agencies/search/$', 'agencies_search'),
-    url(r'^agencies/(?P<countryslug>[-\w]+)/$', 'agencies'),
-    url(r'^agencies/(?P<countryslug>[-\w]+)/(?P<stateslug>[-\w]+)/$', 'agencies'),
-    url(r'^agencies/(?P<countryslug>[-\w]+)/(?P<stateslug>[-\w]+)/(?P<cityslug>[-\w]+)/$', 'agencies'),
-    url(r'^agencies/(?P<countryslug>[-\w]+)/(?P<stateslug>[-\w]+)/(?P<cityslug>[-\w]+)/(?P<nameslug>[-\w]+)/$', 'agencies'),
-    url(r'^agencies/(?P<countryslug>[-\w]+)/(?P<stateslug>[-\w]+)/(?P<cityslug>[-\w]+)/(?P<nameslug>[-\w]+)/edit/$', 'edit_agency'),
+    url(r'^agencies/(?P<countryslug>[\w-]+)/$', 'agencies'),
+    url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/$', 'agencies'),
+    url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/(?P<cityslug>[\w-]+)/$', 'agencies'),
+    url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/(?P<cityslug>[\w-]+)/(?P<nameslug>[\w-]+)/$', 'agencies'),
+    url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/(?P<cityslug>[\w-]+)/(?P<nameslug>[\w-]+)/edit/$', 'edit_agency'),
     url(r'^agencies/(?P<agency>\d+)/$', 'agencies'),
     url(r'^admin/agencies/delete/$', 'delete_all_agencies'),
     url(r'^admin/agencies/create-from-feed/(?P<feed_id>[-\w ]+)/$', 'create_agency_from_feed')
@@ -61,3 +60,14 @@ urlpatterns += patterns(
     url(r'^apps/(?P<transit_app_slug>[\w-]+)/$', 'details', name='apps_details'),
     url(r'^apps/(?P<transit_app_slug>[\w-]+)/screenshot.png$', 'screenshot', name='apps_screenshot'),
 )
+
+
+# API Views -- All URLs that return JSON (maybe XML in the future) back. 
+# Want to break these out just to make clear what our programmatic API surface is.
+urlpatterns += patterns(
+    'opentransit.views.api',
+    url(r'^api/search/agencies/$', 'api_search_agencies', name = 'api_search_agencies'),    
+    url(r'^api/search/apps/$', 'api_search_apps', name = 'api_search_apps'),
+)
+    
+    
