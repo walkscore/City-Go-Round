@@ -96,6 +96,9 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
     location = 'system'
     
     agencies = Agency.all().order("name")
+    
+    public_filter = request.GET.get('public','')
+    
     mck = 'agencies'
     if countryslug:
         agencies = agencies.filter('countryslug =',countryslug)
@@ -114,7 +117,6 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
     
     mem_result = memcache.get(mck)
     if not mem_result:
-        agencies = agencies.order("name")
         mc_added = memcache.add(mck, agencies, 60 * 1)
     else:
         agencies = mem_result
@@ -126,14 +128,19 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         if a.date_opened:
             public_count += 1
             a.date_opened_formatted = a.date_opened
+            if public_filter == 'no_public':
+                a.hide = True
         else:
             no_public_count += 1
+            if public_filter == 'public':
+                a.hide = True
         agency_list.append(a)  #listify now so we dont have to do it again for count(), etc
 
     template_vars = {
         'agencies': agency_list,
         'location' : location,
         'public_count' : public_count,
+        'public_filter' : public_filter,
         'no_public_count' : no_public_count,
         'states' : get_state_list(),
         'agency_count' : len(agency_list),
