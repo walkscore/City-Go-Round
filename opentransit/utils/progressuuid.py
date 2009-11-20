@@ -22,7 +22,7 @@ def is_progress_uuid_in_session(request, progress_uuid):
     return progress_uuid in uuids
     
 def is_progress_uuid_in_datastore(progress_uuid):
-    return TransitAppFormProgress.all().filter('progress_uuid =', progress_uuid).get() is not None
+    return TransitAppFormProgress.get_with_uuid(progress_uuid) is not None
     
 def is_progress_uuid_valid(request, progress_uuid):
     # Basic sanity check

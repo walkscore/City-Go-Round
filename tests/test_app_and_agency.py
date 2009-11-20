@@ -97,8 +97,8 @@ class TestAppAndAgency(unittest.TestCase):
         agency_names = [agency.name for agency in agencies]
         self.assertListsContainSameItems(agency_names, ["Public 1", "Public 2", "Public 3", "Private 1", "Private 2"])
 
-    def test_find_list_of_agencies_given_app_with_uniqify_off(self):
-        agencies = Agency.fetch_for_transit_app(self.app_pub_pub2_pub3_p1_p2, uniqify = False)
+    def test_find_list_of_agencies_given_app_with_uniquify_off(self):
+        agencies = Agency.fetch_for_transit_app(self.app_pub_pub2_pub3_p1_p2, uniquify = False)
         agency_names = [agency.name for agency in agencies]
         self.assertListsContainSameItems(agency_names, ["Public 1", "Public 2", "Public 3", "Public 2", "Public 3", "Private 1", "Private 2"])
 
@@ -117,8 +117,8 @@ class TestAppAndAgency(unittest.TestCase):
         agency_names = [agency.name for agency in agencies]
         self.assertListsContainSameItems(agency_names, ["Public 1", "Public 2", "Public 3", "Private 1", "Private 2", "Private 3"])
         
-    def test_find_list_of_agencies_given_apps_with_uniqify_off(self):
-        agencies = Agency.fetch_for_transit_apps([self.app_pub_pub2_pub3_p1_p2, self.app_p2_p3], uniqify = False)
+    def test_find_list_of_agencies_given_apps_with_uniquify_off(self):
+        agencies = Agency.fetch_for_transit_apps([self.app_pub_pub2_pub3_p1_p2, self.app_p2_p3], uniquify = False)
         agency_names = [agency.name for agency in agencies]
         self.assertListsContainSameItems(agency_names, ["Public 1", "Public 2", "Public 3", "Public 2", "Public 3", "Private 1", "Private 2", "Private 2", "Private 3"])
 
@@ -157,8 +157,8 @@ class TestAppAndAgency(unittest.TestCase):
         app_titles = [app.title for app in apps]
         self.assertListsContainSameItems(app_titles, ["app_p2_p3", "app_pub_p1_p3"])
 
-    def test_find_list_of_apps_given_agency_with_uniqify_off(self):
-        apps = TransitApp.fetch_for_agency(self.public_agency_2, uniqify = False)
+    def test_find_list_of_apps_given_agency_with_uniquify_off(self):
+        apps = TransitApp.fetch_for_agency(self.public_agency_2, uniquify = False)
         app_titles = [app.title for app in apps]
         self.assertListsContainSameItems(app_titles, ["app_pub", "app_pub_p1_p3", "app_pub_pub2_pub3_p1_p2", "app_pub_pub2_pub3_p1_p2"])
         
@@ -172,8 +172,8 @@ class TestAppAndAgency(unittest.TestCase):
         app_titles = [app.title for app in apps]
         self.assertListsContainSameItems(app_titles, ["app_pub", "app_p2_p3", "app_pub_p1_p3", "app_pub_pub2_pub3_p1_p2"])
 
-    def test_find_list_of_apps_given_agencies_with_uniqify_off(self):
-        apps = TransitApp.fetch_for_agencies([self.public_agency_1, self.private_agency_3], uniqify = False)
+    def test_find_list_of_apps_given_agencies_with_uniquify_off(self):
+        apps = TransitApp.fetch_for_agencies([self.public_agency_1, self.private_agency_3], uniquify = False)
         app_titles = [app.title for app in apps]
         self.assertListsContainSameItems(app_titles, ["app_pub", "app_p2_p3", "app_pub_p1_p3", "app_pub_p1_p3", "app_pub_pub2_pub3_p1_p2"])
         
