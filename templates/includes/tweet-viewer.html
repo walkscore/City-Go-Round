@@ -6,10 +6,13 @@
     function react_to_twitter( data ) {
       for(i=0; i<data.results.length; i++) {
         var result = data.results[i];
+        var ix = result.created_at.indexOf(':');
+        var created_at = result.created_at.slice(0,ix-3);
+        
         
         $("#tweet-viewer").append("<div class='tweet'><a href='http://twitter.com/"+result.from_user+"'><img src="+result.profile_image_url+
                                   " width=50px height=50px></a><blockquote><cite>@"+result.from_user+
-                                  " said:</cite> '"+result.text+"'</blockquote><label>"+result.created_at+"</label></div>")
+                                  " said:</cite> '"+result.text+"'</blockquote><label>"+created_at+"</label></div>")
         
       }
     }
