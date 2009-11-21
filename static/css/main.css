@@ -218,6 +218,8 @@
 
 /*********** HOME PAGE ****************/
 .green h2{color:green;}
+.agency_title a{font-weight:bold}
+.odd{background:#DFF4FF;}
 	
 /*********** HEADER ****************/
 
