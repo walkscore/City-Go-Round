@@ -14,6 +14,7 @@ urlpatterns += patterns(
     url(r'^petition-signed/$', 'static', {'template':'petition_signed.html'}, name='petition_signed'),
     url(r'^admin/login/$', 'admin_login'),
     url(r'^admin/logout/$', 'admin_logout'),
+    url(r'^admin/debug/$', 'debug', name='debug'),
 )
 
 
@@ -29,7 +30,6 @@ urlpatterns += patterns(
 urlpatterns += patterns(
     'opentransit.views.feed',
     url(r'^admin/feeds/update/$', 'update_feed_references', name='update_feed_references'),
-    url(r'^admin/feeds/merge/$', 'merge_feeds', name='merge_feeds'),
     url(r'^feed-references/$', 'feed_references', name='feed_references'),
 )
 
