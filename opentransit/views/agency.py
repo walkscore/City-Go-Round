@@ -1,33 +1,51 @@
 import time
 import logging
-
-from django.http import HttpResponse, HttpResponseRedirect
-
 from google.appengine.ext import db
 from google.appengine.api import memcache
+from geo import geotypes
 
 from ..forms import AgencyForm
-from ..models import Agency, FeedReference, TransitApp
 from ..utils.view import render_to_response, redirect_to, not_implemented, bad_request, render_to_json
-from ..utils.misc import uniquify
+from ..models import Agency, FeedReference, TransitApp
+
+from django.http import HttpResponse, HttpResponseRedirect
+from ..utils.slug import slugify
 
 from StringIO import StringIO
 import csv
+from google.appengine.api import users
 
-def edit_agency(request, agency_id):
-    agency = Agency.get_by_id( int(agency_id) )
+
+def uniquify(seq): 
+    # not order preserving 
+    set = {} 
+    map(set.__setitem__, seq, []) 
+    return set.keys()
+
+def edit_agency(request, agency_id=None):
+    if agency_id is not None:
+        agency = Agency.get_by_id( int(agency_id) )
+    else:
+        agency = None
     
     if request.method == 'POST':
+        
         form = AgencyForm(request.POST)
         if form.is_valid():
+            if agency is None:
+                agency = Agency(name=form.cleaned_data['name'],
+                                city=form.cleaned_data['city'],
+                                state=form.cleaned_data['state'],
+                                country=form.cleaned_data['country'])
+            
             agency.name       = form.cleaned_data['name']
             agency.short_name = form.cleaned_data['short_name']
             agency.city       = form.cleaned_data['city']
             agency.state      = form.cleaned_data['state']
-            agency.country    = form.cleaned_data['country']
+            agency.country    = form.cleaned_data['country'] if form.cleaned_data['country'] != "" else None
             agency.postal_code      = form.cleaned_data['postal_code']
             agency.address          = form.cleaned_data['address']
-            agency.agency_url       = form.cleaned_data['agency_url']
+            agency.agency_url       = form.cleaned_data['agency_url'] if form.cleaned_data['agency_url'] != "" else None
             agency.executive        = form.cleaned_data['executive']
             agency.executive_email  = form.cleaned_data['executive_email'] if form.cleaned_data['executive_email'] != "" else None
             agency.twitter          = form.cleaned_data['twitter']
@@ -45,25 +63,28 @@ def edit_agency(request, agency_id):
             
             agency.put()
     else:
-        form = AgencyForm(initial={'name':agency.name,
-                               'short_name':agency.short_name,
-                               'city':agency.city,
-                               'state':agency.state,
-                               'country':agency.country,
-                               'postal_code':agency.postal_code,
-                               'address':agency.address,
-                               'agency_url':agency.agency_url,
-                               'executive':agency.executive,
-                               'executive_email':agency.executive_email,
-                               'twitter':agency.twitter,
-                               'contact_email':agency.contact_email,
-                               'updated':agency.updated,
-                               'phone':agency.phone,
-                               'gtfs_data_exchange_id':",".join(agency.gtfs_data_exchange_id),
-                               'dev_site':agency.dev_site,
-                               'arrival_data':agency.arrival_data,
-                               'position_data':agency.position_data,
-                               'standard_license':agency.standard_license,})
+        if agency is None:
+            form = AgencyForm()
+        else:
+            form = AgencyForm(initial={'name':agency.name,
+                                   'short_name':agency.short_name,
+                                   'city':agency.city,
+                                   'state':agency.state,
+                                   'country':agency.country,
+                                   'postal_code':agency.postal_code,
+                                   'address':agency.address,
+                                   'agency_url':agency.agency_url,
+                                   'executive':agency.executive,
+                                   'executive_email':agency.executive_email,
+                                   'twitter':agency.twitter,
+                                   'contact_email':agency.contact_email,
+                                   'updated':agency.updated,
+                                   'phone':agency.phone,
+                                   'gtfs_data_exchange_id':",".join(agency.gtfs_data_exchange_id),
+                                   'dev_site':agency.dev_site,
+                                   'arrival_data':agency.arrival_data,
+                                   'position_data':agency.position_data,
+                                   'standard_license':agency.standard_license,})
     
     return render_to_response( request, "edit_agency.html", {'agency':agency, 'form':form} )
     
@@ -88,7 +109,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         urlslug = '/'.join([countryslug,stateslug,cityslug,nameslug])
         agency = Agency.all().filter('urlslug =', urlslug).get()
         
-        feeds = FeedReference.all().filter('gtfs_data_exchange_id =', agency.gtfs_data_exchange_id)
+        feeds = FeedReference.all().filter('gtfs_data_exchange_id IN', agency.gtfs_data_exchange_id)
         apps = TransitApp.iter_for_agency(agency)
         
         template_vars = {
@@ -153,6 +174,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         'states' : get_state_list(),
         'agency_count' : len(agency_list),
         'feed_references': FeedReference.all_by_most_recent(),
+        'is_current_user_admin': users.is_current_user_admin(),
     }
     
     if request.GET.get( 'format' ) == 'json':
@@ -191,6 +213,76 @@ def generate_locations(request):
        
     pass
 
+def agencies_search(request):
+    """
+    params
+     - type (location or city)
+     - lat/lon [location]
+     - city/state [city]
+    returns:
+     list of nearby (location) or matching (city) agencies, and their associated apps
+    """
+    def agencies_to_dictionary(agencies):
+        ag = {'agencies' : []}
+        for a in agencies:
+            ad = {}
+            for k in 'name,city,urlslug,state'.split(','):
+                ad[k] = getattr(a,k)
+            #unsure how to get apps...
+            ad['apps'] = list(TransitApp.iter_for_agency(a))
+            ag['agencies'].append(ad)
+        ag['apps'] = list(TransitApp.iter_for_agencies(agencies))
+        return ag                
+
+    def check_lat_lon(lat, lon):
+        try:
+            return float(lat), float(lon)
+        except:
+            return (0,0)
+        
+    #ensure location type search
+    rg = request.GET.get
+    search_type = rg('type','')
+    lat = rg('lat','')
+    lon = rg('lon','')
+    city = rg('city','')
+    state = rg('state','')
+    format = rg('format','html')
+
+    if not search_type in ['location', 'city', 'state']:
+        return bad_request('invalid search type')
+        
+    if not format in ['html', 'json']:
+        return bad_request('invalid format')
+    
+    agencies = Agency.all()
+    
+    if search_type == 'location':
+        #get all agencies that are nearby
+        lat,lon = check_lat_lon(lat, lon)
+        if not (lat and lon):
+            return bad_request('invalid lat/lng')
+        r = .25
+        agencies = Agency.bounding_box_fetch(
+            agencies,
+            geotypes.Box(lat+r, lon+r, lat-r, lon-r),
+            max_results = 50)        
+    else:
+        if search_type == 'city':
+            if not city:
+                return bad_request('you must include a city')
+            # NOTE davepeck: we used to search for 'city =', city... but that didn't really
+            # work because of differences in capitalization. Use slugs instead.
+            agencies = agencies.filter('cityslug =', slugify(city))
+        if not state:
+            return bad_request('you must include a state')
+        agencies = agencies.filter('state =', state.upper())        
+    
+    if format == 'json':
+        return render_to_json(agencies_to_dictionary(agencies))
+    else:
+        return not_implemented(request) # We haven't written "agency_search.html" yet.
+        
 def delete_all_agencies(request):
     todelete = list(Agency.all(keys_only=True))
     

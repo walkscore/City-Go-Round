@@ -7,6 +7,8 @@ from ..utils.mailer import send_to_contact
 from ..models import FeedReference, Agency
 from django.template.context import RequestContext
 from django.conf import settings
+from django.http import HttpResponseRedirect
+from google.appengine.api.users import create_login_url, create_logout_url
 
 def home(request):    
     petition_form = PetitionForm()
@@ -55,4 +57,10 @@ def contact_thanks(request):
 
 def static(request, template):
     return render_to_response(request, template)
+    
+def admin_login(request):
+    return HttpResponseRedirect( create_login_url("/") )
+    
+def admin_logout(request):
+    return HttpResponseRedirect( create_logout_url("/") )
     

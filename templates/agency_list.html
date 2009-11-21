@@ -78,7 +78,8 @@ $(document).ready(function() {
     <th>State</th> 
     <th>Director</th> 
     <th>Twitter</th> 
-    <th>Agency URL</th> 
+    <th>Agency URL</th>
+    {% if is_current_user_admin %}<th>Edit</th>{% endif %}
 </tr> 
 </thead> 
 <tbody> 
@@ -93,7 +94,8 @@ $(document).ready(function() {
     <td>{{a.state}}</td> 
     <td>{{a.executive}}</td> 
     <td>{{a.twitter}}</td> 
-    <td><a href="{{a.agency_url}}" target="_blank">{{a.agency_url}}</a></td> 
+    <td><a href="{{a.agency_url}}" target="_blank">{{a.agency_url}}</a></td>
+    {% if is_current_user_admin %}<td><a href="/agencies/edit/{{a.key.id}}">edit</a></td>{% endif %}
 </tr> 
 {% endif %}
 {% endfor %}
