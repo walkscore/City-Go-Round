@@ -19,8 +19,39 @@ $(document).ready(function() {
     jQuery("#public_filter option[value=" + po + "]").attr('selected','selected')
 
     jQuery("#agency_list")
-    .tablesorter()
+    .tablesorter({ sortList: [[6,0],[5,0]] })
     }); 
+    
+    function update_filters(){
+        var pd = jQuery("#public_filter option:selected").val();
+        var location = jQuery("#location_filter option:selected").val();
+        
+        //show based on filters
+        if (pd=="all" && location=="all"){
+            $("tr").show();
+        }
+        else {
+            $("tr").hide(); //hide everything
+            $("#header-row").show(); //show headers
+            
+            if (pd=="all"){
+                $("tr").filter("."+location).show();
+            }
+            else if (location=="all"){
+                $("tr").filter("."+pd).show();
+            }
+            else {
+                var filter = "tr[class='" + location + " " + pd + "']";
+                $(filter).show();
+            }
+        }
+    }
+
+    function filter(countryCode) {
+        $("tr").hide();
+        $("#header-row").show();
+        $("."+countryCode).show();
+    }
     
     function getDataString(){
         var data = ($("#id_gtfs_public_choice_1").eq(0).is(":checked")) ? "Will send" : "Won't send";
@@ -56,18 +87,32 @@ $(document).ready(function() {
     <form id="add-agencies-form" action="" method="POST" onsubmit="sendDataString()">
         {# This is only going to spew out hidden input fields, so... whatever. #}
         {{form.as_p}}
-        <input type="submit" value="Add The App!"></input>
-        <br /><input type="button" value="DEBUG: show data string" onclick="dbug(getDataString())" />
-        <div id="dbug"></div>
+        <input type="submit" value="onward to step 3..."></input>
         
         <div id="agency-list">  
-        <p>Please choose from the <b>{{agency_count}}</b> transit agencies below.</p>
-        <p>If your app doesn't use agency data, skip this step to specify where your app works by city and country.</p>
-        <p>If your app uses GTFS and/or real-time data in some places, but also functions without that data in more locations, specify the agencies whose data you use here, then proceed to the next step to specify the additional geographic locations where it works.</p>
+        <p>Please choose from the {{agency_count}} transit agencies below.</p>
+        <p>If your app uses feeds and also works in other locations, you can specify those locations in the next step.  If your app doesn't use agency data skip on to the next step now.</p>
+        <p>Filter list by:         
+        <select id="public_filter" name="public_filter" onchange="update_filters();">
+           <option value="all" selected>All Agencies</option>
+           <option value="pub">With Public Data</option>
+           <option value="no_pub">Without Public Data</option>
+        </select>
+        
+        <select id="location_filter" name="location_filter" onchange="update_filters()">
+           <option value="all" selected>All States
+          {% for s in states %}
+           <option value="{{s|upper}}">{{s|upper}}
+          {% endfor %}
+        </select>
+        <br />Sort the list by clicking column headers.  Shift-click for multi-sort.</p>
+        
+        <br /><input type="button" value="DEBUG: show data string" onclick="dbug(getDataString())" />
+        <div id="dbug"></div>
             
         <table id="agency_list"> 
         <thead> 
-        <tr> 
+        <tr id="header-row"> 
             <th>&nbsp;</th> 
             <th>Name</th> 
             <th>Public Data</th>
@@ -80,9 +125,9 @@ $(document).ready(function() {
         <tbody> 
         {% for a in agencies %}
         {% if a.hide %}{% else %}
-        <tr class="{% if a.date_opened %}agency_public{% else %}agency_no_public {%endif %}"> 
+        <tr class="{{a.state}} {% if a.date_opened %}pub{% else %}no_pub{%endif %}"> 
             <td><input type="checkbox" name="{{a.key}}" id="{{a.key}}" /></td> 
-            <td><a href="/agencies/{{a.urlslug}}">{{a.name}}</a></a></td> 
+            <td>{{a.name}}</td> 
             <td>{% if a.date_opened %}Yes{% else %}No{% endif %}</td>
             <td>{% if a.date_opened %}{{a.date_opened|date:"N Y"}}{% endif %}</td>
             <td>{% if a.has_real_time_data %}Yes{% else %}No{% endif %}</td>
@@ -93,6 +138,7 @@ $(document).ready(function() {
         {% endfor %}
         </tbody> 
         </table>
+        <input type="submit" value="onward to step 3..."></input>
     </form>
 </div>
 

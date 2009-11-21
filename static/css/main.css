@@ -689,8 +689,8 @@
     
     
 /*********** AGENCY LISTING MISC ************/
-.agency_public td{background-color:#D1EFD5;}
-.agency_no_public td{background-color:#EFD1D1;}
+.agency_public td, .pub td {background-color:#D1EFD5;}
+.agency_no_public td, .no_pub td {background-color:#EFD1D1;}
 
 .agency_detail{padding:5px;}
 .agency_detail_key{font-weight:bold; width:200px;}
