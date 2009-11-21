@@ -8,10 +8,10 @@ google.load("maps", "2.167");
 jQuery.noConflict();
 jQuery(document).ready(function($) 
 {
-	
-	function url_for_transit_app_query(latitude, longitude, country_code)
-	{
-	    return "{% url api_apps_search %}" + "?lat=" + latitude + "&lon=" + longitude + "&country=" + country_code;
+    
+    function url_for_transit_app_query(latitude, longitude, country_code)
+    {
+        return "{% url api_apps_search %}" + "?lat=" + latitude + "&lon=" + longitude + "&country=" + country_code;
     }
     
     function url_for_agency_query(latitude, longitude)
@@ -24,10 +24,10 @@ jQuery(document).ready(function($)
         // TODO davepeck: How to use django's URL template tag here?
         return '/apps/' + slug + '/';
     }
-	
-	function html_for_row(name, item)
-	{
-	    return "<tr><th>" + name + "</th><td>" + item + "</td></tr>\n";
+    
+    function html_for_row(name, item)
+    {
+        return "<tr><th>" + name + "</th><td>" + item + "</td></tr>\n";
     }
     
     function link(url)
@@ -40,35 +40,35 @@ jQuery(document).ready(function($)
         return '<img src="' + src + '" alt="' + alt + '" />';
     }
     
-	function html_for_transit_app(transit_app)
-	{
-	    var html = "<table>";	    
-	    html += html_for_row("Description:", transit_app.description);
-	    html += html_for_row("Homepage:", link(transit_app.url));
-	    html += html_for_row("Author Name:", transit_app.author_name);
-	    html += html_for_row("Long Description:", transit_app.long_description);
-	    html += html_for_row("Screen Shot:", img(transit_app.screen_shot_url, "Application Screen Shot"));
-	    html += "</table><p>&nbsp;</p>";
-	    return html;
+    function html_for_transit_app(transit_app)
+    {
+        var html = "<table>";       
+        html += html_for_row("Description:", transit_app.description);
+        html += html_for_row("Homepage:", link(transit_app.url));
+        html += html_for_row("Author Name:", transit_app.author_name);
+        html += html_for_row("Long Description:", transit_app.long_description);
+        html += html_for_row("Screen Shot:", img(transit_app.screen_shot_url, "Application Screen Shot"));
+        html += "</table><p>&nbsp;</p>";
+        return html;
     }
-	
-	function query_for_transit_apps(latitude, longitude, country_code)
-	{
-	    $.getJSON(url_for_transit_app_query(latitude, longitude, country_code), function(transit_apps)
-	    {
-	        var transit_app_count = 0;
-	        var transit_apps_html = "";
-	        
-	        $.each(transit_apps, function(i, transit_app)
-	        {
-	            transit_app_count += 1;
-	            transit_apps_html += html_for_transit_app(transit_app);	            
+    
+    function query_for_transit_apps(latitude, longitude, country_code)
+    {
+        $.getJSON(url_for_transit_app_query(latitude, longitude, country_code), function(transit_apps)
+        {
+            var transit_app_count = 0;
+            var transit_apps_html = "";
+            
+            $.each(transit_apps, function(i, transit_app)
+            {
+                transit_app_count += 1;
+                transit_apps_html += html_for_transit_app(transit_app);             
             });
 
             $("#transit_app_loading").fadeOut(0.0, function(){});
             $("#tables_go_here").hide().html(transit_apps_html).fadeIn(1000.0, function(){});
             $("#transit_app_headline").hide().text("There are " + transit_app_count + " apps.").fadeIn(1000.0, function(){});
-	    });
+        });
     }
     
     function query_for_agencies(latitude, longitude, country_code)
@@ -115,15 +115,15 @@ jQuery(document).ready(function($)
     </div>
 
     <div id="petition" class="body-content thinline">
-        <div class="boxed-content">	
+        <div class="boxed-content"> 
             
             <h4>Nearby Agencies with no public data</h4>
             <div class="agency-text-list" id="fill_nearby_no_public"><span class="loading">TODO DAVEPECK...</span></div>
 
             <h2>SUPPORT PUBLIC DATA</h2>
             <div class="wide-col rightmost">
-                {% include "includes/petition-text.html" %}	
-                {% include "includes/petition-disclaimer.html" %}				
+                {% include "includes/petition-text.html" %} 
+                {% include "includes/petition-disclaimer.html" %}               
             </div>
             
             <div class="narrow-col">
@@ -132,7 +132,7 @@ jQuery(document).ready(function($)
             <br class="clear-all" />
         </div>
     </div>
-	  
+      
 {% endblock %}
 
 
