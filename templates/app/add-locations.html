@@ -279,7 +279,8 @@
 			
 			this.sendDataString = function(){
 				if ( !$("#global").eq(0).is(":checked") && $("#choose-locations").eq(0).is(":checked") )
-					$(id_location_list).eq(0).val( this.getDataString() );
+					$("#id_location_list").eq(0).val( this.getDataString() );
+				return true;
 			}
 		}
 
@@ -329,7 +330,7 @@
 {% block content %}
 <div class="body-content">
 
-  <h3>ADD A NEW TRANSIT APP [Step 2 OR 3 -- TODO BUT WHICH?: Where Your App Works]</h3>    
+  <h3>ADD A NEW TRANSIT APP [Step 3: Where Your App Works]</h3>    
   <h2>Select locations where your app works:</h2>
   <form id="add-locations-form" action="" method="POST" onkeypress="return event.keyCode!=13" onsubmit="dataManager.sendDataString()">
     {# This will mostly spit out hidden fields, but it also spits out the global field. #}

@@ -10,7 +10,7 @@ from ..utils.view import render_to_response, redirect_to, not_implemented, rende
 from ..utils.image import crop_and_resize_image_to_square
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
 from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid
-from ..models import TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress
+from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress
 
 def nearby(request):
     petition_form = PetitionForm()
@@ -82,7 +82,7 @@ def add_form(request):
             # they want to associate with agencies, or just associate 
             # with cities and countries.
             if form.cleaned_data["supports_gtfs"]:
-                return redirect_to("apps_add_agencies", progress_uuid = progress.progress_uuid)
+                return redirect_to("apps_add_agencies", progress_uuid = progress.progress_uuid)                
             else:
                 return redirect_to("apps_add_locations", progress_uuid = progress.progress_uuid)                    
     else:
@@ -113,11 +113,17 @@ def add_agencies(request, progress_uuid):
             # TODO davepeck: process this ish!
             return redirect_to("apps_add_locations", progress_uuid = progress.progress_uuid)
     else:
-        form = NewAppAgencyForm(initial = {"progress_uuid": progress_uuid})
+        form = NewAppAgencyForm(initial = {"progress_uuid": progress_uuid})        
 
+    #get agency list
+    agency_list = Agency.fetch_for_slugs()
     template_vars = {
         "form": form,
+        'agencies': agency_list,
+        'states' : Agency.get_state_list(),
+        'agency_count' : len(agency_list)
     }
+
     return render_to_response(request, 'app/add-agencies.html', template_vars)
     
 @requires_valid_progress_uuid

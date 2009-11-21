@@ -2,15 +2,9 @@
 
 {% block title %}{{location}} transit agencies on City-Go-Round{% endblock %}
 
-{% block extra_head %}
+{% block headscripts %}
 <script type="text/javascript" src="/js/jquery.tablesorter.min.js"></script>
 <script type="text/javascript" src="/js/jquery.tablesorter.pager.js"></script>
-<link rel="stylesheet" type="text/css" href="{% static_url /css/tablesort.css %}" media="screen" />
-<link rel="stylesheet" type="text/css" href="{% static_url /css/tablesort.pager.css %}" media="screen" />
-
-{% endblock%}
-
-{% block content %}
 <script type="text/javascript">
 
 var agency_count = {{agency_count}}; 
@@ -37,9 +31,15 @@ $(document).ready(function() {
         }
     }); 
    
-
 </script>
+{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static_url /css/tablesort.css %}" media="screen" />
+<link rel="stylesheet" type="text/css" href="{% static_url /css/tablesort.pager.css %}" media="screen" />
+{% endblock%}
+
+{% block content %}
 <div class="blue_background">
 <h2>All {{location|upper}} Transit Agencies
 {% ifequal public_filter 'public' %} with Public Data 
@@ -72,8 +72,8 @@ $(document).ready(function() {
 <tr> 
     <th>Name</th> 
     <th>Public Data</th>
-    <th>Real-time Data</th>
     <th>Date Added</th>
+    <th>Real-time Data</th>
     <th>City</th> 
     <th>State</th> 
     <th>Director</th> 
@@ -87,8 +87,8 @@ $(document).ready(function() {
 <tr class="{% if a.date_opened %}agency_public{% else %}agency_no_public {%endif %}"> 
     <td><a href="/agencies/{{a.urlslug}}">{{a.name}}</a></a></td> 
     <td>{% if a.date_opened %}Yes{% else %}No{% endif %}</td>
+    <td>{% if a.date_opened %}{{a.date_opened|date:"N Y"}}{% endif %}</td>
     <td>{% if a.has_real_time_data %}Yes{% else %}No{% endif %}</td>
-    <td>{% if a.date_opened %}{{a.date_opened_formatted|date:"N Y"}}{% endif %}</td>
     <td>{{a.city}}</td> 
     <td>{{a.state}}</td> 
     <td>{{a.executive}}</td> 

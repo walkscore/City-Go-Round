@@ -67,23 +67,9 @@ def edit_agency(request, agency_id):
     
     return render_to_response( request, "edit_agency.html", {'agency':agency, 'form':form} )
     
-def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
+def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):        
 
-    def get_state_list():
-        #factoring this out since we want all states all the time
-        #and because we want to memcache this
-        #todo: add other countries (return dict where value includes proper url)
-        mem_result = memcache.get('all_states')
-        if not mem_result:
-            states = uniquify([a.stateslug for a in Agency.all()])
-            states.sort()
-            mc_added = memcache.add('all_states', states, 60 * 1)
-        else:
-            states = mem_result
-
-        return states
-        
-
+    #for a single agency:
     if nameslug:
         urlslug = '/'.join([countryslug,stateslug,cityslug,nameslug])
         agency = Agency.all().filter('urlslug =', urlslug).get()
@@ -99,48 +85,32 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
     
         return render_to_response( request, "agency.html", template_vars)
     
-    location = ''
-    
-    public_filter = request.GET.get('public','')
-    public_count = no_public_count = 0
-    
-    agencies = Agency.all().order("name") 
+    #return a filtered agency list
+    agency_list = Agency.fetch_for_slugs(countryslug, stateslug, cityslug)
 
-    mck = 'agencies'
+    public_filter = request.GET.get('public','all')
+    public_count = no_public_count = 0
+    location = ''    
     if cityslug:
-        agencies = agencies.filter('cityslug =', cityslug)
-        logging.debug('filtering by cityslug %s' % cityslug)
-        mck = 'agencies_%s_%s_%s_%s' % (public_filter, countryslug, stateslug, cityslug)
         location = cityslug
     elif stateslug:
-        agencies = agencies.filter('stateslug =', stateslug)
-        logging.debug('filtering by stateslug %s' % stateslug)
-        mck = 'agencies_%s_%s_%s' % (public_filter, countryslug, stateslug)
         location = stateslug 
     elif countryslug:
-        agencies = agencies.filter('countryslug =',countryslug)
-        mck = 'agencies_%s_%s' % (public_filter, countryslug)
         location = countryslug
-
-    mem_result = memcache.get(mck)
-    if mem_result:
-        agency_list = mem_result  
-    else:
-        agency_list = []
+    
+    #TODO: clean this up -- better form not to set new properties on defined model objects
+    enhanced_list = [];
+    for a in agency_list:
         
-        for a in agencies:
-            if a.date_opened:
-                public_count += 1
-                a.date_opened_formatted = a.date_opened
-                if public_filter == 'no_public':
-                    a.hide = True
-            else:
-                no_public_count += 1
-                if public_filter == 'public':
-                    a.hide = True
-            agency_list.append(a)  #listify now so we dont have to do it again for count(), etc
-
-        mc_added = memcache.add(mck, agency_list, 60 * 60)
+        if a.date_opened:
+            public_count += 1
+            if public_filter == 'no_public':
+                a.hide = True
+        else:
+            no_public_count += 1
+            if public_filter == 'public':
+                a.hide = True
+        enhanced_list.append(a)  #listify now so we dont have to do it again for count(), etc
 
     template_vars = {
         'agencies': agency_list,
@@ -148,7 +118,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         'public_count' : public_count,
         'public_filter' : public_filter,
         'no_public_count' : no_public_count,
-        'states' : get_state_list(),
+        'states' : Agency.get_state_list(),
         'agency_count' : len(agency_list),
         'feed_references': FeedReference.all_by_most_recent(),
     }
