@@ -221,7 +221,7 @@ def create_agency_from_feed(request, feed_id):
     # create an agency entity from it
     agency = Agency(name = feed.name,
                     short_name = feed.name,
-                    city = feed.area if feed.area!="" else "cowtown",
+                    city = feed.area if feed.area!="" else "PLEASE ADD REAL CITY",
                     state = feed.state,
                     country = feed.country,
                     agency_url = feed.url,
