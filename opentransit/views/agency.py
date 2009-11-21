@@ -24,7 +24,7 @@ def uniquify(seq):
 
 def edit_agency(request, agency_id=None):
     if agency_id is not None:
-        agency = Agency(name=form.cleaned_data['name'])
+        agency = Agency.get_by_id( int(agency_id) )
     else:
         agency = None
     
