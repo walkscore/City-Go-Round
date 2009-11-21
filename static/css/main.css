@@ -3,7 +3,7 @@
 	pre,code,address,caption,cite,code,em,strong,th { font-size: 1em; font-weight: normal; font-style: normal; }
 	h1,h2,h3,h4,h5,h6,strong { font-weight: bold; margin: 0; padding: 0; }
 	cite, em { font-style:italic; }
-	ul, ol { margin: 0 0 0 0; }
+	ul, ol { margin: 0 0 0 0; list-style-type: none; }
 	fieldset,img { border: 0; }
 	caption,th { text-align: left; }
 	table { border-collapse: collapse; border-spacing: 0; }
@@ -381,22 +381,22 @@
 
 /* TODO jesse -- i threw these together. fix 'em -- dave */
 
-    #add-app-form blockquote {
+    .add-app-form blockquote {
     	margin: 8px 15px 12px 0;
     	font-style: italic;
     	display: block;
     }
-    #add-app-form th {
+    .add-app-form th {
     	width: 250px;
     }
     
-    #add-app-form tr {
+    .add-app-form tr {
         height: 32px;
         min-height: 32px;
         max-height: 32px;
     }
     
-    #add-app-form table input {
+    .add-app-form table input {
     	height: 18px;
     	font: 12px/12px Verdana, Arial, Helvetica, sans-serif;
     	margin-bottom: 2px;
@@ -405,7 +405,7 @@
     	min-width: 250px;
     }
 
-    #add-app-form table textarea {
+    .add-app-form table textarea {
     	font: 12px/12px Verdana, Arial, Helvetica, sans-serif;
     	margin-bottom: 2px;
     	border: 1px solid #999;
@@ -413,7 +413,7 @@
     	min-width: 250px;
     }
 
-    #add-app-form table textarea {
+    .add-app-form table textarea {
     	font: 12px/12px Verdana, Arial, Helvetica, sans-serif;
     	margin-bottom: 2px;
     	border: 1px solid #999;
@@ -421,30 +421,34 @@
     	min-width: 250px;
     }
     
-    #add-app-form table select {
+    .add-app-form table select {
         width: 250px;
         min-width: 250px;
     }
     
-    #add-app-form table input[type="file"] {
+    .add-app-form table input[type="file"] {
         border: 0;
     }
     
-    #add-app-form table ul {
+    .add-app-form table ul {
         list-style-type: none;
     }
     
-    #add-app-form table ul.errorlist li {
+    .add-app-form table ul.errorlist li {
         color: red;
     }
     
-    #add-app-form table input[type="radio"] {
+    .add-app-form table input[type="radio"] {
         border: 0;
         width: 20px;
     }
     
-    #add-app-form .button {
+    .add-app-form .button {
     	margin: 8px 0 6px 75px;
+    }
+    
+    .add-app-form li {
+      margin-bottom: 6px;
     }
 
 
@@ -615,7 +619,7 @@
 	
 /*********** APP ADD FORMS ************/
 	
-	#add-locations-form p input {
+	.add-locations-form p input {
 		margin-right: 5px;
 	}
 	#location-list {
