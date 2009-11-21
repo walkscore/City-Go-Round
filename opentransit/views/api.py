@@ -6,7 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from google.appengine.ext import db
 from google.appengine.api import memcache
 
-from ..models import Agency
+from ..models import Agency, TransitApp
 from ..utils.view import render_to_response, redirect_to, not_implemented, bad_request, method_not_allowed, render_to_json
 from ..utils.slug import slugify
 from ..utils.geohelpers import are_latitude_and_longitude_valid
@@ -97,7 +97,7 @@ def api_apps_search(request):
         return bad_request('country parameter must be two characters')
     
     # Query and render JSON!
-    return render_to_json([transit_app.to_jsonable() for transit_app in TransitApp.iter_for_location(latitude, longitude, country_code)])
+    return render_to_json([transit_app.to_jsonable() for transit_app in TransitApp.iter_for_location_and_country_code(latitude, longitude, country_code)])
 
 @requires_valid_agency_key_encoded
 def api_apps_for_agency(request, agency):
