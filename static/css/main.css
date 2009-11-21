@@ -109,6 +109,9 @@
 	.body-content p, p.body {
 		margin: 2px 0 8px 0;
 	}
+	.body-content li {
+    margin-bottom: 6px;
+  }
 	
 
 /*********** Links ****************/
@@ -447,9 +450,12 @@
     	margin: 8px 0 6px 75px;
     }
     
-    .add-app-form li {
-      margin-bottom: 6px;
+    #list-panel {
+      clear: both;
+      width: 700px;
+      margin-left: 40px;
     }
+    
 
 
 /*********** FEATURED APPS ****************/
