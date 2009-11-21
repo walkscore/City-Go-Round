@@ -214,6 +214,11 @@ def delete_all_agencies(request):
         
     return HttpResponse( "deleted all agencies")
     
+def delete_agency(request,  agency_id):
+    Agency.get_by_id( int( agency_id ) ).delete()
+    
+    return HttpResponseRedirect( "/admin/debug/" )
+    
 def create_agency_from_feed(request, feed_id):
     # get feed entity
     feed = FeedReference.all().filter("gtfs_data_exchange_id =", feed_id).get()
