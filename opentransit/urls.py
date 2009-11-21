@@ -71,8 +71,12 @@ urlpatterns += patterns(
 # Want to break these out just to make clear what our programmatic API surface is.
 urlpatterns += patterns(
     'opentransit.views.api',
-    url(r'^api/search/agencies/$', 'api_search_agencies', name = 'api_search_agencies'),    
-    url(r'^api/search/apps/$', 'api_search_apps', name = 'api_search_apps'),
+    url(r'^api/agencies/search/$', 'api_agencies_search', name = 'api_agencies_search'),    
+    url(r'^api/apps/search/$', 'api_apps_search', name = 'api_apps_search'),
+    url(r'^api/agencies/for-app/(?P<transit_app_slug>[\w-]+)/$', 'api_agencies_for_app', name = 'api_agencies_for_app'),
+    url(r'^api/apps/for-agency/(?P<key_encoded>[\w-]+)/$', 'api_apps_for_agency', name = 'api_apps_for_agency'),
+    url(r'^api/agencies/for-apps/$', 'api_agencies_for_apps', name = 'api_agencies_for_apps'),
+    url(r'^api/apps/for-agencies/$', 'api_apps_for_agencies', name = 'api_apps_for_agencies'),
 )
     
     

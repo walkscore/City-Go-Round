@@ -74,7 +74,7 @@ jQuery(document).ready(function() {
                 // TODO DAVEPECK:
                 // This is temporarily broken as we rationalize our various JSON/AJAX APIs.
                 // I will fix soon.
-                var nearby_url = '{% url api_search_agencies %}' + '?type=location&format=json';
+                var nearby_url = '{% url api_agencies_search %}' + '?type=location&format=json';
                 nearby_url += '&lat=' + lat + '&lon=' + lon;
                 jQuery.getJSON(nearby_url, display_apps);
                 }
