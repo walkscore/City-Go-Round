@@ -4,147 +4,135 @@
 
 {% block extra_head %}
 <script type="text/javascript">
-jQuery(document).ready(function() {
-    var agencies;
-    var agency_no_public;
-    var agency_public;
-    var agency_public_count = 0;
-    var apps;
-    function display_apps(json){
-        agencies = json.agencies;
-        agency_public = {};
-        agency_no_public = {};
-        
-        var agency_public_html = '<p><strong>Apps powered by:</strong>';
-        var agency_no_public_html ='<p>';
-        apps = [];
-        jQuery.each(agencies, function(i,a){
-            var name = a.name;
-            var slug = a.urlslug;
-            if (a.apps.length){
-                jQuery.each(a.apps, function(i,j){apps.push(j);});
-                agency_public_count += 1;
-                agency_public_html += '<a href="/agencies/' + slug + '">' + name + '</a> | ';
-                }
-            else{
-                agency_no_public_html += '<a href="/agencies/' + slug + '">' + name + '</a> | ';
-                }
+google.load("maps", "2.167");
+jQuery.noConflict();
+jQuery(document).ready(function($) 
+{
+    
+    function url_for_transit_app_query(latitude, longitude, country_code)
+    {
+        return "{% url api_apps_search %}" + "?lat=" + latitude + "&lon=" + longitude + "&country=" + country_code;
+    }
+    
+    function url_for_agency_query(latitude, longitude)
+    {
+        return "{% url api_agencies_search %}" + "?type=location&lat=" + latitude + "&lon=" + longitude;
+    }
+    
+    function url_for_transit_app(slug)
+    {
+        // TODO davepeck: How to use django's URL template tag here?
+        return '/apps/' + slug + '/';
+    }
+    
+    function html_for_row(name, item)
+    {
+        return "<tr><th>" + name + "</th><td>" + item + "</td></tr>\n";
+    }
+    
+    function link(url)
+    {
+        return '<a href="' + url + '">' + url + '</a>';
+    }
+    
+    function img(src, alt)
+    {
+        return '<img src="' + src + '" alt="' + alt + '" />';
+    }
+    
+    function html_for_transit_app(transit_app)
+    {
+        var html = "<table>";       
+        html += html_for_row("Description:", transit_app.description);
+        html += html_for_row("Homepage:", link(transit_app.url));
+        html += html_for_row("Author Name:", transit_app.author_name);
+        html += html_for_row("Long Description:", transit_app.long_description);
+        html += html_for_row("Screen Shot:", img(transit_app.screen_shot_url, "Application Screen Shot"));
+        html += "</table><p>&nbsp;</p>";
+        return html;
+    }
+    
+    function query_for_transit_apps(latitude, longitude, country_code)
+    {
+        $.getJSON(url_for_transit_app_query(latitude, longitude, country_code), function(transit_apps)
+        {
+            var transit_app_count = 0;
+            var transit_apps_html = "";
+            
+            $.each(transit_apps, function(i, transit_app)
+            {
+                transit_app_count += 1;
+                transit_apps_html += html_for_transit_app(transit_app);             
             });
-				agency_no_public_html +='</p>';
-				agency_public_html += '</p>';
-				
-        var summary = '<h4 class="bluegreen"><em>' + apps.length + '</em> transit apps use public data from ';
-        summary += '<span><em>' + agency_public_count + '</em> transit agencies.</span></h4>';
-        
-        var app_html = ''
-        jQuery.each(apps, function(i,a){
-            app_html += a.name + '<br><br>'
-            });
-        jQuery('#fill_nearby_summary').html(summary);
-        jQuery('#fill_nearby_no_public').html(agency_no_public_html);
-        jQuery('#fill_nearby_public').html(agency_public_html);
-        jQuery('#fill_nearby_apps').html(app_html);
-        }
-        
-        
-    function find_nearby_agencies(){
-        var base_url = 'http://maps.google.com/maps/geo?sensor=false&key={{GOOGLE_API_KEY}}';
-        var address = getUrlParam('location_query');
-        var qurl = base_url + '&q=' + address + '&callback=?';
-        jQuery.getJSON(qurl, function(json){
-            //console.log(json);
-            if(json.Placemark){
-                var p = json.Placemark[0];
-                var ad = p.AddressDetails.Country.AdministrativeArea;
-                //console.log(ad);
-                if (!ad.CountryName=='USA'){
-                    alert('sorry, for now we only support US addresses');
-                    }
-                var state = ad.AdministrativeAreaName;
-                if (ad.SubAdministrativeArea && ad.SubAdministrativeArea.Locality) {
-                    var city = ad.SubAdministrativeArea.Locality.LocalityName;
-                    //window.location.replace('/agencies/US/' + state + '/' + city + '/');
-                    }
-                //else {
-                    //window.location.replace('/agencies/US/' + state + '/');
-                  //  }
-                var coords = p.Point.coordinates;
-                var lon = coords[0];
-                var lat = coords[1];
-                // TODO DAVEPECK:
-                // This is temporarily broken as we rationalize our various JSON/AJAX APIs.
-                // I will fix soon.
-                var nearby_url = '{% url api_search_agencies %}' + '?type=location&format=json';
-                nearby_url += '&lat=' + lat + '&lon=' + lon;
-                jQuery.getJSON(nearby_url, display_apps);
-                }
-            else{
-                alert('unable to geocode your address');
-                }
-            });
-        }
 
-    find_nearby_agencies()
-    });
+            $("#transit_app_loading").fadeOut(0.0, function(){});
+            $("#tables_go_here").hide().html(transit_apps_html).fadeIn(1000.0, function(){});
+            $("#transit_app_headline").hide().text("There are " + transit_app_count + " apps.").fadeIn(1000.0, function(){});
+        });
+    }
+    
+    function query_for_agencies(latitude, longitude, country_code)
+    {
+        // TODO DAVEPECK
+    }
+    
+    function handle_google_geocode_response(response)
+    {
+        if (response && response.Status.code == 200)
+        {
+            var place = response.Placemark[0];
+            var latitude = place.Point.coordinates[1];
+            var longitude = place.Point.coordinates[0];
+            var country_code = String(place.AddressDetails.Country.CountryNameCode);
+            query_for_transit_apps(latitude, longitude, country_code);
+            query_for_agencies(latitude, longitude, country_code);
+        }        
+    }
+    
+    function find_nearby_transit_apps()
+    {
+        $("#transit_app_headline").hide();
+        var query = getUrlParam('location_query');
+        var googleCoder = new GClientGeocoder();
+        googleCoder.getLocations(query, handle_google_geocode_response);    
+    }
+
+    find_nearby_transit_apps();
+});
 
 </script>
 {% endblock %}
 
 {% block content %}
-	<div class="col-group">
+
+    <div id="nearby-apps" class="body-content thinline">
+        <div class="boxed-content">
+            <h2>Transit Apps Near {{location_query}}:</h2>
+            <h3 id="transit_app_headline"></h3>
+            <h3 id="transit_app_loading"><img src="{% static_url /images/ajax-loader.gif %}" />LOADING...</h3>
+            <div id="tables_go_here"></div>
+        </div>
+    </div>
+
     <div id="petition" class="body-content thinline">
-			<div class="boxed-content">	
-      	<h4>Nearby Agencies with no public data</h4>
-      	<div class="agency-text-list" id="fill_nearby_no_public"><span class="loading"></span></div>
-	    	<h2>SUPPORT PUBLIC DATA</h2>
-				<div class="wide-col rightmost">
-			    {% include "includes/petition-text.html" %}	
-			    {% include "includes/petition-disclaimer.html" %}				
-		    </div>
-		    <div class="narrow-col">
-		    	{% include "includes/petition-form.html" %}
-			  </div>
-			  <br class="clear-all" />
-		  </div>
-	  </div>
-	  <br class="clear-all" />
-	  <div id="fill_nearby_summary">loading..</div>
-	  <div class="agency-text-list" id="fill_nearby_public"></div>
-	  <div id="fill_nearby_apps"></div>
-	  <div class="narrow-col"> 
-	    <div class="app-thumbs">   
-	        
-		    {% for transit_app in transit_apps %}
-			    <div class="app"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
-			      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
-			      <p>{{transit_app.description}}</p>
-			    </div>
-		    {% endfor %}
+        <div class="boxed-content"> 
+            
+            <h4>Nearby Agencies with no public data</h4>
+            <div class="agency-text-list" id="fill_nearby_no_public"><span class="loading">TODO DAVEPECK...</span></div>
 
-			</div>
-		</div>
-
-	  <div class="narrow-col"> 
-	    <div class="app-thumbs">   
-	        
-		    {% for transit_app in transit_apps %}
-			    <div class="app"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
-			      <h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
-			      <p>{{transit_app.description}}</p>
-			    </div>
-		    {% endfor %}
-
-			</div>
-		</div>
-				
-	</div>
-	
-	<div class="wide-col rightmost">
-	  {% include "includes/mrec1.html" %}
-	</div>
-
+            <h2>SUPPORT PUBLIC DATA</h2>
+            <div class="wide-col rightmost">
+                {% include "includes/petition-text.html" %} 
+                {% include "includes/petition-disclaimer.html" %}               
+            </div>
+            
+            <div class="narrow-col">
+                {% include "includes/petition-form.html" %}
+            </div>
+            <br class="clear-all" />
+        </div>
+    </div>
+      
 {% endblock %}
 
 
-{% block scripts %}
-{% endblock %}

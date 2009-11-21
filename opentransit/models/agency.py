@@ -1,11 +1,13 @@
 import logging
 from google.appengine.ext import db
+from google.appengine.api import memcache
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from geo.geomodel import GeoModel
 from ..utils.slug import slugify
-from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_keys, unique_entities
+from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_keys, unique_entities, iter_uniquify
 from ..utils.geohelpers import square_bounding_box_centered_at
+from ..utils.misc import uniquify
 
 class Agency(GeoModel):
     # properties straight out of the NTD import
@@ -77,8 +79,8 @@ class Agency(GeoModel):
         return (self.date_opened != None)
 
     @staticmethod
-    def fetch_agencies_near(latitude, longitude, query = None, max_results = 50):
-        bounding_box = square_bounding_box_centered_at(latitude, longitude, settings.SIDE_OF_NEARBY_BOUNDING_BOX_IN_MILES)        
+    def fetch_agencies_near(latitude, longitude, query = None, max_results = 50, bbox_side_in_miles = settings.BBOX_SIDE_IN_MILES):
+        bounding_box = square_bounding_box_centered_at(latitude, longitude, bbox_side_in_miles)
         if query is None:
             query = Agency.all()
         return Agency.bounding_box_fetch(query, bounding_box, max_results = max_results)        
@@ -91,7 +93,50 @@ class Agency(GeoModel):
     def all_public_agencies():
         """Return a query to all Agency entities marked 'public' by Brandon's import scripts."""
         return Agency.all().filter('date_opened !=', None)
+
+    @staticmethod    
+    def get_state_list():
+        #factoring this out since we want all states all the time
+        #and because we want to memcache this
+        #todo: add other countries (return dict where value includes proper url)
+        mem_result = memcache.get('all_states')
+        if not mem_result:
+            states = uniquify([a.stateslug for a in Agency.all()])
+            states.sort()
+            mc_added = memcache.add('all_states', states, 60 * 1)
+        else:
+            states = mem_result
+
+        return states
+    
+    @staticmethod
+    def fetch_for_slugs(countryslug = None, stateslug = None, cityslug = None):
+        mck = '_slugs_agencies'
+        agency_query = Agency.all()
         
+        if cityslug:
+            agency_query = agency_query.filter('cityslug =', cityslug)
+            logging.debug('filtering by cityslug %s' % cityslug)
+            mck = '_slugs_agencies_%s_%s_%s' % (countryslug, stateslug, cityslug)
+        elif stateslug:
+            agency_query = agency_query.filter('stateslug =', stateslug)
+            logging.debug('filtering by stateslug %s' % stateslug)
+            mck = '_slugs_agencies_%s_%s' % (countryslug, stateslug)
+        elif countryslug:
+            agency_query = agency_query.filter('countryslug =',countryslug)
+            mck = '_slugs_agencies_%s' % countryslug
+        
+        mem_result = memcache.get(mck)
+        if mem_result is not None:
+            agency_list = mem_result  
+        else:
+            agency_list = [agency for agency in agency_query]
+            #TODO -- can we make this work?  When all agencies, exceeds memcache size limit
+            #     --maybe we memcache the set of datastore keys, then retrieve and fetch those
+            #memcache.set(mck, agency_list, 60)
+        
+        return agency_list
+    
     @staticmethod
     def fetch_explicitly_supported_for_transit_app(transit_app):
         """Return a list of Agency entities that are explicitly supported by the transit app."""
@@ -112,16 +157,12 @@ class Agency(GeoModel):
     @staticmethod
     def iter_for_transit_app(transit_app, uniquify = True):
         """Return an iterator over Agency entities, by default unique, that the given transit app supports"""
-        seen = {}
-        for explicit_agency in Agency.iter_explicitly_supported_for_transit_app(transit_app):
-            if (not uniquify) or (explicit_agency.key() not in seen):
-                if uniquify: seen[explicit_agency.key()] = True
-                yield explicit_agency
+        seen_set = set()
+        for explicit_agency in iter_uniquify(Agency.iter_explicitly_supported_for_transit_app(transit_app), seen_set, uniquify):
+            yield explicit_agency
         if transit_app.supports_all_public_agencies:
-            for public_agency in Agency.all_public_agencies():
-                if (not uniquify) or (public_agency.key() not in seen):
-                    if uniquify: seen[public_agency.key()] = True
-                    yield public_agency
+            for public_agency in iter_uniquify(Agency.all_public_agencies(), seen_set, uniquify):
+                yield public_agency
         
     @staticmethod
     def fetch_for_transit_apps(transit_apps, uniquify = True):
@@ -131,9 +172,7 @@ class Agency(GeoModel):
     @staticmethod
     def iter_for_transit_apps(transit_apps, uniquify = True):
         """Return an iterator over Agency entities, by default unique, that at least one transit application in the transit_apps list supports."""
-        seen = {}
+        seen_set = set()
         for transit_app in transit_apps:
-            for agency in Agency.iter_for_transit_app(transit_app, uniquify = False):
-                if (not uniquify) or (agency.key() not in seen):
-                    if uniquify: seen[agency.key()] = True
-                    yield agency        
+            for agency in iter_uniquify(Agency.iter_for_transit_app(transit_app, uniquify = False), seen_set, uniquify):
+                yield agency        

@@ -35,6 +35,7 @@ def nameddict(name=None, keys=(), defaults=None, module=None):
         defaults = {}
     keys = list(keys) # handles all iterables
     keys.extend(k for k in defaults.keys() if k not in keys)
+    keys = set(keys)
     validate_names(keys)
 
     class nameddict(object):
@@ -53,12 +54,16 @@ def nameddict(name=None, keys=(), defaults=None, module=None):
             for k, v in defaults.iteritems():
                 setattr(self, k, v)
             for k, v in values.iteritems():
+                if k not in keys:
+                    raise Exception("Invalid key.")
                 setattr(self, k, v)
 
         def __getitem__(self, attr):
             return getattr(self, attr)
 
         def __setitem__(self, attr, value):
+            if attr not in keys:
+                raise Exception("Invalid key.")
             setattr(self, attr, value)
 
         def __delitem__(self, attr):

@@ -1,4 +1,5 @@
 import math
+import logging
 from geo import geotypes
 
 class Constants(object):

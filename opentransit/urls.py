@@ -14,6 +14,7 @@ urlpatterns += patterns(
     url(r'^petition-signed/$', 'static', {'template':'petition_signed.html'}, name='petition_signed'),
     url(r'^admin/login/$', 'admin_login'),
     url(r'^admin/logout/$', 'admin_logout'),
+    url(r'^admin/debug/$', 'debug', name='debug'),
 )
 
 
@@ -29,7 +30,6 @@ urlpatterns += patterns(
 urlpatterns += patterns(
     'opentransit.views.feed',
     url(r'^admin/feeds/update/$', 'update_feed_references', name='update_feed_references'),
-    url(r'^admin/feeds/merge/$', 'merge_feeds', name='merge_feeds'),
     url(r'^feed-references/$', 'feed_references', name='feed_references'),
 )
 
@@ -37,7 +37,7 @@ urlpatterns += patterns(
 # Agency Views -- Full URL structure for viewing agencies, and for adding/editing them
 urlpatterns += patterns(
     'opentransit.views.agency',
-    url(r'^agencies/edit/(?P<agency_id>\d+)/$', 'edit_agency', name='edit_agency'), #todo: move this to /agencies/..../edit url
+    url('^agencies/edit/(?P<agency_id>\d+)/$', 'edit_agency', name='edit_agency'), #todo: move this to /agencies/..../edit url
     url(r'^agencies/$', 'agencies', name='agencies'),
     url(r'^agencies/(?P<countryslug>[\w-]+)/$', 'agencies'),
     url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/$', 'agencies'),
@@ -45,8 +45,11 @@ urlpatterns += patterns(
     url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/(?P<cityslug>[\w-]+)/(?P<nameslug>[\w-]+)/$', 'agencies'),
     url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/(?P<cityslug>[\w-]+)/(?P<nameslug>[\w-]+)/edit/$', 'edit_agency'),
     url(r'^agencies/(?P<agency>\d+)/$', 'agencies'),
-    url(r'^admin/agencies/delete/$', 'delete_all_agencies'),
-    url(r'^admin/agencies/create-from-feed/(?P<feed_id>[-\w ]+)/$', 'create_agency_from_feed')
+    url(r'^admin/agencies/deleteall/$', 'delete_all_agencies'),
+    url(r'^admin/agencies/delete/(?P<agency_id>\d+)/$', 'delete_agency', name='delete_agency'),
+    url(r'^admin/agencies/create-from-feed/(?P<feed_id>[-\w ]+)/$', 'create_agency_from_feed'),
+    url(r'^admin/agencies/add/$', 'edit_agency', name='edit_agency'),
+    
 )
 
 
@@ -68,8 +71,12 @@ urlpatterns += patterns(
 # Want to break these out just to make clear what our programmatic API surface is.
 urlpatterns += patterns(
     'opentransit.views.api',
-    url(r'^api/search/agencies/$', 'api_search_agencies', name = 'api_search_agencies'),    
-    url(r'^api/search/apps/$', 'api_search_apps', name = 'api_search_apps'),
+    url(r'^api/agencies/search/$', 'api_agencies_search', name = 'api_agencies_search'),    
+    url(r'^api/apps/search/$', 'api_apps_search', name = 'api_apps_search'),
+    url(r'^api/agencies/for-app/(?P<transit_app_slug>[\w-]+)/$', 'api_agencies_for_app', name = 'api_agencies_for_app'),
+    url(r'^api/apps/for-agency/(?P<key_encoded>[\w-]+)/$', 'api_apps_for_agency', name = 'api_apps_for_agency'),
+    url(r'^api/agencies/for-apps/$', 'api_agencies_for_apps', name = 'api_agencies_for_apps'),
+    url(r'^api/apps/for-agencies/$', 'api_apps_for_agencies', name = 'api_apps_for_agencies'),
 )
     
     

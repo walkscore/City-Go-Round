@@ -36,11 +36,11 @@ class NewAppGeneralInfoForm(forms.Form):
         
     @property
     def platform_list(self):
-        return uniquify([TransitApp.PLATFORMS[platform_choice] for platform_choice in platforms])
+        return uniquify([TransitApp.PLATFORMS[platform_choice] for platform_choice in self.cleaned_data['platforms']])
         
     @property
     def category_list(self):
-        return uniquify([TransitApp.PLATFORMS[category_choice] for category_choice in categories])        
+        return uniquify([TransitApp.CATEGORIES[category_choice] for category_choice in self.cleaned_data['categories']])        
 
 class NewAppAgencyForm(forms.Form):
     progress_uuid = forms.CharField(required = True, widget = forms.widgets.HiddenInput)
@@ -49,5 +49,5 @@ class NewAppAgencyForm(forms.Form):
     
 class NewAppLocationForm(forms.Form):
     progress_uuid = forms.CharField(required = True, widget = forms.widgets.HiddenInput)
-    location_list = LocationListField(required = True, widget = forms.widgets.HiddenInput)
+    location_list = LocationListField(required = False, widget = forms.widgets.HiddenInput)
     available_globally = forms.BooleanField(required = False, label = u"Globally", widget = forms.widgets.CheckboxInput(attrs={'onchange': 'updateUI()', 'id': 'global'}))

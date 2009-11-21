@@ -1,24 +1,160 @@
 {% extends 'base.html' %}
 
-{% block title %}Add a transit app on City-Go-Round{% endblock %}
+{% block title %}{{location}} transit agencies on City-Go-Round{% endblock %}
 
-{% block content %}
-<!-- TODO jesse: add some design here. (dave) -->
-    <div id="add-app-form-container" class="body-content">            
-        <h3>ADD A NEW TRANSIT APP [Step 2: What Agencies Your App Supports]</h3>
-        <h2>Select agencies that your application supports:</h2>
-        <form id="add-agencies-form" action="" method="POST">
-          {# This is only going to spew out hidden input fields, so... whatever. #}
-          {{form.as_p}}
-          <input type="submit" value="Add The App!"></input>
-          
-          <div id="agency-list">
+{% block headscripts %}
+<script type="text/javascript" src="/js/jquery.tablesorter.min.js"></script>
+<script type="text/javascript">
+
+    var agency_count = {{agency_count}}; 
+    function updateFilters(){
+        var pd = jQuery("#public_filter option:selected").val();
+        var location = jQuery("#location_filter option:selected").val();
+        document.location = (location + '?public=' + pd)
+    }
+
+    $(document).ready(function() { 
+        //make sure public dropdown selected appropriately
+        $("#agency_list").tablesorter({ sortList: [[6,0],[5,0]] });
+
+        $("#list-panel").fadeTo(0, 0.33);
+        updateUI();
+        
+        $("#id_gtfs_public_choice_0").change(updateUI);
+        $("#id_gtfs_public_choice_1").change(updateUI);
+    }); 
+    
+    function updateUI() {
+        if ( $("#id_gtfs_public_choice_0").eq(0).is(":checked") ){
+			$(":checkbox").attr("disabled", true);	
+            $("#list-panel").fadeTo(0, 0.33);
+		}
+		else {
+            $(":checkbox").attr("disabled", false);
+            $("#list-panel").fadeTo(0, 1.00);
+		}
             
-          </div>    
-        </form>
-    </div>
+    }
+    
+    function updateFilters(){
+        var pd = jQuery("#public_filter option:selected").val();
+        var location = jQuery("#location_filter option:selected").val();
+        
+        //show based on filters
+        if (pd=="all" && location=="all"){
+            $("tr").show();
+        }
+        else {
+            $("tr").hide(); //hide everything
+            $("#header-row").show(); //show headers
+            
+            if (pd=="all"){
+                $("tr").filter("."+location).show();
+            }
+            else if (location=="all"){
+                $("tr").filter("."+pd).show();
+            }
+            else {
+                var filter = "tr[class='" + location + " " + pd + "']";
+                $(filter).show();
+            }
+        }
+    }
+
+    function filter(countryCode) {
+        $("tr").hide();
+        $("#header-row").show();
+        $("."+countryCode).show();
+    }
+    
+    function getDataString(){
+        var data = $(":checkbox:checked").map(function(){
+            return $(this).attr("id");
+            }).get().join(" | ");
+
+        return data;
+    }
+    
+    function sendDataString() {
+		if ( $("#id_gtfs_public_choice_1").eq(0).is(":checked") )
+			$("#id_agency_list").eq(0).val( this.getDataString() );
+        return true;
+	}
+	
+	function dbug(str){
+		$("#dbug").append(str + "<br />");
+	}
+</script>
 {% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static_url /css/tablesort.css %}" media="screen" />
+{% endblock%}
 
-{% block scripts %}
+{% block content %}
+
+<div id="add-app-form-container" class="body-content">            
+    <h3>ADD A NEW TRANSIT APP [Step 2: What Agencies Your App Supports]</h3>
+    <h2>Select agencies that your application supports:</h2>
+    <p>If your app uses feeds and also works in other locations, you can specify those locations in the next step.  If your app doesn't use agency data skip on to the next step now.</p>
+    <form id="add-agencies-form" action="" method="POST" onsubmit="sendDataString()">
+        <div class="floatleft">
+            {# This is only going to spew out hidden input fields, so... whatever. #}
+            {{form.as_p}}
+        </div>
+        <input style="position:relative; top: 18px; left: 18px;" type="submit" value="onward to step 3..."></input>
+        <div id="list-panel">  
+            <p>Please choose from the {{agency_count}} transit agencies below.</p>
+            <p>Filter list by:         
+            <select id="public_filter" name="public_filter" onchange="updateFilters();">
+               <option value="all" selected>All Agencies</option>
+               <option value="pub">With Public Data</option>
+               <option value="no_pub">Without Public Data</option>
+            </select>
+            
+            <select id="location_filter" name="location_filter" onchange="updateFilters()">
+               <option value="all" selected>All States
+              {% for s in states %}
+               <option value="{{s|upper}}">{{s|upper}}
+              {% endfor %}
+            </select>
+            <br />Sort the list by clicking column headers.  Shift-click for multi-sort.</p>
+            
+            <br /><input type="button" value="DEBUG: show data string" onclick="dbug(getDataString())" />
+            <div id="dbug"></div>
+                
+            <table id="agency_list"> 
+            <thead> 
+            <tr id="header-row"> 
+                <th>&nbsp;</th> 
+                <th>Name</th> 
+                <th>Public Data</th>
+                <th>Date Added</th>
+                <th>Real-time Data</th>
+                <th>City</th> 
+                <th>State</th> 
+            </tr> 
+            </thead> 
+            <tbody> 
+            {% for a in agencies %}
+            {% if a.hide %}{% else %}
+            <tr class="{{a.state}} {% if a.date_opened %}pub{% else %}no_pub{%endif %}"> 
+                <td><input type="checkbox" name="{{a.key}}" id="{{a.key}}" /></td> 
+                <td>{{a.name}}</td> 
+                <td>{% if a.date_opened %}Yes{% else %}No{% endif %}</td>
+                <td>{% if a.date_opened %}{{a.date_opened|date:"N Y"}}{% endif %}</td>
+                <td>{% if a.has_real_time_data %}Yes{% else %}No{% endif %}</td>
+                <td>{{a.city}}</td> 
+                <td>{{a.state}}</td> 
+            </tr> 
+            {% endif %}
+            {% endfor %}
+            </tbody> 
+            </table>
+            <input type="submit" value="onward to step 3..."></input>
+        </form>
+    </div>
+</div>
+
+
 {% endblock %}
