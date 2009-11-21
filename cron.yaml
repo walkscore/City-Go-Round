@@ -1,0 +1,4 @@
+cron:
+- description: daily gtfs data exchange pull
+  url: /admin/feeds/update
+  schedule: every 24 hours
