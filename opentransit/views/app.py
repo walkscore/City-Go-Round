@@ -73,10 +73,11 @@ def add_form(request):
             progress.info_form_pickle = pickle.dumps(info_form, pickle.HIGHEST_PROTOCOL)
             
             # Save the form's progress to the AppEngine data store.
+            # TODO error handling.
             progress.put()
             
             # Remember the current UUID in the session.
-            add_progress_uuid_to_Session(progress.progress_uuid)
+            add_progress_uuid_to_session(request, progress.progress_uuid)
             
             # Redirect to the appropriate next page, based on whether 
             # they want to associate with agencies, or just associate 
@@ -89,28 +90,22 @@ def add_form(request):
         form = NewAppGeneralInfoForm()        
     return render_to_response(request, 'app/add-form.html', {'form': form})
     
-def _process_and_remove_progress(progress_uuid):
-    progress = TransitAppFormProgress.get_with_uuid(progress_uuid)
-    info_form = pickle.loads(progress.info_form_pickle)
-    # TODO davepeck: it is possible that, in the interim, someone
-    # finished making a transit_app with the same title...
-    transit_app = TransitApp(title = info_form['title'])
-    transit_app.description = info_form['description']
-    transit_app.url = db.Link(info_form['url'])
-    transit_app.author_name = info_form['author_name']
-    transit_app.author_email = db.Email(author_email)
-    transit_app.long_description = info_form['long_description']
-    transit_app.tags = info_form['tag_list']
-    transit_app.platforms = info_form['platform_list']
-    transit_app.categories = info_form['category_list']
-    return transit_app
-
 @requires_valid_progress_uuid
 def add_agencies(request, progress_uuid):
     if request.method == "POST":
         form = NewAppAgencyForm(request.POST)
         if form.is_valid():
-            # TODO davepeck: process this ish!
+            agency_form = {
+                "gtfs_public_choice": form.cleaned_data['gtfs_public_choice'],
+                "encoded_agency_keys": [str(agency_key) for agency_key in form.cleaned_data['agency_list']],
+            }
+            
+            # Remember the form info as filled out.
+            progress = TransitAppFormProgress.get_with_uuid(progress_uuid)
+            progress.agency_form_pickle = pickle.dumps(agency_form, pickle.HIGHEST_PROTOCOL)
+            progress.put()
+
+            # Head to our last page...
             return redirect_to("apps_add_locations", progress_uuid = progress.progress_uuid)
     else:
         form = NewAppAgencyForm(initial = {"progress_uuid": progress_uuid})        
@@ -119,9 +114,9 @@ def add_agencies(request, progress_uuid):
     agency_list = Agency.fetch_for_slugs()
     template_vars = {
         "form": form,
-        'agencies': agency_list,
-        'states' : Agency.get_state_list(),
-        'agency_count' : len(agency_list)
+        "agencies": agency_list,
+        "states": Agency.get_state_list(),
+        "agency_count": len(agency_list)
     }
 
     return render_to_response(request, 'app/add-agencies.html', template_vars)
@@ -131,7 +126,49 @@ def add_locations(request, progress_uuid):
     if request.method == "POST":
         form = NewAppLocationForm(request.POST)
         if form.is_valid():
-            # TODO davepeck: process this ish!
+            # Get all the progress so far.
+            progress = TransitAppFormProgress.get_with_uuid(progress_uuid)
+            
+            # 1. Unpack and handle our general info form
+            # TODO davepeck: it is possible that, in the interim, someone
+            # finished making a transit_app with the same title...
+            info_form = pickle.loads(progress.info_form_pickle)
+
+            transit_app = TransitApp(title = info_form['title'])
+            transit_app.description = info_form['description']
+            transit_app.url = db.Link(info_form['url'])
+            transit_app.author_name = info_form['author_name']
+            transit_app.author_email = db.Email(info_form['author_email'])
+            transit_app.long_description = info_form['long_description']
+            transit_app.tags = info_form['tag_list']
+            transit_app.platforms = info_form['platform_list']
+            transit_app.categories = info_form['category_list']
+            transit_app.supports_any_gtfs = info_form['supports_gtfs']
+            
+            # 2. If present, unpack and handle the agency form
+            if progress.agency_form_pickle and str(progress.agency_form_pickle):
+                agency_form = pickle.loads(progress.agency_form_pickle)
+                if agency_form["gtfs_public_choice"] == "yes_public":
+                    transit_app.supports_all_public_agencies = True
+                elif agency_form["encoded_agency_keys"]:
+                    transit_app.add_explicitly_supported_agencies([db.Key(encoded_agency_key) for encoded_agency_key in agency_form["encoded_agency_keys"]])
+            
+            # 3. Now handle the locations form (that's this form!)
+            transit_app.explicitly_supports_the_entire_world = form.cleaned_data["available_globally"]
+            lazy_locations = transit_app.add_explicitly_supported_city_infos_lazy(form.cleaned_data["location_list"].unique_cities)
+            transit_app.add_explicitly_supported_countries([country.country_code for country in form.cleaned_data["location_list"].unique_countries])
+            
+            # Write the transit app to the data store, along with custom locations (if any)
+            transit_app.put()
+            if lazy_locations:
+                real_locations = [lazy_location() for lazy_location in lazy_locations]
+                db.put(real_locations)
+            
+            # Done with this particular progress UUID. Goodbye.
+            remove_progress_uuid_from_session(request, progress_uuid)
+            progress.delete()
+
+            # Wow, we finished!
             return redirect_to("apps_add_success")
     else:
         form = NewAppLocationForm(initial = {"progress_uuid": progress_uuid})

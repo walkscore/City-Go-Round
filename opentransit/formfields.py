@@ -143,8 +143,10 @@ class AgencyListField(forms.CharField):
             return []
             
         try:
+            from bootstrap import BREAKPOINT
+            BREAKPOINT()            
             encoded_keys = value.strip().split('|')
-            datastore_keys = [db.Key(encoded_key) for encoded_key in encoded_keys]
+            datastore_keys = [db.Key(encoded_key.strip()) for encoded_key in encoded_keys]
         except:
             raise forms.ValidationError(self.agency_error_messages['invalid_agency_key'])
             

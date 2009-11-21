@@ -1,6 +1,6 @@
 import os
 
-RUNNING_APP_ENGINE_LOCAL_SERVER = os.environ['SERVER_SOFTWARE'].startswith('Dev')
+RUNNING_APP_ENGINE_LOCAL_SERVER = os.environ.get('SERVER_SOFTWARE', 'Dev').startswith('Dev')
 
 DEBUG = RUNNING_APP_ENGINE_LOCAL_SERVER # For now
 

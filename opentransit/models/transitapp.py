@@ -152,6 +152,7 @@ class TransitApp(db.Model):
     def has_transit_app_for_slug(transit_app_slug):
         return (TransitApp.transit_app_for_slug(transit_app_slug) is not None)
 
+    supports_any_gtfs = db.BooleanProperty()
     supports_all_public_agencies = db.BooleanProperty(indexed = True)
     explicitly_supported_agency_keys = db.ListProperty(db.Key)
     explicitly_supported_city_slugs = db.StringListProperty(indexed = True)   # ["seattle", "san-francisco", ...]
@@ -220,16 +221,25 @@ class TransitApp(db.Model):
         self.explicitly_supported_city_details.append(city_info.important_details)
         return TransitAppLocation(transit_app = self.key(), location = db.GeoPt(city_info.latitude, city_info.longitude))
         
+    def add_explicitly_supported_city_info_lazy(self, city_info):
+        """Helper to set up relations for city information. Returns a function that will create a corresponding transit app location. You must put() that."""
+        if not isinstance(city_info, CityInfo):
+            raise Exception("You must pass in a CityInfo object.")
+        self.explicitly_supported_city_slugs.append(city_info.name_slug)
+        self.explicitly_supported_city_details.append(city_info.important_details)
+        return lambda: TransitAppLocation(transit_app = self.key(), location = db.GeoPt(city_info.latitude, city_info.longitude))
+        
     def add_explicitly_supported_city_info_immediate(self, city_info):
         """Helper to set up relations for city information. Immediately adds the TransitAppLocation object to the data store."""
         self.add_explicitly_supported_city_info(city_info).put()
 
     def add_explicitly_supported_city_infos(self, city_infos):
         """Returns a list of new TransitAppLocation instances that you must put(); helper to set up relations for city informations."""
-        transit_app_locations = []
-        for city_info in city_infos:
-            transit_app_locations.append(self.add_explicitly_supported_city_info(city_info))
-        return transit_app_locations
+        return [self.add_explicitly_supported_city_info(city_info) for city_info in city_infos]
+        
+    def add_explicitly_supported_city_infos_lazy(self, city_infos):
+        """Returns a list of new TransitAppLocation functions that you must invoke and then put(); helper to set up relations for city informations."""
+        return [self.add_explicitly_supported_city_info_lazy(city_info) for city_info in city_infos]
     
     def add_explicitly_supported_city_infos_immedate(self, city_infos):
         """Helper to set up relations for city informations. Immediately adds the TransitAppLocation objects to the data store."""
@@ -238,6 +248,9 @@ class TransitApp(db.Model):
     
     def add_explicitly_supported_country(self, country_code):
         self.explicitly_supported_countries.append(country_code)
+        
+    def add_explicitly_supported_countries(self, country_codes):
+        self.explicitly_supported_countries.extend(country_codes)
         
     @staticmethod
     def all_for_country(country_code):

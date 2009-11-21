@@ -12,6 +12,7 @@ $ python compile_importable_csv.py
 use the bulk importer to load everything into the db
 $ cd ..
 $ export PYTHONPATH=/path/to/opentransitdata:path/to/opentransitdata/opentransit
+$ export DJANGO_SETTINGS_MODULE=settings
 $ /path/to/google_appengine/appcfg.py upload_data . --filename=./data/agencies.csv --kind=Agency --config_file=./data/agency_loader.py --url=http://localhost:8080/remote_api --has_header
 
 After you've imported, hit:
