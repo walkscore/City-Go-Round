@@ -66,10 +66,8 @@ jQuery(document).ready(function($)
             });
 
             $("#transit_app_loading").fadeOut(0.0, function(){});
-            $("#tables_go_here").hide().html(transit_apps_html);
-            $("#transit_app_headline").hide().text("There are " + transit_app_count + " apps.");
-            $("#transit_app_headline").fadeIn(1000.0, function(){});
-            $("#tables_go_here").fadeIn(1000.0, function(){});
+            $("#tables_go_here").hide().html(transit_apps_html).fadeIn(1000.0, function(){});
+            $("#transit_app_headline").hide().text("There are " + transit_app_count + " apps.").fadeIn(1000.0, function(){});
 	    });
     }
     
