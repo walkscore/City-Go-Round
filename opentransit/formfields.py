@@ -3,6 +3,7 @@ from google.appengine.api import images
 from google.appengine.ext import db
 from django.utils.translation import ugettext_lazy as _
 from .utils.image import image_bytes_are_valid
+from .utils.places import CityInfo, CountryInfo, CitiesAndCountries
 from .nameddict import nameddict
 # from bootstrap import BREAKPOINT
 
@@ -40,10 +41,6 @@ class AppEngineImageField(forms.FileField):
             
         return raw_file
 
-CityInfo = nameddict("CityInfo", keys=["latitude", "longitude", "name", "administrative_area", "country_code"])
-CountryInfo = nameddict("CountryInfo", keys=["country_code"])
-CitiesAndCountries = nameddict("CitiesAndCountries", keys=["cities", "countries"])
-                
 class LocationListField(forms.CharField):
     # Very special-purpose form designed to handle data from our 
     # "associate app with cities and countries" signup form.

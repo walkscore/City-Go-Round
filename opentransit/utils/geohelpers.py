@@ -1,4 +1,5 @@
 import math
+import logging
 from geo import geotypes
 
 class Constants(object):
@@ -32,6 +33,7 @@ def square_bounding_box_centered_at(latitude, longitude, side_in_miles):
     side_in_meters = miles_to_meters(side_in_miles)
     latitude_halfside_in_degrees = latitudinal_degrees_from_meters(side_in_meters) / 2.0
     longitude_halfside_in_degrees = longitudinal_degrees_from_meters_at_latitude(side_in_meters, latitude) / 2.0
+    logging.info("\n\n\n\n\n****** FOR Side in miles: %r we have meters: %r and lat/lon sides: %r / %r ******\n\n\n\n\n" % (side_in_miles, side_in_meters,latitude_halfside_in_degrees, longitude_halfside_in_degrees) )
     return geotypes.Box(
         north = latitude + latitude_halfside_in_degrees,
         east = longitude + longitude_halfside_in_degrees,
