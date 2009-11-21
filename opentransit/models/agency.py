@@ -79,8 +79,8 @@ class Agency(GeoModel):
         return (self.date_opened != None)
 
     @staticmethod
-    def fetch_agencies_near(latitude, longitude, query = None, max_results = 50):
-        bounding_box = square_bounding_box_centered_at(latitude, longitude, settings.SIDE_OF_NEARBY_BOUNDING_BOX_IN_MILES)        
+    def fetch_agencies_near(latitude, longitude, query = None, max_results = 50, bbox_side_in_miles = settings.BBOX_SIDE_IN_MILES):
+        bounding_box = square_bounding_box_centered_at(latitude, longitude, bbox_side_in_miles)
         if query is None:
             query = Agency.all()
         return Agency.bounding_box_fetch(query, bounding_box, max_results = max_results)        

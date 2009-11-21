@@ -54,9 +54,7 @@ $(document).ready(function() {
     }
     
     function getDataString(){
-        var data = ($("#id_gtfs_public_choice_1").eq(0).is(":checked")) ? "Will send" : "Won't send";
-        data += "<br />";
-        data += $(":checkbox:checked").map(function(){
+        var data = $(":checkbox:checked").map(function(){
             return $(this).attr("id");
             }).get().join(" | ");
 

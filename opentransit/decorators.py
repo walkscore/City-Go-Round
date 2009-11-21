@@ -1,5 +1,6 @@
 from django.http import Http404
-from .models import TransitApp
+from google.appengine.ext import db
+from .models import TransitApp, Agency
 from .utils.httpbasicauth import authenticate_request
 from .utils.progressuuid import is_progress_uuid_valid
 
@@ -24,4 +25,13 @@ def requires_valid_progress_uuid(view_function):
         if not is_progress_uuid_valid(request, progress_uuid):
             raise Http404
         return view_function(request, progress_uuid, *args, **kwargs)
+    return wrapper
+    
+def requires_valid_agency_key_encoded(view_function):
+    def wrapper(request, key_encoded, *args, **kwargs):
+        try:
+            agency = Agency.get(db.Key(key_encoded.strip()))
+        except:
+            raise Http404
+        return view_function(request, agency, *args, **kwargs)
     return wrapper
