@@ -74,8 +74,7 @@ class TestAppAndAgency(unittest.TestCase):
         self.app_for_portland = TransitApp(title = "app_for_portland")
         self.app_for_portland.put()
         self.app_for_portland.add_explicitly_supported_city_info_immediate(self.portland)
-        
-        
+                
     def tearDown(self):
         self.public_agency_1.delete()
         self.public_agency_2.delete()
@@ -93,6 +92,9 @@ class TestAppAndAgency(unittest.TestCase):
         self.app_for_philadelphia.delete()
         self.app_for_narberth.delete()
         self.app_for_entire_world.delete()
+        self.app_for_us.delete()
+        self.app_for_de.delete()
+        self.app_for_portland.delete()
                 
     def assertListsContainSameItems(self, list1, list2):
         self.assertTrue(len(list1) == len(list2), "FAIL: list lengths do not match. (GOT: %r for first list.)" % list1)
