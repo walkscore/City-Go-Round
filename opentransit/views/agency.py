@@ -11,6 +11,7 @@ from ..forms import AgencyForm
 from ..models import Agency, FeedReference, TransitApp
 from ..utils.view import render_to_response, redirect_to, not_implemented, bad_request, render_to_json
 from ..utils.misc import uniquify
+from ..utils.geocode import geocode_name
  
 from StringIO import StringIO
 import csv
@@ -51,6 +52,8 @@ def edit_agency(request, agency_id=None):
             agency.position_data    = form.cleaned_data['position_data'] if form.cleaned_data['position_data'] != "" else None
             agency.standard_license = form.cleaned_data['standard_license'] if form.cleaned_data['standard_license'] != "" else None
             
+            agency.location = geocode_name( agency.city, agency.state )
+            agency.update_location()
             
             agency.update_slugs()
             
@@ -81,23 +84,9 @@ def edit_agency(request, agency_id=None):
     
     return render_to_response( request, "edit_agency.html", {'agency':agency, 'form':form} )
     
-def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
+def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):        
 
-    def get_state_list():
-        #factoring this out since we want all states all the time
-        #and because we want to memcache this
-        #todo: add other countries (return dict where value includes proper url)
-        mem_result = memcache.get('all_states')
-        if not mem_result:
-            states = uniquify([a.stateslug for a in Agency.all()])
-            states.sort()
-            mc_added = memcache.add('all_states', states, 60 * 1)
-        else:
-            states = mem_result
-
-        return states
-        
-
+    #for a single agency:
     if nameslug:
         urlslug = '/'.join([countryslug,stateslug,cityslug,nameslug])
         agency = Agency.all().filter('urlslug =', urlslug).get()
@@ -112,51 +101,33 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
             }
     
         return render_to_response( request, "agency.html", template_vars)
-    location = ''
     
-        
-    mck = 'agencies'
+    #return a filtered agency list
+    agency_list = Agency.fetch_for_slugs(countryslug, stateslug, cityslug)
+
+    public_filter = request.GET.get('public','all')
+    public_count = no_public_count = 0
+    location = ''    
     if cityslug:
-        logging.debug('filtering by cityslug %s' % cityslug)
-        mck = 'agencies_%s_%s_%s' % (countryslug, stateslug, cityslug)
         location = cityslug
     elif stateslug:
-        logging.debug('filtering by stateslug %s' % stateslug)
-        mck = 'agencies_%s_%s' % (countryslug, stateslug)
         location = stateslug 
     elif countryslug:
-        mck = 'agencies_%s' % countryslug
         location = countryslug
     
-    mem_result = memcache.get(mck)
-    if mem_result:
-        agencies = mem_result    
-    else:
-        agencies = Agency.all().order("name")    
-        if cityslug:
-            agencies = agencies.filter('cityslug =', cityslug)
-        elif stateslug:
-            agencies = agencies.filter('stateslug =', stateslug)
-        elif countryslug:
-            agencies = agencies.filter('countryslug =',countryslug)
-
-        mc_added = memcache.add(mck, agencies, 60 * 1)
-    
-    agency_list = []
-    public_count = no_public_count = 0
-    public_filter = request.GET.get('public','')
-    
-    for a in agencies:
+    #TODO: clean this up -- better form not to set new properties on defined model objects
+    enhanced_list = [];
+    for a in agency_list:
+        
         if a.date_opened:
             public_count += 1
-            a.date_opened_formatted = a.date_opened
             if public_filter == 'no_public':
                 a.hide = True
         else:
             no_public_count += 1
             if public_filter == 'public':
                 a.hide = True
-        agency_list.append(a)  #listify now so we dont have to do it again for count(), etc
+        enhanced_list.append(a)  #listify now so we dont have to do it again for count(), etc
 
     template_vars = {
         'agencies': agency_list,
@@ -164,7 +135,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         'public_count' : public_count,
         'public_filter' : public_filter,
         'no_public_count' : no_public_count,
-        'states' : get_state_list(),
+        'states' : Agency.get_state_list(),
         'agency_count' : len(agency_list),
         'feed_references': FeedReference.all_by_most_recent(),
         'is_current_user_admin': users.is_current_user_admin(),
@@ -214,6 +185,11 @@ def delete_all_agencies(request):
         
     return HttpResponse( "deleted all agencies")
     
+def delete_agency(request,  agency_id):
+    Agency.get_by_id( int( agency_id ) ).delete()
+    
+    return HttpResponseRedirect( "/admin/debug/" )
+    
 def create_agency_from_feed(request, feed_id):
     # get feed entity
     feed = FeedReference.all().filter("gtfs_data_exchange_id =", feed_id).get()
@@ -221,7 +197,7 @@ def create_agency_from_feed(request, feed_id):
     # create an agency entity from it
     agency = Agency(name = feed.name,
                     short_name = feed.name,
-                    city = feed.area if feed.area!="" else "cowtown",
+                    city = feed.area if feed.area!="" else "PLEASE ADD REAL CITY",
                     state = feed.state,
                     country = feed.country,
                     agency_url = feed.url,

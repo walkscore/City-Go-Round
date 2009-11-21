@@ -1,11 +1,13 @@
 import logging
 from google.appengine.ext import db
+from google.appengine.api import memcache
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from geo.geomodel import GeoModel
 from ..utils.slug import slugify
 from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_keys, unique_entities, iter_uniquify
 from ..utils.geohelpers import square_bounding_box_centered_at
+from ..utils.misc import uniquify
 
 class Agency(GeoModel):
     # properties straight out of the NTD import
@@ -91,7 +93,50 @@ class Agency(GeoModel):
     def all_public_agencies():
         """Return a query to all Agency entities marked 'public' by Brandon's import scripts."""
         return Agency.all().filter('date_opened !=', None)
+
+    @staticmethod    
+    def get_state_list():
+        #factoring this out since we want all states all the time
+        #and because we want to memcache this
+        #todo: add other countries (return dict where value includes proper url)
+        mem_result = memcache.get('all_states')
+        if not mem_result:
+            states = uniquify([a.stateslug for a in Agency.all()])
+            states.sort()
+            mc_added = memcache.add('all_states', states, 60 * 1)
+        else:
+            states = mem_result
+
+        return states
+    
+    @staticmethod
+    def fetch_for_slugs(countryslug = None, stateslug = None, cityslug = None):
+        mck = '_slugs_agencies'
+        agency_query = Agency.all()
         
+        if cityslug:
+            agency_query = agency_query.filter('cityslug =', cityslug)
+            logging.debug('filtering by cityslug %s' % cityslug)
+            mck = '_slugs_agencies_%s_%s_%s' % (countryslug, stateslug, cityslug)
+        elif stateslug:
+            agency_query = agency_query.filter('stateslug =', stateslug)
+            logging.debug('filtering by stateslug %s' % stateslug)
+            mck = '_slugs_agencies_%s_%s' % (countryslug, stateslug)
+        elif countryslug:
+            agency_query = agency_query.filter('countryslug =',countryslug)
+            mck = '_slugs_agencies_%s' % countryslug
+        
+        mem_result = memcache.get(mck)
+        if mem_result is not None:
+            agency_list = mem_result  
+        else:
+            agency_list = [agency for agency in agency_query]
+            #TODO -- can we make this work?  When all agencies, exceeds memcache size limit
+            #     --maybe we memcache the set of datastore keys, then retrieve and fetch those
+            #memcache.set(mck, agency_list, 60)
+        
+        return agency_list
+    
     @staticmethod
     def fetch_explicitly_supported_for_transit_app(transit_app):
         """Return a list of Agency entities that are explicitly supported by the transit app."""

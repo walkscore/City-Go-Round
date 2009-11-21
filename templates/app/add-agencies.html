@@ -1,24 +1,100 @@
 {% extends 'base.html' %}
 
-{% block title %}Add a transit app on City-Go-Round{% endblock %}
+{% block title %}{{location}} transit agencies on City-Go-Round{% endblock %}
 
-{% block content %}
-<!-- TODO jesse: add some design here. (dave) -->
-    <div id="add-app-form-container" class="body-content">            
-        <h3>ADD A NEW TRANSIT APP [Step 2: What Agencies Your App Supports]</h3>
-        <h2>Select agencies that your application supports:</h2>
-        <form id="add-agencies-form" action="" method="POST">
-          {# This is only going to spew out hidden input fields, so... whatever. #}
-          {{form.as_p}}
-          <input type="submit" value="Add The App!"></input>
-          
-          <div id="agency-list">
-            
-          </div>    
-        </form>
-    </div>
+{% block headscripts %}
+<script type="text/javascript" src="/js/jquery.tablesorter.min.js"></script>
+<script type="text/javascript">
+
+var agency_count = {{agency_count}}; 
+function update_filters(){
+    var pd = jQuery("#public_filter option:selected").val();
+    var location = jQuery("#location_filter option:selected").val();
+    document.location = (location + '?public=' + pd)
+    }
+
+$(document).ready(function() { 
+    //make sure public dropdown selected appropriately
+    var po = getUrlParam('public');
+    jQuery("#public_filter option[value=" + po + "]").attr('selected','selected')
+
+    jQuery("#agency_list")
+    .tablesorter()
+    }); 
+    
+    function getDataString(){
+        var data = ($("#id_gtfs_public_choice_1").eq(0).is(":checked")) ? "Will send" : "Won't send";
+        data += "<br />";
+        data += $(":checkbox:checked").map(function(){
+            return $(this).attr("id");
+            }).get().join(" | ");
+
+        return data;
+    }
+    
+    function sendDataString() {
+		if ( $("#id_gtfs_public_choice_1").eq(0).is(":checked") )
+			$("#id_agency_list").eq(0).val( this.getDataString() );
+        return true;
+	}
+	
+	function dbug(str){
+		$("#dbug").append(str + "<br />");
+	}
+</script>
 {% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static_url /css/tablesort.css %}" media="screen" />
+{% endblock%}
 
-{% block scripts %}
+{% block content %}
+
+<div id="add-app-form-container" class="body-content">            
+    <h3>ADD A NEW TRANSIT APP [Step 2: What Agencies Your App Supports]</h3>
+    <h2>Select agencies that your application supports:</h2>
+    <form id="add-agencies-form" action="" method="POST" onsubmit="sendDataString()">
+        {# This is only going to spew out hidden input fields, so... whatever. #}
+        {{form.as_p}}
+        <input type="submit" value="Add The App!"></input>
+        <br /><input type="button" value="DEBUG: show data string" onclick="dbug(getDataString())" />
+        <div id="dbug"></div>
+        
+        <div id="agency-list">  
+        <p>Please choose from the <b>{{agency_count}}</b> transit agencies below.</p>
+        <p>If your app doesn't use agency data, skip this step to specify where your app works by city and country.</p>
+        <p>If your app uses GTFS and/or real-time data in some places, but also functions without that data in more locations, specify the agencies whose data you use here, then proceed to the next step to specify the additional geographic locations where it works.</p>
+            
+        <table id="agency_list"> 
+        <thead> 
+        <tr> 
+            <th>&nbsp;</th> 
+            <th>Name</th> 
+            <th>Public Data</th>
+            <th>Date Added</th>
+            <th>Real-time Data</th>
+            <th>City</th> 
+            <th>State</th> 
+        </tr> 
+        </thead> 
+        <tbody> 
+        {% for a in agencies %}
+        {% if a.hide %}{% else %}
+        <tr class="{% if a.date_opened %}agency_public{% else %}agency_no_public {%endif %}"> 
+            <td><input type="checkbox" name="{{a.key}}" id="{{a.key}}" /></td> 
+            <td><a href="/agencies/{{a.urlslug}}">{{a.name}}</a></a></td> 
+            <td>{% if a.date_opened %}Yes{% else %}No{% endif %}</td>
+            <td>{% if a.date_opened %}{{a.date_opened|date:"N Y"}}{% endif %}</td>
+            <td>{% if a.has_real_time_data %}Yes{% else %}No{% endif %}</td>
+            <td>{{a.city}}</td> 
+            <td>{{a.state}}</td> 
+        </tr> 
+        {% endif %}
+        {% endfor %}
+        </tbody> 
+        </table>
+    </form>
+</div>
+
+
 {% endblock %}
