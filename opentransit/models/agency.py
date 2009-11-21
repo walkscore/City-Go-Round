@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from geo.geomodel import GeoModel
 from ..utils.slug import slugify
-from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_keys, unique_entities
+from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_keys, unique_entities, iter_uniquify
 from ..utils.geohelpers import square_bounding_box_centered_at
 
 class Agency(GeoModel):
@@ -112,16 +112,12 @@ class Agency(GeoModel):
     @staticmethod
     def iter_for_transit_app(transit_app, uniquify = True):
         """Return an iterator over Agency entities, by default unique, that the given transit app supports"""
-        seen = {}
-        for explicit_agency in Agency.iter_explicitly_supported_for_transit_app(transit_app):
-            if (not uniquify) or (explicit_agency.key() not in seen):
-                if uniquify: seen[explicit_agency.key()] = True
-                yield explicit_agency
+        seen_set = set()
+        for explicit_agency in iter_uniquify(Agency.iter_explicitly_supported_for_transit_app(transit_app), seen_set, uniquify):
+            yield explicit_agency
         if transit_app.supports_all_public_agencies:
-            for public_agency in Agency.all_public_agencies():
-                if (not uniquify) or (public_agency.key() not in seen):
-                    if uniquify: seen[public_agency.key()] = True
-                    yield public_agency
+            for public_agency in iter_uniquify(Agency.all_public_agencies(), seen_set, uniquify):
+                yield public_agency
         
     @staticmethod
     def fetch_for_transit_apps(transit_apps, uniquify = True):
@@ -131,9 +127,7 @@ class Agency(GeoModel):
     @staticmethod
     def iter_for_transit_apps(transit_apps, uniquify = True):
         """Return an iterator over Agency entities, by default unique, that at least one transit application in the transit_apps list supports."""
-        seen = {}
+        seen_set = set()
         for transit_app in transit_apps:
-            for agency in Agency.iter_for_transit_app(transit_app, uniquify = False):
-                if (not uniquify) or (agency.key() not in seen):
-                    if uniquify: seen[agency.key()] = True
-                    yield agency        
+            for agency in iter_uniquify(Agency.iter_for_transit_app(transit_app, uniquify = False), seen_set, uniquify):
+                yield agency        

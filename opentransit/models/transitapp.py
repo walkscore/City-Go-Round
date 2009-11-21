@@ -5,7 +5,7 @@ from django.core.urlresolvers import reverse
 from geo.geomodel import GeoModel
 from .agency import Agency
 from ..utils.slug import slugify
-from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_keys, unique_entities
+from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_keys, unique_entities, iter_uniquify
 
 #
 # A brief explanation of how Transit Apps and Agencies relate:
@@ -139,9 +139,9 @@ class TransitApp(db.Model):
 
     supports_all_public_agencies = db.BooleanProperty(indexed = True)
     explicitly_supported_agency_keys = db.ListProperty(db.Key)
-    explicitly_supported_cities = db.StringListProperty(indexed = True)   # ["Seattle", "San Francisco", ...]
+    explicitly_supported_city_slugs = db.StringListProperty(indexed = True)   # ["seattle", "san-francisco", ...]
     explicitly_supported_city_details = db.StringListProperty() # ["Seattle,WA,US", "San Francisco,CA,US", ...]
-    explicitly_supported_countries = db.StringListProperty()
+    explicitly_supported_countries = db.StringListProperty() # ["US", "DE", ...]
     explicitly_supports_the_entire_world = db.BooleanProperty(indexed = True)
                 
     @staticmethod
@@ -157,17 +157,13 @@ class TransitApp(db.Model):
     @staticmethod
     def iter_for_agency(agency_or_key, uniquify = True):
         """Return an iterator over TransitApp entities, by default unique, that support the given agency."""
-        seen = {}
+        seen_set = set()
         agency_key, agency = key_and_entity(agency_or_key, Agency)
-        for transit_app_with_explicit_support in TransitApp.gql('WHERE explicitly_supported_agency_keys = :1', agency_key):
-            if (not uniquify) or (transit_app_with_explicit_support.key() not in seen):
-                if uniquify: seen[transit_app_with_explicit_support.key()] = True
-                yield transit_app_with_explicit_support        
+        for transit_app_with_explicit_support in iter_uniquify(TransitApp.gql('WHERE explicitly_supported_agency_keys = :1', agency_key), seen_set, uniquify):
+            yield transit_app_with_explicit_support        
         if agency.is_public:
-            for transit_app_with_public_support in TransitApp.all_supporting_public_agencies():
-                if (not uniquify) or (transit_app_with_public_support.key() not in seen):
-                    if uniquify: seen[transit_app_with_public_support.key()] = True
-                    yield transit_app_with_public_support
+            for transit_app_with_public_support in iter_uniquify(TransitApp.all_supporting_public_agencies(), seen_set, uniquify):
+                yield transit_app_with_public_support
 
     @staticmethod
     def fetch_for_agencies(agencies_or_keys, uniquify = True):
@@ -177,12 +173,10 @@ class TransitApp(db.Model):
     @staticmethod
     def iter_for_agencies(agencies_or_keys, uniquify = True):
         """Return an iterator over TransitApp entities, by default unique, that support at least one of the given agencies."""
-        seen = {}
+        seen_set = set()
         for agency_or_key in agencies_or_keys:
-            for transit_app in TransitApp.iter_for_agency(agency_or_key, uniquify = False):
-                if (not uniquify) or (transit_app.key() not in seen):
-                    if uniquify: seen[transit_app.key()] = True
-                    yield transit_app
+            for transit_app in iter_uniquify(TransitApp.iter_for_agency(agency_or_key, uniquify = False), seen_set, uniquify):
+                yield transit_app
 
     def add_explicitly_supported_agencies(self, agencies_or_keys):
         """Helper to add new supported agencies to this transit app. You must call put() sometime later."""
@@ -205,25 +199,25 @@ class TransitApp(db.Model):
         
     @staticmethod
     def all_for_country(coutry_code):
-        return TransitApp.gql('WHERE supported_countries = :1', country_code)
+        return TransitApp.gql('WHERE explicitly_supported_countries = :1', country_code)
         
     @staticmethod
     def all_for_city(city):
-        return TransitApp.gql('WHERE supported_cities = :1', city)
+        return TransitApp.gql('WHERE explicitly_supported_city_slugs = :1', slugify(city))
+    
+    @staticmethod
+    def all_with_support_for_entire_world():
+        return TransitApp.all().filter('explicitly_supports_the_entire_world =', True)
     
     @staticmethod
     def iter_for_country_or_city(country_code = None, city = None, uniquify = True):
-        seen = {}        
+        seen_set = set()        
         if city:
-            for transit_app in TransitApp.all_for_city(city):
-                if (not uniquify) or (transit_app.key() not in seen):
-                    if uniquify: seen[transit_app.key()] = True
-                    yield transit_app
+            for transit_app in iter_uniquify(TransitApp.all_for_city(city), seen_set, uniquify):
+                yield transit_app
         if country:
-            for transit_app in TransitApp.all_for_country(country_code):
-                if (not uniquify) or (transit_app.key() not in seen):
-                    if uniquify: seen[transit_app.key()] = True
-                    yield transit_app
+            for transit_app in iter_uniquify(TransitApp.all_for_country(country_code), seen_set, uniquify):
+                yield transit_app
     
     @staticmethod
     def iter_for_country_and_city(country_code, city):
@@ -233,10 +227,53 @@ class TransitApp(db.Model):
         for transit_app in TransitApp.all_for_country(country_code):
             if transit_app.key() in seen_city:
                 yield transit_app
+
+    @staticmethod
+    def fetch_transit_apps_near(latitude, longitude, max_results = 500):
+        return [transit_app_location.transit_app for transit_app_location in TransitAppLocation.fetch_transit_app_locations_near(latitude, longitude, query = None, max_results = max_results)]
+                
+    @staticmethod
+    def iter_for_location_and_country_code(latitude, longitude, country_code, uniquify = True):
+        seen_set = set()
+        
+        # 1. What agencies are nearby lat/lon? 
+        agencies_nearby = Agency.fetch_agencies_near(latitude, longitude)
+        
+        #    (And then, what transit apps support those agencies?)
+        transit_apps_for_agencies = TransitApp.fetch_for_agencies(agencies_nearby, uniquify = False)
+        for transit_app in iter_uniquify(transit_apps_for_agencies, seen_set, uniquify):
+            yield transit_app
+        
+        # 2. What transit apps are explicitly nearby lat/lon?
+        transit_apps_near = TransitApp.fetch_transit_apps_near(latitude, longitude)
+        for transit_app in iter_uniquify(transit_apps_near, seen_set, uniquify):
+            yield transit_app
+        
+        # 3. What transit apps support the country code in question?
+        transit_apps_from_country_code = TransitApp.all_for_country(country_code)
+        for transit_app in iter_uniquify(transit_apps_from_country_code, seen_set, uniquify):
+            yield transit_app
+        
+        # 4. What transit apps support the entire GLOBE?
+        transit_apps_with_world_support = TransitApp.all_with_support_for_entire_world()
+        for transit_app in iter_uniquify(transit_apps_with_world_support, seen_set, uniquify):
+            yield transit_app
+        
+    @staticmethod
+    def fetch_for_location_and_country_code(latitude, longitude, country_code, uniquify = True):
+        return [transit_app for transit_app in TransitApp.iter_for_location_and_country_code(latitude, longitude, country_code, uniquify)]
+
     
 class TransitAppLocation(GeoModel):
     """Represents a many-many relationship between TransitApps and explcitly named cities where they work."""
     transit_app = db.ReferenceProperty(TransitApp, collection_name = "explicitly_supported_locations")
+
+    @staticmethod
+    def fetch_transit_app_locations_near(latitude, longitude, query = None, max_results = 500):
+        bounding_box = square_bounding_box_centered_at(latitude, longitude, settings.SIDE_OF_NEARBY_BOUNDING_BOX_IN_MILES)
+        if query is None:
+            query = TransitAppLocation.all()
+        return TransitAppLocation.bounding_box_fetch(query, bounding_box, max_results = max_results)      
 
 class TransitAppFormProgress(db.Model):
     """Holds on to key pieces of form progress that cannot be sent through invisible input fields."""
