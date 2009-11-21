@@ -14,7 +14,7 @@ from ..utils.geohelpers import are_latitude_and_longitude_valid
 def api_search_agencies(request):
     """
         paramters:
-            type        ["location", "city", "state"]
+            type        ["location", "city", "state", "all"]
             lat,lon     (if location)
             city/state  (if city/state. If city, you must also include state)
         returns:
@@ -23,8 +23,8 @@ def api_search_agencies(request):
     
     # Validate our search type
     search_type = request.GET.get('type', None)
-    if search_type not in ['location', 'city', 'state']:
-        return bad_request('type parameter must be "location", "city", or "state"')
+    if search_type not in ['location', 'city', 'state', 'all']:
+        return bad_request('type parameter must be "location", "city", "state", or "all"')
         
     if search_type == 'location':
         # validate latitude and longitude
@@ -47,11 +47,12 @@ def api_search_agencies(request):
             # Use slugs rather than raw city name to ensure matches regardless of caps, etc.
             agencies_iter = agencies_iter.filter('cityslug =', slugify(city))
         
-        state = request.GET.get('state', None)
-        if not state:
-            return bad_request('state parameter must be supplied')
-        # Use slugs rather than raw city name to ensure matches regardless of caps, etc.        
-        agencies_iter = agencies_iter.filter('stateslug =', slugify(state))
+        if search_type == 'city' or search_type == 'state':
+            state = request.GET.get('state', None)
+            if not state:
+                return bad_request('state parameter must be supplied')
+            # Use slugs rather than raw city name to ensure matches regardless of caps, etc.        
+            agencies_iter = agencies_iter.filter('stateslug =', slugify(state))
     
     return render_to_json([agency.to_jsonable() for agency in agencies_iter])
 
@@ -73,10 +74,10 @@ def api_search_apps(request):
     if not are_latitude_and_longitude_valid(latitude, longitude):
         return bad_request('lat/lon parameters must be properly bounded')
     
-    country_code_x = request.GET.get('country')
-    if not country_code_x:
+    country_code = request.GET.get('country')
+    if not country_code:
         return bad_request('country parameter must be supplied')
-    country_code = country_code_x.strip().upper()
+    country_code = country_code.strip().upper()
     if len(country_code) != 2:
         return bad_request('country parameter must be two characters')
     

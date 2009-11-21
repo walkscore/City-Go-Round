@@ -121,6 +121,18 @@ class TransitApp(db.Model):
         super(TransitApp, self).__init__(*args, **kwargs)
         self.slug = slugify(self.title)
     
+    def to_jsonable(self):
+        return {
+            "title": self.title,
+            "slug": self.slug,
+            "description": self.description,
+            "url": str(self.url),
+            "author_name": str(self.author_name), # DO NOT INCLUDE AUTHOR EMAIL.
+            "long_description": self.long_description,
+            "tags": self.tags,
+            "screen_shot_url": self.screen_shot_url,
+        }
+    
     @property
     def has_screen_shot(self):
         return (self.screen_shot is not None)
