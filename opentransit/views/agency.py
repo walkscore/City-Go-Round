@@ -11,6 +11,7 @@ from ..forms import AgencyForm
 from ..models import Agency, FeedReference, TransitApp
 from ..utils.view import render_to_response, redirect_to, not_implemented, bad_request, render_to_json
 from ..utils.misc import uniquify
+from ..utils.geocode import geocode_name
  
 from StringIO import StringIO
 import csv
@@ -51,6 +52,8 @@ def edit_agency(request, agency_id=None):
             agency.position_data    = form.cleaned_data['position_data'] if form.cleaned_data['position_data'] != "" else None
             agency.standard_license = form.cleaned_data['standard_license'] if form.cleaned_data['standard_license'] != "" else None
             
+            agency.location = geocode_name( agency.city, agency.state )
+            agency.update_location()
             
             agency.update_slugs()
             
