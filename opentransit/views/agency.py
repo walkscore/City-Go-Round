@@ -1,35 +1,51 @@
 import time
 import logging
-
-from django.http import HttpResponse, HttpResponseRedirect
-
 from google.appengine.ext import db
 from google.appengine.api import memcache
 from geo import geotypes
 
 from ..forms import AgencyForm
-from ..models import Agency, FeedReference, TransitApp
 from ..utils.view import render_to_response, redirect_to, not_implemented, bad_request, render_to_json
-from ..utils.misc import uniquify
+from ..models import Agency, FeedReference, TransitApp
+
+from django.http import HttpResponse, HttpResponseRedirect
+from ..utils.slug import slugify
 
 from StringIO import StringIO
 import csv
 from google.appengine.api import users
 
-def edit_agency(request, agency_id):
-    agency = Agency.get_by_id( int(agency_id) )
+
+def uniquify(seq): 
+    # not order preserving 
+    set = {} 
+    map(set.__setitem__, seq, []) 
+    return set.keys()
+
+def edit_agency(request, agency_id=None):
+    if agency_id is not None:
+        agency = Agency(name=form.cleaned_data['name'])
+    else:
+        agency = None
     
     if request.method == 'POST':
+        
         form = AgencyForm(request.POST)
         if form.is_valid():
+            if agency is None:
+                agency = Agency(name=form.cleaned_data['name'],
+                                city=form.cleaned_data['city'],
+                                state=form.cleaned_data['state'],
+                                country=form.cleaned_data['country'])
+            
             agency.name       = form.cleaned_data['name']
             agency.short_name = form.cleaned_data['short_name']
             agency.city       = form.cleaned_data['city']
             agency.state      = form.cleaned_data['state']
-            agency.country    = form.cleaned_data['country']
+            agency.country    = form.cleaned_data['country'] if form.cleaned_data['country'] != "" else None
             agency.postal_code      = form.cleaned_data['postal_code']
             agency.address          = form.cleaned_data['address']
-            agency.agency_url       = form.cleaned_data['agency_url']
+            agency.agency_url       = form.cleaned_data['agency_url'] if form.cleaned_data['agency_url'] != "" else None
             agency.executive        = form.cleaned_data['executive']
             agency.executive_email  = form.cleaned_data['executive_email'] if form.cleaned_data['executive_email'] != "" else None
             agency.twitter          = form.cleaned_data['twitter']
@@ -47,25 +63,28 @@ def edit_agency(request, agency_id):
             
             agency.put()
     else:
-        form = AgencyForm(initial={'name':agency.name,
-                               'short_name':agency.short_name,
-                               'city':agency.city,
-                               'state':agency.state,
-                               'country':agency.country,
-                               'postal_code':agency.postal_code,
-                               'address':agency.address,
-                               'agency_url':agency.agency_url,
-                               'executive':agency.executive,
-                               'executive_email':agency.executive_email,
-                               'twitter':agency.twitter,
-                               'contact_email':agency.contact_email,
-                               'updated':agency.updated,
-                               'phone':agency.phone,
-                               'gtfs_data_exchange_id':",".join(agency.gtfs_data_exchange_id),
-                               'dev_site':agency.dev_site,
-                               'arrival_data':agency.arrival_data,
-                               'position_data':agency.position_data,
-                               'standard_license':agency.standard_license,})
+        if agency is None:
+            form = AgencyForm()
+        else:
+            form = AgencyForm(initial={'name':agency.name,
+                                   'short_name':agency.short_name,
+                                   'city':agency.city,
+                                   'state':agency.state,
+                                   'country':agency.country,
+                                   'postal_code':agency.postal_code,
+                                   'address':agency.address,
+                                   'agency_url':agency.agency_url,
+                                   'executive':agency.executive,
+                                   'executive_email':agency.executive_email,
+                                   'twitter':agency.twitter,
+                                   'contact_email':agency.contact_email,
+                                   'updated':agency.updated,
+                                   'phone':agency.phone,
+                                   'gtfs_data_exchange_id':",".join(agency.gtfs_data_exchange_id),
+                                   'dev_site':agency.dev_site,
+                                   'arrival_data':agency.arrival_data,
+                                   'position_data':agency.position_data,
+                                   'standard_license':agency.standard_license,})
     
     return render_to_response( request, "edit_agency.html", {'agency':agency, 'form':form} )
     
