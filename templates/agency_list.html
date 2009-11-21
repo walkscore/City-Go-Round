@@ -86,7 +86,7 @@ $(document).ready(function() {
 {% for a in agencies %}
 {% if a.hide %}{% else %}
 <tr class="{% if a.date_opened %}agency_public{% else %}agency_no_public {%endif %}"> 
-    <td><a href="/agencies/{{a.urlslug}}">{{a.name}}</a></a></td> 
+    <td><a href="/agencies/{{a.urlslug}}">{{a.name}}</a></td> 
     <td>{% if a.date_opened %}Yes{% else %}No{% endif %}</td>
     <td>{% if a.date_opened %}{{a.date_opened|date:"N Y"}}{% endif %}</td>
     <td>{% if a.has_real_time_data %}Yes{% else %}No{% endif %}</td>
