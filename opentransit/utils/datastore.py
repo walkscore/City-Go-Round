@@ -1,5 +1,15 @@
 from google.appengine.ext import db
 
+def iter_uniquify(entities, seen_set, uniquify = True):
+    if uniquify:
+        for entity in entities:
+            if entity.key() not in seen_set:
+                seen_set.add(entity.key())
+                yield entity
+    else:
+        for entity in entities:
+            yield entity
+
 def key_and_entity(entity_or_key, entity_class):
     if isinstance(entity_or_key, db.Model):
         return (entity_or_key.key(), entity_or_key)

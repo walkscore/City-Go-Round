@@ -7,6 +7,8 @@ from ..utils.mailer import send_to_contact
 from ..models import FeedReference, Agency
 from django.template.context import RequestContext
 from django.conf import settings
+from django.http import HttpResponseRedirect
+from google.appengine.api.users import create_login_url, create_logout_url
 
 def home(request):    
     petition_form = PetitionForm()
@@ -55,4 +57,36 @@ def contact_thanks(request):
 
 def static(request, template):
     return render_to_response(request, template)
+    
+def admin_login(request):
+    return HttpResponseRedirect( create_login_url("/") )
+    
+def admin_logout(request):
+    return HttpResponseRedirect( create_logout_url("/") )
+    
+def debug(request):
+    matched_gtfs_data_exchange_ids = set()
+    unmatched_agencies = set()
+    unmatched_feeds = set()
+    
+    # get all agencies
+    for agency in Agency.all():
+        # collect the gtfs_data_exchange_id of the ones that have them
+        if len( agency.gtfs_data_exchange_id ) != 0:
+            for gtfsdeid in agency.gtfs_data_exchange_id:
+                matched_gtfs_data_exchange_ids.add( gtfsdeid )
+        # the rest go into the 'unmatched agencies' bucket
+        else:
+            unmatched_agencies.add( agency )
+    
+    # get all feeds
+    for feed in FeedReference.all():
+        # the ones without ids in the matched agencies bucket go into the 'unmatched feeds' bucket
+        if feed.gtfs_data_exchange_id not in matched_gtfs_data_exchange_ids:
+            unmatched_feeds.add( feed )
+    
+    logging.info( unmatched_agencies )
+    logging.info( unmatched_feeds )
+    
+    return render_to_response( request, "feed-merge.html", {'agencies':Agency.all(),'feeds':unmatched_feeds} )
     

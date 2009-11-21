@@ -56,5 +56,28 @@ def api_search_agencies(request):
     return render_to_json([agency.to_jsonable() for agency in agencies_iter])
 
 def api_search_apps(request):
-    # TODO davepeck
-    return not_implemented()
+    """
+        paramters:
+            lat,lon     (required)
+            country     (required, country code 2-letter)
+        returns:
+            a json list of agencies (using to_jsonable)         
+    """
+    
+    # 0. Validate input
+    try:
+        latitude = float(request.GET.get('lat', None))
+        longitude = float(request.GET.get('lon', None))
+    except:
+        return bad_request('lat/lon parameters must be supplied and must be valid floats')
+    if not are_latitude_and_longitude_valid(latitude, longitude):
+        return bad_request('lat/lon parameters must be properly bounded')
+    
+    country_code_x = request.GET.get('country')
+    if not country_code_x:
+        return bad_request('country parameter must be supplied')
+    country_code = country_code_x.strip().upper()
+    if len(country_code) != 2:
+        return bad_request('country parameter must be two characters')
+    
+    return render_to_json([transit_app.to_jsonable() for transit_app in TransitApp.iter_for_location(latitude, longitude, country_code)])
