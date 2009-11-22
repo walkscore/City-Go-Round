@@ -389,23 +389,18 @@
     	font-style: italic;
     	display: block;
     }
-    .add-app-form th {
-    	width: 250px;
-    }
-    
-    .add-app-form tr {
-        height: 32px;
+    .add-app-form th, .add-app-form td {
+    	width: 230px;
         min-height: 32px;
-        max-height: 32px;
+        padding: 0px 2px 8px 2px;
     }
-    
+    .add-app-form td {
+    	width: 350px;
+    }
     .add-app-form table input {
-    	height: 18px;
     	font: 12px/12px Verdana, Arial, Helvetica, sans-serif;
     	margin-bottom: 2px;
     	border: 1px solid #999;
-    	width: 250px;
-    	min-width: 250px;
     }
 
     .add-app-form table textarea {
@@ -413,20 +408,9 @@
     	margin-bottom: 2px;
     	border: 1px solid #999;
     	width: 250px;
-    	min-width: 250px;
-    }
-
-    .add-app-form table textarea {
-    	font: 12px/12px Verdana, Arial, Helvetica, sans-serif;
-    	margin-bottom: 2px;
-    	border: 1px solid #999;
-    	width: 250px;
-    	min-width: 250px;
-    }
-    
+    }    
     .add-app-form table select {
         width: 250px;
-        min-width: 250px;
     }
     
     .add-app-form table input[type="file"] {

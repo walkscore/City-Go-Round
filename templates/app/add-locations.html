@@ -330,9 +330,9 @@
 {% block content %}
 <div class="body-content">
 
-  <h3>ADD A NEW TRANSIT APP [Step 3: Where Your App Works]</h3>    
+  <h3>ADD A NEW TRANSIT APP [Step 2 or 3: Where Your App Works]</h3>    
   <h2>Select locations where your app works:</h2>
-  <form id="add-locations-form" action="" method="POST" onkeypress="return event.keyCode!=13" onsubmit="dataManager.sendDataString()">
+  <form class="add-locations-form" action="" method="POST" onkeypress="return event.keyCode!=13" onsubmit="dataManager.sendDataString()">
     {# This will mostly spit out hidden fields, but it also spits out the global field. #}
     {{form.as_p}}    
     {# <p><input type="checkbox" name="global" id="global" onchange="updateUI()" />Globally</p> #}
@@ -351,7 +351,7 @@
     <input type="submit" value="Add The App!"></input>    
   </form>
 </div>
-<input style="margin-top: 20px;" type="button" value="DEBUG: Show Data String" onclick="dbug(dataManager.getDataString())"/>
+<!--input style="margin-top: 20px;" type="button" value="DEBUG: Show Data String" onclick="dbug(dataManager.getDataString())"/-->
 <div id="dbug"></div>
 {% endblock %}
 
