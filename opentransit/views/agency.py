@@ -177,7 +177,8 @@ def generate_locations(request):
        
     pass
 
-def agencies_update_locations(request):
+def admin_agencies_update_locations(request):
+    # XXX TODO DAVEPECK
     pass
 
 def delete_all_agencies(request):
