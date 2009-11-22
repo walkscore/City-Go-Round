@@ -144,6 +144,7 @@ def add_locations(request, progress_uuid):
             transit_app.platforms = info_form['platform_list']
             transit_app.categories = info_form['category_list']
             transit_app.supports_any_gtfs = info_form['supports_gtfs']
+            transit_app.screen_shot = db.Blob(progress.screen_shot)
             
             # 2. If present, unpack and handle the agency form
             if progress.agency_form_pickle and str(progress.agency_form_pickle):
