@@ -177,6 +177,9 @@ def generate_locations(request):
        
     pass
 
+def agencies_update_locations(request):
+    pass
+
 def delete_all_agencies(request):
     todelete = list(Agency.all(keys_only=True))
     
@@ -204,4 +207,4 @@ def create_agency_from_feed(request, feed_id):
                     gtfs_data_exchange_id = [feed_id])
     agency.put()
     
-    return HttpResponseRedirect( "/agencies/edit/%s/"%agency.key().id() )
+    return redirect_to( "edit_agency", agency_id = agency.key().id() )

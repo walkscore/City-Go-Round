@@ -1,5 +1,6 @@
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from google.appengine.ext import db
+from google.appengine.api import users
 from .models import TransitApp, Agency
 from .utils.httpbasicauth import authenticate_request
 from .utils.progressuuid import is_progress_uuid_valid
@@ -34,4 +35,12 @@ def requires_valid_agency_key_encoded(view_function):
         except:
             raise Http404
         return view_function(request, agency, *args, **kwargs)
+    return wrapper
+
+def requires_google_admin_login(view_function):
+    def wrapper(request, *args, **kwargs):
+        if not users.is_current_user_admin():
+            return HttpResponseForbidden()
+        else:
+            return view_function(request, *args, **kwargs)
     return wrapper

@@ -14,7 +14,7 @@ urlpatterns += patterns(
     url(r'^petition-signed/$', 'static', {'template':'petition_signed.html'}, name='petition_signed'),
     url(r'^admin/login/$', 'admin_login'),
     url(r'^admin/logout/$', 'admin_logout'),
-    url(r'^admin/debug/$', 'debug', name='debug'),
+    url(r'^admin/$', 'debug', name='debug'),
 )
 
 
@@ -37,7 +37,7 @@ urlpatterns += patterns(
 # Agency Views -- Full URL structure for viewing agencies, and for adding/editing them
 urlpatterns += patterns(
     'opentransit.views.agency',
-    url('^agencies/edit/(?P<agency_id>\d+)/$', 'edit_agency', name='edit_agency'), #todo: move this to /agencies/..../edit url
+    url(r'^admin/agencies/edit/(?P<agency_id>\d+)/$', 'edit_agency', name='edit_agency'), #todo: move this to /agencies/..../edit url
     url(r'^agencies/$', 'agencies', name='agencies'),
     url(r'^agencies/(?P<countryslug>[\w-]+)/$', 'agencies'),
     url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/$', 'agencies'),
@@ -47,9 +47,9 @@ urlpatterns += patterns(
     url(r'^agencies/(?P<agency>\d+)/$', 'agencies'),
     url(r'^admin/agencies/deleteall/$', 'delete_all_agencies'),
     url(r'^admin/agencies/delete/(?P<agency_id>\d+)/$', 'delete_agency', name='delete_agency'),
-    url(r'^admin/agencies/create-from-feed/(?P<feed_id>[-\w ]+)/$', 'create_agency_from_feed'),
+    url(r'^admin/agencies/create-from-feed/(?P<feed_id>[-\w ]+)/$', 'create_agency_from_feed', name='admin_agencies_create_from_feed'),
     url(r'^admin/agencies/add/$', 'edit_agency', name='edit_agency'),
-    
+    url(r'^admin/agencies/update-locations/$', 'admin_agencies_update_locations', name='admin_agencies_update_locations'),    
 )
 
 
