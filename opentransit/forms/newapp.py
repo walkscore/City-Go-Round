@@ -11,10 +11,10 @@ class NewAppGeneralInfoForm(forms.Form):
     author_name         = forms.CharField(max_length = 128, min_length = 6, label = u"Author's Name")
     author_email        = forms.EmailField(label = u"Author's Email (kept private)")
     long_description    = forms.CharField(min_length = 0, max_length = 2048, widget = forms.widgets.Textarea(attrs = {'rows': 6, 'cols': 32}), label = u"Extended Description")
-    platforms           = forms.MultipleChoiceField(choices = TransitApp.platform_choices(), label = u"Platforms supported:")
-    categories          = forms.MultipleChoiceField(choices = TransitApp.category_choices(), label = u"Categories (choose at least one):")
+    platforms           = forms.MultipleChoiceField(choices = TransitApp.platform_choices(), widget = forms.widgets.CheckboxSelectMultiple(), label = u"Platforms supported:")
+    categories          = forms.MultipleChoiceField(choices = TransitApp.category_choices(), widget = forms.widgets.CheckboxSelectMultiple(), label = u"Categories (choose at least one):")
     tags                = forms.CharField(required = False, max_length = 1024, min_length = 0, label = u"Extra Tags (comma separated)")
-    screen_shot         = AppEngineImageField(required = False, label = u"Screen Shot (optional)")
+    screen_shot         = AppEngineImageField(required = True, label = u"Screen Shot (required)")
     supports_gtfs       = forms.BooleanField(required = False, label = u"My app uses GTFS feeds or other data from specific transit agencies:") 
     
     def clean_title(self):

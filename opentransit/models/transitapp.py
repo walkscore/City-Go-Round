@@ -70,9 +70,9 @@ class TransitApp(db.Model):
         "android": "Android", 
         "blackberry": "Blackberry",
         "iphone": "iPhone", 
-        "mobile_web": "Mobile Web",
         "palm_webos": "Palm WebOS", 
         "sms": "SMS",
+        "web": "Web",
         "other": "Other",
     }
     
