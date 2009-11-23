@@ -2,8 +2,13 @@
   {% for closed_agency in closed_agencies|slice:":10" %}
   <li class="{% cycle 'even' 'odd' %}">
     <div class="agency_title"><a href="agencies/{{closed_agency.urlslug}}">{{closed_agency.name}}</a></div>
-    <p><a href="">{{closed_agency.executive_email}}</a> {% if twitter %}twitter: @{{closed_agency.twitter}}{% endif %}<br />
-      exec: {{closed_agency.executive}}</p>
+
+    <p><a href="{{agency.agency_ur}}l">website</a>
+    {% if twitter %}twitter: @{{closed_agency.twitter}}{% endif %}<br />
+    </p>    
+
+   <p><a href="mailto:closed_agency.executive_email}}"></a>
+      {{closed_agency.executive}}</p>
   </li>
   {% endfor %}
 </ol>
