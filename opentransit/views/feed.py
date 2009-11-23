@@ -49,11 +49,10 @@ def replace_feed_references(old_references, new_references):
         fr.put()
         
         # set the 'date_opened' for every feed reference newly opened
-        agency = Agency.all().filter("gtfs_data_exchange_id =", fr.gtfs_data_exchange_id).filter("date_opened =", None).get()
+        agency = Agency.all().filter("gtfs_data_exchange_id =", fr.gtfs_data_exchange_id).get()
         
         if agency is not None:
-            logging.info( "date opened: %s"%agency.date_opened )
-            agency.date_opened = fr.date_added
+            agency.date_opened = fr.date_added if fr.is_official else None
             agency.put()
 
 def update_feed_references(request):
