@@ -8,13 +8,13 @@
 	<div class="col-group data-lists thinline">
 		<div class="boxed-content">
 			<div class="green">
-				<h2>Public Data Powers Apps</h2>
-                <p>Transit apps rely on data from transit agencies.  Does your city have public data?</p>
+				<h2>Open Data Powers Apps</h2>
+                <p>Transit apps rely on data from transit agencies.  Does your city have open data?</p>
                 <br>
 			</div>
 			<div class="narrow-col">
 			  <div id="no-data-list">
-			    <h3>Agencies with no public data</h3>
+			    <h3>Agencies without open data</h3>
 			    <h6>{{closed_agencies.count}} agencies <a href="{% url opentransit.views.agency.agencies %}us/?public=no_public">View all</a></h6>
 			    {% include "includes/no-data-list.html" %}
 			    <p><br />
@@ -23,7 +23,7 @@
 		  	</div>
 		  <div class="wide-col rightmost">
 		    <div id="recently-added-list">
-		      <h3>Agencies with public data</h3>
+		      <h3>Agencies with open data</h3>
 		      <h6>{{open_agencies.count}} agencies  <a href="{% url opentransit.views.agency.agencies %}us/?public=public">View all</a></h6></h6>
 			    {% include "includes/recently-added-list.html" %}      
 		    </div>
@@ -33,7 +33,7 @@
   <div class="wide-col rightmost">
 	  <div id="petition" class="body-content thinline">
 			<div class="boxed-content">
-		    <h2>DEMAND PUBLIC DATA</h2>
+		    <h2>SUPPORT OPEN DATA</h2>
 		    {% include "includes/petition-text.html" %}
 		    {% include "includes/petition-form.html" %}
 		    {% include "includes/petition-disclaimer.html" %}
