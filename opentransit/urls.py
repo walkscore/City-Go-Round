@@ -14,7 +14,7 @@ urlpatterns += patterns(
     url(r'^petition-signed/$', 'static', {'template':'petition_signed.html'}, name='petition_signed'),
     url(r'^admin/login/$', 'admin_login'),
     url(r'^admin/logout/$', 'admin_logout'),
-    url(r'^admin/debug/$', 'debug', name='debug'),
+    url(r'^admin/$', 'admin_home', name='admin_home'),
 )
 
 
@@ -30,14 +30,13 @@ urlpatterns += patterns(
 urlpatterns += patterns(
     'opentransit.views.feed',
     url(r'^admin/feeds/update/$', 'update_feed_references', name='update_feed_references'),
-    url(r'^feed-references/$', 'feed_references', name='feed_references'),
+    url(r'^admin/feeds/references/$', 'admin_feed_references', name='admin_feed_references'),
 )
 
 
 # Agency Views -- Full URL structure for viewing agencies, and for adding/editing them
 urlpatterns += patterns(
     'opentransit.views.agency',
-    url('^agencies/edit/(?P<agency_id>\d+)/$', 'edit_agency', name='edit_agency'), #todo: move this to /agencies/..../edit url
     url(r'^agencies/$', 'agencies', name='agencies'),
     url(r'^agencies/(?P<countryslug>[\w-]+)/$', 'agencies'),
     url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/$', 'agencies'),
@@ -45,11 +44,13 @@ urlpatterns += patterns(
     url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/(?P<cityslug>[\w-]+)/(?P<nameslug>[\w-]+)/$', 'agencies'),
     url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/(?P<cityslug>[\w-]+)/(?P<nameslug>[\w-]+)/edit/$', 'edit_agency'),
     url(r'^agencies/(?P<agency>\d+)/$', 'agencies'),
+    url(r'^admin/agencies/$', 'admin_agencies_list', name='admin_agencies_list'),    
+    url(r'^admin/agencies/edit/(?P<agency_id>\d+)/$', 'edit_agency', name='edit_agency'),
     url(r'^admin/agencies/deleteall/$', 'delete_all_agencies'),
     url(r'^admin/agencies/delete/(?P<agency_id>\d+)/$', 'delete_agency', name='delete_agency'),
-    url(r'^admin/agencies/create-from-feed/(?P<feed_id>[-\w ]+)/$', 'create_agency_from_feed'),
+    url(r'^admin/agencies/create-from-feed/(?P<feed_id>[-\w ]+)/$', 'create_agency_from_feed', name='admin_agencies_create_from_feed'),
     url(r'^admin/agencies/add/$', 'edit_agency', name='edit_agency'),
-    
+    url(r'^admin/agencies/update-locations/$', 'admin_agencies_update_locations', name='admin_agencies_update_locations'),
 )
 
 
@@ -64,6 +65,8 @@ urlpatterns += patterns(
     url(r'^apps/add/success/$', 'add_success', name='apps_add_success'),
     url(r'^apps/(?P<transit_app_slug>[\w-]+)/$', 'details', name='apps_details'),
     url(r'^apps/(?P<transit_app_slug>[\w-]+)/screenshot.png$', 'screenshot', name='apps_screenshot'),
+    url(r'^admin/apps/$', 'admin_apps_list', name='admin_apps_list'),
+    url(r'^admin/apps/edit/(?P<transit_app_slug>[\w-]+)/$', 'admin_apps_edit', name='admin_apps_edit'),
 )
 
 

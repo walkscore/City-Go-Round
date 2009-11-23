@@ -178,8 +178,15 @@ def add_locations(request, progress_uuid):
         "form": form,
     }
     return render_to_response(request, 'app/add-locations.html', template_vars)
-    
-    
+        
 def add_success(request):
     return render_to_response(request, 'app/add-success.html')
 
+
+def admin_apps_list(request):
+    # TODO DAVEPECK
+    pass
+    
+def admin_apps_edit(request):
+    # TODO DAVEPECK
+    pass

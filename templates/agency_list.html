@@ -95,7 +95,7 @@ $(document).ready(function() {
     <td>{{a.executive}}</td> 
     <td>{{a.twitter}}</td> 
     <td><a href="{{a.agency_url}}" target="_blank">{{a.agency_url}}</a></td>
-    {% if is_current_user_admin %}<td><a href="/agencies/edit/{{a.key.id}}">edit</a></td>{% endif %}
+    {% if is_current_user_admin %}<td><a href="{% url edit_agency agency_id=a.key.id %}">edit</a></td>{% endif %}
 </tr> 
 {% endif %}
 {% endfor %}
