@@ -2,8 +2,8 @@
   {% for open_agency in open_agencies|slice:":10" %}
   <li class="{% cycle 'even' 'odd' %}">
     <h5 class="agency_title"><a href="agencies/{{open_agency.urlslug}}">{{open_agency.name}}</a></h5>
-    <p><a href="mailto:{{open_agency.executive_email}}">email</a> {% if twitter %}twitter: @{{open_agency.twitter}}{% endif %}<br />
-      <span>exec: {{open_agency.executive}}</span></p>
+    <p><a href="{{open_agency.agency_url}}">website</a> {% if twitter %}twitter: @{{open_agency.twitter}}{% endif %}<br />
+      <span>added: {{open_agency.date_opened|date}}</span></p>
   </li>
   {% endfor %}
 </ol>
