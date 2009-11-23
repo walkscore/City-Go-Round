@@ -10,7 +10,7 @@ def chunk_sequence(sequence, chunk_size):
         chunk.append(item)
         if len(chunk) >= chunk_size:
             yield chunk
-        chunk = []
+            chunk = []
 
 
     

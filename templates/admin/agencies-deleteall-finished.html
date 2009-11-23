@@ -1,0 +1,13 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}City Go Round ADMIN Homepage{% endblock %}
+
+{% block content %}
+<div id="admin-home">
+    <h2>Successfully deleted all agencies.</h2>
+    
+    <p>Not convinced? Check out the AppEngine <a href="https://appengine.google.com/datastore/explorer?app_id=citygoround&amp;viewby=kind&amp;kind=Agency">admin control panel</a></p>
+    
+    <p>Can I interest you in a visit to the <a href="{% url admin_home %}">City-Go-Round admin homepage</a>?</p>    
+</div>
+{% endblock %}

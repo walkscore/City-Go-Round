@@ -211,12 +211,10 @@ def admin_agencies_update_locations(request):
     return render_to_response(request, "admin/agencies-update-locations-finished.html")
 
 def delete_all_agencies(request):
-    todelete = list(Agency.all(keys_only=True))
-    
-    for i in range(0, len(todelete), 500):
-        db.delete( todelete[i:i+500] )
-        
-    return HttpResponse( "deleted all agencies")
+    keys = [key for key in Agency.all(keys_only=True)]
+    for keys_chunk in chunk_sequence(keys, 100):
+        db.delete(keys_chunk)
+    return render_to_response(request, "admin/agencies-deleteall-finished.html")
     
 def delete_agency(request,  agency_id):
     Agency.get_by_id( int( agency_id ) ).delete()
