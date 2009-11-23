@@ -700,6 +700,18 @@
 
 
 /*------------- ADMIN HOMEPAGE ----------------*/
-#admin-home {
-    font-size: large;
+#admin-outer-wrapper {
+    padding: 1.75em;
+	width: 920px;
+	position:relative;
+}
+
+#admin-outer-wrapper p, #admin-outer-wrapper a
+{
+    font-size: large;    
+}
+
+#admin-outer-wrapper p
+{
+    line-height: 1.75em;
 }

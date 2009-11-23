@@ -200,11 +200,11 @@ def admin_agencies_list(request):
     logging.info( unmatched_agencies )
     logging.info( unmatched_feeds )
 
-    return render_to_response( request, "feed-merge.html", {'agencies':Agency.all(),'feeds':unmatched_feeds} )
+    return render_to_response( request, "admin/agencies-list.html", {'agencies':Agency.all(),'feeds':unmatched_feeds} )
 
 def admin_agencies_update_locations(request):
     # TODO DAVEPECK
-    pass
+    return not_implemented(request)
 
 def delete_all_agencies(request):
     todelete = list(Agency.all(keys_only=True))
