@@ -203,8 +203,11 @@ def admin_agencies_list(request):
     return render_to_response( request, "admin/agencies-list.html", {'agencies':Agency.all(),'feeds':unmatched_feeds} )
 
 def admin_agencies_update_locations(request):
-    # TODO DAVEPECK
-    return not_implemented(request)
+    agencies = [agency for agency in Agency.all()]
+    for agency in agencies:
+        agency.update_location()
+    db.put(agencies)
+    return render_to_response(request, "admin/agencies-update-locations-finished.html")
 
 def delete_all_agencies(request):
     todelete = list(Agency.all(keys_only=True))
