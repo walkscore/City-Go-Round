@@ -10,7 +10,7 @@ from google.appengine.api import users
 from ..forms import AgencyForm
 from ..models import Agency, FeedReference, TransitApp
 from ..utils.view import render_to_response, redirect_to, not_implemented, bad_request, render_to_json
-from ..utils.misc import uniquify
+from ..utils.misc import uniquify, chunk_sequence
 from ..utils.geocode import geocode_name
  
 from StringIO import StringIO
@@ -203,16 +203,18 @@ def admin_agencies_list(request):
     return render_to_response( request, "admin/agencies-list.html", {'agencies':Agency.all(),'feeds':unmatched_feeds} )
 
 def admin_agencies_update_locations(request):
-    # TODO DAVEPECK
-    return not_implemented(request)
+    agencies = [agency for agency in Agency.all()]
+    for agency in agencies:
+        agency.update_location()
+    for agencies_chunk in chunk_sequence(agencies, 100):        
+        db.put(agencies_chunk)
+    return render_to_response(request, "admin/agencies-update-locations-finished.html")
 
 def delete_all_agencies(request):
-    todelete = list(Agency.all(keys_only=True))
-    
-    for i in range(0, len(todelete), 500):
-        db.delete( todelete[i:i+500] )
-        
-    return HttpResponse( "deleted all agencies")
+    keys = [key for key in Agency.all(keys_only=True)]
+    for keys_chunk in chunk_sequence(keys, 100):
+        db.delete(keys_chunk)
+    return render_to_response(request, "admin/agencies-deleteall-finished.html")
     
 def delete_agency(request,  agency_id):
     Agency.get_by_id( int( agency_id ) ).delete()

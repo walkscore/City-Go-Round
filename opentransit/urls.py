@@ -49,7 +49,7 @@ urlpatterns += patterns(
     url(r'^admin/agencies/deleteall/$', 'delete_all_agencies'),
     url(r'^admin/agencies/delete/(?P<agency_id>\d+)/$', 'delete_agency', name='delete_agency'),
     url(r'^admin/agencies/create-from-feed/(?P<feed_id>[-\w ]+)/$', 'create_agency_from_feed', name='admin_agencies_create_from_feed'),
-    url(r'^admin/agencies/add/$', 'edit_agency', name='edit_agency'),
+    url(r'^admin/agencies/add/$', 'edit_agency', name='admin_agencies_add'),
     url(r'^admin/agencies/update-locations/$', 'admin_agencies_update_locations', name='admin_agencies_update_locations'),
 )
 
