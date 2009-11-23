@@ -27,8 +27,8 @@ def gallery(request):
     template_vars = {
         'transit_app_count': TransitAppStats.get_transit_app_count(),
         'transit_apps': TransitApp.all().fetch(40), # TODO DAVEPECK: fix these queries
-        'featured_apps': TransitApp.all().fetch(3), 
-        'recently_added_apps': TransitApp.all().fetch(3), 
+        'featured_apps': TransitApp.featured_by_most_recently_added().fetch(3), 
+        'recently_added_apps': TransitApp.all_by_most_recently_added().fetch(3), 
         'transit_app_count': TransitApp.all().count(),
         'public_feed_count': Agency.all().filter("date_opened != ", None).count(),
     }

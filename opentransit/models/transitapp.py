@@ -118,7 +118,7 @@ class TransitApp(db.Model):
     categories          = db.StringListProperty() # These also go into tags, automatically  
     date_added          = db.DateTimeProperty(auto_now_add = True, indexed = True)
     date_last_updated   = db.DateTimeProperty(auto_now = True, indexed = True)
-    is_featured         = db.BooleanProperty(indexed = True)
+    is_featured         = db.BooleanProperty(indexed = True, default = False)
     
     def __init__(self, *args, **kwargs):
         super(TransitApp, self).__init__(*args, **kwargs)
@@ -150,6 +150,10 @@ class TransitApp(db.Model):
     @staticmethod
     def all_by_most_recently_added():
         return TransitApp.all().order('-date_added')
+        
+    @staticmethod
+    def featured_by_most_recently_added():
+        return TransitApp.all().filter("is_featured=", True).order('-date_added');
         
     @staticmethod
     def transit_app_for_slug(transit_app_slug):

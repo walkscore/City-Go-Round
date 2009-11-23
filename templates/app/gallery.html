@@ -10,14 +10,13 @@
 	<div class="narrow-col">
 		<h3>Recently added</h3>	 
 		<div class="app-thumbs">
-			{% partial "includes/app-thumb-list.html" {'apps': featured_apps} %}
-		</div>
+			{% partial "includes/app-thumb-list.html" {'apps': recently_added_apps} %}		</div>
 	</div>
 	
 	<div class="narrow-col">
 		<h3>Featured</h3>
 		<div class="app-thumbs">
-			{% partial "includes/app-thumb-list.html" {'apps': recently_added_apps} %}
+			{% partial "includes/app-thumb-list.html" {'apps': featured_apps} %}
 		</div>
 	</div>
 </div>
