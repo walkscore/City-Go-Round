@@ -92,7 +92,7 @@ jQuery(document).ready(function($)
     function find_nearby_transit_apps()
     {
         $("#transit_app_headline").hide();
-        var query = getUrlParam('location_query');
+        var query = "{{location_query|escapejs}}";
         var googleCoder = new GClientGeocoder();
         googleCoder.getLocations(query, handle_google_geocode_response);    
     }

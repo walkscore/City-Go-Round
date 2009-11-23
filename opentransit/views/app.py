@@ -2,6 +2,8 @@ import time
 import logging
 import pickle
 
+from datetime import datetime, timedelta, date
+
 from django.conf import settings
 from google.appengine.ext import db
 
@@ -10,7 +12,7 @@ from ..utils.view import render_to_response, redirect_to, not_implemented, rende
 from ..utils.image import crop_and_resize_image_to_square
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
 from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid
-from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress
+from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress, FeedReference
 
 def nearby(request):
     petition_form = PetitionForm()
@@ -24,7 +26,11 @@ def nearby(request):
 def gallery(request):    
     template_vars = {
         'transit_app_count': TransitAppStats.get_transit_app_count(),
-        'transit_apps': TransitApp.all().fetch(10), # TODO DAVEPECK: replace with something better
+        'transit_apps': TransitApp.all().fetch(40), # TODO DAVEPECK: fix these queries
+        'featured_apps': TransitApp.featured_by_most_recently_added().fetch(3), 
+        'recently_added_apps': TransitApp.all_by_most_recently_added().fetch(3), 
+        'transit_app_count': TransitApp.all().count(),
+        'public_feed_count': Agency.all().filter("date_opened != ", None).count(),
     }
         
     return render_to_response(request, 'app/gallery.html', template_vars)
@@ -184,8 +190,7 @@ def add_success(request):
 
 
 def admin_apps_list(request):
-    # TODO DAVEPECK
-    return not_implemented(request)
+    return render_to_response()
     
 def admin_apps_edit(request):
     # TODO DAVEPECK

@@ -12,6 +12,18 @@ from ..utils.slug import slugify
 from ..utils.geohelpers import are_latitude_and_longitude_valid
 from ..decorators import requires_valid_transit_app_slug, requires_valid_agency_key_encoded
 
+def api_agencies_all(request):
+    """
+        Return a list of all agencies.
+        Called via GET only.
+    """
+    
+    # Validate our method
+    if request.method != 'GET':
+        return method_not_allowed('GET only!')
+        
+    return render_to_json([agency.to_jsonable() for agency in Agency.all()])
+    
 def api_agencies_search(request):
     """
         Return a list of agencies that match the search criterion.
@@ -63,6 +75,18 @@ def api_agencies_search(request):
             agencies_iter = agencies_iter.filter('stateslug =', slugify(state))
     
     return render_to_json([agency.to_jsonable() for agency in agencies_iter])
+
+def api_apps_all(request):
+    """
+        Return a list of all transit apps.
+        Called via GET only.
+    """
+
+    # Validate our method
+    if request.method != 'GET':
+        return method_not_allowed('GET only!')
+
+    return render_to_json([transit_app.to_jsonable() for transit_app in TransitApp.all()])
 
 def api_apps_search(request):
     """
