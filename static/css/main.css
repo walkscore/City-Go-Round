@@ -60,7 +60,7 @@
 		font-size:22px; 
 		padding: 0 0 7px 0;	}
 	h3 {
-		font-size:17px;
+		font-size:19px;
 		font-weight: normal;
 		padding: 12px 0 8px 0;
 	}
@@ -72,6 +72,7 @@
 		padding: 0;
 	}
 	h4 {
+		font-size: 16px;
 		font-weight: normal;
 	}
 	h5 {
@@ -216,6 +217,7 @@
 	#outer-wrapper .thinline {
 		border: 1px solid #bbb;
 		padding-bottom: 10px;
+		margin-bottom: 14px;
 	}
 
 
@@ -316,6 +318,7 @@
 		margin-bottom: 5px;
 	}
 
+	/* condensed text list, names only: (shown on search results page) */
 	.agency-text-list a {
 		color: #316b84;
 		text-decoration: none;
@@ -619,6 +622,12 @@
 
 	#fill_nearby_no_public {
 		color: #316b84;
+		margin-bottom: 10px;
+	}
+
+	#fill_nearby_public {
+		color: #316b84;
+		margin-bottom: 10px;
 	}
 	
 /*********** APP ADD FORMS ************/
@@ -662,9 +671,11 @@
 	}
 /*********** CUSTOM STUFF ************/
 	.bluegreen {
+		font-size: 16px;
 		color: #028dc7;
 	}
 	.bluegreen span {
+		font-size: 16px;
 		color: #18b541;
 	}
 	.bluegreen em {
