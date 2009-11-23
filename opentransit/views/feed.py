@@ -70,7 +70,7 @@ def update_feed_references(request):
     # redirect to a page for viewing all your new feed references
     return redirect_to("feed_references")
     
-def feed_references(request):
+def admin_feed_references(request):
     all_references = FeedReference.all().order("-date_added")
     
     refs_with_elapsed = []

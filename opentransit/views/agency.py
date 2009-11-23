@@ -173,12 +173,37 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
     
 def generate_locations(request):
     """Generates Locations for all agencies in the data store. The current bulk uploader does not support adding a derived field
-       during import. This is easier than writing a bulk uploader that does."""
-       
+       during import. This is easier than writing a bulk uploader that does."""       
     pass
 
+def admin_agencies_list(request):
+    matched_gtfs_data_exchange_ids = set()
+    unmatched_agencies = set()
+    unmatched_feeds = set()
+
+    # get all agencies
+    for agency in Agency.all():
+        # collect the gtfs_data_exchange_id of the ones that have them
+        if len( agency.gtfs_data_exchange_id ) != 0:
+            for gtfsdeid in agency.gtfs_data_exchange_id:
+                matched_gtfs_data_exchange_ids.add( gtfsdeid )
+        # the rest go into the 'unmatched agencies' bucket
+        else:
+            unmatched_agencies.add( agency )
+
+    # get all feeds
+    for feed in FeedReference.all():
+        # the ones without ids in the matched agencies bucket go into the 'unmatched feeds' bucket
+        if feed.gtfs_data_exchange_id not in matched_gtfs_data_exchange_ids:
+            unmatched_feeds.add( feed )
+
+    logging.info( unmatched_agencies )
+    logging.info( unmatched_feeds )
+
+    return render_to_response( request, "feed-merge.html", {'agencies':Agency.all(),'feeds':unmatched_feeds} )
+
 def admin_agencies_update_locations(request):
-    # XXX TODO DAVEPECK
+    # TODO DAVEPECK
     pass
 
 def delete_all_agencies(request):

@@ -697,3 +697,9 @@
 
 .big_red{font-size:2em;font-weight:bold; color:red}
 .big_green{font-size:2em; font-weight:bold; color:green;}
+
+
+/*------------- ADMIN HOMEPAGE ----------------*/
+#admin-home {
+    font-size: large;
+}
