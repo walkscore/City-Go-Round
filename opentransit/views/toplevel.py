@@ -23,6 +23,7 @@ def home(request):
     
     template_vars = {
         'petition_form': petition_form,
+        'no_getsatisfaction' : True,
         'agency_count': agency_count,
         'closed_agencies': closed_agencies,
         'open_agencies': open_agencies,
