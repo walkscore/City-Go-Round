@@ -110,7 +110,7 @@
 		margin: 2px 0 8px 0;
 	}
 	.body-content li {
-    margin-bottom: 6px;
+	margin-bottom: 6px;
   }
 	
 
@@ -221,8 +221,6 @@
 
 /*********** HOME PAGE ****************/
 .green h2{color:green;}
-.agency_title a{font-weight:bold}
-.odd{background:#DFF4FF;}
 	
 /*********** HEADER ****************/
 
@@ -288,13 +286,15 @@
 	#friends-and-followers div.friend-twitter p { background: url(/images/otd-icons.png) 0 -22px no-repeat; }
 	
 /*********** LISTS ****************/
-
+	.agency-list .odd{
+		background:#DFF4FF;
+	}
 	.agency-list {
 		color: #cf7200;
 		list-style-type: none;
 	}
-	.agency-list h5 {
-		font: 12px/13px Verdana, Arial, Helvetica, sans-serif;
+	.agency-list h5 a {
+		font: 11px/13px Verdana, Arial, Helvetica, sans-serif;
 		font-weight: bold;
 		padding-bottom: 0;
 		margin: 0;
@@ -308,6 +308,9 @@
 	}
 	.agency-list p a:hover {
 		color: #628dc7;
+	}
+	.agency-list p span {
+		font-size: 10px;
 	}
 	.agency-list li {
 		margin-bottom: 5px;
@@ -386,63 +389,63 @@
 
 /* TODO jesse -- i threw these together. fix 'em -- dave */
 
-    .add-app-form blockquote {
-    	margin: 8px 15px 12px 0;
-    	font-style: italic;
-    	display: block;
-    }
-    .add-app-form th, .add-app-form td {
-    	width: 230px;
-        min-height: 32px;
-        padding: 0px 2px 8px 2px;
-    }
-    .add-app-form td {
-    	width: 350px;
-    }
-    .add-app-form table input {
-    	font: 12px/12px Verdana, Arial, Helvetica, sans-serif;
-    	margin-bottom: 2px;
-    	border: 1px solid #999;
-    }
+	.add-app-form blockquote {
+		margin: 8px 15px 12px 0;
+		font-style: italic;
+		display: block;
+	}
+	.add-app-form th, .add-app-form td {
+		width: 230px;
+		min-height: 32px;
+		padding: 0px 2px 8px 2px;
+	}
+	.add-app-form td {
+		width: 350px;
+	}
+	.add-app-form table input {
+		font: 12px/12px Verdana, Arial, Helvetica, sans-serif;
+		margin-bottom: 2px;
+		border: 1px solid #999;
+	}
 
-    .add-app-form table textarea {
-    	font: 12px/12px Verdana, Arial, Helvetica, sans-serif;
-    	margin-bottom: 2px;
-    	border: 1px solid #999;
-    	width: 250px;
-    }    
-    .add-app-form table select {
-        width: 250px;
-    }
-    
-    .add-app-form table input[type="file"] {
-        border: 0;
-        color: #444;
-    }
-    
-    .add-app-form table ul {
-        list-style-type: none;
-    }
-    
-    .add-app-form table ul.errorlist li {
-        color: red;
-    }
-    
-    .add-app-form table input[type="radio"] {
-        border: 0;
-        width: 20px;
-    }
-    
-    .add-app-form .button {
-    	margin: 8px 0 6px 75px;
-    }
-    
-    #list-panel {
-      clear: both;
-      width: 700px;
-      margin-left: 40px;
-    }
-    
+	.add-app-form table textarea {
+		font: 12px/12px Verdana, Arial, Helvetica, sans-serif;
+		margin-bottom: 2px;
+		border: 1px solid #999;
+		width: 250px;
+	}	 
+	.add-app-form table select {
+		width: 250px;
+	}
+	
+	.add-app-form table input[type="file"] {
+		border: 0;
+		color: #444;
+	}
+	
+	.add-app-form table ul {
+		list-style-type: none;
+	}
+	
+	.add-app-form table ul.errorlist li {
+		color: red;
+	}
+	
+	.add-app-form table input[type="radio"] {
+		border: 0;
+		width: 20px;
+	}
+	
+	.add-app-form .button {
+		margin: 8px 0 6px 75px;
+	}
+	
+	#list-panel {
+	  clear: both;
+	  width: 700px;
+	  margin-left: 40px;
+	}
+	
 
 
 /*********** FEATURED APPS ****************/
@@ -527,7 +530,7 @@
 		padding-top: 44px;
 	}
 	#feat-content div img {
-		float: left;  
+		float: left;	
 		margin: 0 15px 0 60px;
 		border: 1px solid #999;
 	}
@@ -556,7 +559,10 @@
 		float: left;
 		margin-right: 30px;
 	}	
-    .app-gallery .wide-col .app, .app-gallery .narrow-col .app { 
+	.app-gallery .odd {
+		clear: both;
+	}
+	.app-gallery .wide-col .app, .app-gallery .narrow-col .app { 
 		margin-right: 0;
 	}	
 	.app-gallery .app img { 
@@ -666,7 +672,7 @@
 		font-style: normal;
 	}
 	.bluegreen a {
-    text-decoration: underline;
+	text-decoration: underline;
 	}
 	
 	
@@ -686,10 +692,10 @@
 	.app-gallery #up-control:hover label { background-position: 0 -90px; }
 	.app-gallery #down-control label { background: url(/images/otd-icons.png) 0 -78px no-repeat; }
 	.app-gallery #down-control:hover label { background-position: 0 -102px; }	
-    
-    
-    
-    
+	
+	
+	
+	
 /*********** AGENCY LISTING MISC ************/
 .agency_public td, .pub td {background-color:#D1EFD5;}
 .agency_no_public td, .no_pub td {background-color:#EFD1D1;}
@@ -707,17 +713,17 @@
 
 /*------------- ADMIN HOMEPAGE ----------------*/
 #admin-outer-wrapper {
-    padding: 1.75em;
+	padding: 1.75em;
 	width: 920px;
 	position:relative;
 }
 
 #admin-outer-wrapper p, #admin-outer-wrapper a
 {
-    font-size: large;    
+	font-size: large;	 
 }
 
 #admin-outer-wrapper p
 {
-    line-height: 1.75em;
+	line-height: 1.75em;
 }
