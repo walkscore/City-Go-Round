@@ -12,7 +12,10 @@ from ..utils.view import render_to_response, redirect_to, not_implemented, rende
 from ..utils.image import crop_and_resize_image_to_square
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
 from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid
-from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress, FeedReference
+from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress, FeedReference, NamedStat
+
+from django.http import HttpResponse, HttpResponseForbidden
+from django.utils import simplejson as json
 
 def nearby(request):
     petition_form = PetitionForm()
@@ -37,9 +40,14 @@ def gallery(request):
     
 @requires_valid_transit_app_slug
 def details(request, transit_app):
+    
+    already_voted = str(transit_app.key().id()) in request.COOKIES
+    
     template_vars = {
         'transit_app': transit_app,
-    }    
+        'already_voted': already_voted,
+    }
+    
     return render_to_response(request, 'app/details.html', template_vars)
     
 @requires_valid_transit_app_slug
@@ -188,10 +196,28 @@ def add_locations(request, progress_uuid):
 def add_success(request):
     return render_to_response(request, 'app/add-success.html')
 
-
 def admin_apps_list(request):
     return render_to_response()
     
 def admin_apps_edit(request):
     # TODO DAVEPECK
     return not_implemented(request)
+    
+def increment_stat(request):
+    stat_name = request.GET['name']
+    stat_value = NamedStat.increment( stat_name )
+    return HttpResponse( "the new value of %s is %s"%(stat_name,stat_value) )
+
+def app_rating_vote(request):
+    app_key_id = int( request.GET['app_key_id'][0] )
+    rating = int( request.GET['rating'][0] )
+    
+    # if they've been cookied for this app_key_id, pop them an error
+    if str(app_key_id) in request.COOKIES:
+        return HttpResponseForbidden( "you've already voted for the app with key id %s"%app_key_id )
+    
+    app = TransitApp.get_by_id( app_key_id )
+    app.add_rating( rating )
+    app.put()
+    
+    return HttpResponse( json.dumps( [app.average_rating, app.num_ratings] )  )

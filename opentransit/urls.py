@@ -67,6 +67,7 @@ urlpatterns += patterns(
     url(r'^apps/(?P<transit_app_slug>[\w-]+)/screenshot.png$', 'screenshot', name='apps_screenshot'),
     url(r'^admin/apps/$', 'admin_apps_list', name='admin_apps_list'),
     url(r'^admin/apps/edit/(?P<transit_app_slug>[\w-]+)/$', 'admin_apps_edit', name='admin_apps_edit'),
+    url(r'^admin/apps/rating/$', 'app_rating_vote', name='app_rating_vote'),
 )
 
 

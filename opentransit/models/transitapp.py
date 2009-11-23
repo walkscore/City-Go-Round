@@ -119,6 +119,7 @@ class TransitApp(db.Model):
     date_added          = db.DateTimeProperty(auto_now_add = True, indexed = True)
     date_last_updated   = db.DateTimeProperty(auto_now = True, indexed = True)
     is_featured         = db.BooleanProperty(indexed = True, default = False)
+    ratings             = db.ListProperty(int)
     
     def __init__(self, *args, **kwargs):
         super(TransitApp, self).__init__(*args, **kwargs)
@@ -262,6 +263,17 @@ class TransitApp(db.Model):
         
     def add_explicitly_supported_countries(self, country_codes):
         self.explicitly_supported_countries.extend(country_codes)
+        
+    def add_rating(self, rating):
+        self.ratings.append( rating )
+        
+    @property
+    def average_rating(self):
+        return sum(self.ratings)/float(len(self.ratings))
+        
+    @property
+    def num_ratings(self):
+        return len(self.ratings)
         
     @staticmethod
     def all_for_country(country_code):
