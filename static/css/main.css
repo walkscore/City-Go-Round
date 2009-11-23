@@ -221,11 +221,17 @@
 	}
 
 
+
 /*********** HOME PAGE ****************/
-.green h2{color:green;}
+		.green h2{
+			color:green;
+		}
+
+		#no-data-list a, #recently-added-list a{
+			text-decoration: none;
+		}
 	
 /*********** HEADER ****************/
-
 	#header h1 {
 		position:absolute;
 		top: 16px;
