@@ -51,6 +51,13 @@ jQuery(document).ready(function($)
         html += "</table><p>&nbsp;</p>";
         return html;
     }
+    function html_for_transit_app_thumb(transit_app) {
+        var html = '<div class="app"> <a href="' + transit_app.url + '"><img src="' + transit_app.screen_shot_url + '" alt="Application Screen Shot" /></a>';
+        html += '<h5><a href="' + transit_app.url + '">' + transit_app.title + '</a></h5>';
+        html += '<p>' + transit_app.description + '</p>';
+        html += '</div>';
+        return html;
+    }
     
     function query_for_transit_apps(latitude, longitude, country_code)
     {
@@ -62,12 +69,25 @@ jQuery(document).ready(function($)
             $.each(transit_apps, function(i, transit_app)
             {
                 transit_app_count += 1;
-                transit_apps_html += html_for_transit_app(transit_app);             
+                transit_apps_html += html_for_transit_app_thumb(transit_app);             
             });
+            
+            var public_data_count = 5; //XXX TODO DAVEPECK
+            
+            var subhead_html = "<em>" + transit_app_count + "</em> apps";
+            if (public_data_count > 1) 
+                subhead_html += " use data from <em>" + public_data_count + "</em> transit agencies."
+            else if (public_data_count == 1) 
+                subhead_html += " use data from one transit agency."
+            else 
+                subhead_html += "."
 
+
+            $("#fill_nearby_no_public").hide().text("Some agencies here... TODO DAVEPECK").fadeIn(1000.0, function(){});
             $("#transit_app_loading").fadeOut(0.0, function(){});
-            $("#tables_go_here").hide().html(transit_apps_html).fadeIn(1000.0, function(){});
-            $("#transit_app_headline").hide().text("There are " + transit_app_count + " apps.").fadeIn(1000.0, function(){});
+            $("#transit_app_headline").hide().html(subhead_html).fadeIn(1000.0, function(){});
+            $("#fill_nearby_public").hide().text("Apps powered by: Some agencies here... TODO DAVEPECK").fadeIn(1000.0, function(){});
+            $("#apps_go_here").hide().html(transit_apps_html).fadeIn(1000.0, function(){});
         });
     }
     
@@ -105,16 +125,7 @@ jQuery(document).ready(function($)
 
 {% block content %}
 
-    <div id="nearby-apps" class="body-content thinline">
-        <div class="boxed-content">
-            <h2>Transit Apps Near {{location_query}}:</h2>
-            <h3 id="transit_app_headline"></h3>
-            <h3 id="transit_app_loading"><img src="{% static_url /images/ajax-loader.gif %}" />LOADING...</h3>
-            <div id="tables_go_here"></div>
-        </div>
-    </div>
-
-    <div id="petition" class="body-content thinline">
+    <div id="petition" class="body-content thinline col-group">
         <div class="boxed-content"> 
             
             <h4>Nearby Agencies with no public data</h4>
@@ -131,6 +142,14 @@ jQuery(document).ready(function($)
             </div>
             <br class="clear-all" />
         </div>
+    </div>
+
+    <div id="nearby-apps" class="body-content col-group">
+        <h2>Transit Apps Near {{location_query}}:</h2>
+        <h4 class="bluegreen" id="transit_app_headline"></h4>
+        <div class="agency-text-list" id="fill_nearby_public"><span class="loading">TODO DAVEPECK...</span></div>
+        <h3 id="transit_app_loading"><img src="{% static_url /images/ajax-loader.gif %}" />LOADING...</h3>
+        <div id="apps_go_here" class="app-gallery"></div>
     </div>
       
 {% endblock %}
