@@ -67,7 +67,7 @@ def update_feed_references(request):
     #db.run_in_transaction(replace_feed_references, old_references, feed_refs_json)
       
     # redirect to a page for viewing all your new feed references
-    return redirect_to("feed_references")
+    return redirect_to("admin_feed_references")
     
 def admin_feed_references(request):
     all_references = FeedReference.all().order("-date_added")

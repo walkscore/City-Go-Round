@@ -4,13 +4,16 @@
 
 {% block content %}
 <div id="admin-home">
-    <h1>Welcome to City-Go-Round admin.</h1>
+    <h2>Welcome to City-Go-Round admin.</h2>
     <h2>Here are some things you can do:</h2>
     
     <p>Get a <a href="{% url admin_agencies_list %}">list of agencies</a> so you can edit them.</p>
-    <p>Get a <a href="{% url admin_apps_list %}">list of tranist apps</a> so you can edit them.</p>
+    <p>Get a <a href="{% url admin_apps_list %}">list of transit apps</a> so you can edit them.</p>
+    <p>Get a <a href="{% url admin_feed_references %}">list of feed references</a>.</p>
+    <p><a href="{% url admin_agencies_add %}">Add a new agency</a> by hand.</p>
     <p>Force the <a href="{% url update_feed_references %}">feed references to update</a> from GTFS Exchange.</p>
-    <p>Force all <a href="{% url admin_agencies_update_locations %}">agencies</a> to update their geocell information based on their current latitude/longitude.</p>
-    <p>Get a <a href="{% url admin_feed_references %}">list of feed references</a> (probably not so interesting anymore.)</p>
+    <p>Force all agencies to <a href="{% url admin_agencies_update_locations %}">update their geocell information</a> based on their current latitude/longitude.</p>
+    <p>Run <a href="/admin/test">unit and functional tests</a>.</p>
+    
 </div>
 {% endblock %}

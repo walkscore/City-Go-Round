@@ -19,44 +19,10 @@
 
 </head>
 <body>
-<div id="header">
-  {% block header %}
-    <h1 onclick="document.location='{% url home %}'">Open Transit Data</h1>
-    <h2>Apps that help you get around</h2>
-    <a id="front-seat-logo" href="http://www.frontseat.org"><img src="{% static_url /images/front-seat-logo.gif %}" /></a>
-    <p id="nav">
-        <a href="{% url about %}">About</a> &nbsp; | &nbsp;
-        <a href="{% url contact %}">Contact</a> &nbsp; | &nbsp;
-        <a href="{% url opensource %}">Open Source</a> &nbsp; | &nbsp;
-        <a href="{% url apps_gallery %}">Apps</a> &nbsp; | &nbsp;
-        <a href="{% url agencies %}">Agencies</a> &nbsp; 
-    <div id="friends-and-followers">
-      <div class="clickable2 friend-twitter" onclick='trackNavigationNewWindow("http://twitter.com/citygoround", "header", "follow us", "twitter")'>
-        <p>Follow us</p>
-      </div>
-      <div class="clickable2 friend-facebook" onclick='trackNavigationNewWindow("http://www.facebook.com/pages/City-Go-Round/179590999311", "header", "follow us", "facebook")'>
-      	<p>Friend us</p>
-      </div>
+    <div id="admin-outer-wrapper">
+        {% block content %}
+        {% endblock %}
     </div>
-  {% endblock %}
-</div>
-<div id="lede">
-	{% block lede %}
-  	<form onsubmit="goto_search(); return false;">
-	  	<label>Find apps near you:</label>
-	  	<input id="location_query" name="location_query" type="text">
-	  	<input id="search" name="search" type="image" src="{% static_url /images/button-search.gif %}">
-  	</form>
-  	<p>U.S. only for now.</p>
-  {% endblock %}
-</div>
-<div id="outer-wrapper">
-	{% block content %}
-	{% endblock %}
-</div>
-<div id="footer">
-    <p id="gtfs-data-exchange-logo"><a href="http://www.gtfs-data-exchange.com/"><img src="{% static_url /images/gtfs-data-exchange-logo.gif %}" /></a>Data provided by GTFS Data Exchange </p>
-</div>
 </body>
 <script src="{% static_url /js/util.js %}" type="text/javascript"></script>
 {% block scripts %}

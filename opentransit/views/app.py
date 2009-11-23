@@ -191,8 +191,8 @@ def add_success(request):
 
 def admin_apps_list(request):
     # TODO DAVEPECK
-    pass
+    return not_implemented(request)
     
 def admin_apps_edit(request):
     # TODO DAVEPECK
-    pass
+    return not_implemented(request)
