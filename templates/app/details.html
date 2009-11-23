@@ -3,37 +3,29 @@
 {% block title %}Open Transit Data &raquo; Details For {{transit_app.title}}{% endblock %}
 
 {% block content %}
-    <!-- TODO jesse: add some design here. (dave) -->
-    
-    <div id="app-details" class="body-content">    
-        <h2>{{transit_app.title}} DETAILS:</h2>
-        <table>
-            <tr>
-                <th>Description:</th>
-                <td>{{transit_app.description}}</td>
-            </tr>
-            <tr>
-                <th>Homepage:</th>
-                <td><a href="{{transit_app.url}}">{{transit_app.url}}</a></td>
-            </tr>
-            <tr>
-                <th>Author Name:</th>
-                <td>{{transit_app.author_name}}</td>
-            </tr>
-            <tr>
-                <th>Long Description:</th>
-                <td>{{transit_app.long_description}}</td>
-            </tr>
-            <tr>
-                <th>Tags:</th>
-                <td>TODO DAVEPECK</td>
-            </tr>
-            <tr>
-                <th>Screen Shot:</th>
-                <td><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></td>
-            </tr>
-        </table>
+<div id="app-details" class="body-content col-group">    
+    <h2>{{transit_app.title}} <span>By {{transit_app.author_name}}</span></h2>
+    <p>{{transit_app.description}}</p>
+    <div class="app-images">
+        <img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" />
+        <label>Additional Images:</label>
+        <div class="app-images-thumbs">
+            <img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" />
+        </div>
+        <p><a href="{{transit_app.url}}">Visit developer's website</a></p>
     </div>
+    <label>Full Description:</label> <p>{{transit_app.long_description}}"</p>
+    <label>Categories:</label> <p>{{transit_app.categories}}<p>
+    <label>Platforms:</label> <p>{{transit_app.platforms}}<p>
+    <label>All tags:</label> <p>{{transit_app.tags}}<p>
+    <label>Agencies:</label> <p>{{transit_app.explicitly_supported_agency_keys}}<p>
+    <label>Areas Supported:</label> <p>{{transit_app.explicitly_supported_city_details}} {{transit_app.explicitly_supported_countries}}<p>
+</div>
+    
+<div class="wide-col rightmost">
+	{% include "includes/mrec1.html" %}
+</div>
+
 {% endblock %}
 
 

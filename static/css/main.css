@@ -307,7 +307,7 @@
 	}
 	#footer #footer-nav, #footer #footer-nav a {
 		text-decoration: none;
-		color: #777;
+		color: #444;
 	}
 	#footer #footer-nav a:hover {
 		color: #628dc7;
@@ -621,6 +621,39 @@
 		font-weight: normal;
 	}	
 	
+/*********** APP DETAILS ****************/
+    
+    #app-details {
+    }
+    #app-details label {
+        font-weight: bold;
+        float: left;
+        margin-right: 8px;
+    }
+    .app-images {
+        float: left;
+        width: 315px;
+        margin: 0 5px 8px 0;
+        position: relative;
+        top: 4px;
+    }
+    .app-images label {
+        margin: 10px 0 4px;
+    }
+    .app-images img {
+        border: 1px solid #888;
+        width: 300px;
+        height: 300px;
+    }
+    .app-images-thumbs {
+        clear: both;
+        margin-top: 10px;
+    }
+    #outer-wrapper .app-images-thumbs img {
+        width: 145px;
+        height: 145px;
+        margin-right: 8px;
+    }
 	
 /*********** TWEETS ****************/
 	.tweet {
