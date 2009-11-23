@@ -417,6 +417,7 @@
     
     .add-app-form table input[type="file"] {
         border: 0;
+        color: #444;
     }
     
     .add-app-form table ul {
@@ -549,9 +550,14 @@
 /*********** APP GALLERY ****************/
 	
 	.app-gallery .app { 
-		clear: both;
 		padding-bottom: 15px;
 		min-height: 80px;
+		width: 260px;
+		float: left;
+		margin-right: 30px;
+	}	
+    .app-gallery .wide-col .app, .app-gallery .narrow-col .app { 
+		margin-right: 0;
 	}	
 	.app-gallery .app img { 
 		float: left;
