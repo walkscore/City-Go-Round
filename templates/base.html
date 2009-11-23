@@ -25,36 +25,41 @@
     <h2>Apps that help you get around</h2>
     <a id="front-seat-logo" href="http://www.frontseat.org"><img src="{% static_url /images/front-seat-logo.gif %}" /></a>
     <p id="nav">
-        <a href="{% url about %}">About</a> &nbsp; | &nbsp;
-        <a href="{% url contact %}">Contact</a> &nbsp; | &nbsp;
-        <a href="{% url opensource %}">Open Source</a> &nbsp; | &nbsp;
         <a href="{% url apps_gallery %}">Apps</a> &nbsp; | &nbsp;
-        <a href="{% url agencies %}">Agencies</a> &nbsp; 
+        <a href="{% url agencies %}">Agencies</a> &nbsp; | &nbsp;
+        <a href="{% url about %}">About</a> 
     <div id="friends-and-followers">
       <div class="clickable2 friend-twitter" onclick='trackNavigationNewWindow("http://twitter.com/citygoround", "header", "follow us", "twitter")'>
         <p>Follow us</p>
       </div>
       <div class="clickable2 friend-facebook" onclick='trackNavigationNewWindow("http://www.facebook.com/pages/City-Go-Round/179590999311", "header", "follow us", "facebook")'>
-      	<p>Friend us</p>
+        <p>Friend us</p>
       </div>
     </div>
   {% endblock %}
 </div>
 <div id="lede">
-	{% block lede %}
-  	<form onsubmit="goto_search(); return false;">
-	  	<label>Find apps near you:</label>
-	  	<input id="location_query" name="location_query" type="text">
-	  	<input id="search" name="search" type="image" src="{% static_url /images/button-search.gif %}">
-  	</form>
-  	<p>U.S. only for now.</p>
+    {% block lede %}
+    <form onsubmit="goto_search(); return false;">
+        <label>Find apps near you:</label>
+        <input id="location_query" name="location_query" type="text">
+        <input id="search" name="search" type="image" src="{% static_url /images/button-search.gif %}">
+    </form>
+    <p>U.S. only for now.</p>
   {% endblock %}
 </div>
 <div id="outer-wrapper">
-	{% block content %}
-	{% endblock %}
+    {% block content %}
+    {% endblock %}
 </div>
 <div id="footer">
+    <div id="footer-nav">
+        <a href="{% url contact %}">Contact</a> &nbsp;-&nbsp; 
+        <a href="{% url opensource %}">Open Source</a>
+    </div>
+    <div id="license"><p><a style="float: left; margin-right: 8px;" rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/us/80x15.png" /></a><span xmlns:dc="http://purl.org/dc/elements/1.1/" href="http://purl.org/dc/dcmitype/Text" property="dc:title" rel="dc:type">City-Go-Round</span> by <a xmlns:cc="http://creativecommons.org/ns#" href="www.citygoround.org" property="cc:attributionName" rel="cc:attributionURL">City-Go-Round</a> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/">Creative Commons Attribution-Share Alike 3.0 United States License</a>.<br />Based on a work at <a xmlns:dc="http://purl.org/dc/elements/1.1/" href="www.citygoround.org" rel="dc:source">www.citygoround.org</a>.</p></div>
+
+
     <p id="gtfs-data-exchange-logo"><a href="http://www.gtfs-data-exchange.com/"><img src="{% static_url /images/gtfs-data-exchange-logo.gif %}" /></a>Data provided by GTFS Data Exchange </p>
 </div>
 </body>
@@ -71,8 +76,8 @@
 {% endif %}
 
 <script type="text/javascript"> 
-	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www."); 
-	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); 
+    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www."); 
+    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E")); 
 </script> 
 <script type="text/javascript"> try { var pageTracker = _gat._getTracker("UA-11647297-1"); pageTracker._trackPageview(); } catch(err) {}</script>
 </html>
