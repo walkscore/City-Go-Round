@@ -188,7 +188,6 @@ def add_locations(request, progress_uuid):
 def add_success(request):
     return render_to_response(request, 'app/add-success.html')
 
-
 def admin_apps_list(request):
     # TODO DAVEPECK
     return not_implemented(request)
