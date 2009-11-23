@@ -219,7 +219,7 @@ def delete_all_agencies(request):
 def delete_agency(request,  agency_id):
     Agency.get_by_id( int( agency_id ) ).delete()
     
-    return HttpResponseRedirect( "/admin/debug/" )
+    return HttpResponseRedirect( "/admin/agencies/" )
     
 def create_agency_from_feed(request, feed_id):
     # get feed entity

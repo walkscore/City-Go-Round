@@ -4,18 +4,32 @@
 
 {% block content %}
 
+<script type="text/javascript">
+
+function confirmation(linkto) {
+	var answer = confirm("Are you certain?")
+	if (answer){
+        alert( "you're deleting "+linkto );
+		window.location = linkto;
+	}
+}
+
+</script>
+
+
 For each transit agency in the 'unmatched feeds' list:
 <li>look in the 'all agencies' list to see if there's a corresponding agency
 <li>if so, 'edit' that agency and set the gtfs_data_exchange_id to the correct value
 <li>an agency can have more than one gtfs_data_exchange_id - just separate them with commas like 'bart,airbart'
 <li>else, click the 'create' button next to the unmatched feed to create an agency for that feed
 <li>Make sure the city is set and the state uses the two-letter code
+<li>If you click "create" more than once, it will create duplicate agencies
 
 <h2>unmatched feeds</h2>
 <table>
 {% for feed in feeds %}
 <tr>
-<td>{{feed.gtfs_data_exchange_id}}</td><td>{{feed.name}}</td><td>{{feed.url}}</td><td>{{feed.area}}</td><td>{{feed.state}}</td><td><a href="{% url admin_agencies_create_from_feed feed_id=feed.gtfs_data_exchange_id %}/">create</a></td>
+<td>{{feed.gtfs_data_exchange_id}}</td><td>{{feed.name}}</td><td>{{feed.url}}</td><td>{{feed.area}}</td><td>{{feed.state}}</td><td><a href="{% url admin_agencies_create_from_feed feed_id=feed.gtfs_data_exchange_id %}">create</a></td>
 <tr>
 {% endfor %}
 </table>
@@ -25,7 +39,7 @@ For each transit agency in the 'unmatched feeds' list:
 
 {% for agency in agencies %}
 <tr>
-<td>{{ agency.name }}</td><td>{{agency.short_name}}</td><td>{{agency.agency_url}}</td><td>{{agency.city}}</td><td>{{agency.state}}</td><td>{{agency.gtfs_data_exchange_id}}</td><td>loc:({{agency.location}})</td><td><a href="{% url edit_agency agency_id=agency.key.id %}">edit</a></td><td><a href="{% url delete_agency agency_id=agency.key.id %}">delete</a></td>
+<td>{{ agency.name }}</td><td>{{agency.short_name}}</td><td>{{agency.agency_url}}</td><td>{{agency.city}}</td><td>{{agency.state}}</td><td>{{agency.gtfs_data_exchange_id}}</td><td>loc:({{agency.location}})</td><td><a href="{% url edit_agency agency_id=agency.key.id %}">edit</a></td><td><a href="javascript:confirmation('{% url delete_agency agency_id=agency.key.id %}')">delete</a></td>
 </tr>
 {% endfor %}
 
