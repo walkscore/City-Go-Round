@@ -6,6 +6,8 @@
 import django.template as djangot
 from django.conf import settings
 from google.appengine.ext.webapp import template
+from django.template.loader import get_template as djangot_get_template
+from django.template import Context as djangot_Context
 
 register = template.create_template_register()
 
@@ -101,8 +103,8 @@ class PartialNode(djangot.Node):
             new_context[key] = new_context_value
 
         # Render the template
-        final_template = template.load(self.template_path)
-        return final_template.render(template.Context(new_context))
+        final_template = djangot_get_template(self.template_path)
+        return final_template.render(djangot_Context(new_context))
 
 def parse_dictionary_string(s):
     s = s.strip()
