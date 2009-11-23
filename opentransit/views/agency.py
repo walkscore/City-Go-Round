@@ -10,7 +10,7 @@ from google.appengine.api import users
 from ..forms import AgencyForm
 from ..models import Agency, FeedReference, TransitApp
 from ..utils.view import render_to_response, redirect_to, not_implemented, bad_request, render_to_json
-from ..utils.misc import uniquify
+from ..utils.misc import uniquify, chunk_sequence
 from ..utils.geocode import geocode_name
  
 from StringIO import StringIO
@@ -206,7 +206,8 @@ def admin_agencies_update_locations(request):
     agencies = [agency for agency in Agency.all()]
     for agency in agencies:
         agency.update_location()
-    db.put(agencies)
+    for agencies_chunk in chunk_sequence(agencies, 100):        
+        db.put(agencies_chunk)
     return render_to_response(request, "admin/agencies-update-locations-finished.html")
 
 def delete_all_agencies(request):
