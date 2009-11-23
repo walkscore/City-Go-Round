@@ -5,10 +5,10 @@
 {% block content %}
 
 {% if agency.date_opened %}
-<div class="big_green">Provides Public Data</div>
-{{ agency.name }} ({{agency.short_name}}) provides public data.<br>
+<div class="big_green">Provides Open Data</div>
+{{ agency.name }} ({{agency.short_name}}) provides open data.<br>
 {% else %}
-<div class="big_red">No Public Data</div>
+<div class="big_red">No Open Data</div>
 {{ agency.name }} ({{agency.short_name}}) does not make their data public.<br>
 {{ agency.city }} residents can't take advantage of our <a href="/apps">transit app gallery</a>.
 
