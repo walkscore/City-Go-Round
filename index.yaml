@@ -65,3 +65,9 @@ indexes:
   properties:
   - name: stateslug
   - name: name
+
+- kind: TransitApp
+  properties:
+  - name: is_featured=
+  - name: date_added
+    direction: desc
