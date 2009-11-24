@@ -51,7 +51,7 @@
     
     <div class="app-info">
         <div id="app-details" class="body-content">    
-        <label>Ratings:</label> <div id="ratings"><p>average {{transit_app.average_rating}}/5 over {{transit_app.num_ratings}} votes</p></div>
+        <label>Ratings:</label> <div><p id="ratings">average {{transit_app.average_rating}}/5 over {{transit_app.num_ratings}} votes</p></div>
         <div id="votebooth">
         <form name="rating" action="/app/rating" method="POST">
         <p>Your rating:
