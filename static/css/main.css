@@ -93,7 +93,7 @@
 	#recently-added-list h3 { color: #18b541; font-size: 18px; }
 
 	
-  p, a, ul, ol, blockquote, label, span {
+  p, a, ul, ol, blockquote, label, span, li {
 		font:12px Verdana, Arial, Helvetica, sans-serif;
 		color: #555;
 	}
@@ -313,7 +313,7 @@
 	}
 	#footer #footer-nav, #footer #footer-nav a {
 		text-decoration: none;
-		color: #777;
+		color: #444;
 	}
 	#footer #footer-nav a:hover {
 		color: #628dc7;
@@ -627,6 +627,50 @@
 		font-weight: normal;
 	}	
 	
+/*********** APP DETAILS ****************/
+    
+    #app-details label {
+        font-weight: bold;
+        margin: 0;
+        padding: 0;
+    }
+    .app-images {
+        float: left;
+        width: 315px;
+        margin: 0 5px 8px 0;
+        position: relative;
+        top: 4px;
+    }
+    .app-images img {
+        border: 1px solid #888;
+        width: 300px;
+        height: 300px;
+        margin-bottom: 10px;
+    }
+    .app-images-thumbs {
+        clear: both;
+        margin-top: 4px;
+    }
+    #outer-wrapper .app-images-thumbs img {
+        width: 145px;
+        height: 145px;
+        margin: 0 8px 10px 0;
+    }
+    
+    .app-info {
+        width: 270px;
+        float: left;
+    }
+    .app-info ul {
+        margin: 0;
+        padding: 0;
+    }
+    .app-info li {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+
 	
 /*********** TWEETS ****************/
 	.tweet {

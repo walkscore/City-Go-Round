@@ -177,7 +177,7 @@ class TransitApp(db.Model):
     explicitly_supported_city_details = db.StringListProperty() # ["Seattle,WA,US", "San Francisco,CA,US", ...]
     explicitly_supported_countries = db.StringListProperty() # ["US", "DE", ...]
     explicitly_supports_the_entire_world = db.BooleanProperty(indexed = True)
-                
+            
     @staticmethod
     def all_supporting_public_agencies():
         """Return a query to all TransitApp entities flagged as supporting Agencies with 'public' data."""
@@ -211,6 +211,16 @@ class TransitApp(db.Model):
         for agency_or_key in agencies_or_keys:
             for transit_app in iter_uniquify(TransitApp.iter_for_agency(agency_or_key, uniquify = False), seen_set, uniquify):
                 yield transit_app
+                
+    
+    def get_supported_agency_list(self):
+        #want a list of agencies so we can get their names & city-go-round urls for each -- used on app details page
+        #todo DAVEPECK
+        return []
+        
+    def get_supported_location_list(self):
+        list = self.explicitly_supported_city_details + self.explicitly_supported_countries
+        return list
 
     def add_explicitly_supported_agencies(self, agencies_or_keys):
         """Helper to add new supported agencies to this transit app. You must call put() sometime later."""

@@ -41,13 +41,11 @@ def gallery(request):
 @requires_valid_transit_app_slug
 def details(request, transit_app):
     
-    already_voted = str(transit_app.key().id()) in request.COOKIES
-    
     template_vars = {
         'transit_app': transit_app,
-        'already_voted': already_voted,
-    }
-    
+        'agencies': transit_app.get_supported_agency_list(),
+        'locations': transit_app.get_supported_location_list(),
+    }    
     return render_to_response(request, 'app/details.html', template_vars)
     
 @requires_valid_transit_app_slug
