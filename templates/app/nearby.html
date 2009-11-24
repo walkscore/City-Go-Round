@@ -52,7 +52,8 @@ jQuery(document).ready(function($)
         return html;
     }
     function html_for_transit_app_thumb(transit_app) {
-        var html = '<div class="app"> <a href="' + transit_app.url + '"><img src="' + transit_app.screen_shot_url + '" alt="Application Screen Shot" /></a>';
+        // todo DAVEPECK -- how to use django url function to generate the "/apps/" url root below???  or we can just leave it
+        var html = '<div class="app"> <a href="/apps/' + transit_app.slug + '"><img src="' + transit_app.screen_shot_url + '" alt="Application Screen Shot" /></a>';
         html += '<h5><a href="' + transit_app.url + '">' + transit_app.title + '</a></h5>';
         html += '<p>' + transit_app.description + '</p>';
         html += '</div>';
