@@ -53,7 +53,7 @@ def details(request, transit_app):
 @requires_valid_transit_app_slug
 def screenshot(request, transit_app, screen_shot_index, screen_shot_size_name):
     # NOTE/HACK: right now I just assume the extension is PNG (it's hard coded into the URL)
-    bytes, ignored_extension = transit_app.get_screen_shot_bytes_and_extension(index = screen_shot_index, size_name = screen_shot_size_name)
+    bytes, ignored_extension = transit_app.get_screen_shot_bytes_and_extension(index = int(screen_shot_index), size_name = screen_shot_size_name)
     if not bytes: raise Http404
     return render_image_response(request, bytes)
 

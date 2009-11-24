@@ -8,9 +8,32 @@ from django.conf import settings
 from google.appengine.ext.webapp import template
 from django.template.loader import get_template as djangot_get_template
 from django.template import Context as djangot_Context
+from django.core.urlresolvers import reverse
+
+from .models import TransitApp
+
 
 register = template.create_template_register()
 
+
+def _resolve_variable_or_expression(v_or_e, context):
+    value = None
+
+    # Try it as a variable first            
+    try:
+        variable = djangot.Variable(v_or_e)
+        value = variable.resolve(context)
+    except:
+        value = None
+
+    # And as an actual python value second
+    if value is None:
+        try:
+            value = eval(v_or_e)
+        except:
+            value = None
+            
+    return value
 
 #------------------------------------------------------------------------------
 # "Static URLs."
@@ -31,6 +54,46 @@ class StaticUrlNode(djangot.Node):
 
     def render(self, context):
         return self.relative_path
+
+
+#------------------------------------------------------------------------------
+# Screen Shot Image Tag -- resolves to nothing if there is no image
+#------------------------------------------------------------------------------
+
+@register.tag(name="screen_shot_image_url")
+def screen_shot_image_url(parser, token):
+    try:
+        tag_name, transit_app_str, index_str, size_name = token.split_contents()
+    except ValueError:
+        raise djangot.TemplateSyntaxError, "screen_shot_image tag expects [1] the variable that holds the application, or a transit app slug, [2] the index of the screen shot (literal or variable), and [3] the size name desired (original, large, small)"
+    return ScreenShotImageUrlNode(transit_app_str.strip(), index_str.strip(), size_name.strip())
+    
+class ScreenShotImageUrlNode(djangot.Node):
+    def __init__(self, transit_app_str, index_str, size_name):
+        self.transit_app_str = transit_app_str
+        self.index_str = index_str
+        self.size_name = size_name
+        
+    def render(self, context):
+        # First, get a slug. Either we have a TransitApp instance, or a slug string.        
+        transit_app = _resolve_variable_or_expression(self.transit_app_str, context)
+        if isinstance(transit_app, basestring):
+            transit_app_slug = str(transit_app)
+        elif isinstance(transit_app, TransitApp):
+            try:
+                transit_app_slug = transit_app.slug
+            except:
+                return "" # Can't do anything about this error. Fail silently like a good Django template.
+                
+        # Second, get the image index...
+        index_maybe = _resolve_variable_or_expression(self.index_str, context)
+        try:
+            index = int(index_maybe)
+        except:
+            index = 0
+            
+        # Now form the URL
+        return reverse("apps_screenshot", kwargs = {'transit_app_slug': transit_app_slug, 'screen_shot_index': index, 'screen_shot_size_name': self.size_name})
 
 
 #------------------------------------------------------------------------------
@@ -84,22 +147,7 @@ class PartialNode(djangot.Node):
 
         # Run through the dictionary and evaluate it
         for key, value_name in self.dictionary_info.iteritems():
-            new_context_value = None
-
-            # Try it as a variable first            
-            try:
-                v = djangot.Variable(value_name)
-                new_context_value = v.resolve(context)
-            except:
-                new_context_value = None
-
-            # And as an actual python value second
-            if new_context_value is None:
-                try:
-                    new_context_value = eval(value_name)
-                except:
-                    new_context_value = None
-
+            new_context_value = _resolve_variable_or_expression(value_name, context)
             new_context[key] = new_context_value
 
         # Render the template

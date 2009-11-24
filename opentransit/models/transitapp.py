@@ -85,22 +85,12 @@ class TransitApp(db.Model):
         "walking": "Walking",
     }
     
-    SCREEN_SHOT_ORIGINAL_SIZE = ImageBlob.ORIGINAL_SIZE
-    SCREEN_SHOT_LARGE_SIZE = (180, 180)
-    SCREEN_SHOT_SMALL_SIZE = (80, 80)
-    
-    SCREEN_SHOT_SIZE_TO_NAME = {
-        SCREEN_SHOT_ORIGINAL_SIZE: "original",
-        SCREEN_SHOT_LARGE_SIZE: "large",
-        SCREEN_SHOT_SMALL_SIZE: "small",
-    }
-    
-    SCREEN_SHOT_NAME_TO_SIZE = {
-        "original": SCREEN_SHOT_ORIGINAL_SIZE,
-        "large": SCREEN_SHOT_LARGE_SIZE,
-        "small": SCREEN_SHOT_SMALL_SIZE,
-    }
-            
+    SCREEN_SHOT_SIZES = [
+        ("original", ImageBlob.ORIGINAL_SIZE),
+        ("large", (180, 180)),
+        ("small", (80, 80)),
+    ]
+                    
     @staticmethod 
     def platform_choices():
         if hasattr(TransitApp, '_platform_choices'):
@@ -122,6 +112,18 @@ class TransitApp(db.Model):
     @staticmethod
     def gtfs_public_choices():
         return [("yes_public", "My application supports all publicly available GTFS feeds."), ("no_public", "My application supports specific GTFS feeds. Let me choose them.")]
+        
+    @staticmethod
+    def screen_shot_size_from_name(size_name):
+        for name, (width, height) in TransitApp.SCREEN_SHOT_SIZES:
+            if name == size_name:
+                return (width, height)
+    
+    @staticmethod
+    def screen_shot_name_from_size(size):
+        for name, (width, height) in TransitApp.SCREEN_SHOT_SIZES:
+            if (width, height) == size:
+                return name
         
     slug                = db.StringProperty(indexed = True)
     title               = db.StringProperty(required = True)
@@ -162,18 +164,32 @@ class TransitApp(db.Model):
             "default_small_screen_shot_url": self.default_small_screen_shot_url,
         }
     
+    @property
+    def screen_shot_count(self):
+        return len(self.screen_shot_families)
+    
+    @property
+    def screen_shot_indexes(self):
+        """For use in template for loops."""
+        return range(self.screen_shot_count)
+        
+    @property
+    def screen_shot_non_default_indexes(self):
+        """For use in template for loops."""
+        return range(1, self.screen_shot_count)
+        
     def get_screen_shot_url(self, index, width = None, height = None, size = None, size_name = None):
         if (width is not None) and (height is not None):
-            size_name = TransitApp.SCREEN_SHOT_SIZE_TO_NAME[(width, height)]
+            size_name = TransitApp.screen_shot_name_from_size((width, height))
         elif size is not None:
-            size_name = TransitApp.SCREEN_SHOT_SIZE_TO_NAME[size]
+            size_name = TransitApp.screen_shot_name_from_size(size)
         return reverse('apps_screenshot', kwargs = {'transit_app_slug': self.slug, 'screen_shot_index': index, 'screen_shot_size_name': size_name})
         
     def _resolve_screen_shot(self, index, width = None, height = None, size = None, size_name = None):
         if size is not None:
             width, height = size
         elif size_name is not None:
-            width, height = TransitApp.SCREEN_SHOT_NAME_TO_SIZE[size_name]
+            width, height = TransitApp.screen_shot_size_from_name(size_name)
         family = self.screen_shot_families[index]        
         return (family, width, height)
                 
@@ -193,11 +209,11 @@ class TransitApp(db.Model):
         
     @property
     def default_large_screen_shot_url(self):
-        return self.get_screen_shot_url(index = 0, size = TransitApp.SCREEN_SHOT_LARGE_SIZE)
+        return self.get_screen_shot_url(index = 0, size = TransitApp.screen_shot_size_from_name("large"))
     
     @property
     def default_small_screen_shot_url(self):
-        return self.get_screen_shot_url(index = 0, size = TransitApp.SCREEN_SHOT_SMALL_SIZE)
+        return self.get_screen_shot_url(index = 0, size = TransitApp.screen_shot_size_from_name("small"))
                 
     @property
     def details_url(self):
