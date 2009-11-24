@@ -252,9 +252,9 @@
 	}
 	#header #nav {
 		position:absolute;
-		top: 90px;
-		left: 1px;
-		color: #999;
+		top: 93px;
+		left: 86px;
+		color: #ccc;
 	}
 	#header #front-seat-logo {
 		position: absolute;
@@ -263,10 +263,10 @@
 	}
 	#header #nav a {
 		text-decoration: none;
-		color: #777;
-		font-size: 14px;
+		font-size: 13px;
+		font-weight: bold;
 		position: relative;
-		top: 2px;
+		top: 1px;
 	}
 	#header #nav a:hover {
 		color: #628dc7;
