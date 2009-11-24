@@ -1,0 +1,21 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}City Go Round ADMIN Homepage{% endblock %}
+
+{% block content %}
+<div id="admin-home">
+    <h2>Successfully updated the schema of all out-of-date apps.</h2>
+    
+    <p>The schema of {{update_count}} apps was changed. In addition, {{blob_count}} new image blobs were created.</p>
+
+    <p>&nbsp;</p>
+    
+    <p style="font-size: small">WARNING: You may find that a lot of the images for older apps aren't very high-res. That's because until recently we weren't keeping the original bytes around. So, um, expect pixels and maybe aspect ratio artifacts.</p>
+
+    <p>&nbsp;</p>
+    
+    <p>Not convinced this worked? Check out the AppEngine <a href="https://appengine.google.com/datastore/explorer?app_id=citygoround&amp;viewby=kind&amp;kind=TransitApp">admin control panel</a></p>
+    
+    <p>Can I interest you in a visit to the <a href="{% url admin_home %}">City-Go-Round admin homepage</a>?</p>    
+</div>
+{% endblock %}

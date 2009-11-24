@@ -271,3 +271,68 @@ def refresh_all_bayesian_averages(request):
         logging.info( "%s: new bayesian average %s"%(app.key().id(), app.bayesian_average) )
         
     return HttpResponse( "Should have worked alright. Check out the log." )
+    
+def admin_apps_update_schema(request):
+    changed_apps = []
+    new_blobs = []
+    
+    for transit_app in TransitApp.all():    
+        changed = False
+        
+        # Make sure that the app has appropriate dates
+        if not hasattr(transit_app, 'date_added'):
+            transit_app.date_added = datetime.now()
+            changed = True
+            
+        if transit_app.date_added is None:
+            transit_app.date_added = datetime.now()
+            changed = True
+            
+        if not hasattr(transit_app, 'date_last_updated'):
+            transit_app.date_last_updated = datetime.now()
+            changed = True
+        
+        if transit_app.date_last_updated is None:
+            transit_app.date_last_updated = datetime.now()
+            changed = True
+            
+        # Make sure that the app has an is_featured value
+        if not hasattr(transit_app, 'is_featured'):
+            transit_app.is_featured = False
+            changed = True
+        
+        if transit_app.is_featured is None:
+            transit_app.is_featured = False
+            changed = True
+            
+        # Make sure that the app does NOT have an old-style screen_shot blob
+        if hasattr(transit_app, 'screen_shot'):
+            blob = getattr(transit_app, 'screen_shot')
+            if blob:
+                changed = True
+                transit_app.screen_shot = None
+                
+                # Oh boy. We have to make screen shots.
+                families, blobs = get_families_and_screen_shot_blobs([blob])
+                if not has_attr(transit_app, 'screen_shot_families'):
+                    transit_app.screen_shot_families = []
+                if transit_app.screen_shot_families is None:
+                    transit_app.screen_shot_families = []
+                    
+                transit_app.screen_shot_families.extend(families)
+                new_blobs.extend(blobs)
+       
+        # Remember this app, if it changed
+        if changed:
+            changed_apps.append(transit_app)
+    
+    # Looks like we're done. Attempt to commit everything to our database.
+    db.put(changed_apps)
+    db.put(new_blobs)
+    
+    # Render some vaguely useful results
+    template_vars = {
+        "update_count": len(changed_apps),
+        "blob_count": len(new_blobs),
+    }    
+    return render_to_response(request, "admin/apps-update-schema-finished.html", template_vars)

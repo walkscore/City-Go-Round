@@ -21,12 +21,13 @@
     <p>Force the <a href="{% url update_feed_references %}">feed references to update</a> from GTFS Exchange.</p>
     <p>Force all agencies to <a href="{% url admin_agencies_update_locations %}">update their geocell information</a> based on their current latitude/longitude.</p>
     <p>Get a <a href="{% url admin_feed_references %}">list of feed references</a>.</p>
-    <p>Run <a href="/admin/test">unit and functional tests</a>.</p>
-    <p>Refresh <a href="/admin/apps/bayes/refresh">all app rating bayesian averages</a></p>
+    <p>Run <a href="/admin/test">unit and functional tests</a>.</p> <!-- this URL can't be done via the URL template tag. All others should be... -->
+    <p>Refresh <a href="{% url refresh_all_bayesian_averages %}">all app rating bayesian averages</a></p>
+    <p>Update <a href="{% url admin_apps_update_schema %}">outdated transit apps</a> in the datastore to match the latest schema.</p>
     
     <p>&nbsp;</p>
     
-    <h2>Here are some statistics</h2>
+    <h2>Here are some statistics:</h2>
     {% for stat in all_stats %}
     <p>{{stat.name}}:{{stat.value}}</p>
     {% endfor %}
