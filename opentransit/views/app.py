@@ -217,19 +217,20 @@ def app_rating_vote(request):
         return HttpResponseForbidden( "you've already voted for the app with key id %s"%app_key_id )
     
     # set side-wide rating average for use in creating sorting metric using bayesian average
-    all_apps_average_rating = NamedStat.get_stat( "all_apps_average_rating" )
-    all_apps_num_ratings = NamedStat.get_stat( "all_apps_num_ratings" )
-    all_apps_average_rating.value = (all_apps_average_rating.value*all_apps_num_ratings.value + rating)/(all_apps_num_ratings.value+1)
-    all_apps_num_ratings.value = all_apps_num_ratings.value+1
-    all_apps_average_rating.put()
-    all_apps_num_ratings.put()
+    all_rating_sum = NamedStat.get_stat( "all_rating_sum" )
+    all_rating_sum.value = all_rating_sum.value + rating
+    all_rating_sum.put()
+    
+    all_rating_count = NamedStat.get_stat( "all_rating_count" )
+    all_rating_count.value = all_rating_count.value + 1
+    all_rating_count.put()
     
     # get the app, add the rating
     app = TransitApp.get_by_id( app_key_id )
     app.add_rating( rating )
     
     # refresh the app's bayesian average
-    app.refresh_bayesian_average(all_apps_average_rating, all_apps_num_ratings)
+    app.refresh_bayesian_average(all_rating_sum, all_rating_count)
     
     app.put()
     
@@ -238,12 +239,12 @@ def app_rating_vote(request):
 def refresh_all_bayesian_averages(request):
     all_apps = TransitApp.all()
     
-    all_apps_average_rating = NamedStat.get_stat( "all_apps_average_rating" )
-    all_apps_num_ratings = NamedStat.get_stat( "all_apps_num_ratings" )
+    all_rating_sum = NamedStat.get_stat( "all_rating_sum" )
+    all_rating_count = NamedStat.get_stat( "all_rating_count" )
     
     for app in all_apps:
         logging.info( "%s: old bayesian average %s"%(app.key().id(), app.bayesian_average) )
-        app.refresh_bayesian_average( all_apps_average_rating, all_apps_num_ratings )
+        app.refresh_bayesian_average( all_rating_sum, all_rating_count )
         app.put()
         logging.info( "%s: new bayesian average %s"%(app.key().id(), app.bayesian_average) )
         

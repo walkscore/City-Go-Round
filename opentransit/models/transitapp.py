@@ -120,7 +120,8 @@ class TransitApp(db.Model):
     date_added          = db.DateTimeProperty(auto_now_add = True, indexed = True)
     date_last_updated   = db.DateTimeProperty(auto_now = True, indexed = True)
     is_featured         = db.BooleanProperty(indexed = True, default = False)
-    ratings             = db.ListProperty(int)
+    rating_sum          = db.FloatProperty(default=0.0)
+    rating_count        = db.IntegerProperty(default=0)
     bayesian_average    = db.FloatProperty()
     
     def __init__(self, *args, **kwargs):
@@ -270,29 +271,33 @@ class TransitApp(db.Model):
         self.explicitly_supported_countries.extend(country_codes)
         
     def add_rating(self, rating):
-        self.ratings.append( rating )
+        self.rating_sum += rating
+        self.rating_count += 1
         
     @property
     def average_rating(self):
-        if len(self.ratings)==0:
+        if self.rating_count==0:
             return None
         
-        return sum(self.ratings)/float(len(self.ratings))
+        return self.rating_sum/self.rating_count
         
     @property
     def num_ratings(self):
-        return len(self.ratings)
+        return self.rating_count
     
-    def refresh_bayesian_average(self, all_apps_average_rating=None, all_apps_num_ratings=None):
-        all_apps_average_rating = all_apps_average_rating or NamedStat.get_stat( "all_apps_average_rating" )
-        all_apps_num_ratings = all_apps_num_ratings or NamedStat.get_stat( "all_apps_num_ratings" )
+    def refresh_bayesian_average(self, all_rating_sum=None, all_rating_count=None):
+        all_rating_sum = all_rating_sum or NamedStat.get_stat( "all_rating_sum" )
+        all_rating_count = all_rating_count or NamedStat.get_stat( "all_rating_count" )
         
-        #logging.info( "m=%s"%all_apps_average_rating.value )
-        #logging.info( "C=%s"%all_apps_num_ratings.value )
-        #logging.info( "sumx=%s"%sum(self.ratings) )
-        #logging.info( "n=%s"%len(self.ratings) )
+        Cm = all_rating_sum.value
+        sumx = self.rating_sum
+        n = self.rating_count
+        C = all_rating_count.value
         
-        bayesian_average = (all_apps_average_rating.value*all_apps_num_ratings.value + sum(self.ratings))/float(all_apps_num_ratings.value+len(self.ratings))
+        if (n+C)>0:
+            bayesian_average = (Cm + sumx)/float(n+C)
+        else:
+            bayesian_average = None
         self.bayesian_average = bayesian_average
         
     @staticmethod

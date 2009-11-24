@@ -1,8 +1,11 @@
 {% extends 'base.html' %}
 
-{% block title %}Open Transit Data &raquo; Details For {{transit_app.title}}{% endblock %}
+{% block headscripts %}
+<link rel="stylesheet" type="text/css" href="/css/jquery.rating.css" media="screen" />
+<script type="text/javascript" src="/js/jquery.rating.pack.js"></script>
+{% endblock %}
 
-{% block content %}
+{% block extra_head %}
 
     <script type="text/javascript">
     
@@ -18,14 +21,23 @@
 
     }
     
-    function vote( data ) {
-      $.getJSON( "/admin/apps/rating/", {'app_key_id':'{{transit_app.key.id}}','rating':data}, react_to_vote );
-    }
-    
      $(document).ready(function(){
+     
+       $('.auto-submit-star').rating({ 
+         callback: function(value, link){ 
+                     $.getJSON( "/admin/apps/rating/", {'app_key_id':'{{transit_app.key.id}}','rating':value}, react_to_vote );
+                   } 
+       });
+     
      });
 
     </script>
+
+{% endblock %}
+
+{% block title %}Open Transit Data &raquo; Details For {{transit_app.title}}{% endblock %}
+
+{% block content %}
 
     <!-- TODO jesse: add some design here. (dave) -->
     
@@ -35,13 +47,14 @@
         {% if not already_voted %}
         <div id="votebooth">
         Your rating:<form name="rating" action="/app/rating" method="POST">
-        <input type="radio" name="rating" value="1" onchange="vote(this.value);">
-        <input type="radio" name="rating" value="2" onchange="vote(this.value);">
-        <input type="radio" name="rating" value="3" onchange="vote(this.value);">
-        <input type="radio" name="rating" value="4" onchange="vote(this.value);">
-        <input type="radio" name="rating" value="5" onchange="vote(this.value);">
+        <input type="radio" name="rating" value="1" onchange="vote(this.value);" class="auto-submit-star">
+        <input type="radio" name="rating" value="2" onchange="vote(this.value);" class="auto-submit-star">
+        <input type="radio" name="rating" value="3" onchange="vote(this.value);" class="auto-submit-star">
+        <input type="radio" name="rating" value="4" onchange="vote(this.value);" class="auto-submit-star">
+        <input type="radio" name="rating" value="5" onchange="vote(this.value);" class="auto-submit-star">
         </form>
         </div>
+        <br>
         {% endif %}
         
         <table>
