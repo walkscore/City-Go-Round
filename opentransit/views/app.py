@@ -275,52 +275,49 @@ def refresh_all_bayesian_averages(request):
 def admin_apps_update_schema(request):
     changed_apps = []
     new_blobs = []
-    
+
     for transit_app in TransitApp.all():    
         changed = False
         
         # Make sure that the app has appropriate dates
-        if not hasattr(transit_app, 'date_added'):
+        if not transit_app.date_added:
             transit_app.date_added = datetime.now()
             changed = True
             
-        if transit_app.date_added is None:
-            transit_app.date_added = datetime.now()
-            changed = True
-            
-        if not hasattr(transit_app, 'date_last_updated'):
-            transit_app.date_last_updated = datetime.now()
-            changed = True
-        
-        if transit_app.date_last_updated is None:
+        if not transit_app.date_last_updated:
             transit_app.date_last_updated = datetime.now()
             changed = True
             
-        # Make sure that the app has an is_featured value
-        if not hasattr(transit_app, 'is_featured'):
+        if not transit_app.is_featured:
             transit_app.is_featured = False
             changed = True
         
-        if transit_app.is_featured is None:
-            transit_app.is_featured = False
+        if not transit_app.supports_any_gtfs:
+            transit_app.supports_any_gtfs = False
             changed = True
             
-        # Make sure that the app does NOT have an old-style screen_shot blob
-        if hasattr(transit_app, 'screen_shot'):
-            blob = getattr(transit_app, 'screen_shot')
-            if blob:
-                changed = True
-                transit_app.screen_shot = None
+        if not transit_app.supports_all_public_agencies:
+            transit_app.supports_all_public_agencies = False
+            changed = True
+        
+        if not transit_app.explicitly_supports_the_entire_world:
+            transit_app.explicitly_supports_the_entire_world = False
+            changed = True
+            
+        blob = transit_app.screen_shot
+        if blob:
+            changed = True
+            transit_app.screen_shot = None
+            
+            # Oh boy. We have to make screen shots.
+            families, blobs = get_families_and_screen_shot_blobs([str(blob)])
+            if not has_attr(transit_app, 'screen_shot_families'):
+                transit_app.screen_shot_families = []
+            if transit_app.screen_shot_families is None:
+                transit_app.screen_shot_families = []
                 
-                # Oh boy. We have to make screen shots.
-                families, blobs = get_families_and_screen_shot_blobs([blob])
-                if not has_attr(transit_app, 'screen_shot_families'):
-                    transit_app.screen_shot_families = []
-                if transit_app.screen_shot_families is None:
-                    transit_app.screen_shot_families = []
-                    
-                transit_app.screen_shot_families.extend(families)
-                new_blobs.extend(blobs)
+            transit_app.screen_shot_families.extend(families)
+            new_blobs.extend(blobs)
        
         # Remember this app, if it changed
         if changed:

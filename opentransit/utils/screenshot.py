@@ -1,3 +1,4 @@
+import logging
 from google.appengine.ext import db
 
 from .image import crop_and_resize_image, convert_image

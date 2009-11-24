@@ -145,6 +145,8 @@ class TransitApp(db.Model):
     rating_count        = db.IntegerProperty(default=0)
     bayesian_average    = db.FloatProperty()
     
+    screen_shot         = db.BlobProperty() # THIS FIELD IS DEPRECATED. DO NOT USE IT. IT IS KEPT ONLY FOR BACKWARDS COMPAT.
+    
     def __init__(self, *args, **kwargs):
         super(TransitApp, self).__init__(*args, **kwargs)
         self.slug = slugify(self.title)
@@ -247,13 +249,13 @@ class TransitApp(db.Model):
     def has_transit_app_for_slug(transit_app_slug):
         return (TransitApp.transit_app_for_slug(transit_app_slug) is not None)
 
-    supports_any_gtfs = db.BooleanProperty()
-    supports_all_public_agencies = db.BooleanProperty(indexed = True)
+    supports_any_gtfs = db.BooleanProperty(default = False)
+    supports_all_public_agencies = db.BooleanProperty(default = False, indexed = True)
     explicitly_supported_agency_keys = db.ListProperty(db.Key)
     explicitly_supported_city_slugs = db.StringListProperty(indexed = True)   # ["seattle", "san-francisco", ...]
     explicitly_supported_city_details = db.StringListProperty() # ["Seattle,WA,US", "San Francisco,CA,US", ...]
     explicitly_supported_countries = db.StringListProperty() # ["US", "DE", ...]
-    explicitly_supports_the_entire_world = db.BooleanProperty(indexed = True)
+    explicitly_supports_the_entire_world = db.BooleanProperty(default = False, indexed = True)
             
     @staticmethod
     def all_supporting_public_agencies():
