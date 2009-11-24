@@ -5,12 +5,14 @@ import pickle
 from datetime import datetime, timedelta, date
 
 from django.conf import settings
+from django.http import Http404
 from google.appengine.ext import db
 
 from ..forms import NewAppGeneralInfoForm, NewAppAgencyForm, NewAppLocationForm, PetitionForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, render_image_response, redirect_to_url
 from ..utils.image import crop_and_resize_image_to_square
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
+from ..utils.screenshot import get_families_and_screen_shot_blobs
 from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid
 from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress, FeedReference
 
@@ -43,10 +45,11 @@ def details(request, transit_app):
     return render_to_response(request, 'app/details.html', template_vars)
     
 @requires_valid_transit_app_slug
-def screenshot(request, transit_app):
-    if transit_app.has_screen_shot:
-        return render_image_response(request, transit_app.screen_shot)
-    return redirect_to_url("/images/default-transit-app.png")
+def screenshot(request, transit_app, screen_shot_index, screen_shot_size_name):
+    # NOTE/HACK: right now I just assume the extension is PNG (it's hard coded into the URL)
+    bytes, ignored_extension = transit_app.get_screen_shot_bytes_and_extension(index = screen_shot_index, size_name = screen_shot_size_name)
+    if not bytes: raise Http404
+    return render_image_response(request, bytes)
 
 def add_form(request):
     if request.method == 'POST':
@@ -55,13 +58,16 @@ def add_form(request):
             # Create a data store entity to hold on to progress with our form
             progress = TransitAppFormProgress.new_with_uuid()
                         
-            # Process the image, resizing if necessary, and failing silently if something goes wrong.
-            screen_shot_file = request.FILES.get('screen_shot', None)
-            if screen_shot_file:
-                screen_shot_bytes = crop_and_resize_image_to_square(screen_shot_file.read(), settings.TRANSIT_APP_IMAGE_WIDTH, settings.TRANSIT_APP_IMAGE_HEIGHT)
-                if screen_shot_bytes:
-                    progress.screen_shot = db.Blob(screen_shot_bytes)
-
+            # Process the images, resizing if desired, and failing silently if something goes wrong.
+            screen_shot_files = [request.FILES.get(name, None) for name in ('screen_shot', 'screen_shot_2', 'screen_shot_3', 'screen_shot_4', 'screen_shot_5')]
+            screen_shot_files_bytes = [screen_shot_file.read() if screen_shot_file else None for screen_shot_file in screen_shot_files]
+            families, blobs = get_families_and_screen_shot_blobs(screen_shot_files_bytes)            
+            progress.screen_shot_families.extend(families)
+            
+            # Write the individual images to the data store
+            # TODO error handling.
+            db.put(blobs)
+            
             # Hold onto the information in this form, so we can use it later.
             # (Unfortunately we can't just pickle the form itself.)
             info_form = {
@@ -150,7 +156,7 @@ def add_locations(request, progress_uuid):
             transit_app.platforms = info_form['platform_list']
             transit_app.categories = info_form['category_list']
             transit_app.supports_any_gtfs = info_form['supports_gtfs']
-            transit_app.screen_shot = db.Blob(progress.screen_shot)
+            transit_app.screen_shot_families = progress.screen_shot_families
             
             # 2. If present, unpack and handle the agency form
             if progress.agency_form_pickle and str(progress.agency_form_pickle):

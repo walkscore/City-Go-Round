@@ -1,7 +1,7 @@
-TransitData.org
-===================
+CityGoRound.org
+===============
 
-The following repository contains all the code to power the [Transit Data](http://transitdata.org/) web site.
+The following repository contains all the code to power the [City-Go-Round](http://www.citygoround.org/) web site.
 
 It is an AppEngine application running Django 1.1.
 
