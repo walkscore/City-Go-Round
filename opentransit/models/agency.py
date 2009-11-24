@@ -71,8 +71,13 @@ class Agency(GeoModel):
             'city': self.city,
             'urlslug': self.urlslug,
             'state': self.state,
+            'details_url': self.details_url,
             'key_encoded': str(self.key()),            
         }
+
+    @property
+    def details_url(self):
+        return reverse("agencies_all_slugs", kwargs={"countryslug": self.countryslug, "stateslug": self.stateslug, "cityslug": self.cityslug, "nameslug": self.nameslug})
                 
     @property
     def is_public(self):

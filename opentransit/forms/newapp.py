@@ -15,6 +15,10 @@ class NewAppGeneralInfoForm(forms.Form):
     categories          = forms.MultipleChoiceField(choices = TransitApp.category_choices(), widget = forms.widgets.CheckboxSelectMultiple(), initial=[u"public_transit"], label = u"Categories (choose at least one):")
     tags                = forms.CharField(required = False, max_length = 1024, min_length = 0, label = u"Extra Tags (comma separated)")
     screen_shot         = AppEngineImageField(required = True, label = u"Screen Shot (required)")
+    screen_shot_2       = AppEngineImageField(required = False, label = u"Screen Shot #2 (optional)")
+    screen_shot_3       = AppEngineImageField(required = False, label = u"Screen Shot #3 (optional)")
+    screen_shot_4       = AppEngineImageField(required = False, label = u"Screen Shot #4 (optional)")
+    screen_shot_5       = AppEngineImageField(required = False, label = u"Screen Shot #5 (optional)")
     supports_gtfs       = forms.BooleanField(required = False, label = u"My app uses GTFS feeds or other data from specific transit agencies:", initial = True) 
     
     def clean_title(self):

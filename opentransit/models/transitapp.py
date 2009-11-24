@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from google.appengine.ext import db
 from geo.geomodel import GeoModel
 from .agency import Agency
+from .imageblob import ImageBlob
 from ..utils.slug import slugify
 from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_keys, unique_entities, iter_uniquify
 from ..utils.places import CityInfo
@@ -83,7 +84,15 @@ class TransitApp(db.Model):
         "biking": "Biking", 
         "walking": "Walking",
     }
-        
+    
+    SCREEN_SHOT_SIZES = [
+        ("original", ImageBlob.ORIGINAL_SIZE),
+        ("300w", (300, 0)),
+        ("145w", (145, 0)),
+        ("180sq", (180, 180)),
+        ("80sq", (80, 80)),
+    ]
+                    
     @staticmethod 
     def platform_choices():
         if hasattr(TransitApp, '_platform_choices'):
@@ -106,6 +115,18 @@ class TransitApp(db.Model):
     def gtfs_public_choices():
         return [("yes_public", "My application supports all publicly available GTFS feeds."), ("no_public", "My application supports specific GTFS feeds. Let me choose them.")]
         
+    @staticmethod
+    def screen_shot_size_from_name(size_name):
+        for name, (width, height) in TransitApp.SCREEN_SHOT_SIZES:
+            if name == size_name:
+                return (width, height)
+    
+    @staticmethod
+    def screen_shot_name_from_size(size):
+        for name, (width, height) in TransitApp.SCREEN_SHOT_SIZES:
+            if (width, height) == size:
+                return name
+        
     slug                = db.StringProperty(indexed = True)
     title               = db.StringProperty(required = True)
     description         = db.StringProperty()
@@ -114,15 +135,17 @@ class TransitApp(db.Model):
     author_email        = db.EmailProperty()
     long_description    = db.TextProperty()
     tags                = db.StringListProperty()
-    screen_shot         = db.BlobProperty()
     platforms           = db.StringListProperty() # These also go into tags, automatically
     categories          = db.StringListProperty() # These also go into tags, automatically  
     date_added          = db.DateTimeProperty(auto_now_add = True, indexed = True)
     date_last_updated   = db.DateTimeProperty(auto_now = True, indexed = True)
     is_featured         = db.BooleanProperty(indexed = True, default = False)
+    screen_shot_families = db.StringListProperty() # Ordered list of screen shot families, length >= 1
     rating_sum          = db.FloatProperty(default=0.0)
     rating_count        = db.IntegerProperty(default=0)
     bayesian_average    = db.FloatProperty()
+    
+    screen_shot         = db.BlobProperty() # THIS FIELD IS DEPRECATED. DO NOT USE IT. IT IS KEPT ONLY FOR BACKWARDS COMPAT.
     
     def __init__(self, *args, **kwargs):
         super(TransitApp, self).__init__(*args, **kwargs)
@@ -140,20 +163,76 @@ class TransitApp(db.Model):
             "author_name": str(self.author_name), # DO NOT INCLUDE AUTHOR EMAIL.
             "long_description": self.long_description,
             "tags": self.tags,
-            "screen_shot_url": self.screen_shot_url,
+            "details_url": self.details_url,
+            "default_300w_screen_shot_url": self.default_300w_screen_shot_url,
+            "default_145w_screen_shot_url": self.default_145w_screen_shot_url,
+            "default_180sq_screen_shot_url": self.default_180sq_screen_shot_url,
+            "default_80sq_screen_shot_url": self.default_80sq_screen_shot_url,
         }
     
     @property
-    def has_screen_shot(self):
-        return (self.screen_shot is not None)
+    def screen_shot_count(self):
+        return len(self.screen_shot_families)
+    
+    @property
+    def screen_shot_indexes(self):
+        """For use in template for loops."""
+        return range(self.screen_shot_count)
         
     @property
-    def screen_shot_url(self):
-        if self.has_screen_shot:
-            return reverse('apps_screenshot', kwargs = {'transit_app_slug': self.slug})
-        else:
-            return "/images/default-transit-app.png"            
+    def screen_shot_non_default_indexes(self):
+        """For use in template for loops."""
+        return range(1, self.screen_shot_count)
         
+    def get_screen_shot_url(self, index, width = None, height = None, size = None, size_name = None):
+        if (width is not None) and (height is not None):
+            size_name = TransitApp.screen_shot_name_from_size((width, height))
+        elif size is not None:
+            size_name = TransitApp.screen_shot_name_from_size(size)
+        return reverse('apps_screenshot', kwargs = {'transit_app_slug': self.slug, 'screen_shot_index': index, 'screen_shot_size_name': size_name})
+        
+    def _resolve_screen_shot(self, index, width = None, height = None, size = None, size_name = None):
+        if size is not None:
+            width, height = size
+        elif size_name is not None:
+            width, height = TransitApp.screen_shot_size_from_name(size_name)
+        family = self.screen_shot_families[index]        
+        return (family, width, height)
+                
+    def has_screen_shot(self, index, width = None, height = None, size = None, size_name = None):
+        try:
+            family, width, height = self._resolve_screen_shot(index = index, width = width, height = height, size = size, size_name = size_name)
+        except:
+            return False
+        return True
+        
+    def get_screen_shot_bytes_and_extension(self, index, width = None, height = None, size = None, size_name = None):
+        try:
+            family, width, height = self._resolve_screen_shot(index = index, width = width, height = height, size = size, size_name = size_name)
+        except:
+            return (None, None)
+        return ImageBlob.get_bytes_and_extension_for_family_and_size(family, (width, height))
+        
+    @property
+    def default_300w_screen_shot_url(self):
+        return self.get_screen_shot_url(index = 0, size = TransitApp.screen_shot_size_from_name("300w"))
+
+    @property
+    def default_145w_screen_shot_url(self):
+        return self.get_screen_shot_url(index = 0, size = TransitApp.screen_shot_size_from_name("145w"))
+
+    @property
+    def default_180sq_screen_shot_url(self):
+        return self.get_screen_shot_url(index = 0, size = TransitApp.screen_shot_size_from_name("180sq"))
+        
+    @property
+    def default_80sq_screen_shot_url(self):
+        return self.get_screen_shot_url(index = 0, size = TransitApp.screen_shot_size_from_name("80sq"))
+                    
+    @property
+    def details_url(self):
+        return reverse("apps_details", kwargs = {'transit_app_slug': self.slug})
+                
     @staticmethod
     def all_by_most_recently_added():
         return TransitApp.all().order('-date_added')
@@ -170,13 +249,13 @@ class TransitApp(db.Model):
     def has_transit_app_for_slug(transit_app_slug):
         return (TransitApp.transit_app_for_slug(transit_app_slug) is not None)
 
-    supports_any_gtfs = db.BooleanProperty()
-    supports_all_public_agencies = db.BooleanProperty(indexed = True)
+    supports_any_gtfs = db.BooleanProperty(default = False)
+    supports_all_public_agencies = db.BooleanProperty(default = False, indexed = True)
     explicitly_supported_agency_keys = db.ListProperty(db.Key)
     explicitly_supported_city_slugs = db.StringListProperty(indexed = True)   # ["seattle", "san-francisco", ...]
     explicitly_supported_city_details = db.StringListProperty() # ["Seattle,WA,US", "San Francisco,CA,US", ...]
     explicitly_supported_countries = db.StringListProperty() # ["US", "DE", ...]
-    explicitly_supports_the_entire_world = db.BooleanProperty(indexed = True)
+    explicitly_supports_the_entire_world = db.BooleanProperty(default = False, indexed = True)
             
     @staticmethod
     def all_supporting_public_agencies():
@@ -370,8 +449,8 @@ class TransitApp(db.Model):
     @staticmethod
     def fetch_for_location_and_country_code(latitude, longitude, country_code, bbox_side_in_miles = settings.BBOX_SIDE_IN_MILES, uniquify = True):
         return [transit_app for transit_app in TransitApp.iter_for_location_and_country_code(latitude, longitude, country_code, uniquify = uniquify, bbox_side_in_miles = bbox_side_in_miles)]
+            
 
-    
 class TransitAppLocation(GeoModel):
     """Represents a many-many relationship between TransitApps and explcitly named cities where they work."""
     transit_app = db.ReferenceProperty(TransitApp, collection_name = "explicitly_supported_locations")
@@ -387,13 +466,14 @@ class TransitAppLocation(GeoModel):
             query = TransitAppLocation.all()
         return TransitAppLocation.bounding_box_fetch(query, bounding_box, max_results = max_results)      
 
+
 class TransitAppFormProgress(db.Model):
     """Holds on to key pieces of form progress that cannot be sent through invisible input fields."""
     progress_uuid = db.StringProperty(indexed = True, required = True)
     last_updated = db.DateTimeProperty(auto_now = True)    
     info_form_pickle = db.BlobProperty() # dictionary of stuff from original form, pickled.
     agency_form_pickle = db.BlobProperty() # dictionary of stuff from agency form, pickled.
-    screen_shot = db.BlobProperty()
+    screen_shot_families = db.StringListProperty()
 
     @staticmethod
     def new_with_uuid():
@@ -402,4 +482,4 @@ class TransitAppFormProgress(db.Model):
     @staticmethod
     def get_with_uuid(uuid):
         return TransitAppFormProgress.all().filter('progress_uuid =', uuid).get()
-
+    

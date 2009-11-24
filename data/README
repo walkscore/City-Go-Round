@@ -17,3 +17,12 @@ $ /path/to/google_appengine/appcfg.py upload_data . --filename=./data/agencies.c
 
 After you've imported, hit:
     http://localhost:8080/admin/feeds/update/
+
+
+-----------------------------
+
+OR, if you only need to do the bulk importer step, you can just:
+    cd /path/to/opentransitdata
+    ./data/do_data_import
+    
+    And it will "just do it!" -- but remember that appcfg.py has to be on your path.

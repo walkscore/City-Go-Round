@@ -41,7 +41,7 @@ urlpatterns += patterns(
     url(r'^agencies/(?P<countryslug>[\w-]+)/$', 'agencies'),
     url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/$', 'agencies'),
     url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/(?P<cityslug>[\w-]+)/$', 'agencies'),
-    url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/(?P<cityslug>[\w-]+)/(?P<nameslug>[\w-]+)/$', 'agencies'),
+    url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/(?P<cityslug>[\w-]+)/(?P<nameslug>[\w-]+)/$', 'agencies', name='agencies_all_slugs'),
     url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/(?P<cityslug>[\w-]+)/(?P<nameslug>[\w-]+)/edit/$', 'edit_agency'),
     url(r'^agencies/(?P<agency>\d+)/$', 'agencies'),
     url(r'^admin/agencies/$', 'admin_agencies_list', name='admin_agencies_list'),    
@@ -64,11 +64,12 @@ urlpatterns += patterns(
     url(r'^apps/add/agencies/(?P<progress_uuid>[\w]+)/$', 'add_agencies', name='apps_add_agencies'),
     url(r'^apps/add/success/$', 'add_success', name='apps_add_success'),
     url(r'^apps/(?P<transit_app_slug>[\w-]+)/$', 'details', name='apps_details'),
-    url(r'^apps/(?P<transit_app_slug>[\w-]+)/screenshot.png$', 'screenshot', name='apps_screenshot'),
+    url(r'^apps/(?P<transit_app_slug>[\w-]+)/screenshot-(?P<screen_shot_index>[\d]+)-(?P<screen_shot_size_name>[\w\d]+).png$', 'screenshot', name='apps_screenshot'),
     url(r'^admin/apps/$', 'admin_apps_list', name='admin_apps_list'),
     url(r'^admin/apps/edit/(?P<transit_app_slug>[\w-]+)/$', 'admin_apps_edit', name='admin_apps_edit'),
     url(r'^admin/apps/rating/$', 'app_rating_vote', name='app_rating_vote'),
-    url(r'^admin/apps/bayes/refresh/$', 'refresh_all_bayesian_averages', name='refresh_all_bayesian_averages')
+    url(r'^admin/apps/bayes/refresh/$', 'refresh_all_bayesian_averages', name='refresh_all_bayesian_averages'),
+    url(r'^admin/apps/update-schema/$', 'admin_apps_update_schema', name='admin_apps_update_schema'),
 )
 
 
