@@ -55,6 +55,7 @@ jQuery(document).ready(function($)
         // todo DAVEPECK -- how to use django url function to generate the "/apps/" url root below???  or we can just leave it
         var html = '<div class="app"> <a href="/apps/' + transit_app.slug + '"><img src="' + transit_app.screen_shot_url + '" alt="Application Screen Shot" /></a>';
         html += '<h5><a href="' + transit_app.url + '">' + transit_app.title + '</a></h5>';
+        html += '<label>By ' + transit_app.author_name + '</label>';
         html += '<p>' + transit_app.description + '</p>';
         html += '</div>';
         return html;

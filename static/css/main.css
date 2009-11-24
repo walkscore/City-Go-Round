@@ -95,7 +95,7 @@
 	
   p, a, ul, ol, blockquote, label, span, li {
 		font:12px Verdana, Arial, Helvetica, sans-serif;
-		color: #555;
+		color: #444;
 	}
 	ul, ol {
 		padding-left: 5px;
@@ -625,7 +625,18 @@
 		color: #c76402; 
 		font-size: 15px;
 		font-weight: normal;
+	}		
+	.app-gallery .app label { 
+		font-size: 11px;
+		color: #777;
 	}	
+	.app-gallery .app p span { 
+		font-size: 10px;
+		margin: 0;
+		padding: 0;
+	}	
+
+
 	
 /*********** APP DETAILS ****************/
     
