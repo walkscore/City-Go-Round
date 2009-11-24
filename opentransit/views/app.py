@@ -210,24 +210,43 @@ def increment_stat(request):
 
 def app_rating_vote(request):
     app_key_id = int( request.GET['app_key_id'] )
-    rating = int( request.GET['rating'] )
+    rating = int( request.GET['rating'] ) if request.GET['rating'] != "" else None
+        
+    # if they've already voted and they didn't delete their vote
+    if str(app_key_id) in request.COOKIES and request.COOKIES[ str(app_key_id) ] != "":
+
+        old_rating = int( request.COOKIES[ str(app_key_id) ] )
+        
+        #changing a vote
+        if rating is not None:
+            rating_delta = rating - old_rating
+            count_delta = 0
+        #removing a vote
+        else:
+            rating_delta = -old_rating
+            count_delta = -1
     
-    # if they've been cookied for this app_key_id, pop them an error
-    if str(app_key_id) in request.COOKIES:
-        return HttpResponseForbidden( "you've already voted for the app with key id %s"%app_key_id )
-    
+    #new vote
+    else:
+        rating_delta = rating
+        count_delta = 1
+            
     # set side-wide rating average for use in creating sorting metric using bayesian average
     all_rating_sum = NamedStat.get_stat( "all_rating_sum" )
-    all_rating_sum.value = all_rating_sum.value + rating
+    all_rating_sum.value = all_rating_sum.value + rating_delta
     all_rating_sum.put()
     
     all_rating_count = NamedStat.get_stat( "all_rating_count" )
-    all_rating_count.value = all_rating_count.value + 1
+    all_rating_count.value = all_rating_count.value + count_delta
     all_rating_count.put()
     
     # get the app, add the rating
     app = TransitApp.get_by_id( app_key_id )
-    app.add_rating( rating )
+    app.rating_sum += rating_delta
+    app.rating_count += count_delta
+    
+    logging.info( rating_delta )
+    logging.info( count_delta )
     
     # refresh the app's bayesian average
     app.refresh_bayesian_average(all_rating_sum, all_rating_count)

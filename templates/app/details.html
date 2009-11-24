@@ -14,18 +14,14 @@
       num_ratings = data[1];
     
       $("#ratings").html("average "+average_rating+"/5 over "+num_ratings+" votes");
-      
-      // hide the votebooth and cookie the browser on this app so they can't vote again
-      $("#votebooth").hide();
-      document.cookie ='{{transit_app.key.id}}=TRUE; expires=Thu, 2 Aug 2010 20:47:11 UTC; path=/';
-
     }
     
      $(document).ready(function(){
      
        $('.auto-submit-star').rating({ 
-         callback: function(value, link){ 
+         callback: function(value, link){
                      $.getJSON( "/admin/apps/rating/", {'app_key_id':'{{transit_app.key.id}}','rating':value}, react_to_vote );
+                     document.cookie ='{{transit_app.key.id}}='+value+'; expires=Thu, 2 Aug 2010 20:47:11 UTC; path=/';
                    } 
        });
      
@@ -44,7 +40,6 @@
     <div id="app-details" class="body-content">    
         <h2>{{transit_app.title}} DETAILS:</h2>
         Ratings: <div id="ratings">average {{transit_app.average_rating}}/5 over {{transit_app.num_ratings}} votes</div>
-        {% if not already_voted %}
         <div id="votebooth">
         Your rating:<form name="rating" action="/app/rating" method="POST">
         <input type="radio" name="rating" value="1" onchange="vote(this.value);" class="auto-submit-star">
@@ -55,7 +50,6 @@
         </form>
         </div>
         <br>
-        {% endif %}
         
         <table>
             <tr>
