@@ -1,6 +1,6 @@
 from google.appengine.ext import db
 
-from .image import crop_and_resize_image_to_square, convert_image
+from .image import crop_and_resize_image, convert_image
 from ..models import TransitApp, ImageBlob
 
 def get_family_and_screen_shot_blobs(image_bytes):
@@ -21,9 +21,9 @@ def get_family_and_screen_shot_blobs(image_bytes):
     blobs = [original_blob]
     family = original_blob.family    
     for name, (width, height) in TransitApp.SCREEN_SHOT_SIZES:
-        if (width != 0) and (height != 0):
+        if (width != 0) or (height != 0):
             blob = ImageBlob(family = family)
-            blob.image = db.Blob(crop_and_resize_image_to_square(image_bytes, width, height)) # defaults to PNG
+            blob.image = db.Blob(crop_and_resize_image(image_bytes, width, height)) # defaults to PNG
             blob.width = width
             blob.height = height
             blob.extension = "png"

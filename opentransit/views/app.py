@@ -10,7 +10,6 @@ from google.appengine.ext import db
 
 from ..forms import NewAppGeneralInfoForm, NewAppAgencyForm, NewAppLocationForm, PetitionForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, render_image_response, redirect_to_url
-from ..utils.image import crop_and_resize_image_to_square
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
 from ..utils.screenshot import get_families_and_screen_shot_blobs
 from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid

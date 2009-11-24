@@ -87,8 +87,10 @@ class TransitApp(db.Model):
     
     SCREEN_SHOT_SIZES = [
         ("original", ImageBlob.ORIGINAL_SIZE),
-        ("large", (180, 180)),
-        ("small", (80, 80)),
+        ("300w", (300, 0)),
+        ("145w", (145, 0)),
+        ("180sq", (180, 180)),
+        ("80sq", (80, 80)),
     ]
                     
     @staticmethod 
@@ -160,8 +162,10 @@ class TransitApp(db.Model):
             "long_description": self.long_description,
             "tags": self.tags,
             "details_url": self.details_url,
-            "default_large_screen_shot_url": self.default_large_screen_shot_url,
-            "default_small_screen_shot_url": self.default_small_screen_shot_url,
+            "default_300w_screen_shot_url": self.default_300w_screen_shot_url,
+            "default_145w_screen_shot_url": self.default_145w_screen_shot_url,
+            "default_180sq_screen_shot_url": self.default_180sq_screen_shot_url,
+            "default_80sq_screen_shot_url": self.default_80sq_screen_shot_url,
         }
     
     @property
@@ -208,13 +212,21 @@ class TransitApp(db.Model):
         return ImageBlob.get_bytes_and_extension_for_family_and_size(family, (width, height))
         
     @property
-    def default_large_screen_shot_url(self):
-        return self.get_screen_shot_url(index = 0, size = TransitApp.screen_shot_size_from_name("large"))
-    
+    def default_300w_screen_shot_url(self):
+        return self.get_screen_shot_url(index = 0, size = TransitApp.screen_shot_size_from_name("300w"))
+
     @property
-    def default_small_screen_shot_url(self):
-        return self.get_screen_shot_url(index = 0, size = TransitApp.screen_shot_size_from_name("small"))
-                
+    def default_145w_screen_shot_url(self):
+        return self.get_screen_shot_url(index = 0, size = TransitApp.screen_shot_size_from_name("145w"))
+
+    @property
+    def default_180sq_screen_shot_url(self):
+        return self.get_screen_shot_url(index = 0, size = TransitApp.screen_shot_size_from_name("180sq"))
+        
+    @property
+    def default_80sq_screen_shot_url(self):
+        return self.get_screen_shot_url(index = 0, size = TransitApp.screen_shot_size_from_name("80sq"))
+                    
     @property
     def details_url(self):
         return reverse("apps_details", kwargs = {'transit_app_slug': self.slug})

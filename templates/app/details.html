@@ -39,11 +39,11 @@
     <h2>{{transit_app.title}} <span>By {{transit_app.author_name}}</span></h2>
     <p>{{transit_app.description}}</p>
     <div class="app-images">
-        <img src="{{transit_app.default_large_screen_shot_url}}" alt="Application Screen Shot" />
+        <img src="{{transit_app.default_300w_screen_shot_url}}" alt="Application Screen Shot" />
         <label>Additional Images:</label>
         <div class="app-images-thumbs">
             {% for i in transit_app.screen_shot_non_default_indexes %}
-                <img src="{% screen_shot_image_url transit_app i small %}" alt="Application Screen Shot #{{i}}" />
+                <img src="{% screen_shot_image_url transit_app i 145w %}" alt="Application Screen Shot #{{i}}" />
             {% endfor %}
         </div>
 
