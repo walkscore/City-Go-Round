@@ -43,7 +43,7 @@
         <label>Additional Images:</label>
         <div class="app-images-thumbs">
             {% for i in transit_app.screen_shot_non_default_indexes %}
-                <img src="{% screen_shot_image_url transit_app i 145w %}" alt="Application Screen Shot #{{i}}" />
+                <img class="{% cycle 'odd' 'even' %}" src="{% screen_shot_image_url transit_app i 145w %}" alt="Application Screen Shot #{{i}}" />
             {% endfor %}
         </div>
 
