@@ -150,9 +150,6 @@ class TransitApp(db.Model):
     def __init__(self, *args, **kwargs):
         super(TransitApp, self).__init__(*args, **kwargs)
         self.slug = slugify(self.title)
-        
-        if self.bayesian_average is None:
-            self.refresh_bayesian_average()
     
     def to_jsonable(self):
         return {
