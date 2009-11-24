@@ -3,6 +3,10 @@ from google.appengine.ext import db
 from .image import crop_and_resize_image, convert_image
 from ..models import TransitApp, ImageBlob
 
+# TODO davepeck: we're at the edge of synchronous performance when
+# creating 5 separate images when a new app is added. We should
+# DEFINITELY use the TaskQueue API... just haven't gotten around to it yet.
+
 def get_family_and_screen_shot_blobs(image_bytes):
     """Create screen shot blobs of appropriate sizes for the given image. Returns the name of an image family, and a list of ImageBlob objects belonging to that family."""
     # Validate the bytes and make them PNG at the same time (PNG is default to convert_image)
