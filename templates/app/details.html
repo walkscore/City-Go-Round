@@ -65,26 +65,26 @@
         </div>
     </div>
 
-        <label>Full Description:</label> <p>{{transit_app.long_description}}"</p>
+        <label>Full Description:</label> <p>{{transit_app.long_description}}</p>
         <p><a href="{{transit_app.url}}">Visit developer's website</a></p>
         {% if transit_app.categories %}
             <div>
-                <label>Categories:</label> <p>{% for i in transit_app.categories %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}<p>
+                <label>Categories:</label> <p>{% for i in transit_app.categories %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}</p>
             </div>
         {% endif %}
         {% if transit_app.platforms %}
             <div>
-                <label>Platforms:</label> <p>{% for i in transit_app.platforms %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}<p>
+                <label>Platforms:</label> <p>{% for i in transit_app.platforms %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}</p>
             </div>
         {% endif %}
         {% if transit_app.tags %}
             <div>
-                <label>All tags:</label> <p>{% for i in transit_app.tags %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}<p>
+                <label>All tags:</label> <p>{% for i in transit_app.tags %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}</p>
             </div>
         {% endif %}
         {% if locations %}
             <div>
-                <label>Areas Supported:</label> <p>{% for i in locations %}<li>{{ i }}</li>{% endfor %}<p>
+                <label>Areas Supported:</label> <p>{% for i in locations %}<li>{{ i }}</li>{% endfor %}</p>
             </div>
         {% endif %}
         {% if agencies %}
