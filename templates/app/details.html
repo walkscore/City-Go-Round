@@ -10,18 +10,39 @@
         <img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" />
         <label>Additional Images:</label>
         <div class="app-images-thumbs">
-            <img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" />
+            <img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" />
         </div>
-        <p><a href="{{transit_app.url}}">Visit developer's website</a></p>
     </div>
-    <label>Full Description:</label> <p>{{transit_app.long_description}}"</p>
-    <label>Categories:</label> <p>{{transit_app.categories}}<p>
-    <label>Platforms:</label> <p>{{transit_app.platforms}}<p>
-    <label>All tags:</label> <p>{{transit_app.tags}}<p>
-    <label>Agencies:</label> <p>{{transit_app.explicitly_supported_agency_keys}}<p>
-    <label>Areas Supported:</label> <p>{{transit_app.explicitly_supported_city_details}} {{transit_app.explicitly_supported_countries}}<p>
+    <div class="app-info">
+        <label>Full Description:</label> <p>{{transit_app.long_description}}"</p>
+        <p><a href="{{transit_app.url}}">Visit developer's website</a></p>
+        {% if transit_app.categories %}
+            <div>
+                <label>Categories:</label> <p>{% for i in transit_app.categories %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}<p>
+            </div>
+        {% endif %}
+        {% if transit_app.platforms %}
+            <div>
+                <label>Platforms:</label> <p>{% for i in transit_app.platforms %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}<p>
+            </div>
+        {% endif %}
+        {% if transit_app.tags %}
+            <div>
+                <label>All tags:</label> <p>{% for i in transit_app.tags %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}<p>
+            </div>
+        {% endif %}
+        {% if agencies %}
+            <div>
+                <label>Agencies:</label> <p>{% for i in agencies %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}<p>
+            </div>
+        {% endif %}
+        {% if locations %}
+            <div>
+                <label>Areas Supported:</label> <p>{% for i in locations %}<li>{{ i }}</li>{% endfor %}<p>
+            </div>
+        {% endif %}
+    </div>
 </div>
-    
 <div class="wide-col rightmost">
 	{% include "includes/mrec1.html" %}
 </div>

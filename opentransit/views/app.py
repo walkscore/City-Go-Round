@@ -39,6 +39,8 @@ def gallery(request):
 def details(request, transit_app):
     template_vars = {
         'transit_app': transit_app,
+        'agencies': transit_app.get_supported_agency_list(),
+        'locations': transit_app.get_supported_location_list(),
     }    
     return render_to_response(request, 'app/details.html', template_vars)
     
