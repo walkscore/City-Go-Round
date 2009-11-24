@@ -311,9 +311,7 @@ def admin_apps_update_schema(request):
             
             # Oh boy. We have to make screen shots.
             families, blobs = get_families_and_screen_shot_blobs([str(blob)])
-            if not has_attr(transit_app, 'screen_shot_families'):
-                transit_app.screen_shot_families = []
-            if transit_app.screen_shot_families is None:
+            if not transit_app.screen_shot_families:
                 transit_app.screen_shot_families = []
                 
             transit_app.screen_shot_families.extend(families)
