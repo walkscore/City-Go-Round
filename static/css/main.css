@@ -635,6 +635,15 @@
 		margin: 0;
 		padding: 0;
 	}	
+	.app-gallery .app img.featured { 
+	   float: left;
+	   margin: 0 4px 1px 0;
+	   border: 0;
+	   width: 48px;
+	   height: 29px;
+	   position: relative;
+	   top: 2px;
+	}	
 
 
 	
