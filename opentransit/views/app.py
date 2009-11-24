@@ -323,7 +323,8 @@ def admin_apps_update_schema(request):
     
     # Looks like we're done. Attempt to commit everything to our database.
     db.put(changed_apps)
-    db.put(new_blobs)
+    for new_blob in new_blobs:
+        db.put(new_blob)
     
     # Render some vaguely useful results
     template_vars = {
