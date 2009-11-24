@@ -730,11 +730,11 @@
 	-webkit-box-shadow: 0 0 90px #000;	
 }
 #gallery .info strong {
-    font: 12px/18px Verdana, Arial, Helvetica, sans-serif;
+    font: 12px/20px Verdana, Arial, Helvetica, sans-serif;
     color: #fff;
 }
 #gallery .info span {
-    font: 11px/15px Verdana, Arial, Helvetica, sans-serif;
+    font: 11px/20px Verdana, Arial, Helvetica, sans-serif;
     color: #ccc;
 }
 
@@ -757,7 +757,7 @@
 }
 
 /* "next image" and "prev image" links */
-.next, .prev {
+#gallery .next, #gallery .prev {
 	
 	/* absolute positioning relative to the overlay */
 	position:absolute;
@@ -767,14 +767,14 @@
 	display:block;
 	padding:10px 20px;
 	color:#fff;
-	font-size:11px;
+	font: 11px/15px Verdana, Arial, Helvetica, sans-serif;
 	
 	/* upcoming CSS3 features */
 	-moz-border-radius:5px;
 	-webkit-border-radius:5px;	
 }
 
-.prev {
+#gallery .prev {
 	left:0;
 	border-left:0;
 	-moz-border-radius-topleft:0;
@@ -783,7 +783,7 @@
 	-webkit-border-top-left-radius:0;
 }
 
-.next {
+#gallery .next {
 	right:0;
 	border-right:0;
 	-moz-border-radius-topright:0;
@@ -792,18 +792,19 @@
 	-webkit-border-top-right-radius:0;	
 }
 
-.next:hover, .prev:hover {
+#gallery a.next:hover, #gallery a.prev:hover {
+	color: #fdb052;
 	text-decoration:underline;
 	background-color:#000;
 }
 
 /* when there is no next or previous link available this class is added */
-.disabled {
+#gallery .disabled {
 	visibility:hidden;		
 }
 
 /* the "information box" */
-.info {
+#gallery .info {
 	position:absolute;
 	bottom:0;
 	left:0;	
@@ -813,12 +814,12 @@
 	border-top:1px solid #666;
 }
 
-.info strong {
+#gallery .info strong {
 	display:block;	
 }
 
 /* progress indicator (animated gif). should be initially hidden */
-.progress {
+#gallery .progress {
 	position:absolute;
 	top:45%;
 	left:50%;
@@ -826,7 +827,7 @@
 }
 
 /* everybody should know about RGBA colors. */
-.next, .prev, .info {
+#gallery .next, .prev, .info {
 	background:#333 !important;
 	background:rgba(0, 0, 0, 0.6) url(/images/overlay/h80.png) repeat-x;		
 }
