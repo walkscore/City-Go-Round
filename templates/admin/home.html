@@ -22,6 +22,14 @@
     <p>Force all agencies to <a href="{% url admin_agencies_update_locations %}">update their geocell information</a> based on their current latitude/longitude.</p>
     <p>Get a <a href="{% url admin_feed_references %}">list of feed references</a>.</p>
     <p>Run <a href="/admin/test">unit and functional tests</a>.</p>
+    <p>Refresh <a href="/admin/apps/bayes/refresh">all app rating bayesian averages</a></p>
+    
+    <p>&nbsp;</p>
+    
+    <h2>Here are some statistics</h2>
+    {% for stat in all_stats %}
+    <p>{{stat.name}}:{{stat.value}}</p>
+    {% endfor %}
     
 </div>
 {% endblock %}

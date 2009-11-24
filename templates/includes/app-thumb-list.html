@@ -2,5 +2,7 @@
 	<div class="app {% cycle 'odd' 'even' %}"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></a>
 		<h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
 		<p>{{transit_app.description}}</p>
+        <p>average rating {{transit_app.average_rating}}</p>
+        <p>sort value {{transit_app.bayesian_average}}</p>
 	</div>
 {% endfor %}

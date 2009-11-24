@@ -197,8 +197,7 @@ def add_success(request):
     return render_to_response(request, 'app/add-success.html')
 
 def admin_apps_list(request):
-    # TODO DAVEPECK
-    return not_implemented(request)
+    return render_to_response()
     
 def admin_apps_edit(request):
     # TODO DAVEPECK
@@ -210,15 +209,42 @@ def increment_stat(request):
     return HttpResponse( "the new value of %s is %s"%(stat_name,stat_value) )
 
 def app_rating_vote(request):
-    app_key_id = int( request.GET['app_key_id'][0] )
-    rating = int( request.GET['rating'][0] )
+    app_key_id = int( request.GET['app_key_id'] )
+    rating = int( request.GET['rating'] )
     
     # if they've been cookied for this app_key_id, pop them an error
     if str(app_key_id) in request.COOKIES:
         return HttpResponseForbidden( "you've already voted for the app with key id %s"%app_key_id )
     
+    # set side-wide rating average for use in creating sorting metric using bayesian average
+    all_apps_average_rating = NamedStat.get_stat( "all_apps_average_rating" )
+    all_apps_num_ratings = NamedStat.get_stat( "all_apps_num_ratings" )
+    all_apps_average_rating.value = (all_apps_average_rating.value*all_apps_num_ratings.value + rating)/(all_apps_num_ratings.value+1)
+    all_apps_num_ratings.value = all_apps_num_ratings.value+1
+    all_apps_average_rating.put()
+    all_apps_num_ratings.put()
+    
+    # get the app, add the rating
     app = TransitApp.get_by_id( app_key_id )
     app.add_rating( rating )
+    
+    # refresh the app's bayesian average
+    app.refresh_bayesian_average(all_apps_average_rating, all_apps_num_ratings)
+    
     app.put()
     
     return HttpResponse( json.dumps( [app.average_rating, app.num_ratings] )  )
+    
+def refresh_all_bayesian_averages(request):
+    all_apps = TransitApp.all()
+    
+    all_apps_average_rating = NamedStat.get_stat( "all_apps_average_rating" )
+    all_apps_num_ratings = NamedStat.get_stat( "all_apps_num_ratings" )
+    
+    for app in all_apps:
+        logging.info( "%s: old bayesian average %s"%(app.key().id(), app.bayesian_average) )
+        app.refresh_bayesian_average( all_apps_average_rating, all_apps_num_ratings )
+        app.put()
+        logging.info( "%s: new bayesian average %s"%(app.key().id(), app.bayesian_average) )
+        
+    return HttpResponse( "Should have worked alright. Check out the log." )

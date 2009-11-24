@@ -9,6 +9,7 @@ from ..utils.slug import slugify
 from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_keys, unique_entities, iter_uniquify
 from ..utils.places import CityInfo
 from ..utils.geohelpers import square_bounding_box_centered_at
+from ..models import NamedStat
 
 #
 # A brief explanation of how Transit Apps and Agencies relate:
@@ -120,10 +121,14 @@ class TransitApp(db.Model):
     date_last_updated   = db.DateTimeProperty(auto_now = True, indexed = True)
     is_featured         = db.BooleanProperty(indexed = True, default = False)
     ratings             = db.ListProperty(int)
+    bayesian_average    = db.FloatProperty()
     
     def __init__(self, *args, **kwargs):
         super(TransitApp, self).__init__(*args, **kwargs)
         self.slug = slugify(self.title)
+        
+        if self.bayesian_average is None:
+            self.refresh_bayesian_average()
     
     def to_jsonable(self):
         return {
@@ -269,11 +274,26 @@ class TransitApp(db.Model):
         
     @property
     def average_rating(self):
+        if len(self.ratings)==0:
+            return None
+        
         return sum(self.ratings)/float(len(self.ratings))
         
     @property
     def num_ratings(self):
         return len(self.ratings)
+    
+    def refresh_bayesian_average(self, all_apps_average_rating=None, all_apps_num_ratings=None):
+        all_apps_average_rating = all_apps_average_rating or NamedStat.get_stat( "all_apps_average_rating" )
+        all_apps_num_ratings = all_apps_num_ratings or NamedStat.get_stat( "all_apps_num_ratings" )
+        
+        #logging.info( "m=%s"%all_apps_average_rating.value )
+        #logging.info( "C=%s"%all_apps_num_ratings.value )
+        #logging.info( "sumx=%s"%sum(self.ratings) )
+        #logging.info( "n=%s"%len(self.ratings) )
+        
+        bayesian_average = (all_apps_average_rating.value*all_apps_num_ratings.value + sum(self.ratings))/float(all_apps_num_ratings.value+len(self.ratings))
+        self.bayesian_average = bayesian_average
         
     @staticmethod
     def all_for_country(country_code):
