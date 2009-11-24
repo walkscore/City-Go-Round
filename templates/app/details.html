@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block headscripts %}
+<script src="http://cdn.jquerytools.org/1.1.2/full/jquery.tools.min.js"></script>
 <link rel="stylesheet" type="text/css" href="/css/jquery.rating.css" media="screen" />
 <script type="text/javascript" src="/js/jquery.rating.pack.js"></script>
 {% endblock %}
@@ -38,12 +39,12 @@
 <div id="app-details" class="body-content col-group">    
     <h2>{{transit_app.title}} <span>By {{transit_app.author_name}}</span></h2>
     <p>{{transit_app.description}}</p>
-    <div class="app-images">
-        <img src="{{transit_app.default_300w_screen_shot_url}}" alt="Application Screen Shot" />
+    <div class="app-images" id="triggers">
+        <a href="{% screen_shot_image_url transit_app default original %}" title="{{transit_app.title}} screenshot"><img src="{{transit_app.default_300w_screen_shot_url}}" alt="Application Screen Shot" /></a>
         <label>Additional Images:</label>
         <div class="app-images-thumbs">
             {% for i in transit_app.screen_shot_non_default_indexes %}
-                <img class="{% cycle 'odd' 'even' %}" src="{% screen_shot_image_url transit_app i 145w %}" alt="Application Screen Shot #{{i}}" />
+                <a href="{% screen_shot_image_url transit_app i original %}" title="{{transit_app.title}} screenshot"><img src="{% screen_shot_image_url transit_app i 145w %}" alt="Application Screen Shot" /></a>
             {% endfor %}
         </div>
 
@@ -96,9 +97,39 @@
 <div class="wide-col rightmost">
 	{% include "includes/mrec1.html" %}
 </div>
-
 {% endblock %}
 
 
+{% block extra-content %}
+<!-- gallery overlay element --> 
+<div class="simple_overlay" id="gallery"> 
+     <!-- "previous image" action --> 
+    <a class="prev">prev</a> 
+    <!-- "next image" action --> 
+    <a class="next">next</a> 
+    <!-- image information --> 
+    <div class="info"></div> 
+    <!-- load indicator (animated gif) --> 
+    <img class="progress" src="http://static.flowplayer.org/tools/img/overlay/loading.gif" /> 
+</div>
+{% endblock %}
+
 {% block scripts %}
+<script type="text/javascript">
+// select the thumbnails and make them trigger our overlay 
+$("#triggers a").overlay({ 
+ 
+    // each trigger uses the same overlay with the id "gallery" 
+    target: '#gallery', 
+ 
+    // optional exposing effect 
+    expose: '#f1f1f1' 
+ 
+// let the gallery plugin do its magic! 
+}).gallery({ 
+ 
+    // the plugin accepts its own set of configuration options 
+    speed: 800 
+});
+</script>
 {% endblock %}
