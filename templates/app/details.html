@@ -1,8 +1,40 @@
 {% extends 'base.html' %}
 
+{% block headscripts %}
+<link rel="stylesheet" type="text/css" href="/css/jquery.rating.css" media="screen" />
+<script type="text/javascript" src="/js/jquery.rating.pack.js"></script>
+{% endblock %}
+
+{% block extra_head %}
+
+    <script type="text/javascript">
+    
+    function react_to_vote( data ) {
+      average_rating = data[0];
+      num_ratings = data[1];
+    
+      $("#ratings").html("average "+average_rating+"/5 over "+num_ratings+" votes");
+    }
+    
+     $(document).ready(function(){
+     
+       $('.auto-submit-star').rating({ 
+         callback: function(value, link){
+                     $.getJSON( "/admin/apps/rating/", {'app_key_id':'{{transit_app.key.id}}','rating':value}, react_to_vote );
+                     document.cookie ='{{transit_app.key.id}}='+value+'; expires=Thu, 2 Aug 2010 20:47:11 UTC; path=/';
+                   } 
+       });
+     
+     });
+
+    </script>
+
+{% endblock %}
+
 {% block title %}Open Transit Data &raquo; Details For {{transit_app.title}}{% endblock %}
 
 {% block content %}
+    
 <div id="app-details" class="body-content col-group">    
     <h2>{{transit_app.title}} <span>By {{transit_app.author_name}}</span></h2>
     <p>{{transit_app.description}}</p>
@@ -16,6 +48,20 @@
     </div>
     
     <div class="app-info">
+        <div id="app-details" class="body-content">    
+        <label>Ratings:</label> <div id="ratings"><p>average {{transit_app.average_rating}}/5 over {{transit_app.num_ratings}} votes</p></div>
+        <div id="votebooth">
+        <form name="rating" action="/app/rating" method="POST">
+        <p>Your rating:
+        <input type="radio" name="rating" value="1" onchange="vote(this.value);" class="auto-submit-star">
+        <input type="radio" name="rating" value="2" onchange="vote(this.value);" class="auto-submit-star">
+        <input type="radio" name="rating" value="3" onchange="vote(this.value);" class="auto-submit-star">
+        <input type="radio" name="rating" value="4" onchange="vote(this.value);" class="auto-submit-star">
+        <input type="radio" name="rating" value="5" onchange="vote(this.value);" class="auto-submit-star">
+        </p></form>
+        </div>
+    </div>
+
         <label>Full Description:</label> <p>{{transit_app.long_description}}"</p>
         <p><a href="{{transit_app.url}}">Visit developer's website</a></p>
         {% if transit_app.categories %}

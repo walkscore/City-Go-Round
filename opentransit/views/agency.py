@@ -229,7 +229,7 @@ def create_agency_from_feed(request, feed_id):
     agency = Agency(name = feed.name,
                     short_name = feed.name,
                     city = feed.area if feed.area!="" else "PLEASE ADD REAL CITY",
-                    state = feed.state,
+                    state = feed.state if feed.state!="" else "PLEASE ADD REAL STATE",
                     country = feed.country,
                     agency_url = feed.url,
                     gtfs_data_exchange_id = [feed_id])

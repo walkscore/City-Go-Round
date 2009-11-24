@@ -4,7 +4,7 @@ from google.appengine.ext import db
 from ..forms import PetitionForm, AgencyForm, ContactForm
 from ..utils.view import render_to_response, redirect_to, not_implemented
 from ..utils.mailer import send_to_contact
-from ..models import FeedReference, Agency
+from ..models import FeedReference, Agency, NamedStat
 from django.template.context import RequestContext
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -66,5 +66,7 @@ def admin_logout(request):
     return HttpResponseRedirect( create_logout_url("/") )
 
 def admin_home(request):
-    return render_to_response(request, 'admin/home.html')
+    all_stats = NamedStat.all()
+    
+    return render_to_response(request, 'admin/home.html', {'all_stats':all_stats})
     
