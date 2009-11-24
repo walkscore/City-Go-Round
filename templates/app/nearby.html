@@ -21,7 +21,7 @@ jQuery(document).ready(function($)
     
     function url_for_transit_app(slug)
     {
-        // TODO davepeck: How to use django's URL template tag here?
+        // TODO DAVEPECK: How to use django's URL template tag here?
         return '/apps/' + slug + '/';
     }
     
@@ -52,7 +52,8 @@ jQuery(document).ready(function($)
         return html;
     }
     function html_for_transit_app_thumb(transit_app) {
-        var html = '<div class="app"> <a href="' + transit_app.url + '"><img src="' + transit_app.screen_shot_url + '" alt="Application Screen Shot" /></a>';
+        // todo DAVEPECK -- how to use django url function to generate the "/apps/" url root below???  or we can just leave it
+        var html = '<div class="app"> <a href="/apps/' + transit_app.slug + '"><img src="' + transit_app.screen_shot_url + '" alt="Application Screen Shot" /></a>';
         html += '<h5><a href="' + transit_app.url + '">' + transit_app.title + '</a></h5>';
         html += '<p>' + transit_app.description + '</p>';
         html += '</div>';
@@ -72,11 +73,11 @@ jQuery(document).ready(function($)
                 transit_apps_html += html_for_transit_app_thumb(transit_app);             
             });
             
-            var public_data_count = 5; //XXX TODO DAVEPECK
+            var public_data_count = 0; //XXX TODO DAVEPECK
             
             var subhead_html = "<em>" + transit_app_count + "</em> apps";
             if (public_data_count > 1) 
-                subhead_html += " use data from <em>" + public_data_count + "</em> transit agencies."
+                subhead_html += " use data from <span><em>" + public_data_count + "</em> transit agencies.</span>"
             else if (public_data_count == 1) 
                 subhead_html += " use data from one transit agency."
             else 
@@ -128,10 +129,10 @@ jQuery(document).ready(function($)
     <div id="petition" class="body-content thinline col-group">
         <div class="boxed-content"> 
             
-            <h4>Nearby Agencies with no public data</h4>
+            <h4>Nearby Agencies with no open data</h4>
             <div class="agency-text-list" id="fill_nearby_no_public"><span class="loading">TODO DAVEPECK...</span></div>
 
-            <h2>SUPPORT PUBLIC DATA</h2>
+            <h2>SUPPORT OPEN DATA</h2>
             <div class="wide-col rightmost">
                 {% include "includes/petition-text.html" %} 
                 {% include "includes/petition-disclaimer.html" %}               

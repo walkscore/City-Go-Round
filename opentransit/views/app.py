@@ -14,7 +14,10 @@ from ..utils.image import crop_and_resize_image_to_square
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
 from ..utils.screenshot import get_families_and_screen_shot_blobs
 from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid
-from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress, FeedReference
+from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress, FeedReference, NamedStat
+
+from django.http import HttpResponse, HttpResponseForbidden
+from django.utils import simplejson as json
 
 def nearby(request):
     petition_form = PetitionForm()
@@ -39,8 +42,11 @@ def gallery(request):
     
 @requires_valid_transit_app_slug
 def details(request, transit_app):
+    
     template_vars = {
         'transit_app': transit_app,
+        'agencies': Agency.iter_for_transit_app(transit_app),
+        'locations': transit_app.get_supported_location_list(),
     }    
     return render_to_response(request, 'app/details.html', template_vars)
     
@@ -195,9 +201,74 @@ def add_success(request):
     return render_to_response(request, 'app/add-success.html')
 
 def admin_apps_list(request):
-    # TODO DAVEPECK
-    return not_implemented(request)
+    return render_to_response()
     
 def admin_apps_edit(request):
     # TODO DAVEPECK
     return not_implemented(request)
+    
+def increment_stat(request):
+    stat_name = request.GET['name']
+    stat_value = NamedStat.increment( stat_name )
+    return HttpResponse( "the new value of %s is %s"%(stat_name,stat_value) )
+
+def app_rating_vote(request):
+    app_key_id = int( request.GET['app_key_id'] )
+    rating = int( request.GET['rating'] ) if request.GET['rating'] != "" else None
+        
+    # if they've already voted and they didn't delete their vote
+    if str(app_key_id) in request.COOKIES and request.COOKIES[ str(app_key_id) ] != "":
+
+        old_rating = int( request.COOKIES[ str(app_key_id) ] )
+        
+        #changing a vote
+        if rating is not None:
+            rating_delta = rating - old_rating
+            count_delta = 0
+        #removing a vote
+        else:
+            rating_delta = -old_rating
+            count_delta = -1
+    
+    #new vote
+    else:
+        rating_delta = rating
+        count_delta = 1
+            
+    # set side-wide rating average for use in creating sorting metric using bayesian average
+    all_rating_sum = NamedStat.get_stat( "all_rating_sum" )
+    all_rating_sum.value = all_rating_sum.value + rating_delta
+    all_rating_sum.put()
+    
+    all_rating_count = NamedStat.get_stat( "all_rating_count" )
+    all_rating_count.value = all_rating_count.value + count_delta
+    all_rating_count.put()
+    
+    # get the app, add the rating
+    app = TransitApp.get_by_id( app_key_id )
+    app.rating_sum += rating_delta
+    app.rating_count += count_delta
+    
+    logging.info( rating_delta )
+    logging.info( count_delta )
+    
+    # refresh the app's bayesian average
+    app.refresh_bayesian_average(all_rating_sum, all_rating_count)
+    
+    app.put()
+    
+    return HttpResponse( json.dumps( [app.average_rating, app.num_ratings] )  )
+    
+def refresh_all_bayesian_averages(request):
+    all_apps = TransitApp.all()
+    
+    all_rating_sum = NamedStat.get_stat( "all_rating_sum" )
+    all_rating_count = NamedStat.get_stat( "all_rating_count" )
+    
+    for app in all_apps:
+        logging.info( "%s: old bayesian average %s"%(app.key().id(), app.bayesian_average) )
+        app.refresh_bayesian_average( all_rating_sum, all_rating_count )
+        app.put()
+        logging.info( "%s: new bayesian average %s"%(app.key().id(), app.bayesian_average) )
+        
+    return HttpResponse( "Should have worked alright. Check out the log." )

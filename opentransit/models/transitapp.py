@@ -10,6 +10,7 @@ from ..utils.slug import slugify
 from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_keys, unique_entities, iter_uniquify
 from ..utils.places import CityInfo
 from ..utils.geohelpers import square_bounding_box_centered_at
+from ..models import NamedStat
 
 #
 # A brief explanation of how Transit Apps and Agencies relate:
@@ -136,10 +137,16 @@ class TransitApp(db.Model):
     date_last_updated   = db.DateTimeProperty(auto_now = True, indexed = True)
     is_featured         = db.BooleanProperty(indexed = True, default = False)
     screen_shot_families = db.StringListProperty() # Ordered list of screen shot families, length >= 1
+    rating_sum          = db.FloatProperty(default=0.0)
+    rating_count        = db.IntegerProperty(default=0)
+    bayesian_average    = db.FloatProperty()
     
     def __init__(self, *args, **kwargs):
         super(TransitApp, self).__init__(*args, **kwargs)
         self.slug = slugify(self.title)
+        
+        if self.bayesian_average is None:
+            self.refresh_bayesian_average()
     
     def to_jsonable(self):
         return {
@@ -219,7 +226,7 @@ class TransitApp(db.Model):
     explicitly_supported_city_details = db.StringListProperty() # ["Seattle,WA,US", "San Francisco,CA,US", ...]
     explicitly_supported_countries = db.StringListProperty() # ["US", "DE", ...]
     explicitly_supports_the_entire_world = db.BooleanProperty(indexed = True)
-                
+            
     @staticmethod
     def all_supporting_public_agencies():
         """Return a query to all TransitApp entities flagged as supporting Agencies with 'public' data."""
@@ -253,6 +260,11 @@ class TransitApp(db.Model):
         for agency_or_key in agencies_or_keys:
             for transit_app in iter_uniquify(TransitApp.iter_for_agency(agency_or_key, uniquify = False), seen_set, uniquify):
                 yield transit_app
+                
+        
+    def get_supported_location_list(self):
+        list = self.explicitly_supported_city_details + self.explicitly_supported_countries
+        return list
 
     def add_explicitly_supported_agencies(self, agencies_or_keys):
         """Helper to add new supported agencies to this transit app. You must call put() sometime later."""
@@ -311,6 +323,36 @@ class TransitApp(db.Model):
         
     def add_explicitly_supported_countries(self, country_codes):
         self.explicitly_supported_countries.extend(country_codes)
+        
+    def add_rating(self, rating):
+        self.rating_sum += rating
+        self.rating_count += 1
+        
+    @property
+    def average_rating(self):
+        if self.rating_count==0:
+            return None
+        
+        return self.rating_sum/self.rating_count
+        
+    @property
+    def num_ratings(self):
+        return self.rating_count
+    
+    def refresh_bayesian_average(self, all_rating_sum=None, all_rating_count=None):
+        all_rating_sum = all_rating_sum or NamedStat.get_stat( "all_rating_sum" )
+        all_rating_count = all_rating_count or NamedStat.get_stat( "all_rating_count" )
+        
+        Cm = all_rating_sum.value
+        sumx = self.rating_sum
+        n = self.rating_count
+        C = all_rating_count.value
+        
+        if (n+C)>0:
+            bayesian_average = (Cm + sumx)/float(n+C)
+        else:
+            bayesian_average = None
+        self.bayesian_average = bayesian_average
         
     @staticmethod
     def all_for_country(country_code):

@@ -1,39 +1,100 @@
 {% extends 'base.html' %}
 
+{% block headscripts %}
+<link rel="stylesheet" type="text/css" href="/css/jquery.rating.css" media="screen" />
+<script type="text/javascript" src="/js/jquery.rating.pack.js"></script>
+{% endblock %}
+
+{% block extra_head %}
+
+    <script type="text/javascript">
+    
+    function react_to_vote( data ) {
+      average_rating = data[0];
+      num_ratings = data[1];
+    
+      $("#ratings").html("average "+average_rating+"/5 over "+num_ratings+" votes");
+    }
+    
+     $(document).ready(function(){
+     
+       $('.auto-submit-star').rating({ 
+         callback: function(value, link){
+                     $.getJSON( "/admin/apps/rating/", {'app_key_id':'{{transit_app.key.id}}','rating':value}, react_to_vote );
+                     document.cookie ='{{transit_app.key.id}}='+value+'; expires=Thu, 2 Aug 2010 20:47:11 UTC; path=/';
+                   } 
+       });
+     
+     });
+
+    </script>
+
+{% endblock %}
+
 {% block title %}Open Transit Data &raquo; Details For {{transit_app.title}}{% endblock %}
 
 {% block content %}
-    <!-- TODO jesse: add some design here. (dave) -->
     
-    <div id="app-details" class="body-content">    
-        <h2>{{transit_app.title}} DETAILS:</h2>
-        <table>
-            <tr>
-                <th>Description:</th>
-                <td>{{transit_app.description}}</td>
-            </tr>
-            <tr>
-                <th>Homepage:</th>
-                <td><a href="{{transit_app.url}}">{{transit_app.url}}</a></td>
-            </tr>
-            <tr>
-                <th>Author Name:</th>
-                <td>{{transit_app.author_name}}</td>
-            </tr>
-            <tr>
-                <th>Long Description:</th>
-                <td>{{transit_app.long_description}}</td>
-            </tr>
-            <tr>
-                <th>Tags:</th>
-                <td>TODO DAVEPECK</td>
-            </tr>
-            <tr>
-                <th>Screen Shot:</th>
-                <td><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /></td>
-            </tr>
-        </table>
+<div id="app-details" class="body-content col-group">    
+    <h2>{{transit_app.title}} <span>By {{transit_app.author_name}}</span></h2>
+    <p>{{transit_app.description}}</p>
+    <div class="app-images">
+        <img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" />
+        <label>Additional Images:</label>
+        <div class="app-images-thumbs">
+            <img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" />
+        </div>
+
     </div>
+    
+    <div class="app-info">
+        <div id="app-details" class="body-content">    
+        <label>Ratings:</label> <div id="ratings"><p>average {{transit_app.average_rating}}/5 over {{transit_app.num_ratings}} votes</p></div>
+        <div id="votebooth">
+        <form name="rating" action="/app/rating" method="POST">
+        <p>Your rating:
+        <input type="radio" name="rating" value="1" onchange="vote(this.value);" class="auto-submit-star">
+        <input type="radio" name="rating" value="2" onchange="vote(this.value);" class="auto-submit-star">
+        <input type="radio" name="rating" value="3" onchange="vote(this.value);" class="auto-submit-star">
+        <input type="radio" name="rating" value="4" onchange="vote(this.value);" class="auto-submit-star">
+        <input type="radio" name="rating" value="5" onchange="vote(this.value);" class="auto-submit-star">
+        </p></form>
+        </div>
+    </div>
+
+        <label>Full Description:</label> <p>{{transit_app.long_description}}"</p>
+        <p><a href="{{transit_app.url}}">Visit developer's website</a></p>
+        {% if transit_app.categories %}
+            <div>
+                <label>Categories:</label> <p>{% for i in transit_app.categories %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}<p>
+            </div>
+        {% endif %}
+        {% if transit_app.platforms %}
+            <div>
+                <label>Platforms:</label> <p>{% for i in transit_app.platforms %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}<p>
+            </div>
+        {% endif %}
+        {% if transit_app.tags %}
+            <div>
+                <label>All tags:</label> <p>{% for i in transit_app.tags %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}<p>
+            </div>
+        {% endif %}
+        {% if locations %}
+            <div>
+                <label>Areas Supported:</label> <p>{% for i in locations %}<li>{{ i }}</li>{% endfor %}<p>
+            </div>
+        {% endif %}
+        {% if agencies %}
+            <div class="condensed-agency-list">
+                <label>Uses Open Data from:</label> <ul>{% for i in agencies %}<li><a href="/agencies/{{ i.urlslug }}">{{ i.name }}</a> {{ i.city }}, {{ i.state}}</li>{% endfor %}</ul>
+            </div>
+        {% endif %}
+    </div>
+</div>
+<div class="wide-col rightmost">
+	{% include "includes/mrec1.html" %}
+</div>
+
 {% endblock %}
 
 

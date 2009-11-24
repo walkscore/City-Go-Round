@@ -53,14 +53,14 @@
 		color: #f79900;
 		}
 	
-  h1 {
-		font-size:55px; 
-	}
-  h2 {
+    h1 {
+    	font-size:55px; 
+    }
+    h2 {
 		font-size:22px; 
 		padding: 0 0 7px 0;	}
 	h3 {
-		font-size:17px;
+		font-size:19px;
 		font-weight: normal;
 		padding: 12px 0 8px 0;
 	}
@@ -72,6 +72,7 @@
 		padding: 0;
 	}
 	h4 {
+		font-size: 16px;
 		font-weight: normal;
 	}
 	h5 {
@@ -92,7 +93,7 @@
 	#recently-added-list h3 { color: #18b541; font-size: 18px; }
 
 	
-  p, a, ul, ol, blockquote, label, span {
+  p, a, ul, ol, blockquote, label, span, li {
 		font:12px Verdana, Arial, Helvetica, sans-serif;
 		color: #555;
 	}
@@ -110,7 +111,7 @@
 		margin: 2px 0 8px 0;
 	}
 	.body-content li {
-    margin-bottom: 6px;
+	margin-bottom: 6px;
   }
 	
 
@@ -216,16 +217,21 @@
 	#outer-wrapper .thinline {
 		border: 1px solid #bbb;
 		padding-bottom: 10px;
+		margin-bottom: 14px;
 	}
 
 
+
 /*********** HOME PAGE ****************/
-.green h2{color:green;}
-.agency_title a{font-weight:bold}
-.odd{background:#DFF4FF;}
+		.green h2{
+			color:green;
+		}
+
+		#no-data-list a, #recently-added-list a{
+			text-decoration: none;
+		}
 	
 /*********** HEADER ****************/
-
 	#header h1 {
 		position:absolute;
 		top: 16px;
@@ -248,6 +254,7 @@
 		position:absolute;
 		top: 90px;
 		left: 1px;
+		color: #999;
 	}
 	#header #front-seat-logo {
 		position: absolute;
@@ -258,6 +265,8 @@
 		text-decoration: none;
 		color: #777;
 		font-size: 14px;
+		position: relative;
+		top: 2px;
 	}
 	#header #nav a:hover {
 		color: #628dc7;
@@ -287,14 +296,53 @@
 	#friends-and-followers div.friend-facebook p { background: url(/images/otd-icons.png) 0 0 no-repeat; }
 	#friends-and-followers div.friend-twitter p { background: url(/images/otd-icons.png) 0 -22px no-repeat; }
 	
-/*********** LISTS ****************/
+/*********** FOOTER ****************/
+	
+	#footer {
+	   margin-top: 40px;
+	   padding-bottom: 20px;
+	}
+	#footer #license {
+	   margin-top: 12px;
+	}
+	#footer #license p, #footer #license p span {
+	   color: #888;
+    }
+	#footer #license p, #footer #license p span, #footer #license p a {
+	   font-size: 11px;
+	}
+	#footer #footer-nav, #footer #footer-nav a {
+		text-decoration: none;
+		color: #444;
+	}
+	#footer #footer-nav a:hover {
+		color: #628dc7;
+		text-decoration: underline;
+	}
 
+	#footer #gtfs-data-exchange-logo {
+		position: absolute;
+		top: 0;
+		right: 0;		
+		font-size: 11px;
+		color: #999;
+	}
+	#footer #gtfs-data-exchange-logo img{
+	float: right;
+	position: relative;
+	top: -10px;
+	}
+
+/*********** LISTS ****************/
+	.agency-list .odd{
+		background:#DFF4FF;
+	}
 	.agency-list {
 		color: #cf7200;
 		list-style-type: none;
 	}
-	.agency-list h5 {
-		font: 12px/13px Verdana, Arial, Helvetica, sans-serif;
+	.agency-list h5 a {
+		font: 11px/13px Verdana, Arial, Helvetica, sans-serif;
 		font-weight: bold;
 		padding-bottom: 0;
 		margin: 0;
@@ -309,10 +357,14 @@
 	.agency-list p a:hover {
 		color: #628dc7;
 	}
+	.agency-list p span {
+		font-size: 10px;
+	}
 	.agency-list li {
 		margin-bottom: 5px;
 	}
 
+	/* condensed text list, names only: (shown on search results page) */
 	.agency-text-list a {
 		color: #316b84;
 		text-decoration: none;
@@ -386,63 +438,63 @@
 
 /* TODO jesse -- i threw these together. fix 'em -- dave */
 
-    .add-app-form blockquote {
-    	margin: 8px 15px 12px 0;
-    	font-style: italic;
-    	display: block;
-    }
-    .add-app-form th, .add-app-form td {
-    	width: 230px;
-        min-height: 32px;
-        padding: 0px 2px 8px 2px;
-    }
-    .add-app-form td {
-    	width: 350px;
-    }
-    .add-app-form table input {
-    	font: 12px/12px Verdana, Arial, Helvetica, sans-serif;
-    	margin-bottom: 2px;
-    	border: 1px solid #999;
-    }
+	.add-app-form blockquote {
+		margin: 8px 15px 12px 0;
+		font-style: italic;
+		display: block;
+	}
+	.add-app-form th, .add-app-form td {
+		width: 230px;
+		min-height: 32px;
+		padding: 0px 2px 8px 2px;
+	}
+	.add-app-form td {
+		width: 350px;
+	}
+	.add-app-form table input {
+		font: 12px/12px Verdana, Arial, Helvetica, sans-serif;
+		margin-bottom: 2px;
+		border: 1px solid #999;
+	}
 
-    .add-app-form table textarea {
-    	font: 12px/12px Verdana, Arial, Helvetica, sans-serif;
-    	margin-bottom: 2px;
-    	border: 1px solid #999;
-    	width: 250px;
-    }    
-    .add-app-form table select {
-        width: 250px;
-    }
-    
-    .add-app-form table input[type="file"] {
-        border: 0;
-        color: #444;
-    }
-    
-    .add-app-form table ul {
-        list-style-type: none;
-    }
-    
-    .add-app-form table ul.errorlist li {
-        color: red;
-    }
-    
-    .add-app-form table input[type="radio"] {
-        border: 0;
-        width: 20px;
-    }
-    
-    .add-app-form .button {
-    	margin: 8px 0 6px 75px;
-    }
-    
-    #list-panel {
-      clear: both;
-      width: 700px;
-      margin-left: 40px;
-    }
-    
+	.add-app-form table textarea {
+		font: 12px/12px Verdana, Arial, Helvetica, sans-serif;
+		margin-bottom: 2px;
+		border: 1px solid #999;
+		width: 250px;
+	}	 
+	.add-app-form table select {
+		width: 250px;
+	}
+	
+	.add-app-form table input[type="file"] {
+		border: 0;
+		color: #444;
+	}
+	
+	.add-app-form table ul {
+		list-style-type: none;
+	}
+	
+	.add-app-form table ul.errorlist li {
+		color: red;
+	}
+	
+	.add-app-form table input[type="radio"] {
+		border: 0;
+		width: 20px;
+	}
+	
+	.add-app-form .button {
+		margin: 8px 0 6px 75px;
+	}
+	
+	#list-panel {
+	  clear: both;
+	  width: 700px;
+	  margin-left: 40px;
+	}
+	
 
 
 /*********** FEATURED APPS ****************/
@@ -527,7 +579,7 @@
 		padding-top: 44px;
 	}
 	#feat-content div img {
-		float: left;  
+		float: left;	
 		margin: 0 15px 0 60px;
 		border: 1px solid #999;
 	}
@@ -556,7 +608,10 @@
 		float: left;
 		margin-right: 30px;
 	}	
-    .app-gallery .wide-col .app, .app-gallery .narrow-col .app { 
+	.app-gallery .odd {
+		clear: both;
+	}
+	.app-gallery .wide-col .app, .app-gallery .narrow-col .app { 
 		margin-right: 0;
 	}	
 	.app-gallery .app img { 
@@ -572,19 +627,57 @@
 		font-weight: normal;
 	}	
 	
-/*********** FOOTER ****************/
-	#footer #gtfs-data-exchange-logo {
-		position: absolute;
-		top: 0;
-		right: 0;		
-		font-size: 11px;
-		color: #999;
-	}
-	#footer #gtfs-data-exchange-logo img{
-	float: right;
-	position: relative;
-	top: -10px;
-	}
+/*********** APP DETAILS ****************/
+    
+    #app-details label {
+        font-weight: bold;
+        margin: 0;
+        padding: 0;
+    }
+    .app-images {
+        float: left;
+        width: 315px;
+        margin: 0 5px 8px 0;
+        position: relative;
+        top: 4px;
+    }
+    .app-images img {
+        border: 1px solid #888;
+        width: 300px;
+        height: 300px;
+        margin-bottom: 10px;
+    }
+    .app-images-thumbs {
+        clear: both;
+        margin-top: 4px;
+    }
+    #outer-wrapper .app-images-thumbs img {
+        width: 145px;
+        height: 145px;
+        margin: 0 8px 10px 0;
+    }
+    .condensed-agency-list li a {
+        font-size: 11px;
+        color: #9b744e;
+    }
+    .condensed-agency-list li {
+        font-size: 10px;
+    }
+    
+    .app-info {
+        width: 270px;
+        float: left;
+    }
+    .app-info ul {
+        margin: 0;
+        padding: 0;
+    }
+    .app-info li {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+    }
+
 	
 /*********** TWEETS ****************/
 	.tweet {
@@ -613,6 +706,12 @@
 
 	#fill_nearby_no_public {
 		color: #316b84;
+		margin-bottom: 10px;
+	}
+
+	#fill_nearby_public {
+		color: #316b84;
+		margin-bottom: 10px;
 	}
 	
 /*********** APP ADD FORMS ************/
@@ -656,9 +755,11 @@
 	}
 /*********** CUSTOM STUFF ************/
 	.bluegreen {
+		font-size: 16px;
 		color: #028dc7;
 	}
 	.bluegreen span {
+		font-size: 16px;
 		color: #18b541;
 	}
 	.bluegreen em {
@@ -666,7 +767,7 @@
 		font-style: normal;
 	}
 	.bluegreen a {
-    text-decoration: underline;
+	text-decoration: underline;
 	}
 	
 	
@@ -686,10 +787,10 @@
 	.app-gallery #up-control:hover label { background-position: 0 -90px; }
 	.app-gallery #down-control label { background: url(/images/otd-icons.png) 0 -78px no-repeat; }
 	.app-gallery #down-control:hover label { background-position: 0 -102px; }	
-    
-    
-    
-    
+	
+	
+	
+	
 /*********** AGENCY LISTING MISC ************/
 .agency_public td, .pub td {background-color:#D1EFD5;}
 .agency_no_public td, .no_pub td {background-color:#EFD1D1;}
@@ -707,17 +808,17 @@
 
 /*------------- ADMIN HOMEPAGE ----------------*/
 #admin-outer-wrapper {
-    padding: 1.75em;
+	padding: 1.75em;
 	width: 920px;
 	position:relative;
 }
 
 #admin-outer-wrapper p, #admin-outer-wrapper a
 {
-    font-size: large;    
+	font-size: large;	 
 }
 
 #admin-outer-wrapper p
 {
-    line-height: 1.75em;
+	line-height: 1.75em;
 }
