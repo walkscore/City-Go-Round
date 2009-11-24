@@ -12,7 +12,9 @@
         <div class="app-images-thumbs">
             <img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" /><img src="{{transit_app.screen_shot_url}}" alt="Application Screen Shot" />
         </div>
+
     </div>
+    
     <div class="app-info">
         <label>Full Description:</label> <p>{{transit_app.long_description}}"</p>
         <p><a href="{{transit_app.url}}">Visit developer's website</a></p>
@@ -31,14 +33,14 @@
                 <label>All tags:</label> <p>{% for i in transit_app.tags %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}<p>
             </div>
         {% endif %}
-        {% if agencies %}
-            <div>
-                <label>Agencies:</label> <p>{% for i in agencies %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}<p>
-            </div>
-        {% endif %}
         {% if locations %}
             <div>
                 <label>Areas Supported:</label> <p>{% for i in locations %}<li>{{ i }}</li>{% endfor %}<p>
+            </div>
+        {% endif %}
+        {% if agencies %}
+            <div class="condensed-agency-list">
+                <label>Uses Open Data from:</label> <ul>{% for i in agencies %}<li><a href="/agencies/{{ i.urlslug }}">{{ i.name }}</a> {{ i.city }}, {{ i.state}}</li>{% endfor %}</ul>
             </div>
         {% endif %}
     </div>

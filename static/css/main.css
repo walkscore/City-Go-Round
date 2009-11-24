@@ -656,6 +656,13 @@
         height: 145px;
         margin: 0 8px 10px 0;
     }
+    .condensed-agency-list li a {
+        font-size: 11px;
+        color: #9b744e;
+    }
+    .condensed-agency-list li {
+        font-size: 10px;
+    }
     
     .app-info {
         width: 270px;
