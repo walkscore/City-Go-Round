@@ -53,22 +53,40 @@ jQuery(document).ready(function($)
         return html;
     }
     
+    function appHasTag(app, target_tag){
+        for (var i=0; i<app.tags.length; i++){
+            if(app.tags[i]==target_tag)
+                return true; 
+        }
+        return false;
+    }
+    
     function query_for_transit_apps(latitude, longitude, country_code)
     {
         $.getJSON(url_for_transit_app_query(latitude, longitude, country_code), function(transit_apps)
         {
-            var transit_app_count = 0;
-            var transit_apps_html = "";
+            var total_app_count = 0;
+            var biking_app_count = 0;
+            var main_apps_html = "";
+            var biking_apps_html = "";
             
+            //sort biking apps from others
             $.each(transit_apps, function(i, transit_app)
             {
-                transit_app_count += 1;
-                transit_apps_html += html_for_transit_app_thumb(transit_app);             
+                total_app_count += 1;
+                if (appHasTag(transit_app, "Biking")) {
+                    biking_apps_html += html_for_transit_app_thumb(transit_app);
+                    biking_app_count ++;
+                }
+                else {
+                    main_apps_html += html_for_transit_app_thumb(transit_app);
+                }
             });
+            
             
             var public_data_count = 0; //XXX TODO DAVEPECK
             
-            var subhead_html = "<em>" + transit_app_count + "</em> apps";
+            var subhead_html = "<em>" + total_app_count + "</em> apps";
             if (public_data_count > 1) 
                 subhead_html += " use data from <span><em>" + public_data_count + "</em> transit agencies.</span>"
             else if (public_data_count == 1) 
@@ -81,7 +99,11 @@ jQuery(document).ready(function($)
             $("#transit_app_loading").fadeOut(0.0, function(){});
             $("#transit_app_headline").hide().html(subhead_html).fadeIn(1000.0, function(){});
             $("#fill_nearby_public").hide().text("Apps powered by: Some agencies here... TODO DAVEPECK").fadeIn(1000.0, function(){});
-            $("#apps_go_here").hide().html(transit_apps_html).fadeIn(1000.0, function(){});
+            $("#apps_go_here").hide().html(main_apps_html).fadeIn(1000.0, function(){});
+            if (biking_app_count>0){
+                $("#biking_apps").fadeIn(1000.0);
+                $("#biking_apps_go_here").hide().html(biking_apps_html).fadeIn(1000.0, function(){});
+            }
         });
     }
     
@@ -144,6 +166,10 @@ jQuery(document).ready(function($)
         <div class="agency-text-list" id="fill_nearby_public"><span class="loading">TODO DAVEPECK...</span></div>
         <h3 id="transit_app_loading"><img src="{% static_url /images/ajax-loader.gif %}" />LOADING...</h3>
         <div id="apps_go_here" class="app-gallery"></div>
+    </div>
+    <div id="biking_apps" class="body-content col-group">
+        <h2>Biking Apps Near {{location_query}}:</h2>
+        <div id="biking_apps_go_here" class="app-gallery"></div>
     </div>
       
 {% endblock %}

@@ -27,10 +27,27 @@ def nearby(request):
     }    
     return render_to_response(request, 'app/nearby.html', template_vars)
 
-def gallery(request):    
+def gallery(request):
+
+    all_apps = TransitApp.all().fetch(500);
+    bike_list = []
+    main_list = []
+    
+    for a in all_apps:        
+        has_bike = False
+        for item in a.tags:
+            if (item=="Biking"):
+                has_bike = True 
+                break
+        if has_bike:
+            bike_list.append(a)
+        else:
+            main_list.append(a)
+          
     template_vars = {
         'transit_app_count': TransitAppStats.get_transit_app_count(),
-        'transit_apps': TransitApp.all().fetch(40), # TODO DAVEPECK: fix these queries
+        'main_app_list': main_list,
+        'bike_app_list': bike_list,
         'featured_apps': TransitApp.featured_by_most_recently_added().fetch(3), 
         'recently_added_apps': TransitApp.all_by_most_recently_added().fetch(3), 
         'transit_app_count': TransitApp.all().count(),

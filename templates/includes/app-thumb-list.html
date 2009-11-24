@@ -2,7 +2,7 @@
 	<div class="app {% cycle 'odd' 'even' %}"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.default_80sq_screen_shot_url}}" alt="Application Screen Shot" /></a>
 		<h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
 		<label>By {{transit_app.author_name}}</label>
-		<p><img class="featured" src="{% static_url /images/editors-choice.gif %}" />{{transit_app.description}}<br />
+		<p>{% if transit_app.is_featured %}<img class="featured" src="{% static_url /images/editors-choice.gif %}" />{% endif %}{{transit_app.description}}<br />
             <span>average rating {{transit_app.average_rating}}<br />
             sort value {{transit_app.bayesian_average}}</span>
         </p>

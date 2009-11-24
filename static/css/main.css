@@ -642,7 +642,7 @@
 	   width: 48px;
 	   height: 29px;
 	   position: relative;
-	   top: 2px;
+	   top: 1px;
 	}	
 
 
@@ -733,6 +733,9 @@
 		color: #316b84;
 		margin-bottom: 10px;
 	}
+	#biking_apps {
+	   display: none;
+    }
 	
 /*********** APP ADD FORMS ************/
 	
