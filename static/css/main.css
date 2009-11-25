@@ -654,6 +654,11 @@
         width: 160px;
         height: 16px;
     }
+    .app-gallery .rating p {
+        margin-left:  88px;
+        font-size: 10px;
+        color: #888;
+    }
     .app-gallery .rating {
         float: left;
         position: relative;

@@ -47,8 +47,8 @@ jQuery(document).ready(function($)
         html += img(transit_app.default_80sq_screen_shot_url, "Application Screen Shot")
         html += '</a>';
         html += '<h5><a href="' + transit_app.details_url + '">' + transit_app.title + '</a></h5>';
-        html += '<div class="rating"><div class="stars' + (transit_app.rating * 10) + '"></div></div>';
         html += '<label>By ' + transit_app.author_name + '</label>';
+        html += '<div class="rating"><div class="stars' + (transit_app.rating * 10) + '"></div><p>(' + transit_app.rating_count + ' ratings)</p></div>';
         html += '<p>' + transit_app.description + '</p>';
         html += '</div>';
         return html;
