@@ -12,6 +12,7 @@ from ..forms import NewAppGeneralInfoForm, NewAppAgencyForm, NewAppLocationForm,
 from ..utils.view import render_to_response, redirect_to, not_implemented, render_image_response, redirect_to_url, method_not_allowed, render_to_json
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
 from ..utils.screenshot import get_families_and_screen_shot_blobs
+from ..utils.misc import chunk_sequence
 from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid
 from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress, FeedReference, NamedStat
 
@@ -29,7 +30,7 @@ def nearby(request):
 
 def gallery(request):
 
-    all_apps = TransitApp.all().fetch(500);
+    all_apps = TransitApp.all().order('-bayesian_average').fetch(500);
     bike_list = []
     main_list = []
     
@@ -88,8 +89,9 @@ def add_form(request):
             
             # Write the individual images to the data store
             # TODO error handling.
-            db.put(blobs)
-            
+            for blobs_chunk in chunk_sequence(blobs, 3):
+                db.put(blobs_chunk)
+                            
             # Hold onto the information in this form, so we can use it later.
             # (Unfortunately we can't just pickle the form itself.)
             info_form = {

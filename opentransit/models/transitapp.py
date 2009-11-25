@@ -156,6 +156,8 @@ class TransitApp(db.Model):
             "title": self.title,
             "slug": self.slug,
             "description": self.description,
+            "rating": self.average_rating,
+            "rating_count": self.rating_count,
             "url": str(self.url),
             "author_name": str(self.author_name), # DO NOT INCLUDE AUTHOR EMAIL.
             "long_description": self.long_description,
@@ -359,8 +361,13 @@ class TransitApp(db.Model):
     def average_rating(self):
         if self.rating_count==0:
             return None
-        
         return self.rating_sum/self.rating_count
+        
+        
+    def average_rating_no_decimal(self):
+        if self.rating_count==0:
+            return 0
+        return int(self.rating_sum*10/self.rating_count)
         
     @property
     def num_ratings(self):
