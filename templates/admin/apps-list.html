@@ -68,15 +68,15 @@ jQuery(document).ready(function($)
             return;
         }
         
-        if (json["success"])
+        if (json.success)
         {
-            alert("'" + transit_app_slug + "' was successfully deleted.");
+            alert("'" + json.transit_app_slug + "' was successfully deleted.");
             $("#transit_apps").html("&nbsp;");
             query_for_transit_apps();
         }
         else
         {
-            alert("Could not delete '" + transit_app_slug + "'. Please try again");
+            alert("Could not delete '" + json.transit_app_slug + "'. Please try again");
         }        
     }
     

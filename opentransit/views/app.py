@@ -232,8 +232,8 @@ def admin_apps_delete(request, transit_app):
     try:
         transit_app.delete();
     except:
-        return render_to_json({"success": False});
-    return render_to_json({"success": True});
+        return render_to_json({"success": False, "transit_app_slug": transit_app.slug});
+    return render_to_json({"success": True, "transit_app_slug": transit_app.slug});
         
 def increment_stat(request):
     stat_name = request.GET['name']

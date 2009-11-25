@@ -11,6 +11,8 @@ def chunk_sequence(sequence, chunk_size):
         if len(chunk) >= chunk_size:
             yield chunk
             chunk = []
+    if chunk:
+        yield chunk
 
 
     
