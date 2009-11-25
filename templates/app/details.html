@@ -3,21 +3,69 @@
 {% block headscripts %}
 <link rel="stylesheet" type="text/css" href="/css/jquery.rating.css" media="screen" />
 <script type="text/javascript" src="/js/jquery.rating.pack.js"></script>
+<script type="text/javascript" src="/js/jquery.metadata.js"></script>
 {% endblock %}
 
 {% block extra_head %}
 
     <script type="text/javascript">
     
+    function get_current_user_rating() {
+      cookies = document.cookie.split(";");
+      
+      // for each cookie
+      for(i=0; i<cookies.length; i++) {
+        cookie = cookies[i];
+        splitter = cookie.indexOf("=");
+        key = cookie.substring(0,splitter);
+        value = cookie.substring(splitter+1,cookie.length);
+        
+        // if the key of the cookie is the app id
+        if(parseInt(key)=={{transit_app.key.id}}) {
+          return parseInt(value);
+        }
+      }
+      
+      return null;
+    }
+    
+    // on return of ajax call
     function react_to_vote( data ) {
       average_rating = data[0];
       num_ratings = data[1];
+      
+      // get the number of stars to represent the average rating, and control we'll be flipping
+      if(average_rating) {
+        star_index = Math.round((average_rating/5.0)*20) - 1
+      } else {
+        star_index = 0
+      }
+      checkable = $("#avgratingform > input");
+      
+      // enable it, flip it, and then disable it
+      checkable.rating('readOnly',false);
+      checkable.rating('select',star_index);
+      checkable.rating('readOnly',true);
     
-      $("#ratings").html("average "+average_rating+"/5 over "+num_ratings+" votes");
+      // tell our fine people how many votes we have
+      $("#ratings").html(" "+num_ratings+" votes");
     }
     
+     // on startup
      $(document).ready(function(){
+       // if the user has been cookied for this app, set their personal rating
+       current_user_rating = get_current_user_rating();
+       if(current_user_rating) {
+         $("#rating"+current_user_rating).attr("checked","checked");
+       }
      
+       // set the average-stars to the correct value, then disable it
+       {% if transit_app.average_rating %}
+       $("#avgratingform > input").rating('select',Math.round(20*({{transit_app.average_rating}}/5))-1);
+       {% endif %}
+       $("#avgratingform > input").rating('readOnly',true);
+     
+       // on my-rating click, send an ajax call
        $('.auto-submit-star').rating({ 
          callback: function(value, link){
                      $.getJSON( "/admin/apps/rating/", {'app_key_id':'{{transit_app.key.id}}','rating':value}, react_to_vote );
@@ -51,19 +99,47 @@
     
     <div class="app-info">
         <div id="app-details" class="body-content">    
-        <label>Ratings:</label> <div><p id="ratings">average {{transit_app.average_rating}}/5 over {{transit_app.num_ratings}} votes</p></div>
+            <label>Ratings:</label> 
+            <div class="Clear">
+                <form id="avgratingform">
+                    <input name="adv1" type="radio" class="star {split:4}" /> 
+                    <input name="adv1" type="radio" class="star {split:4}" /> 
+                    <input name="adv1" type="radio" class="star {split:4}" /> 
+                    <input name="adv1" type="radio" class="star {split:4}" /> 
+
+                    <input name="adv1" type="radio" class="star {split:4}" /> 
+                    <input name="adv1" type="radio" class="star {split:4}" /> 
+                    <input name="adv1" type="radio" class="star {split:4}" /> 
+                    <input name="adv1" type="radio" class="star {split:4}" />
+
+                    <input name="adv1" type="radio" class="star {split:4}" /> 
+                    <input name="adv1" type="radio" class="star {split:4}" /> 
+                    <input name="adv1" type="radio" class="star {split:4}" /> 
+                    <input name="adv1" type="radio" class="star {split:4}" />
+
+                    <input name="adv1" type="radio" class="star {split:4}" /> 
+                    <input name="adv1" type="radio" class="star {split:4}" /> 
+                    <input name="adv1" type="radio" class="star {split:4}" /> 
+                    <input name="adv1" type="radio" class="star {split:4}" />
+
+                    <input name="adv1" type="radio" class="star {split:4}" /> 
+                    <input name="adv1" type="radio" class="star {split:4}" /> 
+                    <input name="adv1" type="radio" class="star {split:4}" /> 
+                    <input name="adv1" type="radio" class="star {split:4}" />
+                </form><div><p id="ratings">&nbsp;{{transit_app.num_ratings}} votes</p></div>
+            </div>
+
         <div id="votebooth">
-        <form name="rating" action="/app/rating" method="POST">
-        <p>Your rating:
-        <input type="radio" name="rating" value="1" onchange="vote(this.value);" class="auto-submit-star">
-        <input type="radio" name="rating" value="2" onchange="vote(this.value);" class="auto-submit-star">
-        <input type="radio" name="rating" value="3" onchange="vote(this.value);" class="auto-submit-star">
-        <input type="radio" name="rating" value="4" onchange="vote(this.value);" class="auto-submit-star">
-        <input type="radio" name="rating" value="5" onchange="vote(this.value);" class="auto-submit-star">
-        </p></form>
+        Your rating:
+        <form id="ratingform" name="rating" action="/app/rating" method="POST">
+        <input id="rating1" type="radio" name="rating" value="1" class="auto-submit-star">
+        <input id="rating2" type="radio" name="rating" value="2" class="auto-submit-star">
+        <input id="rating3" type="radio" name="rating" value="3" class="auto-submit-star">
+        <input id="rating4" type="radio" name="rating" value="4" class="auto-submit-star">
+        <input id="rating5" type="radio" name="rating" value="5" class="auto-submit-star"></form>
         </div>
     </div>
-
+<br>
         <label>Full Description:</label> <p>{{transit_app.long_description}}"</p>
         <p><a href="{{transit_app.url}}">Visit developer's website</a></p>
         {% if transit_app.categories %}
