@@ -3,8 +3,8 @@
 {% block title %}{{location}} transit agencies on City-Go-Round{% endblock %}
 
 {% block headscripts %}
-<script type="text/javascript" src="http://files.citygoround.org.s3.amazonaws.com/js/jquery.tablesorter.min.js"></script>
-<script type="text/javascript" src="http://files.citygoround.org.s3.amazonaws.com/js/jquery.tablesorter.pager.js"></script>
+<script type="text/javascript" src="{% static_or_s3_url /js/jquery.tablesorter.min.js %}"></script>
+<script type="text/javascript" src="{% static_or_s3_url /js/jquery.tablesorter.pager.js %}"></script>
 <script type="text/javascript">
 
 var agency_count = {{agency_count}}; 

@@ -35,6 +35,7 @@ def _resolve_variable_or_expression(v_or_e, context):
             
     return value
 
+
 #------------------------------------------------------------------------------
 # "Static URLs."
 #------------------------------------------------------------------------------
@@ -54,6 +55,30 @@ class StaticUrlNode(djangot.Node):
 
     def render(self, context):
         return self.relative_path
+
+
+#------------------------------------------------------------------------------
+# "Static Or S3 URLs."
+#------------------------------------------------------------------------------
+
+# Pointer to static media _for our site_ (like our js/css/images)
+@register.tag(name="static_or_s3_url")
+def static_url(parser, token):
+    try:
+        tag_name, relative_path = token.split_contents()
+    except ValueError:
+        raise djangot.TemplateSyntaxError, "static_url tag expects a relative path (like /css/foo.css)"
+    return StaticOrS3UrlNode(relative_path)
+
+class StaticOrS3UrlNode(djangot.Node):
+    def __init__(self, relative_path):
+        self.relative_path = relative_path
+
+    def render(self, context):
+        if settings.DEBUG or (settings.S3_URL_ROOT is None):            
+            return self.relative_path
+        else:
+            return settings.S3_URL_ROOT + self.relative_path
 
 
 #------------------------------------------------------------------------------
@@ -115,6 +140,28 @@ class IfDjangoDebugNode(djangot.Node):
             return self.nodelist.render(context)
         else:
             return ""
+
+
+#------------------------------------------------------------------------------
+# "Django NOT Debug" -- an if statement that is true if we're on debug mode
+#------------------------------------------------------------------------------
+
+@register.tag(name="if_not_django_debug")
+def if_not_django_debug(parser, token):
+    nodelist = parser.parse(('end_if_not_django_debug',))
+    parser.delete_first_token()
+    return IfNotDjangoDebugNode(nodelist)
+
+class IfNotDjangoDebugNode(djangot.Node):
+    def __init__(self, nodelist):
+        self.nodelist = nodelist
+
+    def render(self, context):
+        if not settings.DEBUG:
+            return self.nodelist.render(context)
+        else:
+            return ""
+
 
 #------------------------------------------------------------------------------
 # "Partial" template; currently VERY HACKNOLOGICAL, but it works. Should be hella cleaned.
