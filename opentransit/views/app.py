@@ -222,9 +222,22 @@ def add_success(request):
 def admin_apps_list(request):
     return render_to_response(request, 'admin/apps-list.html')
     
-def admin_apps_edit(request, transit_app_slug):
+@requires_valid_transit_app_slug
+def admin_apps_edit(request, transit_app):
+    return render_to_response(request, 'admin/app-edit.html', {'transit_app': transit_app})
+    
+@requires_valid_transit_app_slug
+def admin_apps_edit_basic(request, transit_app):
     return not_implemented(request)
     
+@requires_valid_transit_app_slug
+def admin_apps_edit_locations(request, transit_app):
+    return not_implemented(request)
+    
+@requires_valid_transit_app_slug
+def admin_apps_edit_agencies(request, transit_app):
+    return not_implemented(request)
+        
 @requires_valid_transit_app_slug
 def admin_apps_delete(request, transit_app):
     if request.method != "POST":
