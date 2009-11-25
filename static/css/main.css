@@ -95,7 +95,7 @@
 	
   p, a, ul, ol, blockquote, label, span, li {
 		font:12px Verdana, Arial, Helvetica, sans-serif;
-		color: #444;
+		color: #555;
 	}
 	ul, ol {
 		padding-left: 5px;
@@ -628,10 +628,14 @@
 	}		
 	.app-gallery .app label { 
 		font-size: 11px;
+		line-height: 11px;
 		color: #777;
+		display: block;
+		padding-bottom: 3px;
 	}	
 	.app-gallery .app p span { 
 		font-size: 10px;
+		color: #aaa;
 		margin: 0;
 		padding: 0;
 	}	
@@ -645,6 +649,34 @@
 	   top: 1px;
 	}	
 
+    
+    .app-gallery .rating, .app-gallery .rating div {
+        width: 160px;
+        height: 16px;
+    }
+    .app-gallery .rating {
+        float: left;
+        position: relative;
+        background: url(/images/static-stars.gif) 0 -16px no-repeat;
+    }
+    .app-gallery .rating div {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: url(/images/static-stars.gif) 0 0 no-repeat;   
+        width: 20px; 
+    }
+    .app-gallery .rating div.stars0 { width: 0px; }
+    .app-gallery .rating div.stars05 { width: 8px; }
+    .app-gallery .rating div.stars10 { width: 16px; }
+    .app-gallery .rating div.stars15 { width: 24px; }
+    .app-gallery .rating div.stars20 { width: 32px; }
+    .app-gallery .rating div.stars25 { width: 40px; }
+    .app-gallery .rating div.stars30 { width: 48px; }  
+    .app-gallery .rating div.stars35 { width: 56px; }  
+    .app-gallery .rating div.stars40 { width: 64px; }  
+    .app-gallery .rating div.stars45 { width: 72px; }  
+    .app-gallery .rating div.stars50 { width: 80px; }    
 
 	
 /*********** APP DETAILS ****************/
@@ -831,7 +863,6 @@
 	background:#333 !important;
 	background:rgba(0, 0, 0, 0.6) url(/images/overlay/h80.png) repeat-x;		
 }
-
 	
 /*********** TWEETS ****************/
 	.tweet {
