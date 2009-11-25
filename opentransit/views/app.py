@@ -50,7 +50,7 @@ def gallery(request):
         'bike_app_list': bike_list,
         'featured_apps': TransitApp.featured_by_most_recently_added().fetch(3), 
         'recently_added_apps': TransitApp.all_by_most_recently_added().fetch(3), 
-        'transit_app_count': TransitApp.all().count(),
+        'transit_app_count': TransitApp.all().order('-bayesian_average').count(),
         'public_feed_count': Agency.all().filter("date_opened != ", None).count(),
     }
         
