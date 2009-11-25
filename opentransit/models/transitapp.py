@@ -156,6 +156,7 @@ class TransitApp(db.Model):
             "title": self.title,
             "slug": self.slug,
             "description": self.description,
+            "rating": self.average_rating,
             "url": str(self.url),
             "author_name": str(self.author_name), # DO NOT INCLUDE AUTHOR EMAIL.
             "long_description": self.long_description,
