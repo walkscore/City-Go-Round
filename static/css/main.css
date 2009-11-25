@@ -1042,3 +1042,18 @@
 {
     font-weight: bold;
 }
+
+#admin-transit-apps-list tr
+{
+    padding-top: 0.2em;
+}
+
+#admin-transit-apps-list tr.even td
+{
+    background-color: #CCC;
+}
+
+#admin-transit-apps-list tr.odd td
+{
+    background-color: #EEE;
+}

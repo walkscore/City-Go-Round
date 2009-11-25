@@ -21,72 +21,86 @@ jQuery(document).ready(function($)
     {
         return "{% url admin_apps_delete transit_app_slug="REPLACEME" %}".replace("REPLACEME", transit_app_slug);
     }
+        
+    function get_html_for_transit_app(transit_app, row_class)
+    {
+        return '<tr class="' + row_class + '"><td><a href="' + transit_app.details_url + '">' + transit_app.title + "</a></td><td>" + transit_app.description + "</td><td>" + transit_app.author_name + '</td><td><a href="#" class="edit_link" id="edit_' + transit_app.slug + '">Edit</a></td><td><a href="#" class="delete_link" id="delete_' + transit_app.slug + '">Delete</a></td>\n';        
+    }
+    
+    function get_html_for_transit_apps(transit_apps)
+    {
+        var transit_apps_html = '<table style="width:1000px">\n<tr><th>Name</th><th>Description</th><th>Author</th><th>Edit</th><th>Delete</th></tr>\n';        
+        $.each(transit_apps, function(i, transit_app)
+        {
+            var row_class = ((i % 2) == 0) ? "even" : "odd";
+            transit_apps_html += get_html_for_transit_app(transit_app, row_class);
+        });
+        transit_apps_html += "</table>\n";
+        return transit_apps_html
+    }
+    
+    function get_text_for_transit_app_count(transit_app_count)
+    {
+        if (transit_app_count == 0)
+        {
+            return "There are no apps in the system.";
+        }
+        else if (transit_app_count == 1)
+        {
+            return "There is one app in the system.";
+        }
+        
+        return "There are " + transit_app_count.toString() + " apps in the system.";
+    }
+    
+    function on_edit_link_click()
+    {
+        var transit_app_slug = $(this).attr("id").toString().split('_')[1];
+        document.location = url_for_transit_app_edit(transit_app_slug);
+        return false;
+    }
+    
+    function on_delete_app_callback(json, errorInfo)
+    {
+        if (errorInfo != "success")
+        {
+            alert("An unknown network failure was encountered when attempting to delete '" + transit_app_slug + "' (" + errorInfo.toString() + "). Please try again.");
+            return;
+        }
+        
+        if (json["success"])
+        {
+            alert("'" + transit_app_slug + "' was successfully deleted.");
+            $("#transit_apps").html("&nbsp;");
+            query_for_transit_apps();
+        }
+        else
+        {
+            alert("Could not delete '" + transit_app_slug + "'. Please try again");
+        }        
+    }
+    
+    function on_delete_link_click()
+    {
+        // confirm that the user really wants to delete this app
+        var transit_app_slug = $(this).attr("id").toString().split('_')[1];
+        if (confirm("Are you sure you want to delete the app named '" + transit_app_slug + "'? There is no going back."))
+        {
+            // make a json POST request to the admin delete-an-app API
+            var url = url_for_transit_app_delete(transit_app_slug);
+            $.post(url, {}, on_delete_app_callback, "json");
+        }
+        return false;        
+    }
     
     function query_for_transit_apps()
     {
         $.getJSON(url_for_transit_apps_query(), function(transit_apps)
         {
-            var transit_app_count = 0;
-            var transit_apps_html = '<table style="width:900px">\n<tr><th>Name</th><th>Description</th><th>Author</th><th>Edit</th><th>Delete</th></tr>\n';
-            
-            //sort biking apps from others
-            $.each(transit_apps, function(i, transit_app)
-            {
-                transit_app_count += 1;
-                transit_apps_html += '<tr><td><a href="' + transit_app.details_url + '">' + transit_app.title + "</a></td><td>" + transit_app.description + "</td><td>" + transit_app.author_name + '</td><td><a href="#" class="edit_link" id="edit_' + transit_app.slug + '">Edit</a></td><td><a href="#" class="delete_link" id="delete_' + transit_app.slug + '">Delete</a></td>\n';
-            });
-            
-            transit_apps_html += "</table>\n";
-            
-            if (transit_app_count == 0)
-            {
-                $("#transit_app_count").text("There are no apps in the system.");
-            }
-            else if (transit_app_count == 1)
-            {
-                $("#transit_app_count").text("There is one app in the system.");
-            }
-            else
-            {
-                $("#transit_app_count").text("There are " + transit_app_count.toString() + " apps in the system.");
-            }
-            $("#transit_apps").html(transit_apps_html);
-            
-            $("#transit_apps a.edit_link").click(function ()
-            {
-                var transit_app_slug = $(this).attr("id").toString().split('_')[1];
-                document.location = url_for_transit_app_edit(transit_app_slug);
-                return false;
-            });
-            
-            $("#transit_apps a.delete_link").click(function ()
-            {
-                var transit_app_slug = $(this).attr("id").toString().split('_')[1];
-                if (confirm("Are you sure you want to delete the app named '" + transit_app_slug + "'? There is no going back."))
-                {
-                    var url = url_for_transit_app_delete(transit_app_slug);
-                    $.post(url, {}, function (json, errorInfo) 
-                    { 
-                        if (errorInfo != "success")
-                        {
-                            alert("An unknown network failure was encountered when attempting to delete '" + transit_app_slug + "' (" + errorInfo.toString() + "). Please try again.");
-                            return;
-                        }
-                        
-                        if (json["success"])
-                        {
-                            alert("'" + transit_app_slug + "' was successfully deleted.");
-                            $("#transit_apps").html("&nbsp;");
-                            query_for_transit_apps();
-                        }
-                        else
-                        {
-                            alert("Could not delete '" + transit_app_slug + "'. Please try again");
-                        }
-                    }, "json");                
-                }
-                return false;
-            });
+            $("#transit_apps").html(get_html_for_transit_apps(transit_apps));   
+            $("#transit_app_count").text(get_text_for_transit_app_count($(transit_apps).length));
+            $("#transit_apps a.edit_link").click(on_edit_link_click);
+            $("#transit_apps a.delete_link").click(on_delete_link_click);
         });
     }
     
