@@ -49,7 +49,7 @@
       checkable.rating('readOnly',true);
     
       // tell our fine people how many votes we have
-      $("#ratings").html(" "+num_ratings+" votes");
+      $("#ratings").html(" "+num_ratings+" ratings");
     }
     
      // on startup
@@ -73,6 +73,8 @@
                      document.cookie ='{{transit_app.key.id}}='+value+'; expires=Thu, 2 Aug 2010 20:47:11 UTC; path=/';
                    } 
        });
+       
+       $("#ratings-panel").css("visibility", "visible");
      
      });
 
@@ -99,48 +101,50 @@
     </div>
     
     <div class="app-info">
-        <div id="app-details" class="body-content">    
-            <label>Ratings:</label> 
-            <div class="Clear">
-                <form id="avgratingform">
-                    <input name="adv1" type="radio" class="star {split:4}" /> 
-                    <input name="adv1" type="radio" class="star {split:4}" /> 
-                    <input name="adv1" type="radio" class="star {split:4}" /> 
-                    <input name="adv1" type="radio" class="star {split:4}" /> 
-
-                    <input name="adv1" type="radio" class="star {split:4}" /> 
-                    <input name="adv1" type="radio" class="star {split:4}" /> 
-                    <input name="adv1" type="radio" class="star {split:4}" /> 
-                    <input name="adv1" type="radio" class="star {split:4}" />
-
-                    <input name="adv1" type="radio" class="star {split:4}" /> 
-                    <input name="adv1" type="radio" class="star {split:4}" /> 
-                    <input name="adv1" type="radio" class="star {split:4}" /> 
-                    <input name="adv1" type="radio" class="star {split:4}" />
-
-                    <input name="adv1" type="radio" class="star {split:4}" /> 
-                    <input name="adv1" type="radio" class="star {split:4}" /> 
-                    <input name="adv1" type="radio" class="star {split:4}" /> 
-                    <input name="adv1" type="radio" class="star {split:4}" />
-
-                    <input name="adv1" type="radio" class="star {split:4}" /> 
-                    <input name="adv1" type="radio" class="star {split:4}" /> 
-                    <input name="adv1" type="radio" class="star {split:4}" /> 
-                    <input name="adv1" type="radio" class="star {split:4}" />
-                </form><div><p id="ratings">&nbsp;{{transit_app.num_ratings}} votes</p></div>
+        <div id="app-details" class="body-content">
+            <div id="ratings-panel">    
+                <label>Ratings:</label> 
+                <div id="avg-rating-panel">
+                    <form id="avgratingform">
+                        <input name="adv1" type="radio" class="star {split:4}" /> 
+                        <input name="adv1" type="radio" class="star {split:4}" /> 
+                        <input name="adv1" type="radio" class="star {split:4}" /> 
+                        <input name="adv1" type="radio" class="star {split:4}" /> 
+    
+                        <input name="adv1" type="radio" class="star {split:4}" /> 
+                        <input name="adv1" type="radio" class="star {split:4}" /> 
+                        <input name="adv1" type="radio" class="star {split:4}" /> 
+                        <input name="adv1" type="radio" class="star {split:4}" />
+    
+                        <input name="adv1" type="radio" class="star {split:4}" /> 
+                        <input name="adv1" type="radio" class="star {split:4}" /> 
+                        <input name="adv1" type="radio" class="star {split:4}" /> 
+                        <input name="adv1" type="radio" class="star {split:4}" />
+    
+                        <input name="adv1" type="radio" class="star {split:4}" /> 
+                        <input name="adv1" type="radio" class="star {split:4}" /> 
+                        <input name="adv1" type="radio" class="star {split:4}" /> 
+                        <input name="adv1" type="radio" class="star {split:4}" />
+    
+                        <input name="adv1" type="radio" class="star {split:4}" /> 
+                        <input name="adv1" type="radio" class="star {split:4}" /> 
+                        <input name="adv1" type="radio" class="star {split:4}" /> 
+                        <input name="adv1" type="radio" class="star {split:4}" />
+                    </form><p id="ratings">&nbsp;{{transit_app.num_ratings}} ratings</p>
+                </div>
+    
+                <div id="your-rating-panel">
+                    <p style="float:left">Your rating:</p>
+                    <form id="ratingform" name="rating" action="/app/rating" method="POST">
+                    <input id="rating1" type="radio" name="rating" value="1" class="auto-submit-star">
+                    <input id="rating2" type="radio" name="rating" value="2" class="auto-submit-star">
+                    <input id="rating3" type="radio" name="rating" value="3" class="auto-submit-star">
+                    <input id="rating4" type="radio" name="rating" value="4" class="auto-submit-star">
+                    <input id="rating5" type="radio" name="rating" value="5" class="auto-submit-star"></form>
+                </div>
             </div>
-
-        <div id="votebooth">
-        Your rating:
-        <form id="ratingform" name="rating" action="/app/rating" method="POST">
-        <input id="rating1" type="radio" name="rating" value="1" class="auto-submit-star">
-        <input id="rating2" type="radio" name="rating" value="2" class="auto-submit-star">
-        <input id="rating3" type="radio" name="rating" value="3" class="auto-submit-star">
-        <input id="rating4" type="radio" name="rating" value="4" class="auto-submit-star">
-        <input id="rating5" type="radio" name="rating" value="5" class="auto-submit-star"></form>
         </div>
-    </div>
-<br>
+        <br>
         <label>Full Description:</label> <p>{{transit_app.long_description}}"</p>
         <p><a href="{{transit_app.url}}">Visit developer's website</a></p>
         {% if transit_app.categories %}

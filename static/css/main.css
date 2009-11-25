@@ -723,6 +723,23 @@
         font-size: 10px;
     }
     
+    #ratings-panel {
+        visibility: hidden;
+        height: 48px;
+    }
+    #ratings-panel div#avg-rating-panel {
+        clear: both;
+        margin-top: 4px;
+    }
+    #ratings-panel div#your-rating-panel {
+        clear: both;
+        margin: 5px 0 7px 0;
+    }
+    #ratings-panel p {
+        padding: 0;
+        margin: 0 5px 0 0;
+    }
+    
     .app-info {
         width: 270px;
         float: left;
