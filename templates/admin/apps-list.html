@@ -1,0 +1,108 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}City-Go-Round Admin :: List Of Transit Apps!{% endblock %}
+
+{% block extra_head %}
+<script type="text/javascript">
+jQuery.noConflict();
+jQuery(document).ready(function($) 
+{
+    function url_for_transit_apps_query()
+    {
+        return "{% url api_apps_all %}";
+    }
+    
+    function url_for_transit_app_edit(transit_app_slug)
+    {
+        return "{% url admin_apps_edit transit_app_slug="REPLACEME" %}".replace("REPLACEME", transit_app_slug);
+    }
+    
+    function url_for_transit_app_delete(transit_app_slug)
+    {
+        return "{% url admin_apps_delete transit_app_slug="REPLACEME" %}".replace("REPLACEME", transit_app_slug);
+    }
+    
+    function query_for_transit_apps()
+    {
+        $.getJSON(url_for_transit_apps_query(), function(transit_apps)
+        {
+            var transit_app_count = 0;
+            var transit_apps_html = '<table style="width:900px">\n<tr><th>Name</th><th>Description</th><th>Author</th><th>Edit</th><th>Delete</th></tr>\n';
+            
+            //sort biking apps from others
+            $.each(transit_apps, function(i, transit_app)
+            {
+                transit_app_count += 1;
+                transit_apps_html += '<tr><td><a href="' + transit_app.details_url + '">' + transit_app.title + "</a></td><td>" + transit_app.description + "</td><td>" + transit_app.author_name + '</td><td><a href="#" class="edit_link" id="edit_' + transit_app.slug + '">Edit</a></td><td><a href="#" class="delete_link" id="delete_' + transit_app.slug + '">Delete</a></td>\n';
+            });
+            
+            transit_apps_html += "</table>\n";
+            
+            if (transit_app_count == 0)
+            {
+                $("#transit_app_count").text("There are no apps in the system.");
+            }
+            else if (transit_app_count == 1)
+            {
+                $("#transit_app_count").text("There is one app in the system.");
+            }
+            else
+            {
+                $("#transit_app_count").text("There are " + transit_app_count.toString() + " apps in the system.");
+            }
+            $("#transit_apps").html(transit_apps_html);
+            
+            $("#transit_apps a.edit_link").click(function ()
+            {
+                var transit_app_slug = $(this).attr("id").toString().split('_')[1];
+                document.location = url_for_transit_app_edit(transit_app_slug);
+                return false;
+            });
+            
+            $("#transit_apps a.delete_link").click(function ()
+            {
+                var transit_app_slug = $(this).attr("id").toString().split('_')[1];
+                if (confirm("Are you sure you want to delete the app named '" + transit_app_slug + "'? There is no going back."))
+                {
+                    var url = url_for_transit_app_delete(transit_app_slug);
+                    $.post(url, {}, function (json, errorInfo) 
+                    { 
+                        if (errorInfo != "success")
+                        {
+                            alert("An unknown network failure was encountered when attempting to delete '" + transit_app_slug + "' (" + errorInfo.toString() + "). Please try again.");
+                            return;
+                        }
+                        
+                        if (json["success"])
+                        {
+                            alert("'" + transit_app_slug + "' was successfully deleted.");
+                            $("#transit_apps").html("&nbsp;");
+                            query_for_transit_apps();
+                        }
+                        else
+                        {
+                            alert("Could not delete '" + transit_app_slug + "'. Please try again");
+                        }
+                    }, "json");                
+                }
+                return false;
+            });
+        });
+    }
+    
+    query_for_transit_apps();
+});
+</script>
+{% endblock %}
+
+{% block content %}
+
+    <div id="admin-transit-apps-list">
+        <h2>All Transit Apps In The System:</h2>
+        <h3 id="transit_app_count">&nbsp;</h3>
+        <div id="transit_apps"></div>
+    </div>
+      
+{% endblock %}
+
+

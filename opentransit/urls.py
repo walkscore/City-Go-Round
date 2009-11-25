@@ -67,6 +67,7 @@ urlpatterns += patterns(
     url(r'^apps/(?P<transit_app_slug>[\w-]+)/screenshot-(?P<screen_shot_index>[\d]+)-(?P<screen_shot_size_name>[\w\d]+).png$', 'screenshot', name='apps_screenshot'),
     url(r'^admin/apps/$', 'admin_apps_list', name='admin_apps_list'),
     url(r'^admin/apps/edit/(?P<transit_app_slug>[\w-]+)/$', 'admin_apps_edit', name='admin_apps_edit'),
+    url(r'^admin/apps/delete/(?P<transit_app_slug>[\w-]+)/$', 'admin_apps_delete', name='admin_apps_delete'),
     url(r'^admin/apps/rating/$', 'app_rating_vote', name='app_rating_vote'),
     url(r'^admin/apps/bayes/refresh/$', 'refresh_all_bayesian_averages', name='refresh_all_bayesian_averages'),
     url(r'^admin/apps/update-schema/$', 'admin_apps_update_schema', name='admin_apps_update_schema'),

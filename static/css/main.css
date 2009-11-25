@@ -1032,3 +1032,13 @@
 {
 	line-height: 1.75em;
 }
+
+#admin-transit-apps-list
+{
+	font: 11.4px/11px Tahoma, Verdana, sans-serif;    
+}
+
+#admin-transit-apps-list th
+{
+    font-weight: bold;
+}

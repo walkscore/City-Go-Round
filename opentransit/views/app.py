@@ -9,7 +9,7 @@ from django.http import Http404
 from google.appengine.ext import db
 
 from ..forms import NewAppGeneralInfoForm, NewAppAgencyForm, NewAppLocationForm, PetitionForm
-from ..utils.view import render_to_response, redirect_to, not_implemented, render_image_response, redirect_to_url
+from ..utils.view import render_to_response, redirect_to, not_implemented, render_image_response, redirect_to_url, method_not_allowed, render_to_json
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
 from ..utils.screenshot import get_families_and_screen_shot_blobs
 from ..utils.misc import chunk_sequence
@@ -220,12 +220,21 @@ def add_success(request):
     return render_to_response(request, 'app/add-success.html')
 
 def admin_apps_list(request):
+    return render_to_response(request, 'admin/apps-list.html')
+    
+def admin_apps_edit(request, transit_app_slug):
     return not_implemented(request)
     
-def admin_apps_edit(request):
-    # TODO DAVEPECK
-    return not_implemented(request)
-    
+@requires_valid_transit_app_slug
+def admin_apps_delete(request, transit_app):
+    if request.method != "POST":
+        return method_not_allowed("Must be called with POST.")
+    try:
+        transit_app.delete();
+    except:
+        return render_to_json({"success": False});
+    return render_to_json({"success": True});
+        
 def increment_stat(request):
     stat_name = request.GET['name']
     stat_value = NamedStat.increment( stat_name )
