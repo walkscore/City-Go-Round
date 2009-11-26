@@ -89,6 +89,9 @@
 <div id="app-details" class="body-content col-group">    
     <h2>{{transit_app.title}} <span>By {{transit_app.author_name}}</span></h2>
     <p>{{transit_app.description}}</p>
+    {% if_user_is_google_admin %}
+        <p>Logged in as admin: you can <a href="{% url admin_apps_edit transit_app_slug=transit_app.slug %}">edit this application</a>.</p>
+    {% end_if_user_is_google_admin %}    
     <div class="app-images" id="triggers">
         <a href="{% screen_shot_image_url transit_app default original %}" title="{{transit_app.title}} screenshot"><img src="{{transit_app.default_300w_screen_shot_url}}" alt="Application Screen Shot" /></a>
         <label>Additional Images:</label>

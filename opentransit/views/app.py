@@ -242,6 +242,7 @@ def admin_apps_edit_basic(request, transit_app):
             transit_app.categories = form.category_list
             transit_app.tags = form.tag_list
             transit_app.supports_any_gtfs = form.cleaned_data["supports_gtfs"]            
+            transit_app.is_featured = form.cleaned_data["is_featured"]
             transit_app.put()            
             return redirect_to("admin_apps_edit", transit_app_slug = transit_app.slug)
     else:
@@ -257,6 +258,7 @@ def admin_apps_edit_basic(request, transit_app):
             "categories": transit_app.category_choice_list,
             "tags": transit_app.tag_list_as_string,
             "supports_gtfs": transit_app.supports_any_gtfs,
+            "is_featured": transit_app.is_featured,
         }
         form = EditAppGeneralInfoForm(initial = form_initial_values)
     
@@ -321,6 +323,11 @@ def admin_apps_edit_locations(request, transit_app):
     
 @requires_valid_transit_app_slug
 def admin_apps_edit_agencies(request, transit_app):
+    # TODO davepeck
+    return not_implemented(request)
+    
+@requires_valid_transit_app_slug
+def admin_apps_edit_images(request, transit_app):
     # TODO davepeck
     return not_implemented(request)
         
