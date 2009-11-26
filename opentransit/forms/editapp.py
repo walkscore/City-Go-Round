@@ -15,14 +15,7 @@ class EditAppGeneralInfoForm(forms.Form):
     long_description    = forms.CharField(min_length = 0, max_length = 2048, widget = forms.widgets.Textarea(attrs = {'rows': 6, 'cols': 32}), label = u"Extended Description")
     platforms           = forms.MultipleChoiceField(choices = TransitApp.platform_choices(), widget = forms.widgets.CheckboxSelectMultiple(), label = u"Platforms supported:")
     categories          = forms.MultipleChoiceField(choices = TransitApp.category_choices(), widget = forms.widgets.CheckboxSelectMultiple(), initial=[u"public_transit"], label = u"Categories (choose at least one):")
-    tags                = forms.CharField(required = False, max_length = 1024, min_length = 0, label = u"Extra Tags (comma separated)")
-    
-    # TODO davepeck
-    # screen_shot         = AppEngineImageField(required = False, label = u"New Screen Shot #1 (optional)")
-    # screen_shot_2       = AppEngineImageField(required = False, label = u"New Screen Shot #2 (optional)")
-    # screen_shot_3       = AppEngineImageField(required = False, label = u"New Screen Shot #3 (optional)")
-    # screen_shot_4       = AppEngineImageField(required = False, label = u"New Screen Shot #4 (optional)")
-    # screen_shot_5       = AppEngineImageField(required = False, label = u"New Screen Shot #5 (optional)")
+    tags                = forms.CharField(required = False, max_length = 1024, min_length = 0, label = u"Extra Tags (comma separated)")    
     supports_gtfs       = forms.BooleanField(required = False, label = u"My app uses GTFS feeds or other data from specific transit agencies:", initial = True) 
     
     def clean_title(self):

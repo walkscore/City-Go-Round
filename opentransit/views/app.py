@@ -323,8 +323,31 @@ def admin_apps_edit_locations(request, transit_app):
     
 @requires_valid_transit_app_slug
 def admin_apps_edit_agencies(request, transit_app):
-    # TODO davepeck
-    return not_implemented(request)
+    if request.method == "POST":
+        form = EditAppAgencyForm(request.POST)
+        if form.is_valid():
+            transit_app.explicitly_supported_agency_keys = []
+            transit_app.supports_all_public_agencies = (form.cleaned_data["gtfs_public_choice"] == "yes_public")
+            if not transit_app.supports_all_public_agencies:
+                transit_app.add_explicitly_supported_agencies(form.cleaned_data['agency_list'])
+            transit_app.put()
+            return redirect_to("admin_apps_edit", transit_app_slug = transit_app.slug)
+    else:
+        form_initial_values = {
+            "gtfs_public_choice": "yes_public" if transit_app.supports_all_public_agencies else "no_public",            
+        }        
+        form = EditAppAgencyForm(initial = form_initial_values)    
+    
+    agency_list = Agency.fetch_for_slugs()
+    template_vars = {
+        'form': form,
+        'transit_app': transit_app,
+        'angency_keys_encoded': '|'.join([str(key) for key in transit_app.explicitly_supported_agency_keys]),
+        "agencies": agency_list,
+        "states": Agency.get_state_list(),
+        "agency_count": len(agency_list),
+    }
+    return render_to_response(request, "admin/app-edit-agencies.html", template_vars)
     
 @requires_valid_transit_app_slug
 def admin_apps_edit_images(request, transit_app):
