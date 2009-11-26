@@ -47,3 +47,11 @@ class EditAppGeneralInfoForm(forms.Form):
     @property
     def category_list(self):
         return uniquify([TransitApp.CATEGORIES[category_choice] for category_choice in self.cleaned_data['categories']])        
+
+class EditAppAgencyForm(forms.Form):
+    gtfs_public_choice = forms.ChoiceField(choices = TransitApp.gtfs_public_choices(), widget = forms.widgets.RadioSelect(), label = u"", initial = "yes_public")
+    agency_list = AgencyListField(required = False, widget = forms.widgets.HiddenInput)
+
+class EditAppLocationForm(forms.Form):
+    location_list = LocationListField(required = False, widget = forms.widgets.HiddenInput)
+    available_globally = forms.BooleanField(required = False, label = u"Globally", widget = forms.widgets.CheckboxInput(attrs={'onchange': 'updateUI()', 'id': 'global'}))

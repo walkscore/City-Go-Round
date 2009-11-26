@@ -8,7 +8,7 @@ from django.conf import settings
 from django.http import Http404
 from google.appengine.ext import db
 
-from ..forms import NewAppGeneralInfoForm, NewAppAgencyForm, NewAppLocationForm, PetitionForm, EditAppGeneralInfoForm
+from ..forms import NewAppGeneralInfoForm, NewAppAgencyForm, NewAppLocationForm, PetitionForm, EditAppGeneralInfoForm, EditAppLocationForm, EditAppAgencyForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, render_image_response, redirect_to_url, method_not_allowed, render_to_json
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
 from ..utils.screenshot import get_families_and_screen_shot_blobs
@@ -268,8 +268,56 @@ def admin_apps_edit_basic(request, transit_app):
     
 @requires_valid_transit_app_slug
 def admin_apps_edit_locations(request, transit_app):
-    # TODO davepeck
-    return not_implemented(request)
+    if request.method == "POST":
+        form = EditAppLocationForm(request.POST)
+        if form.is_valid():
+            # 1. line up all TransitAppLocation instances that match this app...
+            transit_app_locations_to_delete = [transit_app_location for transit_app_location in transit_app.explicitly_supported_locations]
+            transit_app.explicitly_supported_countries = []   
+            transit_app.explicitly_supported_city_slugs = []
+            transit_app.explicitly_supported_city_details = []         
+            
+            # 2. Now deal with locations...
+            transit_app.explicitly_supports_the_entire_world = form.cleaned_data["available_globally"]
+            lazy_locations = transit_app.add_explicitly_supported_city_infos_lazy(form.cleaned_data["location_list"].unique_cities)
+            transit_app.add_explicitly_supported_countries([country.country_code for country in form.cleaned_data["location_list"].unique_countries])
+                        
+            # Write the transit app to the data store, along with custom locations (if any)
+            transit_app.put()
+            if lazy_locations:
+                real_locations = [lazy_location() for lazy_location in lazy_locations]
+                db.put(real_locations)
+            for chunk in chunk_sequence(transit_app_locations_to_delete, 10):
+                db.delete(chunk)                
+            return redirect_to("admin_apps_edit", transit_app_slug = transit_app.slug)
+    else:
+        form_initial_values = {
+            "available_globally": transit_app.explicitly_supports_the_entire_world,
+        }
+        form = EditAppLocationForm(initial = form_initial_values)
+        
+    # Pull together an initial location string from cities...
+    locations = []
+    for transit_app_location in transit_app.explicitly_supported_locations:
+        location_parts = [str(transit_app_location.location.lat), str(transit_app_location.location.lon)]            
+        if transit_app_location.city_details:
+            location_parts.append(transit_app_location.city_details)
+        location = ','.join(location_parts)
+        locations.append(location)
+    
+    # ...and from countries
+    for explicitly_supported_country in transit_app.explicitly_supported_countries:
+        locations.append(explicitly_supported_country)
+
+    # Make it happy for the form. HAPPY, DAMMIT.
+    location_list = '|'.join(locations)
+                    
+    template_vars = {
+        'form': form,
+        'transit_app': transit_app,
+        'location_list': location_list,
+    }
+    return render_to_response(request, "admin/app-edit-locations.html", template_vars)
     
 @requires_valid_transit_app_slug
 def admin_apps_edit_agencies(request, transit_app):
