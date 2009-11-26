@@ -1,0 +1,13 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}City Go Round ADMIN Homepage{% endblock %}
+
+{% block content %}
+<div id="admin-home">
+    <h2>Edit the app named "{{transit_app.title}}":</h2>
+    
+    <p>Edit <a href="{% url admin_apps_edit_basic transit_app_slug=transit_app.slug %}">basic information</a>, like title, tags, and images.</p>
+    <p>Edit <a href="{% url admin_apps_edit_agencies transit_app_slug=transit_app.slug %}">associated agencies</a>.</p>
+    <p>Edit <a href="{% url admin_apps_edit_locations transit_app_slug=transit_app.slug %}">freely associated locations</a>.</p>    
+</div>
+{% endblock %}

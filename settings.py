@@ -4,6 +4,8 @@ RUNNING_APP_ENGINE_LOCAL_SERVER = os.environ.get('SERVER_SOFTWARE', 'Dev').start
 
 DEBUG = RUNNING_APP_ENGINE_LOCAL_SERVER # For now
 
+S3_URL_ROOT = "http://files.citygoround.org.s3.amazonaws.com"
+
 APPEND_SLASH = True
 
 INSTALLED_APPS = ['opentransit', 'gaeunit']

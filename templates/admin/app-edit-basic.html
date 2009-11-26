@@ -1,17 +1,16 @@
-{% extends 'base.html' %}
+{% extends 'admin/base.html' %}
 
-{% block title %}Add a transit app on City-Go-Round{% endblock %}
+{% block title %}Edit a transit app on City-Go-Round{% endblock %}
 
 {% block content %}
-<!-- TODO jesse: add some design here. (dave) -->
     <div id="add-app-form-container" class="body-content">            
-        <h3>ADD A NEW TRANSIT APP [Step 1 of 3: Basic Information]</h3>
+        <h2>Edit Basic Information For "{{transit_app.title}}":</h2>
         <form class="add-app-form" action="" method="POST" enctype="multipart/form-data">
             <table>
             {{ form.as_table }}
             </table>
 
-            <input type="submit" value="Onward To Step 2..."></input>
+            <input type="submit" value="Save These Changes"></input>
         </form>
     </div>
 {% endblock %}

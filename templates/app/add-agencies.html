@@ -3,88 +3,8 @@
 {% block title %}{{location}} transit agencies on City-Go-Round{% endblock %}
 
 {% block headscripts %}
-<script type="text/javascript" src="http://files.citygoround.org.s3.amazonaws.com/js/jquery.tablesorter.min.js"></script>
-<script type="text/javascript">
-
-    var agency_count = {{agency_count}}; 
-    function updateFilters(){
-        var pd = jQuery("#public_filter option:selected").val();
-        var location = jQuery("#location_filter option:selected").val();
-        document.location = (location + '?public=' + pd)
-    }
-
-    $(document).ready(function() { 
-        //make sure public dropdown selected appropriately
-        $("#agency_list").tablesorter({ sortList: [[6,0],[5,0]] });
-
-        $("#list-panel").fadeTo(0, 0.33);
-        updateUI();
-        
-        $("#id_gtfs_public_choice_0").change(updateUI);
-        $("#id_gtfs_public_choice_1").change(updateUI);
-    }); 
-    
-    function updateUI() {
-        if ( $("#id_gtfs_public_choice_0").eq(0).is(":checked") ){
-			$(":checkbox").attr("disabled", true);	
-            $("#list-panel").fadeTo(0, 0.33);
-		}
-		else {
-            $(":checkbox").attr("disabled", false);
-            $("#list-panel").fadeTo(0, 1.00);
-		}
-            
-    }
-    
-    function updateFilters(){
-        var pd = jQuery("#public_filter option:selected").val();
-        var location = jQuery("#location_filter option:selected").val();
-        
-        //show based on filters
-        if (pd=="all" && location=="all"){
-            $("tr").show();
-        }
-        else {
-            $("tr").hide(); //hide everything
-            $("#header-row").show(); //show headers
-            
-            if (pd=="all"){
-                $("tr").filter("."+location).show();
-            }
-            else if (location=="all"){
-                $("tr").filter("."+pd).show();
-            }
-            else {
-                var filter = "tr[class='" + location + " " + pd + "']";
-                $(filter).show();
-            }
-        }
-    }
-
-    function filter(countryCode) {
-        $("tr").hide();
-        $("#header-row").show();
-        $("."+countryCode).show();
-    }
-    
-    function getDataString(){
-        var data = $(":checkbox:checked").map(function(){
-            return $(this).attr("id");
-            }).get().join(" | ");
-
-        return data;
-    }
-    
-    function sendDataString() {
-		if ( $("#id_gtfs_public_choice_1").eq(0).is(":checked") )
-			$("#id_agency_list").eq(0).val( this.getDataString() );
-        return true;
-	}
-	
-	function dbug(str){
-		$("#dbug").append(str + "<br />");
-	}
-</script>
+<script type="text/javascript" src="{% static_or_s3_url /js/jquery.tablesorter.min.js %}"></script>
+<script type="text/javascript" src="{% static_url /js/app-form-agencies.js %}"></script>
 {% endblock %}
 
 {% block extra_head %}
@@ -94,7 +14,7 @@
 {% block content %}
 
 <div id="add-app-form-container" class="body-content">            
-    <h3>ADD A NEW TRANSIT APP [Step 2: What Agencies Your App Supports]</h3>
+    <h3>ADD A NEW TRANSIT APP [Step 2 of 3: What Agencies Your App Supports]</h3>
     <h2>Select agencies that your application supports:</h2>
     <p>If your app uses feeds and also works in other locations, you can specify those locations in the next step.  If your app doesn't use agency data skip on to the next step now.</p>
     <form id="add-agencies-form" action="" method="POST" onsubmit="sendDataString()">

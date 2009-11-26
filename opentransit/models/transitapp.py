@@ -10,6 +10,7 @@ from ..utils.slug import slugify
 from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_keys, unique_entities, iter_uniquify
 from ..utils.places import CityInfo
 from ..utils.geohelpers import square_bounding_box_centered_at
+from ..utils.misc import key_for_value
 from ..models import NamedStat
 
 #
@@ -247,6 +248,22 @@ class TransitApp(db.Model):
     @staticmethod
     def has_transit_app_for_slug(transit_app_slug):
         return (TransitApp.transit_app_for_slug(transit_app_slug) is not None)
+
+    @property
+    def tag_list_as_string(self):
+        unique_tags = []
+        for tag in self.tags:
+            if (tag not in TransitApp.CATEGORIES.values()) and (tag not in TransitApp.PLATFORMS.values()):
+                unique_tags.append(tag)
+        return ', '.join(unique_tags)
+    
+    @property
+    def category_choice_list(self):
+        return [key_for_value(TransitApp.CATEGORIES, category) for category in self.categories]
+    
+    @property
+    def platform_choice_list(self):
+        return [key_for_value(TransitApp.PLATFORMS, platform) for platform in self.platforms]
 
     supports_any_gtfs = db.BooleanProperty(default = False)
     supports_all_public_agencies = db.BooleanProperty(default = False, indexed = True)
