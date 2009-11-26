@@ -184,6 +184,19 @@ class TransitApp(db.Model):
         """For use in template for loops."""
         return range(1, self.screen_shot_count)
         
+    def screen_shots_to_jsonable(self):
+        shots = []
+        index = 0
+        for screen_shot_family in self.screen_shot_families:
+            dictionary = {
+                "family": screen_shot_family,
+            }
+            for size_name, (width, height) in TransitApp.SCREEN_SHOT_SIZES:
+                dictionary["url_" + size_name] = self.get_screen_shot_url(index, size_name = size_name)
+            shots.append(dictionary)
+            index += 1
+        return shots
+        
     def get_screen_shot_url(self, index, width = None, height = None, size = None, size_name = None):
         if (width is not None) and (height is not None):
             size_name = TransitApp.screen_shot_name_from_size((width, height))

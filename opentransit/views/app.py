@@ -8,10 +8,10 @@ from django.conf import settings
 from django.http import Http404
 from google.appengine.ext import db
 
-from ..forms import NewAppGeneralInfoForm, NewAppAgencyForm, NewAppLocationForm, PetitionForm, EditAppGeneralInfoForm, EditAppLocationForm, EditAppAgencyForm
+from ..forms import NewAppGeneralInfoForm, NewAppAgencyForm, NewAppLocationForm, PetitionForm, EditAppGeneralInfoForm, EditAppLocationForm, EditAppAgencyForm, EditAppImagesForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, render_image_response, redirect_to_url, method_not_allowed, render_to_json
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
-from ..utils.screenshot import get_families_and_screen_shot_blobs
+from ..utils.screenshot import get_families_and_screen_shot_blobs, get_family_and_screen_shot_blobs
 from ..utils.misc import chunk_sequence
 from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid
 from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress, FeedReference, NamedStat
@@ -351,8 +351,56 @@ def admin_apps_edit_agencies(request, transit_app):
     
 @requires_valid_transit_app_slug
 def admin_apps_edit_images(request, transit_app):
-    # TODO davepeck
-    return not_implemented(request)
+    too_few_error = ''
+    
+    if request.method == "POST":        
+        form = EditAppImagesForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Remove families we no longer need, keeping track of their indexes...
+            for remove_family in form.cleaned_data['remove_list'][::-1]:
+                if remove_family in transit_app.screen_shot_families:
+                    transit_app.screen_shot_families.remove(remove_family)
+            
+            # Process all new images, remembering their positions
+            screen_shot_files = [request.FILES.get(name, None) for name in ('new_shot_1', 'new_shot_2', 'new_shot_3', 'new_shot_4', 'new_shot_5')]
+            screen_shot_files_bytes = [screen_shot_file.read() if screen_shot_file else None for screen_shot_file in screen_shot_files]
+            families = []
+            all_blobs = []
+            for screen_shot_file_bytes in screen_shot_files_bytes:
+                family, blobs = get_family_and_screen_shot_blobs(screen_shot_file_bytes)
+                families.append(family)
+                all_blobs.append(blobs)
+            
+            # Now add the new image references to the transit app, in the appropriate places
+            insert_at = 0
+            good_blobs = []
+            for family, blobs in zip(families, all_blobs):
+                if family is not None:
+                    transit_app.screen_shot_families.insert(insert_at, family)
+                    good_blobs.extend(blobs)
+                insert_at += 1
+                    
+            # Sanity check before writing...                    
+            if len(transit_app.screen_shot_families) == 0:
+                too_few_error = "*** There were too few images after removing. All apps must have at least one image. Try again."
+                transit_app = TransitApp.transit_app_for_slug(transit_app.slug)
+            else:
+                # Finally, write the transit app and blobs
+                # TODO error handling.
+                transit_app.put()
+                for blobs_chunk in chunk_sequence(good_blobs, 3):
+                    db.put(blobs_chunk)                
+                return redirect_to("admin_apps_edit", transit_app_slug = transit_app.slug)            
+    else:
+        form = EditAppImagesForm()
+        
+    template_vars = {
+        'form': form,
+        'transit_app': transit_app,
+        'screen_shots_json': json.dumps(transit_app.screen_shots_to_jsonable()),
+        'too_few_error': too_few_error,
+    }
+    return render_to_response(request, "admin/app-edit-images.html", template_vars)
         
 @requires_valid_transit_app_slug
 def admin_apps_delete(request, transit_app):

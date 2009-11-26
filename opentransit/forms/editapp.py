@@ -51,3 +51,15 @@ class EditAppAgencyForm(forms.Form):
 class EditAppLocationForm(forms.Form):
     location_list = LocationListField(required = False, widget = forms.widgets.HiddenInput)
     available_globally = forms.BooleanField(required = False, label = u"Globally", widget = forms.widgets.CheckboxInput(attrs={'onchange': 'updateUI()', 'id': 'global'}))
+
+class EditAppImagesForm(forms.Form):
+    new_shot_1 = AppEngineImageField(required = False, label = u"Screenshot #1")
+    new_shot_2 = AppEngineImageField(required = False, label = u"Screenshot #2")
+    new_shot_3 = AppEngineImageField(required = False, label = u"Screenshot #3")
+    new_shot_4 = AppEngineImageField(required = False, label = u"Screenshot #4")
+    new_shot_5 = AppEngineImageField(required = False, label = u"Screenshot #5")
+    remove_list = forms.CharField(required = False, widget = forms.widgets.HiddenInput)
+
+    def clean_remove_list(self):
+        remove_list = self.cleaned_data["remove_list"]
+        return [family.strip() for family in remove_list.split('|')]

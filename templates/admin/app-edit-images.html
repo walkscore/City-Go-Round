@@ -1,0 +1,106 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Edit a transit app on City-Go-Round{% endblock %}
+
+{% block headscripts %}
+<script type="text/javascript">
+jQuery(document).ready(function($)
+{
+    function get_screen_shots()
+    {
+        return {{screen_shots_json|safe}};
+    }
+    
+    function get_screen_shot(index)
+    {
+        return get_screen_shots[index];
+    }
+
+    function get_name_for_index(index)
+    {
+        return "id_new_shot_" + ((index+1).toString());
+    }
+    
+    function $fi(index)
+    {
+        return $("#" + get_name_for_index(index));
+    }
+    
+    function $li(index)
+    {
+        return $('label[for="' + get_name_for_index(index) +'"]');
+    }
+    
+    function img_tag(src, alt)
+    {
+        return '<img src="' + src + '" alt="' + alt + '" />';
+    }
+    
+    function a_tag(href, contents)
+    {
+        return '<a href="' + href + '">' + contents + '</a>';
+    }
+    
+    function a_tag_id(href, contents, id)
+    {
+        return '<a href="' + href + '" id="' + id + '">' + contents + '</a>';        
+    }
+    
+    function html_for_present(i, screen_shot)
+    {
+        var html = '&nbsp;&nbsp;&nbsp;<span id="image_span_' + i.toString() + '">';
+        html += a_tag(screen_shot.url_original, img_tag(screen_shot.url_80sq, "screen shot"));
+        html += "&nbsp;&nbsp;&nbsp;";
+        html += a_tag_id("#", "Remove This", "remove_" + i.toString());
+        html += '</span>';
+        return html;
+    }
+    
+    function initialize_from_screen_shots(screen_shots)
+    {
+        $.each(screen_shots, function(i, screen_shot)
+        {
+            $fi(i).hide();
+            $li(i).append(html_for_present(i, screen_shot));
+        });
+        
+        $('a[href="#"]').click(function ()
+        {
+            var index = parseInt($(this).attr("id").split('_')[1]);
+            var family = screen_shots[index].family;
+            var current_families = $("#id_remove_list").val();
+            if (current_families.length < 1)
+            {
+                $("#id_remove_list").val(family);
+            }
+            else
+            {
+                $("#id_remove_list").val(current_families + '|' + family);
+            }
+            $fi(index).show();
+            $("#image_span_" + index.toString()).hide();            
+            return false;
+        });
+    }
+    
+    initialize_from_screen_shots(get_screen_shots());
+});
+</script>
+{% endblock %}
+
+{% block content %}
+    <div id="add-app-form-container" class="body-content">            
+        <h2>Edit Images For "{{transit_app.title}}":</h2>
+        <h2>{{too_few_error}}</h2>
+        <form class="add-app-form" action="" method="POST" enctype="multipart/form-data">
+            <div id="image_input_list">
+                {{ form.as_p }}                
+            </div>
+            <input type="submit" value="Save These Changes"></input>
+        </form>
+    </div>
+{% endblock %}
+
+
+{% block scripts %}
+{% endblock %}
