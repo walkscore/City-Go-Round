@@ -3,7 +3,7 @@ CityGoRound.org
 
 [City-Go-Round](http://www.citygoround.org/) makes it easy for you to discover great new apps that help you get around town.
 
-By showcasing innovation in transit apps, we hope that [City-Go-Round](http://www.citygoround.org/) will encourage your favorite local transit agency to make their data open and publicly available.
+By showcasing innovation in transit apps, we hope that [City-Go-Round](http://www.citygoround.org/) will encourage your favorite local transit agency to make its data open and publicly available.
 
 TECHNOLOGY
 ----------
