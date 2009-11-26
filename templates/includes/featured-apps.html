@@ -5,9 +5,6 @@
     
       
     <div id="feat-controls">
-    
-        <div class="navi"></div>
-    
         <div id="feat-controls-prev" class="prevPage browse left"></div>
         <div id="jumplinks">
             <!-- loop here for jump control links -->
@@ -15,8 +12,9 @@
                 <a href="{{forloop.counter}}"></a>
             {% endfor %}
             
-        </div>  
-        <div id="feat-controls-next" class="nextPage browse right"></div>   
+        </div>
+        <div id="feat-controls-next" class="nextPage browse right"></div>
+         
     </div>  
     <a id="view-all" href="{% url apps_gallery %}">View all {{transit_app_count}} apps</a>
     <div id="flowpanes"> 

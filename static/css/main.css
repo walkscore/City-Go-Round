@@ -553,11 +553,9 @@
 	#feat-controls {
 		position: absolute;
 		bottom: 3px;
-		left: 251px;
-		width: 150px;
-	}
-	#feat-controls #jumplinks {
-	   background-color: #ccc;
+		left: 190px;
+		width: 212px;
+		text-align: center;
 	}
 	#feat-controls #feat-controls-prev, #feat-controls #feat-controls-next, #feat-controls #jumplinks a {
 		width: 16px;
@@ -609,6 +607,8 @@
 		float: left;	
 		margin: 0 15px 0 60px;
 		border: 1px solid #999;
+		width: 180px;
+		height: 180px;
 	}
 	#flowpanes .items div h4 a {
 		color: #c76402; 
