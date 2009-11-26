@@ -1,5 +1,30 @@
 {% extends 'base.html' %}
 
+{% block headscripts %}
+<script src="http://files.citygoround.org.s3.amazonaws.com/js/jquery.tools.min.js"></script>
+
+<script type="text/javascript">
+// wait until document is fully scriptable 
+$(document).ready(function() { 
+ 
+    // select #flowplanes and make it scrollable. use circular and navigator plugins 
+    $("#flowpanes").scrollable({size: 1, clickable:false}).circular().mousewheel(400).navigator({ 
+ 
+        // select #flowtabs to be used as navigator 
+        navi: "#jumplinks", 
+ 
+        // select A tags inside the navigator to work as items (not direct children) 
+        naviItem: 'a', 
+ 
+        // assign "current" class name for the active A tag inside navigator 
+        activeClass: 'current' 
+ 
+    }); 
+});
+</script>
+{% endblock %}
+
+
 {% block content %}
 <div id="home">
 	<div id="features">

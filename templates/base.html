@@ -42,7 +42,7 @@
     {% block lede %}
     <form onsubmit="goto_search(); return false;">
         <label>Find apps near you:</label>
-        <input id="location_query" name="location_query" type="text">
+        <input id="location_query" name="location_query" type="text" value="Type a city or ZIP">
         <input id="search" name="search" type="image" src="{% static_url /images/button-search.gif %}">
     </form>
     <p>U.S. only for now.</p>
@@ -70,6 +70,12 @@
 {% block scripts %}
 {% endblock %}
 
+<script type="text/javascript">
+$("#location_query").bind("focus", function(e) { if (this.value=='Type a city or ZIP') this.value=''; $(this).css("color","#444"); });
+$("#location_query").bind("blur", function(e) { if (this.value=='') { this.value='Type a city or ZIP'; $(this).css("color","#888");} });
+</script>
+
+
 {% if no_getsatisfaction %}{% else %}
 <script type="text/javascript" charset="utf-8">
 var is_ssl = ("https:" == document.location.protocol);
@@ -85,7 +91,6 @@ feedback_widget_options.company = "citygoround";
 feedback_widget_options.placement = "right";
 feedback_widget_options.color = "#bbbbbb";
 feedback_widget_options.style = "idea";
-
 
 var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
 </script>

@@ -4,29 +4,21 @@ from google.appengine.ext import db
 from ..forms import PetitionForm, AgencyForm, ContactForm
 from ..utils.view import render_to_response, redirect_to, not_implemented
 from ..utils.mailer import send_to_contact
-from ..models import FeedReference, Agency, NamedStat
+from ..models import FeedReference, Agency, NamedStat, TransitApp
 from django.template.context import RequestContext
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from google.appengine.api.users import create_login_url, create_logout_url
 
-def home(request):    
-    petition_form = PetitionForm()
-    
-    agency_count = Agency.all().count()
-    
-    closed_agencies = Agency.all().filter("date_opened =", None).order("-passenger_miles")
-    open_agencies = Agency.all().filter("date_opened !=", None).order("-date_opened")
-    
-    logging.info( closed_agencies.count() )
-    logging.info( open_agencies.count() )
-    
+def home(request):  
+
     template_vars = {
-        'petition_form': petition_form,
+        'featured_apps': TransitApp.all(),
+        'petition_form': PetitionForm(),
         'no_getsatisfaction' : True,
-        'agency_count': agency_count,
-        'closed_agencies': closed_agencies,
-        'open_agencies': open_agencies,
+        'agency_count': Agency.all().count(),
+        'closed_agencies': Agency.all().filter("date_opened =", None).order("-passenger_miles"),
+        'open_agencies': Agency.all().filter("date_opened !=", None).order("-date_opened"),
     }    
     return render_to_response(request, 'home.html', template_vars)
 
