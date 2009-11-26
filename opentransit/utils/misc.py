@@ -14,5 +14,10 @@ def chunk_sequence(sequence, chunk_size):
     if chunk:
         yield chunk
 
+def key_for_value(dictionary, value):
+    for k, v in dictionary.iteritems():
+        if v == value:
+            return k
+    return None
 
     

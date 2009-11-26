@@ -8,7 +8,7 @@ from django.conf import settings
 from django.http import Http404
 from google.appengine.ext import db
 
-from ..forms import NewAppGeneralInfoForm, NewAppAgencyForm, NewAppLocationForm, PetitionForm
+from ..forms import NewAppGeneralInfoForm, NewAppAgencyForm, NewAppLocationForm, PetitionForm, EditAppGeneralInfoForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, render_image_response, redirect_to_url, method_not_allowed, render_to_json
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
 from ..utils.screenshot import get_families_and_screen_shot_blobs
@@ -228,14 +228,52 @@ def admin_apps_edit(request, transit_app):
     
 @requires_valid_transit_app_slug
 def admin_apps_edit_basic(request, transit_app):
-    return not_implemented(request)
+    if request.method == "POST":
+        form = EditAppGeneralInfoForm(request.POST, request.FILES)
+        if form.is_valid():
+            transit_app.title = form.cleaned_data["title"]
+            transit_app.slug = form.transit_app_slug
+            transit_app.description = form.cleaned_data["description"]
+            transit_app.url = form.cleaned_data["url"]
+            transit_app.author_name = form.cleaned_data["author_name"]
+            transit_app.author_email = form.cleaned_data["author_email"]
+            transit_app.long_description = form.cleaned_data["long_description"]
+            transit_app.platforms = form.platform_list
+            transit_app.categories = form.category_list
+            transit_app.tags = form.tag_list
+            transit_app.supports_any_gtfs = form.cleaned_data["supports_gtfs"]            
+            transit_app.put()            
+            return redirect_to("admin_apps_edit", transit_app_slug = transit_app.slug)
+    else:
+        form_initial_values = {
+            "original_slug": transit_app.slug,
+            "title": transit_app.title,
+            "description": transit_app.description,
+            "url": transit_app.url,
+            "author_name": transit_app.author_name,
+            "author_email": transit_app.author_email,
+            "long_description": transit_app.long_description,
+            "platforms": transit_app.platform_choice_list,
+            "categories": transit_app.category_choice_list,
+            "tags": transit_app.tag_list_as_string,
+            "supports_gtfs": transit_app.supports_any_gtfs,
+        }
+        form = EditAppGeneralInfoForm(initial = form_initial_values)
+    
+    template_vars = {
+        'form': form,
+        'transit_app': transit_app,
+    }
+    return render_to_response(request, 'admin/app-edit-basic.html', template_vars)
     
 @requires_valid_transit_app_slug
 def admin_apps_edit_locations(request, transit_app):
+    # TODO davepeck
     return not_implemented(request)
     
 @requires_valid_transit_app_slug
 def admin_apps_edit_agencies(request, transit_app):
+    # TODO davepeck
     return not_implemented(request)
         
 @requires_valid_transit_app_slug

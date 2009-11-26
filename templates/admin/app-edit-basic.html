@@ -4,14 +4,13 @@
 
 {% block content %}
     <div id="add-app-form-container" class="body-content">            
-        <h2>Edit Transit App Named "{{transit_app.title}}":</h2>
-        <h3>(Step 1 of 3: Edit basic information.)</h3>
+        <h2>Edit Basic Information For "{{transit_app.title}}":</h2>
         <form class="add-app-form" action="" method="POST" enctype="multipart/form-data">
             <table>
             {{ form.as_table }}
             </table>
 
-            <input type="submit" value="Onward To Editing, Step 2..."></input>
+            <input type="submit" value="Save These Changes"></input>
         </form>
     </div>
 {% endblock %}
