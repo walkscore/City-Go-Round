@@ -10,6 +10,8 @@ from django.template.loader import get_template as djangot_get_template
 from django.template import Context as djangot_Context
 from django.core.urlresolvers import reverse
 
+from google.appengine.api import users
+
 from .models import TransitApp
 
 
@@ -79,6 +81,27 @@ class StaticOrS3UrlNode(djangot.Node):
             return self.relative_path
         else:
             return settings.S3_URL_ROOT + self.relative_path
+
+
+#------------------------------------------------------------------------------
+# Current User is Google Admin?
+#------------------------------------------------------------------------------
+
+@register.tag(name="if_user_is_google_admin")
+def if_user_is_google_admin(parser, token):
+    nodelist = parser.parse(('end_if_user_is_google_admin',))
+    parser.delete_first_token()
+    return IfUserIsGoogleAdminNode(nodelist)
+
+class IfUserIsGoogleAdminNode(djangot.Node):
+    def __init__(self, nodelist):
+        self.nodelist = nodelist
+
+    def render(self, context):
+        if users.is_current_user_admin():
+            return self.nodelist.render(context)
+        else:
+            return ""
 
 
 #------------------------------------------------------------------------------

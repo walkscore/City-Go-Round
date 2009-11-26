@@ -19,7 +19,6 @@ $(document).ready(function()
     		return false;
     	};
     });
-	// $("#debug-input").click(function () { dbug(data_manager.getDataString()); });
 });
 			
 function Geocoder() 
@@ -259,16 +258,21 @@ function DataManager()
 
 	this.addQuery = function(key)
 	{
-		var query = $("#query").get(0).value;
-						
-		if (this.queryDataList.addOrUpdateQuery(this.numLocations, query) ) 
+		var query = $("#query").val();
+		this.addDirectQuery(query);
+		$("#query").focus().val("");
+		this.geocodeQueuedQueries();
+	}
+	
+	this.addDirectQuery = function(query)
+	{
+		if (this.queryDataList.addOrUpdateQuery(this.numLocations, query)) 
 		{ 
 		    //will always add, we don't allow editing old ones
 			this.addLocation();
 			this.numLocations++;
 		}
-		this.geocodeQueuedQueries();
-	}
+    }
 	
 	this.addLocation = function()
 	{
@@ -277,7 +281,6 @@ function DataManager()
 		htmlStr += '<a id="removelink' + this.numLocations + '" onclick="data_manager.removeQuery(' + this.numLocations + ')">remove</a>';
 		htmlStr += '</div>';
 		$("#locations").append(htmlStr);
-		$("#query").focus().val("");
 	}
 	
 	this.removeQuery = function(key)
@@ -330,7 +333,7 @@ function DataManager()
 			alert("couldn't find item to set data on");
 		}
 			
-		this.geocodeQueuedQueries
+		this.geocodeQueuedQueries();
 	}
 				
 	this.handleGeocodeTimeout = function()
@@ -401,4 +404,66 @@ function dbug(str)
 function dbugThese()
 {
 	dbug(Array.prototype.join.call(arguments, " :: "));
+}
+
+function reconstitute_country_from_code(country_code)
+{
+    var trimmed = $.trim(country_code);
+    if (trimmed == "US")
+    {
+        $("#entire-us").click();
+    }
+    else
+    {
+        data_manager.addDirectQuery(countryLookups[country_code]);
+    }
+}
+
+function reconstitute_city_from_lat_lon(lat, lon)
+{
+    data_manager.addDirectQuery(lat + "," + lon);
+}
+
+function reconstitute_city_from_details(lat, lon, city, administrative_area, country_code)
+{
+    data_manager.addDirectQuery(city + ", " + administrative_area + ", " + country_code);
+}
+
+function reconstitute_location_from_text(text)
+{
+    parts = text.split(',')
+    if ($(parts).length == 1)
+    {
+        reconstitute_country_from_code(parts[0]);
+    }
+    else if ($(parts).length == 2)
+    {
+        reconstitute_city_from_lat_lon(parts[0], parts[1]);
+    }
+    else if ($(parts).length == 5)
+    {
+        reconstitute_city_from_details(parts[0], parts[1], parts[2], parts[3], parts[4]);
+    }
+    else
+    {
+        alert("Bad location text encountered; could not reconstitute: " + text);
+    }
+}
+
+function reconstitute_locations(text)
+{
+    var clean_text = $.trim(text)
+    if (clean_text.length > 0)
+    {
+        if (clean_text != "US")
+        {
+            $("#choose-locations").click();
+        }
+        locations = text.split('|');
+        $.each(locations, function(i, location)
+        {
+            reconstitute_location_from_text(location);        
+        });
+        data_manager.geocodeQueuedQueries();	
+    }
 }

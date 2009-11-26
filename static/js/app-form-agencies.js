@@ -92,3 +92,22 @@ function dbug(str)
 {
 	$("#dbug").append(str + "<br />");
 }
+
+function reconstitute_from_key(key)
+{
+    $("#" + key).click();
+}
+
+function reconstitute_from_keys(keys)
+{
+    var trimmed = $.trim(keys);
+    
+    if (trimmed.length > 0)
+    {
+        var keys = trimmed.split('|')
+        $.each(keys, function(i, key)
+        {
+            reconstitute_from_key($.trim(key));
+        });
+    }
+}

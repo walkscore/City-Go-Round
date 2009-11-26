@@ -1,0 +1,85 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Edit Agencies for {{transit_app.title}}{% endblock %}
+
+{% block headscripts %}
+<script type="text/javascript" src="{% static_or_s3_url /js/jquery.tablesorter.min.js %}"></script>
+<script type="text/javascript" src="{% static_url /js/app-form-agencies.js %}"></script>
+<script type="text/javascript">
+    jQuery(document).ready(function($)
+    {
+        reconstitute_from_keys("{{angency_keys_encoded|escapejs}}");
+    });
+</script>
+{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" type="text/css" href="{% static_url /css/tablesort.css %}" media="screen" />
+{% endblock%}
+
+{% block content %}
+
+<div id="add-app-form-container" class="body-content">            
+    <h2>Edit Agency Information For "{{transit_app.title}}":</h2>
+    <h2>Select agencies that your application supports:</h2>
+    <form id="add-agencies-form" action="" method="POST" onsubmit="sendDataString()">
+        <div class="floatleft">
+            {# This is only going to spew out hidden input fields, so... whatever. #}
+            {{form.as_p}}
+        </div>
+        <input style="position:relative; top: 18px; left: 18px;" type="submit" value="Submit Changes"></input>
+        <div id="list-panel">  
+            <p>Please choose from the {{agency_count}} transit agencies below.</p>
+            <p>Filter list by:         
+            <select id="public_filter" name="public_filter" onchange="updateFilters();">
+               <option value="all" selected>All Agencies</option>
+               <option value="pub">With Open Data</option>
+               <option value="no_pub">Without Open Data</option>
+            </select>
+            
+            <select id="location_filter" name="location_filter" onchange="updateFilters()">
+               <option value="all" selected>All States
+              {% for s in states %}
+               <option value="{{s|upper}}">{{s|upper}}
+              {% endfor %}
+            </select>
+            <br />Sort the list by clicking column headers.  Shift-click for multi-sort.</p>
+            
+            <!--br /><input type="button" value="DEBUG: show data string" onclick="dbug(getDataString())" />
+            <div id="dbug"></div-->
+                
+            <table id="agency_list"> 
+            <thead> 
+            <tr id="header-row"> 
+                <th>&nbsp;</th> 
+                <th>Name</th> 
+                <th>Open Data</th>
+                <th>Date Added</th>
+                <th>Real-time Data</th>
+                <th>City</th> 
+                <th>State</th> 
+            </tr> 
+            </thead> 
+            <tbody> 
+            {% for a in agencies %}
+            {% if a.hide %}{% else %}
+            <tr class="{{a.state}} {% if a.date_opened %}pub{% else %}no_pub{%endif %}"> 
+                <td><input type="checkbox" name="{{a.key}}" id="{{a.key}}" /></td> 
+                <td>{{a.name}}</td> 
+                <td>{% if a.date_opened %}Yes{% else %}No{% endif %}</td>
+                <td>{% if a.date_opened %}{{a.date_opened|date:"N Y"}}{% endif %}</td>
+                <td>{% if a.has_real_time_data %}Yes{% else %}No{% endif %}</td>
+                <td>{{a.city}}</td> 
+                <td>{{a.state}}</td> 
+            </tr> 
+            {% endif %}
+            {% endfor %}
+            </tbody> 
+            </table>
+            <input type="submit" value="Submit Changes"></input>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}

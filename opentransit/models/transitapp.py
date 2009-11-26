@@ -337,7 +337,7 @@ class TransitApp(db.Model):
             raise Exception("You must pass in a CityInfo object.")
         self.explicitly_supported_city_slugs.append(city_info.name_slug)
         self.explicitly_supported_city_details.append(city_info.important_details)
-        return TransitAppLocation(transit_app = self.key(), location = db.GeoPt(city_info.latitude, city_info.longitude))
+        return TransitAppLocation(transit_app = self.key(), city_slug = city_info.name_slug, city_details = city_info.important_details, location = db.GeoPt(city_info.latitude, city_info.longitude))
         
     def add_explicitly_supported_city_info_lazy(self, city_info):
         """Helper to set up relations for city information. Returns a function that will create a corresponding transit app location. You must put() that."""
@@ -345,7 +345,7 @@ class TransitApp(db.Model):
             raise Exception("You must pass in a CityInfo object.")
         self.explicitly_supported_city_slugs.append(city_info.name_slug)
         self.explicitly_supported_city_details.append(city_info.important_details)
-        return lambda: TransitAppLocation(transit_app = self.key(), location = db.GeoPt(city_info.latitude, city_info.longitude))
+        return lambda: TransitAppLocation(transit_app = self.key(), city_slug = city_info.name_slug, city_details = city_info.important_details, location = db.GeoPt(city_info.latitude, city_info.longitude))
         
     def add_explicitly_supported_city_info_immediate(self, city_info):
         """Helper to set up relations for city information. Immediately adds the TransitAppLocation object to the data store."""
@@ -475,6 +475,8 @@ class TransitApp(db.Model):
 class TransitAppLocation(GeoModel):
     """Represents a many-many relationship between TransitApps and explcitly named cities where they work."""
     transit_app = db.ReferenceProperty(TransitApp, collection_name = "explicitly_supported_locations")
+    city_slug = db.StringProperty()
+    city_details = db.StringProperty()
     
     def __init__(self, *args, **kwargs):
         super(TransitAppLocation, self).__init__(*args, **kwargs)
