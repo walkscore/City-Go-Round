@@ -601,8 +601,7 @@
     #flowpanes .items div { 
         float:left; 
         display:block; 
-        width:670px; 
-        cursor:pointer; 
+        width:620px; 
         font-size:14px; 
     } 
 
@@ -612,7 +611,6 @@
 		border: 1px solid #999;
 	}
 	#flowpanes .items div h4 a {
-		float: left;
 		color: #c76402; 
 		font-size: 22px; 
 		line-height: 22px; 
@@ -622,8 +620,7 @@
 	#flowpanes .items div p {
 		font-size: 18px;
 		color: #6c6c6c;
-		width: 290px;
-		float: left;
+		margin-right: 80px;
 	}
 	
     #flowpanes .less, #flowpanes .less a { 

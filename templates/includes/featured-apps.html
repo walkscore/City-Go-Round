@@ -6,18 +6,17 @@
       
     <div id="feat-controls">
     
-    	<div class="navi"></div>
+        <div class="navi"></div>
     
-    	<div id="feat-controls-prev" class="prevPage browse left"></div>
-    	<div id="jumplinks">
-    		<!-- loop here for jump control links -->
-    		<a href="0"></a>
-    		<a href="1"></a>
-    		<a href="2"></a>
-    		<a href="3"></a>
-    		
-    	</div>	
-    	<div id="feat-controls-next" class="nextPage browse right"></div>	
+        <div id="feat-controls-prev" class="prevPage browse left"></div>
+        <div id="jumplinks">
+            <!-- loop here for jump control links -->
+            {% for transit_app in featured_apps %}
+                <a href="{{forloop.counter}}"></a>
+            {% endfor %}
+            
+        </div>  
+        <div id="feat-controls-next" class="nextPage browse right"></div>   
     </div>  
     <a id="view-all" href="{% url apps_gallery %}">View all {{transit_app_count}} apps</a>
     <div id="flowpanes"> 
@@ -25,29 +24,14 @@
         <div class="items"> 
      
             <!-- the items --> <!-- loop here to enter apps -->
-        	<div>
-        		<a href=""><img src="{% static_url /images/appthumbs/app-1-large.png %}"></a>
-        		<h4><a href="">SEA Bus Map</a></h4>
-        		<p>So, really, where is the bus?  You won't wonder long if you have SEA bus map</p>
-        	</div>
-
-        	<div>
-        		<a href=""><img src="{% static_url /images/appthumbs/app-1-large.png %}"></a>
-        		<h4><a href="">SEA Bus Map</a></h4>
-        		<p>So, really, where is the bus?  You won't wonder long if you have SEA bus map</p>
-        	</div>
-
-        	<div>
-        		<a href=""><img src="{% static_url /images/appthumbs/app-1-large.png %}"></a>
-        		<h4><a href="">SEA Bus Map</a></h4>
-        		<p>So, really, where is the bus?  You won't wonder long if you have SEA bus map</p>
-        	</div>
-
-        	<div>
-        		<a href=""><img src="{% static_url /images/appthumbs/app-1-large.png %}"></a>
-        		<h4><a href="">SEA Bus Map</a></h4>
-        		<p>So, really, where is the bus?  You won't wonder long if you have SEA bus map</p>
-        	</div>
+            {% for transit_app in featured_apps %}
+            <div>
+                <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.default_180sq_screen_shot_url}}"></a>
+                <h4><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h4>
+                <p>{{transit_app.description}}</p>
+            </div>
+            {% endfor %}
+            
         </div>
     </div>
 </div>
