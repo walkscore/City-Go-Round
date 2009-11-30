@@ -8,6 +8,7 @@ from ..utils.slug import slugify
 from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_keys, unique_entities, iter_uniquify
 from ..utils.geohelpers import square_bounding_box_centered_at
 from ..utils.misc import uniquify
+import cgi
 
 class Agency(GeoModel):
     # properties straight out of the NTD import
@@ -67,10 +68,10 @@ class Agency(GeoModel):
             'date_opened':self.date_opened.isoformat(" ") if self.date_opened else None,
             'passenger_miles':self.passenger_miles,
             'is_public':self.is_public,
-            'name': self.name,
-            'city': self.city,
+            'name': cgi.escape(self.name),
+            'city': cgi.escape(self.city),
             'urlslug': self.urlslug,
-            'state': self.state,
+            'state': cgi.escape(self.state),
             'details_url': self.details_url,
             'key_encoded': str(self.key()),            
         }
@@ -122,14 +123,15 @@ class Agency(GeoModel):
         if cityslug:
             agency_query = agency_query.filter('cityslug =', cityslug)
             logging.debug('filtering by cityslug %s' % cityslug)
-            mck = '_slugs_agencies_%s_%s_%s' % (countryslug, stateslug, cityslug)
-        elif stateslug:
+            
+        if stateslug:
             agency_query = agency_query.filter('stateslug =', stateslug)
             logging.debug('filtering by stateslug %s' % stateslug)
-            mck = '_slugs_agencies_%s_%s' % (countryslug, stateslug)
-        elif countryslug:
+            
+        if countryslug:
             agency_query = agency_query.filter('countryslug =',countryslug)
-            mck = '_slugs_agencies_%s' % countryslug
+            
+        mck = '_slugs_agencies_%s_%s_%s' % (countryslug, stateslug, cityslug)
         
         mem_result = memcache.get(mck)
         if mem_result is not None:
