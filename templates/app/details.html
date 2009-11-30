@@ -22,7 +22,7 @@
         value = cookie.substring(splitter+1,cookie.length);
         
         // if the key of the cookie is the app id
-        if(parseInt(key)=={{transit_app.key.id}}) {
+        if(parseInt(key)=={{transit_app.key.id|escapejs}}) {
           return parseInt(value);
         }
       }
@@ -62,15 +62,15 @@
      
        // set the average-stars to the correct value, then disable it
        {% if transit_app.average_rating %}
-       $("#avgratingform > input").rating('select',Math.round(20*({{transit_app.average_rating}}/5))-1);
+       $("#avgratingform > input").rating('select',Math.round(20*({{transit_app.average_rating|escapejs}}/5))-1);
        {% endif %}
        $("#avgratingform > input").rating('readOnly',true);
      
        // on my-rating click, send an ajax call
        $('.auto-submit-star').rating({ 
          callback: function(value, link){
-                     $.getJSON( "/admin/apps/rating/", {'app_key_id':'{{transit_app.key.id}}','rating':value}, react_to_vote );
-                     document.cookie ='{{transit_app.key.id}}='+value+'; expires=Thu, 2 Aug 2010 20:47:11 UTC; path=/';
+                     $.getJSON( "/admin/apps/rating/", {'app_key_id':'{{transit_app.key.id|escapejs}}','rating':value}, react_to_vote );
+                     document.cookie ='{{transit_app.key.id|escapejs}}='+value+'; expires=Thu, 2 Aug 2010 20:47:11 UTC; path=/';
                    } 
        });
        

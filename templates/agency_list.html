@@ -7,7 +7,7 @@
 <script type="text/javascript" src="{% static_or_s3_url /js/jquery.tablesorter.pager.js %}"></script>
 <script type="text/javascript">
 
-var agency_count = {{agency_count}}; 
+var agency_count = {{agency_count|escapejs}}; 
 function update_filters(){
     var pd = jQuery("#public_filter option:selected").val();
     var location = jQuery("#location_filter option:selected").val();
