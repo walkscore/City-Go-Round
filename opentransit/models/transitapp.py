@@ -12,6 +12,7 @@ from ..utils.places import CityInfo
 from ..utils.geohelpers import square_bounding_box_centered_at
 from ..utils.misc import key_for_value
 from ..models import NamedStat
+import cgi
 
 #
 # A brief explanation of how Transit Apps and Agencies relate:
@@ -154,15 +155,15 @@ class TransitApp(db.Model):
     
     def to_jsonable(self):
         return {
-            "title": self.title,
+            "title": cgi.escape(self.title),
             "slug": self.slug,
-            "description": self.description,
+            "description": cgi.escape(self.description),
             "rating": self.average_rating,
             "rating_count": self.rating_count,
             "url": str(self.url),
-            "author_name": str(self.author_name), # DO NOT INCLUDE AUTHOR EMAIL.
-            "long_description": self.long_description,
-            "tags": self.tags,
+            "author_name": cgi.escape(str(self.author_name)), # DO NOT INCLUDE AUTHOR EMAIL.
+            "long_description": cgi.escape(self.long_description),
+            "tags": [cgi.escape(tag) for tag in self.tags],
             "details_url": self.details_url,
             "default_300w_screen_shot_url": self.default_300w_screen_shot_url,
             "default_145w_screen_shot_url": self.default_145w_screen_shot_url,
