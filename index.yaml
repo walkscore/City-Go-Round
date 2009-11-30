@@ -68,6 +68,12 @@ indexes:
 
 - kind: TransitApp
   properties:
+  - name: is_featured
+  - name: date_added
+    direction: desc
+
+- kind: TransitApp
+  properties:
   - name: is_featured=
   - name: date_added
     direction: desc

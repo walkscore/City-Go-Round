@@ -71,8 +71,8 @@
 {% endblock %}
 
 <script type="text/javascript">
-$("#location_query").bind("focus", function(e) { if (this.value=='Type a city or ZIP') this.value=''; $(this).css("color","#444"); });
-$("#location_query").bind("blur", function(e) { if (this.value=='') { this.value='Type a city or ZIP'; $(this).css("color","#888");} });
+jQuery("#location_query").bind("focus", function(e) { if (this.value=='Type a city or ZIP') this.value=''; jQuery(this).css("color","#444"); });
+jQuery("#location_query").bind("blur", function(e) { if (this.value=='') { this.value='Type a city or ZIP'; jQuery(this).css("color","#888");} });
 </script>
 
 

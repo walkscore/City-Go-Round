@@ -252,7 +252,7 @@ class TransitApp(db.Model):
         
     @staticmethod
     def featured_by_most_recently_added():
-        return TransitApp.all().filter("is_featured=", True).order('-date_added');
+        return TransitApp.all().filter('is_featured =', True).order('-date_added');
         
     @staticmethod
     def transit_app_for_slug(transit_app_slug):

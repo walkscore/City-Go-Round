@@ -30,27 +30,41 @@ def nearby(request):
 
 def gallery(request):
 
+    def app_in_list(app, list):
+        for item in list:
+            if (app.slug == item.slug):
+                return True
+        return False
+        
+    NUM_RECENT_APPS = 3
+    NUM_FEATURED_APPS = 3
+    
     all_apps = TransitApp.all().order('-bayesian_average').fetch(500);
+
+    recent_list = TransitApp.all_by_most_recently_added().fetch(NUM_RECENT_APPS)
+    featured_list = []
     bike_list = []
     main_list = []
     
-    for a in all_apps:        
-        has_bike = False
-        for item in a.tags:
-            if (item=="Biking"):
-                has_bike = True 
-                break
-        if has_bike:
-            bike_list.append(a)
-        else:
-            main_list.append(a)
-          
+    for a in all_apps:   
+        if app_in_list(a, recent_list):
+            continue
+        
+        if a.is_featured and len(featured_list) <= NUM_FEATURED_APPS:
+            featured_list.append(a)
+        else:  
+            has_bike = False
+            if "Biking" in a.tags and not "Public Transit" in a.tags:
+                bike_list.append(a)
+            else:
+                main_list.append(a)
+                
     template_vars = {
         'transit_app_count': TransitAppStats.get_transit_app_count(),
         'main_app_list': main_list,
         'bike_app_list': bike_list,
-        'featured_apps': TransitApp.featured_by_most_recently_added().fetch(3), 
-        'recently_added_apps': TransitApp.all_by_most_recently_added().fetch(3), 
+        'featured_apps': featured_list, 
+        'recently_added_apps': recent_list, 
         'transit_app_count': TransitApp.all().count(),
         'public_feed_count': Agency.all().filter("date_opened != ", None).count(),
     }
