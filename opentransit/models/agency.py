@@ -123,14 +123,15 @@ class Agency(GeoModel):
         if cityslug:
             agency_query = agency_query.filter('cityslug =', cityslug)
             logging.debug('filtering by cityslug %s' % cityslug)
-            mck = '_slugs_agencies_%s_%s_%s' % (countryslug, stateslug, cityslug)
-        elif stateslug:
+            
+        if stateslug:
             agency_query = agency_query.filter('stateslug =', stateslug)
             logging.debug('filtering by stateslug %s' % stateslug)
-            mck = '_slugs_agencies_%s_%s' % (countryslug, stateslug)
-        elif countryslug:
+            
+        if countryslug:
             agency_query = agency_query.filter('countryslug =',countryslug)
-            mck = '_slugs_agencies_%s' % countryslug
+            
+        mck = '_slugs_agencies_%s_%s_%s' % (countryslug, stateslug, cityslug)
         
         mem_result = memcache.get(mck)
         if mem_result is not None:
