@@ -17,7 +17,7 @@
             <th>Property</th>
             <th>Description</th>
             <th>&nbsp;</th>
-            <th>&nbsp;</th>
+            {# <th>&nbsp;</th> #}
         </tr>        
         {% for bad_ref in bad_refs %}
         <tr class="{% cycle 'even' 'odd' %}">
@@ -25,7 +25,7 @@
             <td>{{bad_ref.property_name}}</td>
             <td>{{bad_ref.description}}</td>
             <td><a href="{{bad_ref.inspect_url}}">inspect</a></td>
-            <td><a href="#" id="delete-{{bad_ref.key_encoded}}">delete</a></td>
+            {# <td><a href="#" id="delete-{{bad_ref.key_encoded}}">delete</a></td> #}
         </tr>
         {% endfor %}
     </table>
@@ -50,7 +50,7 @@
             <td>{{bad_list.property_name}}</td>
             <td>{{bad_list.description}}</td>
             <td><a href="{{bad_list.inspect_url}}">inspect</a></td>
-            <td><a href="#" id="delete-{{bad_list.key_encoded}}">delete</a></td>
+            {# <td><a href="#" id="delete-{{bad_list.key_encoded}}">delete</a></td> #}
         </tr>
         {% endfor %}
     </table>
