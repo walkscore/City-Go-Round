@@ -1,3 +1,5 @@
+import re
+
 from django.conf import settings
 
 from .utils.httpbasicauth import authenticate_request
@@ -7,8 +9,24 @@ SESSION_COOKIE_KEY = "_session"
 USER_KEY_SESSION_KEY = "_user_key"
 
 class SiteWideUsernameAndPasswordMiddleware(object):
+    def __init__(self, *args, **kwargs):
+        super(SiteWideUsernameAndPasswordMiddleware, self).__init__(*args, **kwargs)
+
+        # Compile a list of exceptions to u/p requirements
+        self._regexps = []
+        if hasattr(settings, 'SITE_WIDE_USERNAME_AND_PASSWORD_URL_EXCEPTIONS'):
+            for exception in settings.SITE_WIDE_USERNAME_AND_PASSWORD_URL_EXCEPTIONS:
+                self._regexps.append(re.compile(exception))
+    
     # Use HTTP Basic Authentication to keep people who haven't been invited out... for now.
     def process_request(self, request):
+        # Check to see if the request is to an exceptional path...
+        path = request.path
+        for regexp in self._regexps:
+            if re.match(regexp, path):
+                return None 
+                
+        # No, this path requires authentication...
         return authenticate_request(request, settings.SITE_WIDE_USERNAME, settings.SITE_WIDE_PASSWORD, settings.SITE_WIDE_REALM)
 
 class AppEngineSecureSessionMiddleware(object):

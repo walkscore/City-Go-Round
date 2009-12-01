@@ -410,10 +410,16 @@ def admin_apps_edit_images(request, transit_app):
 @requires_valid_transit_app_slug
 def admin_apps_delete(request, transit_app):
     try:
-        transit_app.delete();
+        # Get rid of all associated TransitAppLocation instances
+        locations = [explicitly_supported_location for explicitly_supported_location in transit_app.explicitly_supported_locations]
+        for location_chunk in chunk_sequence(locations, 5):
+            db.delete(location_chunk)
+            
+        # Get rid of the transit app itself.
+        transit_app.delete()        
     except:
-        return render_to_json({"success": False, "transit_app_slug": transit_app.slug});
-    return render_to_json({"success": True, "transit_app_slug": transit_app.slug});
+        return render_to_json({"success": False, "transit_app_slug": transit_app.slug})
+    return render_to_json({"success": True, "transit_app_slug": transit_app.slug})
         
 def increment_stat(request):
     stat_name = request.GET['name']
