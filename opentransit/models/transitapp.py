@@ -296,6 +296,19 @@ class TransitApp(db.Model):
         return TransitApp.all().filter('supports_all_public_agencies = ', True)
         
     @staticmethod
+    def fetch_for_explicit_agency(agency_or_key, uniquify = True):
+        """Return a list of TransitApp entities, by default unique, that have explicit support for the given agency."""
+        return [transit_app for transit_app in TransitApp.iter_for_explicit_agency(agency_or_key, uniquify)]
+    
+    @staticmethod
+    def iter_for_explicit_agency(agency_or_key, uniquify = True):
+        """Return an iterator over TransitApp entities, by default unique, that have explicit support for the given agency."""
+        seen_set = set()
+        agency_key, agency = key_and_entity(agency_or_key, Agency)
+        for transit_app_with_explicit_support in iter_uniquify(TransitApp.gql('WHERE explicitly_supported_agency_keys = :1', agency_key), seen_set, uniquify):
+            yield transit_app_with_explicit_support            
+    
+    @staticmethod
     def fetch_for_agency(agency_or_key, uniquify = True):
         """Return a list of TransitApp entities, by default unique, that support the given agency."""
         return [transit_app for transit_app in TransitApp.iter_for_agency(agency_or_key, uniquify)]

@@ -217,9 +217,21 @@ def delete_all_agencies(request):
     return render_to_response(request, "admin/agencies-deleteall-finished.html")
     
 def delete_agency(request,  agency_id):
-    Agency.get_by_id( int( agency_id ) ).delete()
+    agency = Agency.get_by_id(int(agency_id))
+
+    # If any applications _explicitly_ support this agency, go ahead and remove that explicit support...
+    explicit_apps = TransitApp.fetch_for_explicit_agency(agency)
+    for explicit_app in explicit_apps:
+        explicit_app.remove_explicitly_supported_agency(agency)
     
-    return HttpResponseRedirect( "/admin/agencies/" )
+    # Save the apps.
+    for explicit_app_chunk in chunk_sequence(explicit_apps, 10):
+        db.put(explicit_app_chunk)
+
+    # Now, delete the agency.
+    agency.delete()
+    
+    return redirect_to("admin_agencies_list")
     
 def create_agency_from_feed(request, feed_id):
     # get feed entity
