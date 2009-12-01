@@ -3,10 +3,13 @@
 {% block title %}Frequently Asked Questions &mdash; City-Go-Round{% endblock %}
 
 {% block content %}
-<div class="body-content">
+<div class="col-group body-content">
   <h2>Thanks for signing</h2>
   <p>More Open data will mean more transit apps. Thanks for helping to make this happen!</p>
   <p>Back to the <a href="{% url home %}">home page</a></p>
+</div>
+<div class="wide-col rightmost">
+	{% include "includes/mrec1.html" %}
 </div>
 {% endblock %}
 

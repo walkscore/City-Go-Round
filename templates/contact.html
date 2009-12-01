@@ -3,15 +3,21 @@
 {% block title %}Contact Us &mdash; City-Go-Round{% endblock %}
 
 {% block content %}
-<h2>Contact Us</h2>
-<p>To contact us via email, just fill out the form below.  Thanks!</p>
-<div id="contact-form">
-<form id="contact-form" action="" method="POST">
-  <table>
-  {{ contact_form.as_table }}
-  </table>
-  <input class="button" type="submit" value="Send"></input>
-</form>
+<div class="col-group body-content">
+    <h2>Contact Us</h2>
+    <p>To contact us via email, just fill out the form below.  Thanks!</p>
+    <div id="contact-form">
+    <form id="contact-form" action="" method="POST">
+        <table>
+            {{ contact_form.as_table }}
+        </table>
+        <input class="button" type="submit" value="Send"></input>
+    </form>
+    </div>
 </div>
+<div class="wide-col rightmost">
+	{% include "includes/mrec1.html" %}
+</div>
+
 {% endblock %}
 

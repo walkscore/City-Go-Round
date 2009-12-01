@@ -166,7 +166,7 @@ jQuery(document).ready(function($)
 {% endblock %}
 
 {% block content %}
-
+<div class="col-group body-content">
     <div id="petition" class="body-content thinline col-group">
         <div class="boxed-content"> 
             
@@ -197,6 +197,11 @@ jQuery(document).ready(function($)
         <h2>Biking Apps Near {{location_query}}:</h2>
         <div id="biking_apps_go_here" class="app-gallery"></div>
     </div>
+</div>
+<div class="wide-col rightmost">
+	{% include "includes/mrec1.html" %}
+</div>
+
       
 {% endblock %}
 
