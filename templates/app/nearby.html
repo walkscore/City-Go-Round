@@ -130,8 +130,12 @@ jQuery(document).ready(function($)
                 }
             });
             
+            
+            
             if(closed_agencies_html.length > 0) {
                 $("#nearby_agencies_header").fadeIn(1000.0, function(){});
+            } else if(agencies.length==0) {
+                $("#no_agencies").html("No nearby transit agencies").fadeIn(1000.0, function(){});
             }
             $("#fill_nearby_no_public").hide().html( closed_agencies_html ).fadeIn(1000.0, function(){});
             $("#fill_nearby_public").hide().html( open_agencies_html ).fadeIn(1000.0, function(){});
@@ -160,6 +164,7 @@ jQuery(document).ready(function($)
     }
 
     $("#nearby_agencies_header").hide();
+    $("#no_agencies").hide();
     find_nearby_transit_apps();
 });
 
@@ -168,6 +173,7 @@ jQuery(document).ready(function($)
 
 {% block content %}
 <div class="col-group body-content">
+    <div id="no_agencies"></div>
     <div id="petition" class="body-content thinline col-group">
         <div class="boxed-content"> 
             
