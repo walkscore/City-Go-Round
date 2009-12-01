@@ -121,7 +121,22 @@ def admin_integrity_check(request):
     
     # For each ref_list on a model, attempt to access all keys in it.
     bad_lists = []
-    # TODO davepeck
+    for model_name, model_class, property_name in ref_lists:
+        for item in model_class.all():
+            keys = eval("item." + property_name)            
+            for key in keys:
+                try:
+                    entity = db.get(key)
+                except:
+                    list_info = {
+                        "model_name": model_name,
+                        "property_name": property_name,
+                        "key_encoded": str(item.key()),
+                        "description": str(item),
+                        "inspect_url": url_for_key_and_kind(kind=model_name, key=str(item.key())),
+                    }
+                    bad_lists.append(list_info)
+                    break
     
     # Render our status report.
     template_vars = {
