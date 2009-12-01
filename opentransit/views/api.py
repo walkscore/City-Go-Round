@@ -2,6 +2,7 @@ import time
 import logging
 
 from django.http import HttpResponse, HttpResponseRedirect
+from django.conf import settings
 
 from google.appengine.ext import db
 from google.appengine.api import memcache
@@ -56,7 +57,7 @@ def api_agencies_search(request):
         if not are_latitude_and_longitude_valid(latitude, longitude):
             return bad_request('lat/lon parameters must be properly bounded')
         
-        agencies_iter = Agency.fetch_agencies_near(latitude, longitude)
+        agencies_iter = Agency.fetch_agencies_near(latitude, longitude,bbox_side_in_miles=settings.NEARBY_AGENCIES_BBOX_SIDE_IN_MILES)
     else:
         agencies_iter = Agency.all()
                 
