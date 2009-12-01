@@ -1,0 +1,60 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}City Go Round ADMIN Homepage{% endblock %}
+
+{% block content %}
+<div id="admin-home" class="integrity-check">
+    <h1>Referential Integrity Check.</h1>
+    
+    <p>&nbsp;</p>
+    
+    <h2>There are {{bad_ref_count}} invalid ReferenceProperty values.</h2>
+
+    {% if bad_refs %}
+    <table>
+        <tr>
+            <th>Model</th>
+            <th>Property</th>
+            <th>Description</th>
+            <th>&nbsp;</th>
+            {# <th>&nbsp;</th> #}
+        </tr>        
+        {% for bad_ref in bad_refs %}
+        <tr class="{% cycle 'even' 'odd' %}">
+            <td>{{bad_ref.model_name}}</td>
+            <td>{{bad_ref.property_name}}</td>
+            <td>{{bad_ref.description}}</td>
+            <td><a href="{{bad_ref.inspect_url}}">inspect</a></td>
+            {# <td><a href="#" id="delete-{{bad_ref.key_encoded}}">delete</a></td> #}
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}    
+    
+    <p>&nbsp;</p>
+    
+    <h2>There are {{bad_list_count}} ListProperty values that contain invalid keys.</h2>
+    
+    {% if bad_lists %}
+    <table>
+        <tr>
+            <th>Model</th>
+            <th>Property</th>
+            <th>List</th>
+            <th>&nbsp;</th>
+            <th>&nbsp;</th>
+        </tr>        
+        {% for bad_list in bad_lists %}
+        <tr class="{% cycle 'even' 'odd' %}">
+            <td>{{bad_list.model_name}}</td>
+            <td>{{bad_list.property_name}}</td>
+            <td>{{bad_list.description}}</td>
+            <td><a href="{{bad_list.inspect_url}}">inspect</a></td>
+            {# <td><a href="#" id="delete-{{bad_list.key_encoded}}">delete</a></td> #}
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+    
+</div>
+{% endblock %}

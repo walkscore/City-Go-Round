@@ -153,6 +153,9 @@ class TransitApp(db.Model):
         super(TransitApp, self).__init__(*args, **kwargs)
         self.slug = slugify(self.title)
     
+    def __str__(self):
+        return "%s (%s)" % (self.title, self.url)
+    
     def to_jsonable(self):
         return {
             "title": cgi.escape(self.title),
@@ -495,6 +498,9 @@ class TransitAppLocation(GeoModel):
     def __init__(self, *args, **kwargs):
         super(TransitAppLocation, self).__init__(*args, **kwargs)
         self.update_location()
+
+    def __str__(self):
+        return "lat: %.4f, lon: %.4f (for %s)" % (self.location.lat, self.location.lon, self.city_details)
 
     @staticmethod
     def fetch_transit_app_locations_near(latitude, longitude, query = None, max_results = 500, bbox_side_in_miles = settings.BBOX_SIDE_IN_MILES):

@@ -1096,3 +1096,24 @@ border: 1px solid #999;
 {
     background-color: #EEE;
 }
+
+#admin-home.integrity-check table th
+{
+    font-weight: bold;
+}
+
+#admin-home.integrity-check table th, #admin-home.integrity-check table td
+{
+    padding: 0.66em;
+}
+
+#admin-home.integrity-check table .even td
+{
+    background-color: #DDD;
+}
+
+#admin-home.integrity-check table .odd td
+{
+    background-color: #BBB;
+}
+

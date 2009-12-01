@@ -24,3 +24,7 @@ class FeedReference(db.Model):
     @staticmethod
     def all_by_most_recent():
         return FeedReference.all().order("-date_added")
+    
+    def __str__(self):
+        return "%s (%s)" % (self.name, self.url)    
+    
