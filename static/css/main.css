@@ -110,9 +110,12 @@
 	.body-content p, p.body {
 		margin: 2px 0 8px 0;
 	}
+	.body-content ul {
+        padding-bottom: 8px;
+    }
 	.body-content li {
-	margin-bottom: 6px;
-  }
+    	margin-bottom: 6px;
+    }
 	
 
 /*********** Links ****************/
@@ -745,13 +748,18 @@ border: 1px solid #999;
     .app-images-thumbs img.odd{
         clear: both;
     }
-        
-    .condensed-agency-list li a {
+
+    .condensed-list li {
+        font-size: 11px;
+    }
+
+    .condensed-link-list li a {
         font-size: 11px;
         color: #9b744e;
     }
-    .condensed-agency-list li {
+    .condensed-link-list li {
         font-size: 10px;
+        color: #777;
     }
     
     #ratings-panel {
@@ -774,10 +782,6 @@ border: 1px solid #999;
     .app-info {
         width: 270px;
         float: left;
-    }
-    .app-info ul {
-        margin: 0;
-        padding: 0;
     }
     .app-info li {
         list-style-type: none;

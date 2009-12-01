@@ -166,12 +166,12 @@
             </div>
         {% endif %}
         {% if locations %}
-            <div>
-                <label>Areas Supported:</label> <p>{% for i in locations %}<li>{{ i }}</li>{% endfor %}</p>
+            <div class="condensed-list">
+                <label>Areas Supported:</label> <ul>{% for i in locations %}<li>{{ i }}</li>{% endfor %}</ul>
             </div>
         {% endif %}
         {% if agencies %}
-            <div class="condensed-agency-list">
+            <div class="condensed-list">
                 <label>Uses Open Data from:</label> <ul>{% for i in agencies %}<li><a href="/agencies/{{ i.urlslug }}">{{ i.name }}</a> {{ i.city }}, {{ i.state}}</li>{% endfor %}</ul>
             </div>
         {% endif %}
