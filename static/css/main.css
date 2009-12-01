@@ -388,14 +388,13 @@
 		left: 30px;
 	}	
 	#lede input#location_query {
-		font: 18px/28px Verdana, Arial, Helvetica, sans-serif;
+		font: 18px/18px Verdana, Arial, Helvetica, sans-serif;
 		color: #888;
 		position: absolute;
 		top: 17px;
 		left: 305px;
 		width: 380px;
-		height: 26px;
-		padding: 0;
+		padding: 0 0 0 0;
 		margin: 0;
 		
 	}	
@@ -671,12 +670,10 @@
 	}	
 	.app-gallery .app img.featured { 
 	   float: left;
-	   margin: 0 4px 1px 0;
+	   margin: 0 4px 0 0;
 	   border: 0;
 	   width: 48px;
-	   height: 29px;
-	   position: relative;
-	   top: 1px;
+	   height: 27px;
 	}	
 
     
@@ -693,6 +690,7 @@
         float: left;
         position: relative;
         background: url(/images/static-stars.gif) 0 -16px no-repeat;
+        margin-bottom: 3px;
     }
     .app-gallery .rating div {
         position: absolute;

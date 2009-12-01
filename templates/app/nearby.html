@@ -54,6 +54,11 @@ jQuery(document).ready(function($)
         return html;
     }
     
+    function html_for_agency(agency) {
+        var html = '<div><a href="'+agency.details_url+'">'+agency.name+'</a></div>';
+        return html
+    }
+    
     function appHasTag(app, target_tag){
         for (var i=0; i<app.tags.length; i++){
             if(app.tags[i]==target_tag)
@@ -96,21 +101,41 @@ jQuery(document).ready(function($)
                 subhead_html += "."
 
 
-            $("#fill_nearby_no_public").hide().text("Some agencies here... TODO DAVEPECK").fadeIn(1000.0, function(){});
+            //$("#fill_nearby_no_public").hide().text("Some agencies here... TODO DAVEPECK").fadeIn(1000.0, function(){});
             $("#transit_app_loading").fadeOut(0.0, function(){});
             $("#transit_app_headline").hide().html(subhead_html).fadeIn(1000.0, function(){});
-            $("#fill_nearby_public").hide().text("Apps powered by: Some agencies here... TODO DAVEPECK").fadeIn(1000.0, function(){});
+            //$("#fill_nearby_public").hide().text("Apps powered by: Some agencies here... TODO DAVEPECK").fadeIn(1000.0, function(){});
             $("#apps_go_here").hide().html(main_apps_html).fadeIn(1000.0, function(){});
             if (biking_app_count>0){
                 $("#biking_apps").fadeIn(1000.0);
                 $("#biking_apps_go_here").hide().html(biking_apps_html).fadeIn(1000.0, function(){});
             }
         });
+        
+
     }
     
     function query_for_agencies(latitude, longitude, country_code)
     {
-        // TODO DAVEPECK
+
+    
+        $.getJSON(url_for_agency_query(latitude, longitude), function(agencies)
+        {
+            open_agencies_html = "";
+            closed_agencies_html = "";
+        
+            $.each(agencies, function(i, agency)
+            {
+                if( agency.is_public ) {
+                    open_agencies_html += html_for_agency( agency );
+                } else {
+                    closed_agencies_html += html_for_agency( agency );
+                }
+            });
+            
+            $("#fill_nearby_no_public").hide().html( closed_agencies_html ).fadeIn(1000.0, function(){});
+            $("#fill_nearby_public").hide().html( open_agencies_html ).fadeIn(1000.0, function(){});
+        });
     }
     
     function handle_google_geocode_response(response)
@@ -146,7 +171,7 @@ jQuery(document).ready(function($)
         <div class="boxed-content"> 
             
             <h4>Nearby Agencies with no open data</h4>
-            <div class="agency-text-list" id="fill_nearby_no_public"><span class="loading">TODO DAVEPECK...</span></div>
+            <div class="agency-text-list" id="fill_nearby_no_public"><span class="loading">LOADING...</span></div>
 
             <h2>SUPPORT OPEN DATA</h2>
             <div class="wide-col rightmost">
@@ -164,7 +189,7 @@ jQuery(document).ready(function($)
     <div id="nearby-apps" class="body-content col-group">
         <h2>Transit Apps Near {{location_query}}:</h2>
         <h4 class="bluegreen" id="transit_app_headline"></h4>
-        <div class="agency-text-list" id="fill_nearby_public"><span class="loading">TODO DAVEPECK...</span></div>
+        <div class="agency-text-list" id="fill_nearby_public"><span class="loading">LOADING...</span></div>
         <h3 id="transit_app_loading"><img src="{% static_url /images/ajax-loader.gif %}" />LOADING...</h3>
         <div id="apps_go_here" class="app-gallery"></div>
     </div>
