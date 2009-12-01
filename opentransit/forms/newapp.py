@@ -1,3 +1,4 @@
+from decimal import Decimal
 from django import forms
 from ..models import TransitApp
 from ..utils.slug import slugify
@@ -11,6 +12,7 @@ class NewAppGeneralInfoForm(forms.Form):
     title               = forms.CharField(max_length = 64, min_length = 2, label = u"Title")
     description         = forms.CharField(max_length = 140, min_length = 2, label = u"One Sentence Description")
     url                 = forms.URLField(verify_exists = False, min_length = 2, label = u"App URL")
+    price               = forms.DecimalField(decimal_places = 2, max_digits = 6, min_value = Decimal("0.00"), initial = Decimal("0.00"), label = u"Price (USD)")
     author_name         = forms.CharField(max_length = 128, min_length = 2, label = u"Author's Name")
     author_email        = forms.EmailField(label = u"Author's Email (kept private)")
     long_description    = forms.CharField(min_length = 0, max_length = 2048, widget = forms.widgets.Textarea(attrs = {'rows': 6, 'cols': 32}), label = u"Extended Description")

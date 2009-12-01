@@ -2,6 +2,7 @@ import time
 import logging
 import pickle
 
+from decimal import Decimal
 from datetime import datetime, timedelta, date
 
 from django.conf import settings
@@ -114,6 +115,7 @@ def add_form(request):
                 "category_list": form.category_list,
                 "tag_list": form.tag_list,
                 "supports_gtfs": form.cleaned_data['supports_gtfs'],
+                "price": form.cleaned_data['price'],
             }
             progress.info_form_pickle = pickle.dumps(info_form, pickle.HIGHEST_PROTOCOL)
             
@@ -182,6 +184,7 @@ def add_locations(request, progress_uuid):
             transit_app = TransitApp(title = info_form['title'])
             transit_app.description = info_form['description']
             transit_app.url = db.Link(info_form['url'])
+            transit_app.price = info_form['price']
             transit_app.author_name = info_form['author_name']
             transit_app.author_email = db.Email(info_form['author_email'])
             transit_app.long_description = info_form['long_description']
@@ -244,6 +247,7 @@ def admin_apps_edit_basic(request, transit_app):
             transit_app.slug = form.transit_app_slug
             transit_app.description = form.cleaned_data["description"]
             transit_app.url = form.cleaned_data["url"]
+            transit_app.price = form.cleaned_data["price"]
             transit_app.author_name = form.cleaned_data["author_name"]
             transit_app.author_email = form.cleaned_data["author_email"]
             transit_app.long_description = form.cleaned_data["long_description"]
@@ -260,6 +264,7 @@ def admin_apps_edit_basic(request, transit_app):
             "title": transit_app.title,
             "description": transit_app.description,
             "url": transit_app.url,
+            "price": transit_app.price,
             "author_name": transit_app.author_name,
             "author_email": transit_app.author_email,
             "long_description": transit_app.long_description,
@@ -519,6 +524,10 @@ def admin_apps_update_schema(request):
             transit_app.explicitly_supports_the_entire_world = False
             changed = True
             
+        if not transit_app.price:
+            transit_app.price = Decimal("0.00")
+            changed = True
+            
         blob = transit_app.screen_shot
         if blob:
             changed = True
@@ -536,7 +545,8 @@ def admin_apps_update_schema(request):
             changed_apps.append(transit_app)
     
     # Looks like we're done. Attempt to commit everything to our database.
-    db.put(changed_apps)
+    for changed_app_chunk in chunk_sequence(changed_apps, 10):
+        db.put(changed_app_chunk)
     
     # Render some vaguely useful results
     template_vars = {
