@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block headscripts %}
-<script src="http://files.citygoround.org.s3.amazonaws.com/js/jquery.tools.min.js"></script>
+<script src="{% static_or_s3_url /js/jquery.tools.min.js %}"></script>
 
 <script type="text/javascript">
 // wait until document is fully scriptable 

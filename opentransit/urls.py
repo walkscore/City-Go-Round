@@ -12,6 +12,7 @@ urlpatterns += patterns(
     url(r'^about/$', 'static', {'template':'about.html'}, name='about'),
     url(r'^opensource/$', 'static', {'template':'opensource.html'}, name='opensource'),
     url(r'^petition-signed/$', 'static', {'template':'petition_signed.html'}, name='petition_signed'),
+    url(r'^widgets/$', 'static', {'template':'widgets.html'}, name='widgets'),
     url(r'^admin/login/$', 'admin_login'),
     url(r'^admin/logout/$', 'admin_logout'),
     url(r'^admin/$', 'admin_home', name='admin_home'),
