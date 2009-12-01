@@ -110,9 +110,12 @@
 	.body-content p, p.body {
 		margin: 2px 0 8px 0;
 	}
+	.body-content ul {
+        padding-bottom: 8px;
+    }
 	.body-content li {
-	margin-bottom: 6px;
-  }
+    	margin-bottom: 6px;
+    }
 	
 
 /*********** Links ****************/
@@ -152,7 +155,7 @@
 		background-color: #c6e6f2;
 		margin: 0px auto 16px auto;
 		width: 920px;
-		height: 65px;
+		height: 60px;
 	}
 	#outer-wrapper {
 		margin: 0px auto 0 auto;
@@ -384,7 +387,7 @@
 		font-weight: bold;
 		color: #028dc7;
 		position: absolute;
-		top: 18px;
+		top: 16px;
 		left: 30px;
 	}	
 	#lede input#location_query {
@@ -394,23 +397,26 @@
 		top: 17px;
 		left: 305px;
 		width: 380px;
-		padding: 0 0 0 0;
+height: 27px;
+border: 1px solid #999;
+		padding: 0 0 0 6px;
 		margin: 0;
 		
 	}	
 	#lede input#search {
 		position: absolute;
 		top: 17px;
-		left: 700px;
-		height: 32px;
+		left: 705px;
+		height: 27px;
+border: 1px solid #999;
 	}	
 	#lede p {
-		font-size:10px; 
-		color: #747474;
+		font:10px/10px Verdana, Arial, Helvetica, sans-serif;; 
+		color: #888;
 		position: absolute;
-		bottom: 3px;
+		bottom: 2px;
 		left: 0;
-		width: 685px;
+		width: 693px;
 		text-align: right;
 	}
 
@@ -581,7 +587,7 @@
 	}
 	#flowpanes {
 		width: 100%;
-		height: 160px;
+		height: 182px;
         padding-top: 44px;
         position:relative; 
         overflow:hidden; 
@@ -742,13 +748,18 @@
     .app-images-thumbs img.odd{
         clear: both;
     }
-        
-    .condensed-agency-list li a {
+
+    .condensed-list li {
+        font-size: 11px;
+    }
+
+    .condensed-link-list li a {
         font-size: 11px;
         color: #9b744e;
     }
-    .condensed-agency-list li {
+    .condensed-link-list li {
         font-size: 10px;
+        color: #777;
     }
     
     #ratings-panel {
@@ -771,10 +782,6 @@
     .app-info {
         width: 270px;
         float: left;
-    }
-    .app-info ul {
-        margin: 0;
-        padding: 0;
     }
     .app-info li {
         list-style-type: none;

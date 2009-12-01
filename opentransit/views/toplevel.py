@@ -13,7 +13,7 @@ from google.appengine.api.users import create_login_url, create_logout_url
 def home(request):  
 
     template_vars = {
-        'featured_apps': TransitApp.all().fetch(8),
+        'featured_apps': TransitApp.featured_by_most_recently_added().fetch(8),
         'petition_form': PetitionForm(),
         'no_getsatisfaction' : True,
         'agency_count': Agency.all().count(),
