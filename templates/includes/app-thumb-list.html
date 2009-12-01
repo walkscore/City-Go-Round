@@ -3,7 +3,7 @@
 		<h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
 		<label>By {{transit_app.author_name}}</label>
 		<div class="rating"><div class="stars{{transit_app.average_rating_no_decimal}}"></div><p>({{transit_app.rating_count}} ratings)</p></div>
-		<p>{% if transit_app.is_featured %}<img class="featured" src="{% static_url /images/editors-choice.gif %}" />{% endif %}{{transit_app.description}}<br />
+		<p>{% if transit_app.is_featured %}<img class="featured" src="{% static_url /images/editors-choice3.gif %}" />{% endif %}{{transit_app.description}}<br />
             <span>sort value {{transit_app.bayesian_average}}</span>
         </p>
 	</div>

@@ -50,7 +50,7 @@ def gallery(request):
         if app_in_list(a, recent_list):
             continue
         
-        if a.is_featured and len(featured_list) <= NUM_FEATURED_APPS:
+        if a.is_featured and len(featured_list) < NUM_FEATURED_APPS:
             featured_list.append(a)
         else:  
             has_bike = False
