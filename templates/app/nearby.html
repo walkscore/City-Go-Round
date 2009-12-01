@@ -100,11 +100,8 @@ jQuery(document).ready(function($)
             else 
                 subhead_html += "."
 
-
-            //$("#fill_nearby_no_public").hide().text("Some agencies here... TODO DAVEPECK").fadeIn(1000.0, function(){});
             $("#transit_app_loading").fadeOut(0.0, function(){});
             $("#transit_app_headline").hide().html(subhead_html).fadeIn(1000.0, function(){});
-            //$("#fill_nearby_public").hide().text("Apps powered by: Some agencies here... TODO DAVEPECK").fadeIn(1000.0, function(){});
             $("#apps_go_here").hide().html(main_apps_html).fadeIn(1000.0, function(){});
             if (biking_app_count>0){
                 $("#biking_apps").fadeIn(1000.0);
@@ -133,6 +130,9 @@ jQuery(document).ready(function($)
                 }
             });
             
+            if(closed_agencies_html.length > 0) {
+                $("#nearby_agencies_header").fadeIn(1000.0, function(){});
+            }
             $("#fill_nearby_no_public").hide().html( closed_agencies_html ).fadeIn(1000.0, function(){});
             $("#fill_nearby_public").hide().html( open_agencies_html ).fadeIn(1000.0, function(){});
         });
@@ -159,6 +159,7 @@ jQuery(document).ready(function($)
         googleCoder.getLocations(query, handle_google_geocode_response);    
     }
 
+    $("#nearby_agencies_header").hide();
     find_nearby_transit_apps();
 });
 
@@ -170,7 +171,7 @@ jQuery(document).ready(function($)
     <div id="petition" class="body-content thinline col-group">
         <div class="boxed-content"> 
             
-            <h4>Nearby Agencies with no open data</h4>
+            <h4 id="nearby_agencies_header">Nearby Agencies with no open data</h4>
             <div class="agency-text-list" id="fill_nearby_no_public"><span class="loading">LOADING...</span></div>
 
             <h2>SUPPORT OPEN DATA</h2>
