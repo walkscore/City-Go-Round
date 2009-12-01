@@ -17,6 +17,8 @@ MIDDLEWARE_CLASSES = [
     'opentransit.middleware.AppEngineSecureSessionMiddleware',
 ]
 
+SITE_WIDE_USERNAME_AND_PASSWORD_URL_EXCEPTIONS = [ r'^/admin/taskqueue/.*$' ]
+
 # NOTE davepeck:
 #
 # Add the following middleware classes
