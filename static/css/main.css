@@ -152,7 +152,7 @@
 		background-color: #c6e6f2;
 		margin: 0px auto 16px auto;
 		width: 920px;
-		height: 65px;
+		height: 60px;
 	}
 	#outer-wrapper {
 		margin: 0px auto 0 auto;
@@ -384,7 +384,7 @@
 		font-weight: bold;
 		color: #028dc7;
 		position: absolute;
-		top: 18px;
+		top: 16px;
 		left: 30px;
 	}	
 	#lede input#location_query {
@@ -394,23 +394,26 @@
 		top: 17px;
 		left: 305px;
 		width: 380px;
-		padding: 0 0 0 0;
+height: 27px;
+border: 1px solid #999;
+		padding: 0 0 0 6px;
 		margin: 0;
 		
 	}	
 	#lede input#search {
 		position: absolute;
 		top: 17px;
-		left: 700px;
-		height: 32px;
+		left: 705px;
+		height: 27px;
+border: 1px solid #999;
 	}	
 	#lede p {
-		font-size:10px; 
-		color: #747474;
+		font:10px/10px Verdana, Arial, Helvetica, sans-serif;; 
+		color: #888;
 		position: absolute;
-		bottom: 3px;
+		bottom: 2px;
 		left: 0;
-		width: 685px;
+		width: 693px;
 		text-align: right;
 	}
 
