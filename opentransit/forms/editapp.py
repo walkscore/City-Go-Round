@@ -53,6 +53,9 @@ class EditAppLocationForm(forms.Form):
     available_globally = forms.BooleanField(required = False, label = u"Globally", widget = forms.widgets.CheckboxInput(attrs={'onchange': 'updateUI()', 'id': 'global'}))
 
 class EditAppImagesForm(forms.Form):
+    SCREEN_SHOT_COUNT = 5
+    SCREEN_SHOT_FIELDS = ('new_shot_1', 'new_shot_2', 'new_shot_3', 'new_shot_4', 'new_shot_5')
+    
     new_shot_1 = AppEngineImageField(required = False, label = u"Screenshot #1")
     new_shot_2 = AppEngineImageField(required = False, label = u"Screenshot #2")
     new_shot_3 = AppEngineImageField(required = False, label = u"Screenshot #3")

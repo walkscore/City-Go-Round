@@ -20,4 +20,11 @@ def key_for_value(dictionary, value):
             return k
     return None
 
+def pad_list(list, length, pad_with = None):
+    if len(list) < length:
+        list.extend([pad_with] * (length - len(list)))
+
+def collapse_list(list, collapse_item = None):
+    while collapse_item in list:
+        list.remove(collapse_item)
     

@@ -15,6 +15,7 @@ urlpatterns += patterns(
     url(r'^admin/login/$', 'admin_login'),
     url(r'^admin/logout/$', 'admin_logout'),
     url(r'^admin/$', 'admin_home', name='admin_home'),
+    url(r'^admin/integrity-check/$', 'admin_integrity_check', name='admin_integrity_check'),
 )
 
 
@@ -92,4 +93,9 @@ urlpatterns += patterns(
     url(r'^api/apps/for-agencies/$', 'api_apps_for_agencies', name = 'api_apps_for_agencies'),
 )
     
+# Task Queue Views -- All URLs that service task queue items
+urlpatterns += patterns(
+    'opentransit.views.taskqueue',
+    url(r'^admin/taskqueue/screen-shot-resize/', 'taskqueue_screen_shot_resize', name = 'taskqueue_screen_shot_resize'),
+)
     

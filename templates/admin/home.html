@@ -24,6 +24,7 @@
     <p>Run <a href="/admin/test">unit and functional tests</a>.</p> <!-- this URL can't be done via the URL template tag. All others should be... -->
     <p>Refresh <a href="{% url refresh_all_bayesian_averages %}">all app rating bayesian averages</a></p>
     <p>Update <a href="{% url admin_apps_update_schema %}">outdated transit apps</a> in the datastore to match the latest schema.</p>
+    <p>Verify the <a href="{% url admin_integrity_check %}">referential integrity</a> of all entities in the datastore.</p>
     
     <p>&nbsp;</p>
     

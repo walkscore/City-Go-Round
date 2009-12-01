@@ -1,0 +1,5 @@
+queue:
+- name: screen-shot-resize-queue
+  rate: 5/s
+  bucket_size: 5
+

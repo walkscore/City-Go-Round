@@ -54,6 +54,9 @@ class Agency(GeoModel):
             self.update_location()
         self.update_slugs()
         
+    def __str__(self):
+        return "%s in %s, %s (%s)" % (self.name, self.city, self.state, self.country)
+        
     def update_slugs(self):
         self.nameslug = slugify(self.name)
         self.cityslug = slugify(self.city)

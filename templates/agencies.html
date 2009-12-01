@@ -1,9 +1,0 @@
-{% extends 'base.html' %}
-
-{% block content %}
-
-{% for agency in agencies %}
-{{agency.city}}, {{agency.state}} - <a href="agencies/{{agency.key.id}}">{{agency.name}}</a><br>
-{% endfor %}
-    
-{% endblock %}

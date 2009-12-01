@@ -1,4 +1,5 @@
 from django import forms
+from django.conf import settings
 from google.appengine.api import images
 from google.appengine.ext import db
 from django.utils.translation import ugettext_lazy as _
@@ -13,6 +14,7 @@ class AppEngineImageField(forms.FileField):
 
     image_error_messages = {
         'invalid_image': _(u"Upload a valid image. The file you uploaded was either not an image or was a corrupted image."),
+        'too_large_image': _(u"Your image was too large. Please keep images under 1MB in size."),
     }
     
     def clean(self, data, initial = None):
@@ -33,6 +35,9 @@ class AppEngineImageField(forms.FileField):
         if bytes is None:
             raise forms.ValidationError(self.image_error_messages['invalid_image'])
         
+        if len(bytes) > settings.MAX_IMAGE_SIZE:
+            raise forms.ValidationError(self.image_error_messages['too_large_image'])
+                        
         if (len(bytes) > 0) and (not image_bytes_are_valid(bytes)):
             raise forms.ValidationError(self.image_error_messages['invalid_image'])
         

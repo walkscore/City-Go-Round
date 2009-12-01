@@ -11,9 +11,9 @@ from google.appengine.ext import db
 from ..forms import NewAppGeneralInfoForm, NewAppAgencyForm, NewAppLocationForm, PetitionForm, EditAppGeneralInfoForm, EditAppLocationForm, EditAppAgencyForm, EditAppImagesForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, render_image_response, redirect_to_url, method_not_allowed, render_to_json
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
-from ..utils.screenshot import get_families_and_screen_shot_blobs, get_family_and_screen_shot_blobs
-from ..utils.misc import chunk_sequence
-from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid
+from ..utils.screenshot import kick_off_resizing_for_screen_shots, kick_off_resizing_for_screen_shot
+from ..utils.misc import chunk_sequence, pad_list, collapse_list
+from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid, requires_POST
 from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress, FeedReference, NamedStat
 
 from django.http import HttpResponse, HttpResponseForbidden
@@ -96,16 +96,11 @@ def add_form(request):
             progress = TransitAppFormProgress.new_with_uuid()
                         
             # Process the images, resizing if desired, and failing silently if something goes wrong.
-            screen_shot_files = [request.FILES.get(name, None) for name in ('screen_shot', 'screen_shot_2', 'screen_shot_3', 'screen_shot_4', 'screen_shot_5')]
+            screen_shot_files = [request.FILES.get(name, None) for name in NewAppGeneralInfoForm.SCREEN_SHOT_FIELDS]
             screen_shot_files_bytes = [screen_shot_file.read() if screen_shot_file else None for screen_shot_file in screen_shot_files]
-            families, blobs = get_families_and_screen_shot_blobs(screen_shot_files_bytes)            
+            families = kick_off_resizing_for_screen_shots(screen_shot_files_bytes)            
             progress.screen_shot_families.extend(families)
             
-            # Write the individual images to the data store
-            # TODO error handling.
-            for blobs_chunk in chunk_sequence(blobs, 3):
-                db.put(blobs_chunk)
-                            
             # Hold onto the information in this form, so we can use it later.
             # (Unfortunately we can't just pickle the form itself.)
             info_form = {
@@ -370,40 +365,35 @@ def admin_apps_edit_images(request, transit_app):
     if request.method == "POST":        
         form = EditAppImagesForm(request.POST, request.FILES)
         if form.is_valid():
-            # Remove families we no longer need, keeping track of their indexes...
-            for remove_family in form.cleaned_data['remove_list'][::-1]:
-                if remove_family in transit_app.screen_shot_families:
-                    transit_app.screen_shot_families.remove(remove_family)
+            final_family_order = [screen_shot_family for screen_shot_family in transit_app.screen_shot_families]
+            pad_list(final_family_order, EditAppImagesForm.SCREEN_SHOT_COUNT, pad_with = None)
+            
+            # Remove families we no longer need...
+            for remove_family in form.cleaned_data['remove_list']:
+                if remove_family in final_family_order:
+                    final_family_order[final_family_order.index(remove_family)] = None
             
             # Process all new images, remembering their positions
-            screen_shot_files = [request.FILES.get(name, None) for name in ('new_shot_1', 'new_shot_2', 'new_shot_3', 'new_shot_4', 'new_shot_5')]
+            screen_shot_files = [request.FILES.get(name, None) for name in EditAppImagesForm.SCREEN_SHOT_FIELDS]
             screen_shot_files_bytes = [screen_shot_file.read() if screen_shot_file else None for screen_shot_file in screen_shot_files]
-            families = []
-            all_blobs = []
-            for screen_shot_file_bytes in screen_shot_files_bytes:
-                family, blobs = get_family_and_screen_shot_blobs(screen_shot_file_bytes)
-                families.append(family)
-                all_blobs.append(blobs)
+            for i, screen_shot_file_bytes in enumerate(screen_shot_files_bytes):
+                if screen_shot_file_bytes:
+                    family = kick_off_resizing_for_screen_shot(screen_shot_file_bytes)
+                    if family is not None:
+                        final_family_order[i] = family
             
-            # Now add the new image references to the transit app, in the appropriate places
-            insert_at = 0
-            good_blobs = []
-            for family, blobs in zip(families, all_blobs):
-                if family is not None:
-                    transit_app.screen_shot_families.insert(insert_at, family)
-                    good_blobs.extend(blobs)
-                insert_at += 1
-                    
+            # Now collapse down the list by removing empty screen shot slots
+            collapse_list(final_family_order)
+            
             # Sanity check before writing...                    
-            if len(transit_app.screen_shot_families) == 0:
+            if len(final_family_order) == 0:
                 too_few_error = "*** There were too few images after removing. All apps must have at least one image. Try again."
                 transit_app = TransitApp.transit_app_for_slug(transit_app.slug)
             else:
                 # Finally, write the transit app and blobs
                 # TODO error handling.
+                transit_app.screen_shot_families = final_family_order
                 transit_app.put()
-                for blobs_chunk in chunk_sequence(good_blobs, 3):
-                    db.put(blobs_chunk)                
                 return redirect_to("admin_apps_edit", transit_app_slug = transit_app.slug)            
     else:
         form = EditAppImagesForm()
@@ -416,10 +406,9 @@ def admin_apps_edit_images(request, transit_app):
     }
     return render_to_response(request, "admin/app-edit-images.html", template_vars)
         
+@requires_POST
 @requires_valid_transit_app_slug
 def admin_apps_delete(request, transit_app):
-    if request.method != "POST":
-        return method_not_allowed("Must be called with POST.")
     try:
         transit_app.delete();
     except:
@@ -494,7 +483,7 @@ def refresh_all_bayesian_averages(request):
     
 def admin_apps_update_schema(request):
     changed_apps = []
-    new_blobs = []
+    new_families = []
 
     for transit_app in TransitApp.all():    
         changed = False
@@ -530,25 +519,22 @@ def admin_apps_update_schema(request):
             transit_app.screen_shot = None
             
             # Oh boy. We have to make screen shots.
-            families, blobs = get_families_and_screen_shot_blobs([str(blob)])
             if not transit_app.screen_shot_families:
-                transit_app.screen_shot_families = []
-                
+                transit_app.screen_shot_families = []                
+            families = kick_off_resizing_for_screen_shots([str(blob)])                
             transit_app.screen_shot_families.extend(families)
-            new_blobs.extend(blobs)
-       
+            new_families = []
+            
         # Remember this app, if it changed
         if changed:
             changed_apps.append(transit_app)
     
     # Looks like we're done. Attempt to commit everything to our database.
     db.put(changed_apps)
-    for new_blob in new_blobs:
-        db.put(new_blob)
     
     # Render some vaguely useful results
     template_vars = {
         "update_count": len(changed_apps),
-        "blob_count": len(new_blobs),
+        "family_count": len(new_families),
     }    
     return render_to_response(request, "admin/apps-update-schema-finished.html", template_vars)

@@ -27,10 +27,15 @@ class ImageBlob(db.Model):
         return ImageBlob.all().filter('family =', family).filter('width =', width).filter('height =', height).get()
 
     @staticmethod
+    def get_original_for_family(family):
+        return ImageBlob.get_for_family_and_size(family, ImageBlob.ORIGINAL_SIZE)
+
+    @staticmethod
     def get_bytes_and_extension_for_family_and_size(family, (width, height)):
         blob = ImageBlob.get_for_family_and_size(family, (width, height))
         if not blob: return (None, None)
         return (blob.image, blob.extension)
 
-        
-        
+    def __str__(self):
+        return "%s (%dx%d)" % (self.family, self.width, self.height)    
+    

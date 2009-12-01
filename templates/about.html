@@ -3,8 +3,7 @@
 {% block title %}About City-Go-Round{% endblock %}
 
 {% block content %}
-<div class="body-content">
-  
+<div class="col-group app-gallery body-content">
 <h2>About City-Go-Round</h2> 
   
 <p>City-Go-Round helps you find useful transit applications (apps) near you. City-Go-Round also encourages public transit agencies to open  their data to software developers.</p> 
@@ -34,8 +33,11 @@
 <p>City-Go-Round is open source. <a href="http://github.com/bmander/opentransitdata" target="_blank">Help us make it better</a>. </p> 
 <h3><a name="0.1_agency"></a>Transit agencies: how do I get off the &quot;No Open Data&quot; list?</h3> 
 <p>Once you have your schedule data in <a href="http://code.google.com/transit/spec/transit_feed_specification.html" target="_blank">GTFS</a> format, it&#39;s easy. First, email <a href="mailto:googletransitdatafeed@googlegroups.com" target="_blank">googletransitdatafeed@<WBR>googlegroups.com</a> with the location of your feed. Second, <a href="http://www.gtfs-data-exchange.com/upload" target="_blank">upload your feed to GTFS Data Exchange</a>. </p> 
-<p>Once your feed is available on GTFS Data Exchange, City-Go-Round will retrieve your feed within 24 hours and show that your agency provides open data.</p><p> </p> 
+<p>Once your feed is available on GTFS Data Exchange, City-Go-Round will retrieve your feed within 24 hours and show that your agency provides open data.</p>
 
+</div>
+<div class="wide-col rightmost">
+	{% include "includes/mrec1.html" %}
 </div>
 {% endblock %}
 

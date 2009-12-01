@@ -11,20 +11,17 @@ from ..models import Agency, TransitApp
 from ..utils.view import render_to_response, redirect_to, not_implemented, bad_request, method_not_allowed, render_to_json
 from ..utils.slug import slugify
 from ..utils.geohelpers import are_latitude_and_longitude_valid
-from ..decorators import requires_valid_transit_app_slug, requires_valid_agency_key_encoded
+from ..decorators import requires_valid_transit_app_slug, requires_valid_agency_key_encoded, requires_GET
 
+@requires_GET
 def api_agencies_all(request):
     """
         Return a list of all agencies.
         Called via GET only.
-    """
-    
-    # Validate our method
-    if request.method != 'GET':
-        return method_not_allowed('GET only!')
-        
+    """    
     return render_to_json([agency.to_jsonable() for agency in Agency.all()])
     
+@requires_GET
 def api_agencies_search(request):
     """
         Return a list of agencies that match the search criterion.
@@ -37,11 +34,6 @@ def api_agencies_search(request):
         returns:
             a json list of agencies (using to_jsonable)         
     """
-    
-    # Validate our method
-    if request.method != 'GET':
-        return method_not_allowed('GET only!')
-    
     # Validate our search type
     search_type = request.GET.get('type', None)
     if search_type not in ['location', 'city', 'state', 'all']:
@@ -77,18 +69,15 @@ def api_agencies_search(request):
     
     return render_to_json([agency.to_jsonable() for agency in agencies_iter])
 
+@requires_GET
 def api_apps_all(request):
     """
         Return a list of all transit apps.
         Called via GET only.
     """
-
-    # Validate our method
-    if request.method != 'GET':
-        return method_not_allowed('GET only!')
-
     return render_to_json([transit_app.to_jsonable() for transit_app in TransitApp.all()])
 
+@requires_GET
 def api_apps_search(request):
     """
         Return a list of transit apps that match the search criterion.
@@ -100,10 +89,6 @@ def api_apps_search(request):
         returns:
             a json list of agencies (using to_jsonable)         
     """
-    
-    # Validate our method
-    if request.method != 'GET':
-        return method_not_allowed('GET only!')
     
     # Validate input
     try:
@@ -124,32 +109,25 @@ def api_apps_search(request):
     # Query and render JSON!
     return render_to_json([transit_app.to_jsonable() for transit_app in TransitApp.iter_for_location_and_country_code(latitude, longitude, country_code)])
 
+@requires_GET
 @requires_valid_agency_key_encoded
 def api_apps_for_agency(request, agency):
     """
         Return a list of transit apps that support the given agency.
         Called via GET only.
-    """
-    
-    # Validate our method
-    if request.method != 'GET':
-        return method_not_allowed('GET only!')
-    
+    """    
     return render_to_json([transit_app.to_jsonable() for transit_app in TransitApp.iter_for_agency(agency)])
     
+@requires_GET
 @requires_valid_transit_app_slug
 def api_agencies_for_app(request, transit_app):
     """
         Return a list of agencies that support the given transit app.
         Called via GET only.
     """
-
-    # Validate our method
-    if request.method != 'GET':
-        return method_not_allowed('GET only!')
-    
     return render_to_json([agency.to_jsonable() for agency in Agency.iter_for_transit_app(transit_app)])
 
+@requires_GET
 def api_apps_for_agencies(request):
     """
         Return a list of transit apps that support the given agency.
@@ -159,10 +137,6 @@ def api_apps_for_agencies(request):
             key_encoded     [multiple, max 50]
     """
 
-    # Validate our method
-    if request.method != 'GET':
-        return method_not_allowed('GET only!')
-        
     # Validate our input (mostly)
     potential_keys = request.GET.getlist("key_encoded")
     if not potential_keys or (len(potential_keys) > 50):
@@ -185,7 +159,7 @@ def api_apps_for_agencies(request):
     # Send off the apps!
     return render_to_json([transit_app.to_jsonable() for transit_app in TransitApp.iter_for_agencies(agencies)])
 
-
+@requires_GET
 def api_agencies_for_apps(request):
     """
         Return a list of agencies that support the given transit app.
@@ -194,11 +168,7 @@ def api_agencies_for_apps(request):
         parameters:
             transit_app_slug    [multiple, max 50]
     """
-    
-    # Validate our method
-    if request.method != 'GET':
-        return method_not_allowed('GET only!')
-        
+
     # Validate our input (mostly)
     potential_transit_app_slugs = request.GET.getlist("transit_app_slug")
     if not potential_transit_app_slugs or (len(potential_transit_app_slugs) > 50):
