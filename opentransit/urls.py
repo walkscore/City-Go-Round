@@ -92,4 +92,9 @@ urlpatterns += patterns(
     url(r'^api/apps/for-agencies/$', 'api_apps_for_agencies', name = 'api_apps_for_agencies'),
 )
     
+# Task Queue Views -- All URLs that service task queue items
+urlpatterns += patterns(
+    'opentransit.views.taskqueue',
+    url(r'^admin/taskqueue/screen-shot-resize/', 'taskqueue_screen_shot_resize', name = 'taskqueue_screen_shot_resize'),
+)
     

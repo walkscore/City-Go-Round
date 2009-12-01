@@ -5,6 +5,9 @@ from ..utils.misc import uniquify
 from ..formfields import AppEngineImageField, LocationListField, AgencyListField
 
 class NewAppGeneralInfoForm(forms.Form):
+    SCREEN_SHOT_COUNT = 5
+    SCREEN_SHOT_FIELDS = ('screen_shot', 'screen_shot_2', 'screen_shot_3', 'screen_shot_4', 'screen_shot_5')    
+    
     title               = forms.CharField(max_length = 64, min_length = 2, label = u"Title")
     description         = forms.CharField(max_length = 140, min_length = 2, label = u"One Sentence Description")
     url                 = forms.URLField(verify_exists = False, min_length = 2, label = u"App URL")

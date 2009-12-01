@@ -4,13 +4,28 @@ from google.appengine.api import users
 from .models import TransitApp, Agency
 from .utils.httpbasicauth import authenticate_request
 from .utils.progressuuid import is_progress_uuid_valid
+from .utils.view import method_not_allowed
 
+def requires_method(view_function, method):
+    def wrapper(request, *args, **kwargs):
+        if request.method != method:
+            return method_not_allowed("Must be called with %s." % method)
+        return view_function(request, *args, **kwargs)
+    return wrapper
+
+def requires_GET(view_function):
+    return requires_method(view_function, method = "GET")
+    
+def requires_POST(view_function):
+    return requires_method(view_function, method = "POST")
+    
 def requires_http_basic_authentication(view_function, correct_username, correct_password, realm = None):
     def wrapper(request, *args, **kwargs):
         authentication_response = authenticate_request(request, correct_username, correct_password, realm)
         if authentication_response is not None:
             return authentication_response
-        return view_function(request, *args, **kwargs)        
+        return view_function(request, *args, **kwargs)   
+    return wrapper     
 
 def requires_valid_transit_app_slug(view_function):
     def wrapper(request, transit_app_slug, *args, **kwargs):
