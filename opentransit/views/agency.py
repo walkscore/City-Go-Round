@@ -105,6 +105,34 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
     #return a filtered agency list
     agency_list = Agency.fetch_for_slugs(countryslug, stateslug, cityslug)
 
+    if request.GET.get( 'format' ) == 'json':
+        jsonable_list = []
+        
+        for agency in agency_list:
+            jsonable_list.append( agency.to_jsonable() )
+        
+        return render_to_json(jsonable_list)
+        
+    if request.GET.get( 'format' ) == 'csv':
+        jsonable_list = []
+        
+        for agency in agency_list:
+            jsonable_list.append( agency.to_jsonable() )
+        
+        if len(jsonable_list) > 0:
+            csv_buffer = StringIO()
+            csv_writer = csv.writer( csv_buffer )
+            
+            header = jsonable_list[0].keys()
+            csv_writer.writerow( header )
+            
+            for item in jsonable_list:
+                csv_writer.writerow( [item[header_col] for header_col in header] )
+                        
+            return HttpResponse( content=csv_buffer.getvalue(), mimetype="text/plain" )
+        else:
+            return HttpResponse("")
+
     public_filter = request.GET.get('public','all')
     public_count = no_public_count = 0
     location = ''    
@@ -140,34 +168,6 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         'feed_references': FeedReference.all_by_most_recent(),
         'is_current_user_admin': users.is_current_user_admin(),
     }
-    
-    if request.GET.get( 'format' ) == 'json':
-        jsonable_list = []
-        
-        for agency in agencies:
-            jsonable_list.append( agency.to_jsonable() )
-        
-        return render_to_json(jsonable_list)
-        
-    if request.GET.get( 'format' ) == 'csv':
-        jsonable_list = []
-        
-        for agency in agencies:
-            jsonable_list.append( agency.to_jsonable() )
-        
-        if len(jsonable_list) > 0:
-            csv_buffer = StringIO()
-            csv_writer = csv.writer( csv_buffer )
-            
-            header = jsonable_list[0].keys()
-            csv_writer.writerow( header )
-            
-            for item in jsonable_list:
-                csv_writer.writerow( [item[header_col] for header_col in header] )
-                        
-            return HttpResponse( content=csv_buffer.getvalue(), mimetype="text/plain" )
-        else:
-            return HttpResponse("")
     
     return render_to_response( request, "agency_list.html", template_vars)
     
