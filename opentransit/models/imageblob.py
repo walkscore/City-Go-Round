@@ -36,5 +36,6 @@ class ImageBlob(db.Model):
         if not blob: return (None, None)
         return (blob.image, blob.extension)
 
-        
-        
+    def __str__(self):
+        return "%s (%dx%d)" % (self.family, self.width, self.height)    
+    

@@ -15,6 +15,7 @@ urlpatterns += patterns(
     url(r'^admin/login/$', 'admin_login'),
     url(r'^admin/logout/$', 'admin_logout'),
     url(r'^admin/$', 'admin_home', name='admin_home'),
+    url(r'^admin/integrity-check/$', 'admin_integrity_check', name='admin_integrity_check'),
 )
 
 
