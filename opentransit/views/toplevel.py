@@ -1,11 +1,12 @@
 import time
 import logging
 from google.appengine.ext import db
+from google.appengine.api import memcache
 from ..forms import PetitionForm, AgencyForm, ContactForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, render_to_json
 from ..utils.mailer import send_to_contact
 from ..models import FeedReference, Agency, NamedStat, TransitApp
-from ..decorators import memcache_view_response
+from ..decorators import memcache_view_response, requires_GET, requires_POST
 from django.template.context import RequestContext
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -147,3 +148,21 @@ def admin_integrity_check(request):
         'bad_lists': bad_lists,
     }
     return render_to_response(request, 'admin/integrity-check.html', template_vars)
+
+def admin_memcache_statistics(request):
+    stats = [(k, v) for k, v in memcache.get_stats().iteritems()]
+    template_vars = {
+        'memcache_statistics': stats,
+    }
+    return render_to_response(request, "admin/memcache-statistics.html", template_vars)
+    
+@requires_GET
+def admin_memcache_statistics_json(request):
+    stats = dict(memcache.get_stats())
+    return render_to_json(stats)
+    
+@requires_POST
+def admin_clear_memcache(request):
+    success = memcache.flush_all()
+    return render_to_json({"success": success})
+
