@@ -50,3 +50,18 @@ def render_to_json(jsonable):
 
 def raise_404():
     raise Http404
+
+def key_for_request(request):
+    """Given a django HttpRequest, return a string that will be the same for same requests (URL, method, and parameters)"""
+    params_string = "None"
+    if request.method == "GET" or request.method == "POST":
+        params = []
+        query = request.GET if request.method == "GET" else request.POST
+        for k, v in query.iterlists():
+            params.append(str(k))
+        params.sort()
+        params_string = '-'.join(params)
+
+    key = "request-%s-%s-%s" % (request.path, request.method, params_string)
+    return key
+

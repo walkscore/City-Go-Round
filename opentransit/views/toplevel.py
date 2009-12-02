@@ -5,13 +5,14 @@ from ..forms import PetitionForm, AgencyForm, ContactForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, render_to_json
 from ..utils.mailer import send_to_contact
 from ..models import FeedReference, Agency, NamedStat, TransitApp
+from ..decorators import memcache_view_response
 from django.template.context import RequestContext
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from google.appengine.api.users import create_login_url, create_logout_url
 
+@memcache_view_response(time = 60 * 60)
 def home(request):  
-
     template_vars = {
         'featured_apps': TransitApp.featured_by_most_recently_added().fetch(8),
         'petition_form': PetitionForm(),
