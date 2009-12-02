@@ -8,13 +8,14 @@ from datetime import datetime, timedelta, date
 from django.conf import settings
 from django.http import Http404
 from google.appengine.ext import db
+from google.appengine.api import memcache
 
 from ..forms import NewAppGeneralInfoForm, NewAppAgencyForm, NewAppLocationForm, PetitionForm, EditAppGeneralInfoForm, EditAppLocationForm, EditAppAgencyForm, EditAppImagesForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, render_image_response, redirect_to_url, method_not_allowed, render_to_json
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
 from ..utils.screenshot import kick_off_resizing_for_screen_shots, kick_off_resizing_for_screen_shot
 from ..utils.misc import chunk_sequence, pad_list, collapse_list
-from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid, requires_POST
+from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid, requires_POST, memcache_view_response, memcache_parameterized_view_response
 from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress, FeedReference, NamedStat
 
 from django.http import HttpResponse, HttpResponseForbidden
@@ -29,6 +30,7 @@ def nearby(request):
     }    
     return render_to_response(request, 'app/nearby.html', template_vars)
 
+@memcache_view_response(time = settings.MEMCACHE_PAGE_SECONDS)
 def gallery(request):
 
     def app_in_list(app, list):
@@ -84,9 +86,15 @@ def details(request, transit_app):
     
 @requires_valid_transit_app_slug
 def screenshot(request, transit_app, screen_shot_index, screen_shot_size_name):
-    # NOTE/HACK: right now I just assume the extension is PNG (it's hard coded into the URL)
-    bytes, ignored_extension = transit_app.get_screen_shot_bytes_and_extension(index = int(screen_shot_index), size_name = screen_shot_size_name)
-    if not bytes: raise Http404
+    # NOTE/HACK: right now I just assume the extension is PNG (it's hard coded into the URL)    
+    memcache_key = "screenshot-%s-%s-%s" % (transit_app.slug, screen_shot_index, screen_shot_size_name)
+    bytes = memcache.get(memcache_key)
+    if bytes is None:
+        bytes, ignored_extension = transit_app.get_screen_shot_bytes_and_extension(index = int(screen_shot_index), size_name = screen_shot_size_name)
+        if not bytes: 
+            return redirect_to_url(settings.DEFAULT_TRANSIT_APP_IMAGE_URL)        
+        if len(bytes) <= settings.MEMCACHE_SCREENSHOT_MAX_SIZE:
+            memcache.set(memcache_key, bytes, time = settings.MEMCACHE_SCREENSHOT_SECONDS)    
     return render_image_response(request, bytes)
 
 def add_form(request):
@@ -157,8 +165,7 @@ def add_agencies(request, progress_uuid):
     else:
         form = NewAppAgencyForm(initial = {"progress_uuid": progress_uuid})        
 
-    #get agency list
-    agency_list = Agency.fetch_for_slugs()
+    agency_list = Agency.fetch_all_agencies_as_jsonable()
     template_vars = {
         "form": form,
         "agencies": agency_list,
@@ -352,7 +359,7 @@ def admin_apps_edit_agencies(request, transit_app):
         }        
         form = EditAppAgencyForm(initial = form_initial_values)    
     
-    agency_list = Agency.fetch_for_slugs()
+    agency_list = Agency.fetch_all_agencies_as_jsonable()
     template_vars = {
         'form': form,
         'transit_app': transit_app,

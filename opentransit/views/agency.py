@@ -2,11 +2,13 @@ import time
 import logging
  
 from django.http import HttpResponse, HttpResponseRedirect
- 
+from django.conf import settings
+
 from google.appengine.ext import db
 from google.appengine.api import memcache
 from google.appengine.api import users
  
+from ..decorators import memcache_parameterized_view_response
 from ..forms import AgencyForm
 from ..models import Agency, FeedReference, TransitApp
 from ..utils.view import render_to_response, redirect_to, not_implemented, bad_request, render_to_json
@@ -83,7 +85,8 @@ def edit_agency(request, agency_id=None):
                                    'standard_license':agency.standard_license,})
     
     return render_to_response( request, "edit_agency.html", {'agency':agency, 'form':form} )
-    
+  
+@memcache_parameterized_view_response(time = settings.MEMCACHE_PAGE_SECONDS)  
 def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):        
 
     #for a single agency:

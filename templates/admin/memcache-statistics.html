@@ -1,0 +1,70 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}City Go Round ADMIN Homepage{% endblock %}
+
+{% block headscripts %}
+<script type="text/javascript" src="{% static_url /js/jquery.timers.js %}"></script>
+<script type="text/javascript">
+    jQuery(document).ready(function($)
+    {
+        $("#clean_memcache").click(function(event)
+        {
+            if (confirm("Are you sure you want to clear the memcache? Things may temporarily run slow if you do."))
+            {
+                $.post("{% url admin_clear_memcache %}", {}, function(json)
+                {
+                    if (json.success)
+                    {
+                        alert("Memcache successfully cleared!");
+                    }
+                    else
+                    {
+                        alert("Something went bad with memcache clearing!");
+                    }
+                },
+                "json" );
+            }
+            
+            return false;
+        });
+        
+        
+        $(this).everyTime("5s", "5s", function()
+        {
+            $.getJSON("{% url admin_memcache_statistics_json %}", function(json)
+            {
+                $(".value-container").each(function(key)
+                {
+                    var name = $(this).attr("id").split("-")[1];
+                    $(this).text(json[name]);
+                });
+            });
+        });     
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<div id="admin-home" class="integrity-check">
+    <h2>Memcache Statistics:</h2>
+    
+    <p>&nbsp;</p>
+    
+    <table>
+        {% for name, value in memcache_statistics %}
+        <tr class="{% cycle 'even' 'odd' %}">
+            <th>{{name}}</th>
+            <td id="value-{{name}}" class="value-container">{{value}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <p>&nbsp;</p>
+    
+    <h2>Here are some things you can do:</h2>
+    
+    <p>&nbsp;</p>
+    
+    <a href="#" id="clean_memcache">Clear the memcache</a>.    
+</div>
+{% endblock %}
