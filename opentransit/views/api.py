@@ -22,6 +22,7 @@ def api_agencies_all(request):
     return render_to_json([agency.to_jsonable() for agency in Agency.all()])
     
 @requires_GET
+@memcache_parameterized_view_response(time = settings.MEMCACHE_API_SECONDS)
 def api_agencies_search(request):
     """
         Return a list of agencies that match the search criterion.
@@ -79,6 +80,7 @@ def api_apps_all(request):
     return render_to_json([transit_app.to_jsonable() for transit_app in TransitApp.all()])
 
 @requires_GET
+@memcache_parameterized_view_response(time = settings.MEMCACHE_API_SECONDS)
 def api_apps_search(request):
     """
         Return a list of transit apps that match the search criterion.
