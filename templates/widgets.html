@@ -1,22 +1,28 @@
-
-{% block title %}About City-Go-Round{% endblock %}
-
-{% block content %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>{% block title %}City-Go-Round - A searchable directory of transit apps and public transit agencies{% endblock %}</title>
+</head>
+<body>
 <div class="col-group app-gallery body-content">
 <h2>City-Go-Round Widgets</h2> 
-  
 <p>Use these City-Go-Round widgets to promote transit apps and open data:</p> 
-<div id="city-go-round-widget" style="position: relative; width: ">
-    <p style="position: absolute; top: 97px; left: 7px; font:12px Verdana, Arial, Helvetica, sans-serif; color: #555;">Find apps in your city:</p>
-    <form style="position: absolute; top: 96px; left: 6px;">
-        <input id="location_query" name="location_query" type="text" value="Type a city or ZIP">
-        <input id="search" name="search" type="image" src="http://citygoround.org/images/button-search.gif">
+
+<div id="city-go-round-widget" style="position: relative; width: 180px; height: 150px; background-color: #fff; border: 1px solid #999;">
+    <h2 style="position: absolute; top: 0px; left: 0px; width: 163px; height: 67px; border: 0; background: url(http://citygoround.org/images/widgets/public-transit-apps-near-you.gif) 0 0 no-repeat; text-indent: -1000000000px; margin: 0; padding: 0;"><a href="http://citygoround.org">Find Public Transit Apps Near You on City-Go-Round.org</a></h2>
+    <p style="position: absolute; top: 61px; left: 9px; font:12px/12px Verdana, Arial, Helvetica, sans-serif; color: #555; margin: 0; padding: 0;">Find apps in your city:</p>
+    <form style="position: absolute; top: 96px; left: 6px; width: 167px; height: 23px;" onsubmit="document.location='http://citygoround.org/apps/nearby/?location_query=' + document.getElementById('crg-location_query').value; return false;">
+        <input id="crg-location_query" name="location_query" type="text" value="City or ZIP" style="font: 12px/12px Verdana, Arial, Helvetica, sans-serif; color: #888; width: 134px; height: 19px; border: 1px solid #999; text-indent: 8px; padding: 0; margin: 0;" onfocus ="if (this.value=='City or ZIP') { this.value=''; this.style.color = '#444';}" onblur = "if (this.value=='') { this.value='City or ZIP'; this.style.color = '#888';}">
+        <input id="cgr-search" name="search" type="image" src="http://citygoround.org/images/widgets/go-button-small.gif" style="position: absolute; top: 0px; right: 0; width: 27px; height: 21px;">
     </form>
-    <a style="position: absolute; top: 127px; left: 50px;" href="http://citygoround.org"><img src="http://citygoround.org/images/city-go-round-logo-small.gif" /></a>
+    <a style="position: absolute; top: 127px; left: 46px; border: 0;" href="http://citygoround.org"><img style="border: 0;" src="http://citygoround.org/images/widgets/city-go-round-logo-small.gif" /></a>
 </div>
 
 
+
+
+
 </div>
 
-{% endblock %}
-
+</body>
+</html>
