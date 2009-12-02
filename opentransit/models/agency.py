@@ -76,8 +76,18 @@ class Agency(GeoModel):
             'urlslug': self.urlslug,
             'state': cgi.escape(self.state),
             'details_url': self.details_url,
-            'key_encoded': str(self.key()),            
+            'key_encoded': str(self.key()),
+            'has_real_time_data': self.has_real_time_data,            
         }
+
+    @staticmethod
+    def fetch_all_agencies_as_jsonable():
+        memcache_key = "all-agencies-as-jsonable"
+        all_as_jsonable = memcache.get(memcache_key)
+        if all_as_jsonable is None:
+            all_as_jsonable = [agency.to_jsonable() for agency in Agency.all()]
+            memcache.set(memcache_key, all_as_jsonable, time = settings.MEMCACHE_DEFAULT_SECONDS)
+        return all_as_jsonable
 
     @property
     def details_url(self):
@@ -112,7 +122,7 @@ class Agency(GeoModel):
         if not mem_result:
             states = uniquify([a.stateslug for a in Agency.all()])
             states.sort()
-            mc_added = memcache.add('all_states', states, 60 * 1)
+            mc_added = memcache.add('all_states', states, settings.MEMCACHE_DEFAULT_SECONDS)
         else:
             states = mem_result
 
@@ -120,32 +130,14 @@ class Agency(GeoModel):
     
     @staticmethod
     def fetch_for_slugs(countryslug = None, stateslug = None, cityslug = None):
-        mck = '_slugs_agencies'
-        agency_query = Agency.all()
-        
+        agency_query = Agency.all()        
         if cityslug:
-            agency_query = agency_query.filter('cityslug =', cityslug)
-            logging.debug('filtering by cityslug %s' % cityslug)
-            
+            agency_query = agency_query.filter('cityslug =', cityslug)            
         if stateslug:
-            agency_query = agency_query.filter('stateslug =', stateslug)
-            logging.debug('filtering by stateslug %s' % stateslug)
-            
+            agency_query = agency_query.filter('stateslug =', stateslug)            
         if countryslug:
-            agency_query = agency_query.filter('countryslug =',countryslug)
-            
-        mck = '_slugs_agencies_%s_%s_%s' % (countryslug, stateslug, cityslug)
-        
-        mem_result = memcache.get(mck)
-        if mem_result is not None:
-            agency_list = mem_result  
-        else:
-            agency_list = [agency for agency in agency_query]
-            #TODO -- can we make this work?  When all agencies, exceeds memcache size limit
-            #     --maybe we memcache the set of datastore keys, then retrieve and fetch those
-            #memcache.set(mck, agency_list, 60)
-        
-        return agency_list
+            agency_query = agency_query.filter('countryslug =',countryslug)            
+        return [agency for agency in agency_query]
     
     @staticmethod
     def fetch_explicitly_supported_for_transit_app(transit_app):

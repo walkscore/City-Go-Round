@@ -165,8 +165,7 @@ def add_agencies(request, progress_uuid):
     else:
         form = NewAppAgencyForm(initial = {"progress_uuid": progress_uuid})        
 
-    #get agency list
-    agency_list = Agency.fetch_for_slugs()
+    agency_list = Agency.fetch_all_agencies_as_jsonable()
     template_vars = {
         "form": form,
         "agencies": agency_list,
@@ -360,7 +359,7 @@ def admin_apps_edit_agencies(request, transit_app):
         }        
         form = EditAppAgencyForm(initial = form_initial_values)    
     
-    agency_list = Agency.fetch_for_slugs()
+    agency_list = Agency.fetch_all_agencies_as_jsonable()
     template_vars = {
         'form': form,
         'transit_app': transit_app,
