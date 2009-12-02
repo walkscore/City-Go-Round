@@ -42,7 +42,7 @@
     {% block lede %}
     <form onsubmit="goto_search(); return false;">
         <label>Find apps near you:</label>
-        <input id="location_query" name="location_query" type="text" value="Type a city or ZIP">
+        <input id="location_query" name="location_query" type="text" value="{% block location_query %}Type a city or ZIP{% endblock %}">
         <input id="search" name="search" type="image" src="{% static_url /images/button-search.gif %}">
     </form>
     <p>U.S. only for now.</p>
