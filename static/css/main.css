@@ -1001,6 +1001,18 @@ border: 1px solid #999;
     .ads {
     }
 
+/*********** WIDGETS ************/
+    #widgets .code-box {
+        font-size: 10px;
+        width: 280px;
+        height: 140px;
+    }
+    #widgets label {
+        font-weight: bold;
+    }
+    
+    
+
 /*********** CUSTOM STUFF ************/
 	.bluegreen {
 		font-size: 16px;
