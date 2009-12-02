@@ -1002,13 +1002,25 @@ border: 1px solid #999;
     }
 
 /*********** WIDGETS ************/
+
+	#widgets .narrow-col { 
+		width: 240px;
+		margin-right: 20px;
+		float: left;
+	}
+	#widgets .wide-col { 
+		width: 300px;
+		margin-right: 20px;
+		float: left;
+	}	
+
     #widgets .code-box {
         font-size: 10px;
-        width: 280px;
+        width: 240px;
         height: 140px;
     }
-    #widgets label {
-        font-weight: bold;
+    #cgr-widget1, #cgr-widget2, #cgr-widget3 {
+        border: 1px solid #888;
     }
     
     

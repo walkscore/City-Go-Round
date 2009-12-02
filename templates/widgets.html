@@ -4,16 +4,16 @@
 
 {% block content %}
 
-<div style="float:left">
+<div id="widgets" style="float:left">
     <h2>City-Go-Round Widgets</h2> 
     <p>Use these City-Go-Round widgets to promote transit apps and open data:</p> 
     <div id="widgets" class="col-group app-gallery body-content">
             
-        <h3>Find Public Transit Apps Widget</h3>
-        <div class="narrow-col">
-            <label>Size: 180 x 150</label>
+        <h3>Find Public Transit Apps</h3>
+        <div class="wide-col">
+            <p>Size: 180 x 150</p>
             <style>
-            #cgr-widget1 {position: relative; width: 180px; height: 150px; background-color: #fff; border: 1px solid #999;}
+            #cgr-widget1 {position: relative; width: 180px; height: 150px; background-color: #fff;}
             #cgr-widget1 h2, #cgr-widget1 p, #cgr-widget1 form, #cgr-widget1 input, #cgr-widget1 img {border: 0; margin: 0; padding: 0}
             #cgr-widget1 p, #cgr-widget1 input {font: 12px/12px Verdana, Arial, Helvetica, sans-serif;}
             #cgr-widget1 h2, #cgr-widget1 p, #cgr-widget1 form, #cgr-widget1 #cgr-search, #cgr-widget1 #cgr-logo {position: absolute;}
@@ -38,42 +38,36 @@
         </div>
         
         <div class="narrow-col"> 
-            <label>Get the code:</label>
-            <p>(copy and paste into your page)</p>           
-            <textarea readonly="readonly" class="code-box" onclick="this.select();">
-            
-            #cgr-widget1 {position: relative; width: 180px; height: 150px; background-color: #fff; border: 1px solid #999;}
-            #cgr-widget1 h2, #cgr-widget1 p, #cgr-widget1 form, #cgr-widget1 input, #cgr-widget1 img {border: 0; margin: 0; padding: 0}
-            #cgr-widget1 p, #cgr-widget1 input {font: 12px/12px Verdana, Arial, Helvetica, sans-serif;}
-            #cgr-widget1 h2, #cgr-widget1 p, #cgr-widget1 form, #cgr-widget1 #cgr-search, #cgr-widget1 #cgr-logo {position: absolute;}
-            #cgr-widget1 h2 {top: 11px; left: 10px;}
-            #cgr-widget1 h2 a {display: block; width: 163px; height: 67px; background: url(http://citygoround.org/images/widgets/public-transit-apps-near-you.gif) 0 0 no-repeat;text-decoration: none;}
-            #cgr-widget1 h2 a span {visibility: hidden; }
-            #cgr-widget1 p {top: 76px; left: 10px; color: #555;}
-            #cgr-widget1 form {top: 96px; left: 6px; width: 167px; height: 23px;}
-            #cgr-widget1 #crg-location-query {color: #888; width: 134px; height: 19px; border: 1px solid #999; text-indent: 8px;}
-            #cgr-widget1 #cgr-search {top: 0px; right: 0; width: 27px; height: 21px;}
-            #cgr-widget1 #cgr-logo {top: 127px; left: 46px; border: 0;}
-            </style>
-            <div id="cgr-widget1">
-            <h2><a href="http://citygoround.org?utm_medium=find-apps-widget&utm_campaign=title-link" title="Find Public Transit Apps Near You on CityGoRound.org"><span>Find Public Transit Apps Near You on City-Go-Round.org</span></a></h2>
-            <p>Find apps in your city:</p>
-            <form onsubmit='document.location="http://citygoround.org/apps/nearby/?location_query=" + document.getElementById("crg-location-query").value + "&utm_medium=find-apps-widget&utm_campaign=form-submit"; return false;'>
-            <input id="crg-location-query" name="location_query" type="text" value="City or ZIP" onfocus ="if (this.value=='City or ZIP') { this.value=''; this.style.color = '#444';}" onblur = "if (this.value=='') { this.value='City or ZIP'; this.style.color = '#888';}">
-            <input id="cgr-search" name="search" type="image" src="http://citygoround.org/images/widgets/go-button-small.gif">
-            </form>
-            <a id="cgr-logo" href="http://citygoround.org?utm_medium=find-apps-widget&utm_campaign=footer-logo-link" title="CityGoRound.org"><img src="http://citygoround.org/images/widgets/city-go-round-logo-small.gif" alt="CityGoRound.org logo" /></a>
-            </div>
-            
-            </textarea>
+            <p><strong>Get the code:</strong> (copy and paste)</p>           
+<textarea readonly="readonly" class="code-box" onclick="this.select();"><style>#cgr-widget1 {position: relative; width: 180px; height: 150px; background-color: #fff;}
+#cgr-widget1 h2, #cgr-widget1 p, #cgr-widget1 form, #cgr-widget1 input, #cgr-widget1 img {border: 0; margin: 0; padding: 0}
+#cgr-widget1 p, #cgr-widget1 input {font: 12px/12px Verdana, Arial, Helvetica, sans-serif;}
+#cgr-widget1 h2, #cgr-widget1 p, #cgr-widget1 form, #cgr-widget1 #cgr-search, #cgr-widget1 #cgr-logo {position: absolute;}
+#cgr-widget1 h2 {top: 11px; left: 10px;}
+#cgr-widget1 h2 a {display: block; width: 163px; height: 67px; background: url(http://citygoround.org/images/widgets/public-transit-apps-near-you.gif) 0 0 no-repeat;text-decoration: none;}
+#cgr-widget1 h2 a span {visibility: hidden; }
+#cgr-widget1 p {top: 76px; left: 10px; color: #555;}
+#cgr-widget1 form {top: 96px; left: 6px; width: 167px; height: 23px;}
+#cgr-widget1 #crg-location-query {color: #888; width: 134px; height: 19px; border: 1px solid #999; text-indent: 8px;}
+#cgr-widget1 #cgr-search {top: 0px; right: 0; width: 27px; height: 21px;}
+#cgr-widget1 #cgr-logo {top: 127px; left: 46px; border: 0;}
+</style>
+<div id="cgr-widget1">
+<h2><a href="http://citygoround.org?utm_medium=find-apps-widget&utm_campaign=title-link" title="Find Public Transit Apps Near You on CityGoRound.org"><span>Find Public Transit Apps Near You on City-Go-Round.org</span></a></h2>
+<p>Find apps in your city:</p>
+<form onsubmit='document.location="http://citygoround.org/apps/nearby/?location_query=" + document.getElementById("crg-location-query").value + "&utm_medium=find-apps-widget&utm_campaign=form-submit"; return false;'>
+<input id="crg-location-query" name="location_query" type="text" value="City or ZIP" onfocus ="if (this.value=='City or ZIP') { this.value=''; this.style.color = '#444';}" onblur = "if (this.value=='') { this.value='City or ZIP'; this.style.color = '#888';}">
+<input id="cgr-search" name="search" type="image" src="http://citygoround.org/images/widgets/go-button-small.gif">
+</form>
+<a id="cgr-logo" href="http://citygoround.org?utm_medium=find-apps-widget&utm_campaign=footer-logo-link" title="CityGoRound.org"><img src="http://citygoround.org/images/widgets/city-go-round-logo-small.gif" alt="CityGoRound.org logo" /></a>
+</div></textarea>
         </div>
     </div>
     <div class="col-group app-gallery body-content">
         <h3>Support Open Data Widget</h3>
-        <div class="narrow-col">
-            <label>Size: 180 x 150</label>
-            <style>
-            #cgr-widget2 {position: relative; width: 180px; height: 150px; background-color: #fff; border: 1px solid #999;}
+        <div class="wide-col">
+            <p>Size: 180 x 150</p>
+            <style>#cgr-widget2 {position: relative; width: 180px; height: 150px; background-color: #fff;}
             #cgr-widget2 h2, #cgr-widget2 p, #cgr-widget2 form, #cgr-widget2 input, #cgr-widget2 img {border: 0; margin: 0; padding: 0}
             #cgr-widget2 p, #cgr-widget2 input {font: 12px/12px Verdana, Arial, Helvetica, sans-serif;}
             #cgr-widget2 h2, #cgr-widget2 p, #cgr-widget2 form, #cgr-widget2 #cgr-search, #cgr-widget2 #cgr-logo {position: absolute;}
@@ -98,9 +92,29 @@
         </div>
         
         <div class="narrow-col">
-            <textarea readonly="readonly" class="code-box" onclick="this.select();">
-            
-            </textarea>
+            <p><strong>Get the code:</strong> (copy and paste)</p> 
+<textarea readonly="readonly" class="code-box" onclick="this.select();"><style>#cgr-widget2 {position: relative; width: 180px; height: 150px; background-color: #fff;}
+#cgr-widget2 h2, #cgr-widget2 p, #cgr-widget2 form, #cgr-widget2 input, #cgr-widget2 img {border: 0; margin: 0; padding: 0}
+#cgr-widget2 p, #cgr-widget2 input {font: 12px/12px Verdana, Arial, Helvetica, sans-serif;}
+#cgr-widget2 h2, #cgr-widget2 p, #cgr-widget2 form, #cgr-widget2 #cgr-search, #cgr-widget2 #cgr-logo {position: absolute;}
+#cgr-widget2 h2 {top: 11px; left: 10px;}
+#cgr-widget2 h2 a {display: block; width: 160px; height: 53px; background: url(http://citygoround.org/images/widgets/support-open-transit-data.gif) 0 0 no-repeat;text-decoration: none;}
+#cgr-widget2 h2 a span {visibility: hidden; }
+#cgr-widget2 p {top: 76px; left: 10px; color: #555;}
+#cgr-widget2 form {top: 96px; left: 6px; width: 167px; height: 23px;}
+#cgr-widget2 #crg-location-query {color: #888; width: 134px; height: 19px; border: 1px solid #999; text-indent: 8px;}
+#cgr-widget2 #cgr-search {top: 0px; right: 0; width: 27px; height: 21px;}
+#cgr-widget2 #cgr-logo {top: 127px; left: 46px; border: 0;}
+</style>
+<div id="cgr-widget2">
+<h2><a href="http://citygoround.org?utm_medium=support-open-data-widget&utm_campaign=title-link" title="Find Public Transit Apps Near You on CityGoRound.org"><span>Support open data on City-Go-Round.org</span></a></h2>
+<p>Does your city have it?</p>
+<form onsubmit='document.location="http://citygoround.org/apps/nearby/?location_query=" + document.getElementById("crg-location-query").value + "&utm_medium=support-open-data-widget&utm_campaign=form-submit"; return false;'>
+<input id="crg-location-query" name="location_query" type="text" value="City or ZIP" onfocus ="if (this.value=='City or ZIP') { this.value=''; this.style.color = '#444';}" onblur = "if (this.value=='') { this.value='City or ZIP'; this.style.color = '#888';}">
+<input id="cgr-search" name="search" type="image" src="http://citygoround.org/images/widgets/go-button-small.gif">
+</form>
+<a id="cgr-logo" href="http://citygoround.org?utm_medium=support-open-data-widget&utm_campaign=footer-logo-link" title="CityGoRound.org"><img src="http://citygoround.org/images/widgets/city-go-round-logo-small.gif" alt="CityGoRound.org logo" /></a>
+</div></textarea>
         </div>
         
     </div>
@@ -108,10 +122,9 @@
     <div class="col-group app-gallery body-content">
         <h3>Find Transit Apps Widget</h3>
         <div class="wide-col">
-            <label>Size: 300 x 130</label>
+            <p>Size: 300 x 130</p>
 
-            <style>
-            #cgr-widget3 {position: relative; width: 300px; height: 130px; background-color: #fff; border: 1px solid #999;}
+            <style>#cgr-widget3 {position: relative; width: 300px; height: 130px; background-color: #fff;}
             #cgr-widget3 h2, #cgr-widget p, #cgr-widget form, #cgr-widget input, #cgr-widget img {border: 0; margin: 0; padding: 0}
             #cgr-widget3 p, #cgr-widget3 input {font: 12px/12px Verdana, Arial, Helvetica, sans-serif;}
             #cgr-widget3 h2, #cgr-widget3 p, #cgr-widget3 form, #cgr-widget3 #cgr-search, #cgr-widget3 #cgr-logo {position: absolute;}
@@ -136,9 +149,29 @@
         </div>
         
         <div class="narrow-col">
-            <textarea readonly="readonly" class="code-box" onclick="this.select();">
-            
-            </textarea>
+            <p><strong>Get the code:</strong> (copy and paste)</p> 
+<textarea readonly="readonly" class="code-box" onclick="this.select();"><style>#cgr-widget3 {position: relative; width: 300px; height: 130px; background-color: #fff;}
+#cgr-widget3 h2, #cgr-widget p, #cgr-widget form, #cgr-widget input, #cgr-widget img {border: 0; margin: 0; padding: 0}
+#cgr-widget3 p, #cgr-widget3 input {font: 12px/12px Verdana, Arial, Helvetica, sans-serif;}
+#cgr-widget3 h2, #cgr-widget3 p, #cgr-widget3 form, #cgr-widget3 #cgr-search, #cgr-widget3 #cgr-logo {position: absolute;}
+#cgr-widget3 h2 {top: 9px; left: 18px;}
+#cgr-widget3 h2 a {display: block; width: 188px; height: 39px; background: url(http://citygoround.org/images/widgets/find-transit-apps.gif) 0 0 no-repeat;text-decoration: none;}
+#cgr-widget3 h2 a span {visibility: hidden; }
+#cgr-widget3 p {top: 54px; left: 22px; color: #555;}
+#cgr-widget3 form {top: 72px; left: 19px; width: 245px; height: 23px;}
+#cgr-widget3 #crg-location-query {color: #888; width: 203px; height: 19px; border: 1px solid #999; text-indent: 8px;}
+#cgr-widget3 #cgr-search {top: 0px; right: 0; width: 27px; height: 21px;}
+#cgr-widget3 #cgr-logo {top: 105px; left: 108px; border: 0;}
+</style>
+<div id="cgr-widget3">
+<h2><a href="http://citygoround.org?utm_medium=support-open-data-widget&utm_campaign=title-link" title="Find Public Transit Apps Near You on CityGoRound.org"><span>Support open data on City-Go-Round.org</span></a></h2>
+<p>Helpful public transit apps in your city:</p>
+<form onsubmit='document.location="http://citygoround.org/apps/nearby/?location_query=" + document.getElementById("crg-location-query").value + "&utm_medium=support-open-data-widget&utm_campaign=form-submit"; return false;'>
+<input id="crg-location-query" name="location_query" type="text" value="City or ZIP" onfocus ="if (this.value=='City or ZIP') { this.value=''; this.style.color = '#444';}" onblur = "if (this.value=='') { this.value='City or ZIP'; this.style.color = '#888';}">
+<input id="cgr-search" name="search" type="image" src="http://citygoround.org/images/widgets/go-button-small.gif">
+</form>
+<a id="cgr-logo" href="http://citygoround.org?utm_medium=support-open-data-widget&utm_campaign=footer-logo-link" title="CityGoRound.org"><img src="http://citygoround.org/images/widgets/city-go-round-logo-small.gif" alt="CityGoRound.org logo" /></a>
+</div></textarea>
         </div>
         
     </div>
