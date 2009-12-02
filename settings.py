@@ -56,7 +56,7 @@ MEMCACHE_API_SECONDS = 24 * 60 * 60
 MEMCACHE_SCREENSHOT_SECONDS = 60 * 60
 MEMCACHE_SCREENSHOT_MAX_SIZE = 65536 # empirically, 64kb is a good max size for caching screen shots. This covers all the gallery page and home page screen shots.
 
-DEFAULT_TRANSIT_APP_IMAGE = "/images/default-transit-app.png"
+DEFAULT_TRANSIT_APP_IMAGE_URL = "/images/default-transit-app.png"
 
 LOGIN_URL = "/login/"
 
