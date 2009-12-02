@@ -15,7 +15,7 @@ from ..utils.view import render_to_response, redirect_to, not_implemented, rende
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
 from ..utils.screenshot import kick_off_resizing_for_screen_shots, kick_off_resizing_for_screen_shot
 from ..utils.misc import chunk_sequence, pad_list, collapse_list
-from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid, requires_POST, memcache_parameterized_view_response
+from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid, requires_POST, memcache_view_response, memcache_parameterized_view_response
 from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress, FeedReference, NamedStat
 
 from django.http import HttpResponse, HttpResponseForbidden
@@ -30,6 +30,7 @@ def nearby(request):
     }    
     return render_to_response(request, 'app/nearby.html', template_vars)
 
+@memcache_view_response(time = settings.MEMCACHE_PAGE_SECONDS)
 def gallery(request):
 
     def app_in_list(app, list):
