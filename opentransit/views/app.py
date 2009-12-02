@@ -8,6 +8,7 @@ from datetime import datetime, timedelta, date
 from django.conf import settings
 from django.http import Http404
 from google.appengine.ext import db
+from google.appengine.api import memcache
 
 from ..forms import NewAppGeneralInfoForm, NewAppAgencyForm, NewAppLocationForm, PetitionForm, EditAppGeneralInfoForm, EditAppLocationForm, EditAppAgencyForm, EditAppImagesForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, render_image_response, redirect_to_url, method_not_allowed, render_to_json
@@ -82,12 +83,17 @@ def details(request, transit_app):
     }    
     return render_to_response(request, 'app/details.html', template_vars)
     
-@memcache_parameterized_view_response(time = settings.MEMCACHE_SCREENSHOT_SECONDS)
 @requires_valid_transit_app_slug
 def screenshot(request, transit_app, screen_shot_index, screen_shot_size_name):
-    # NOTE/HACK: right now I just assume the extension is PNG (it's hard coded into the URL)
-    bytes, ignored_extension = transit_app.get_screen_shot_bytes_and_extension(index = int(screen_shot_index), size_name = screen_shot_size_name)
-    if not bytes: raise Http404
+    # NOTE/HACK: right now I just assume the extension is PNG (it's hard coded into the URL)    
+    memcache_key = "screenshot-%s-%s-%s" % (transit_app.slug, screen_shot_index, screen_shot_size_name)
+    bytes = memcache.get(memcache_key)
+    if bytes is None:
+        bytes, ignored_extension = transit_app.get_screen_shot_bytes_and_extension(index = int(screen_shot_index), size_name = screen_shot_size_name)
+        if not bytes: 
+            return redirect_to_url(settings.DEFAULT_TRANSIT_APP_IMAGE_URL)        
+        if len(bytes) <= settings.MEMCACHE_SCREENSHOT_MAX_SIZE:
+            memcache.set(memcache_key, bytes, time = settings.MEMCACHE_SCREENSHOT_SECONDS)    
     return render_image_response(request, bytes)
 
 def add_form(request):
