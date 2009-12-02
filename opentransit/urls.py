@@ -18,6 +18,9 @@ urlpatterns += patterns(
     url(r'^admin/logout/$', 'admin_logout'),
     url(r'^admin/$', 'admin_home', name='admin_home'),
     url(r'^admin/integrity-check/$', 'admin_integrity_check', name='admin_integrity_check'),
+    url(r'^admin/memcache-statistics/$', 'admin_memcache_statistics', name='admin_memcache_statistics'),
+    url(r'^admin/memcache-statistics/json/$', 'admin_memcache_statistics_json', name='admin_memcache_statistics_json'),
+    url(r'^admin/clear-memcache/$', 'admin_clear_memcache', name='admin_clear_memcache'),
 )
 
 

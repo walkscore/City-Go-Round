@@ -59,7 +59,7 @@
             {% for a in agencies %}
             {% if a.hide %}{% else %}
             <tr class="{{a.state}} {% if a.date_opened %}pub{% else %}no_pub{%endif %}"> 
-                <td><input type="checkbox" name="{{a.key}}" id="{{a.key}}" /></td> 
+                <td><input type="checkbox" name="{{a.key_encoded}}" id="{{a.key_encoded}}" /></td> 
                 <td>{{a.name}}</td> 
                 <td>{% if a.date_opened %}Yes{% else %}No{% endif %}</td>
                 <td>{% if a.date_opened %}{{a.date_opened|date:"N Y"}}{% endif %}</td>

@@ -586,7 +586,7 @@ border: 1px solid #999;
 	}
 	#flowpanes {
 		width: 100%;
-		height: 182px;
+		height: 180px;
         padding-top: 44px;
         position:relative; 
         overflow:hidden; 
@@ -610,7 +610,6 @@ border: 1px solid #999;
 	#flowpanes .items div img {
 		float: left;	
 		margin: 0 15px 0 60px;
-		border: 1px solid #999;
 		width: 180px;
 		height: 180px;
 	}
@@ -651,7 +650,6 @@ border: 1px solid #999;
 	.app-gallery .app img { 
 		float: left;
 		margin-right: 10px;
-		border: 1px solid #888;
 		width: 80px;
 		height: 80px;
 	}
@@ -732,7 +730,6 @@ border: 1px solid #999;
         top: 4px;
     }
     .app-images img {
-        border: 1px solid #888;
         width: 300px;
         margin-bottom: 10px;
     }
@@ -742,7 +739,7 @@ border: 1px solid #999;
     }
     .app-images-thumbs img {
         width: 145px;
-        margin: 0 8px 10px 0;
+        margin: 0 6px 10px 0;
     }
     .app-images-thumbs img.odd{
         clear: both;
@@ -807,7 +804,7 @@ border: 1px solid #999;
 	z-index:10000;
 	
 	/* styling */
-	background-color:#333;
+	background-color:#fff;
 	
 	width:675px;	
 	min-height:200px;
@@ -838,7 +835,6 @@ border: 1px solid #999;
 }
 /* the large image. we use a gray border around it */
 #img {
-	border:1px solid #666;
 	position: relative;
 	top: -1px;
 	left: -1px;
@@ -1000,6 +996,30 @@ border: 1px solid #999;
 /*********** ADS ************/
     .ads {
     }
+
+/*********** WIDGETS ************/
+
+	#widgets .narrow-col { 
+		width: 240px;
+		margin-right: 20px;
+		float: left;
+	}
+	#widgets .wide-col { 
+		width: 300px;
+		margin-right: 20px;
+		float: left;
+	}	
+
+    #widgets .code-box {
+        font-size: 10px;
+        width: 240px;
+        height: 140px;
+    }
+    #cgr-widget1, #cgr-widget2, #cgr-widget3 {
+        border: 1px solid #888;
+    }
+    
+    
 
 /*********** CUSTOM STUFF ************/
 	.bluegreen {

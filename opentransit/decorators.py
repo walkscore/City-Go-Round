@@ -1,12 +1,77 @@
+import types
 from django.http import Http404, HttpResponseForbidden
 from google.appengine.ext import db
 from google.appengine.api import users
+from google.appengine.api import memcache
 from .models import TransitApp, Agency
 from .utils.httpbasicauth import authenticate_request
 from .utils.progressuuid import is_progress_uuid_valid
-from .utils.view import method_not_allowed
+from .utils.view import method_not_allowed, key_for_request
 
-def requires_method(view_function, method):
+def memcache_view_response(*args, **kwargs):
+    """Memcache the entire response object of the view. 
+    Do so unconditionally, regardless of any parameters sent to the view.
+    
+    Optional named parameters:
+        time = <memcache expiration time in seconds>
+        namespace = <memcache namespace>
+    """
+    time = kwargs.get('time', 0)
+    namespace = kwargs.get('namespace', None)
+    
+    def decorator(view_function):
+        memcache_key = "view_function-%s.%s" % (str(view_function.__module__), str(view_function.__name__))
+        def wrapper(request, *wrapped_args, **wrapped_kwargs):
+            response = memcache.get(memcache_key, namespace = namespace)
+            if response is None:
+                response = view_function(request, *wrapped_args, **wrapped_kwargs)
+                memcache.set(memcache_key, response, time = time, namespace = namespace)
+            return response
+        return wrapper        
+        
+    # Was memcache_view_response called with no parameters? If so,
+    # python runtime directly hands us the function to decorate.
+    if (len(args) == 1) and (type(args[0]) is types.FunctionType):
+        return decorator(args[0])
+        
+    # memcache_view_response was called WITH parameters. This means
+    # that we must return a function that will _in turn_ take the
+    # function to decorate.
+    return decorator
+    
+    
+def memcache_parameterized_view_response(*args, **kwargs):
+    """Memcache the entire response object of the view. 
+    Do so conditionally, taking into account the URL, request method, and parameters in GET or POST.
+    
+    Optional named parameters:
+        time = <memcache expiration time in seconds>
+        namespace = <memcache namespace>
+    """
+    time = kwargs.get('time', 0)
+    namespace = kwargs.get('namespace', None)
+    
+    def decorator(view_function):
+        def wrapper(request, *wrapped_args, **wrapped_kwargs):
+            memcache_key = key_for_request(request)
+            response = memcache.get(memcache_key, namespace = namespace)
+            if response is None:
+                response = view_function(request, *wrapped_args, **wrapped_kwargs)
+                memcache.set(memcache_key, response, time = time, namespace = namespace)
+            return response
+        return wrapper
+        
+    # Was memcache_parameterized_view_response called with no parameters? If so,
+    # python runtime directly hands us the function to decorate.
+    if (len(args) == 1) and (type(args[0]) is types.FunctionType):
+        return decorator(args[0])
+
+    # memcache_parameterized_view_response was called WITH parameters. This means
+    # that we must return a function that will _in turn_ take the
+    # function to decorate.
+    return decorator
+
+def _requires_method(view_function, method):
     def wrapper(request, *args, **kwargs):
         if request.method != method:
             return method_not_allowed("Must be called with %s." % method)
@@ -14,10 +79,10 @@ def requires_method(view_function, method):
     return wrapper
 
 def requires_GET(view_function):
-    return requires_method(view_function, method = "GET")
+    return _requires_method(view_function, method = "GET")
     
 def requires_POST(view_function):
-    return requires_method(view_function, method = "POST")
+    return _requires_method(view_function, method = "POST")
     
 def requires_http_basic_authentication(view_function, correct_username, correct_password, realm = None):
     def wrapper(request, *args, **kwargs):
@@ -49,7 +114,9 @@ def requires_valid_agency_key_encoded(view_function):
             agency = Agency.get(db.Key(key_encoded.strip()))
         except:
             raise Http404
-        return view_function(request, agency, *args, **kwargs)
+        if agency is None:
+            raise Http404
+        return view_function(request, agency = agency, *args, **kwargs)
     return wrapper
 
 def requires_google_admin_login(view_function):

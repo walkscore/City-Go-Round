@@ -1,6 +1,7 @@
 from google.appengine.ext import db
 
 def iter_uniquify(entities, seen_set, uniquify = True):
+    """Return an iterator that walks over the given entities, by default removing duplicates."""
     if uniquify:
         for entity in entities:
             if entity.key() not in seen_set:
@@ -11,16 +12,43 @@ def iter_uniquify(entities, seen_set, uniquify = True):
             yield entity
 
 def key_and_entity(entity_or_key, entity_class):
+    """Given an entity or key, return both the entity and its key."""
     if isinstance(entity_or_key, db.Model):
         return (entity_or_key.key(), entity_or_key)
     else:
         return (entity_or_key, entity_class.get([entity_or_key]))
 
 def normalize_to_key(entity_or_key):
+    """Given an entity or key, return the key."""
     return entity_or_key.key() if isinstance(entity_or_key, db.Model) else entity_or_key
 
 def normalize_to_keys(entities_or_keys):
+    """Given a list of entities or keys, return a list of keys."""
     return [eok.key() if isinstance(eok, db.Model) else eok for eok in entities_or_keys]
+
+def serialize_entities(entities):
+    """Given a list of datastore entities, or a single entity, return a string (or list of strings) 
+       that represents that entity. Using protobuf is substantially faster than pickling and leads to
+       much more compact representations when storing in memcache."""
+    if entities is None:
+        return None
+    elif isinstance(entities, db.Model):
+        # Just one instance
+        return db.model_to_protobuf(entities).Encode()
+    else:
+        # A list
+        return [db.model_to_protobuf(x).Encode() for x in entities]
+
+def deserialize_entities(data):
+    """Given the representation of a serialized entity, or entities, return the
+       deserialized form."""
+    if data is None:
+        return None
+    elif isinstance(data, str):
+        # Just one instance
+        return db.model_from_protobuf(entity_pb.EntityProto(data))
+    else:
+        return [db.model_from_protobuf(entity_pb.EntityProto(x)) for x in data]
 
 def unique_keys(keys):
     unique = {}
