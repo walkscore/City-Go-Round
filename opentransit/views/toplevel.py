@@ -146,3 +146,6 @@ def admin_integrity_check(request):
         'bad_lists': bad_lists,
     }
     return render_to_response(request, 'admin/integrity-check.html', template_vars)
+
+def comment(request):
+    return render_to_response(request, 'comment.html', {})

@@ -7,6 +7,7 @@ urlpatterns = patterns('')
 urlpatterns += patterns(
     'opentransit.views.toplevel',
     url(r'^$', 'home', name='home'),
+    url(r'^comment/$', 'comment', name='comment'),
     url(r'^contact/$', 'contact', name='contact'),
     url(r'^contact-thanks/$', 'contact_thanks', name='contact_thanks'),
     url(r'^about/$', 'static', {'template':'about.html'}, name='about'),
