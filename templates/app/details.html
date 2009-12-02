@@ -148,7 +148,7 @@
             </div>
         </div>
         <br>
-        <label>Full Description:</label> <p>{{transit_app.long_description}}"</p>
+        <label>Full Description:</label> <p>{{transit_app.long_description}}</p>
         <p><a href="{{transit_app.url}}">Visit developer's website</a></p>
         {% if transit_app.categories %}
             <div>
@@ -162,7 +162,7 @@
         {% endif %}
         {% if transit_app.tags %}
             <div>
-                <label>All tags:</label> <p>{% for i in transit_app.tags %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}</p>
+                <label>All Tags:</label> <p>{% for i in transit_app.tags %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}</p>
             </div>
         {% endif %}
         {% if locations %}
@@ -172,7 +172,7 @@
         {% endif %}
         {% if agencies %}
             <div class="condensed-list">
-                <label>Uses Open Data from:</label> <ul>{% for i in agencies %}<li><a href="/agencies/{{ i.urlslug }}">{{ i.name }}</a> {{ i.city }}, {{ i.state}}</li>{% endfor %}</ul>
+                <label>Uses Data From:</label> <ul>{% for i in agencies %}<li><a href="/agencies/{{ i.urlslug }}">{{ i.name }}</a> {{ i.city }}, {{ i.state}}</li>{% endfor %}</ul>
             </div>
         {% endif %}
     </div>

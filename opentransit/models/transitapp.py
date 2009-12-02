@@ -1,11 +1,13 @@
 import logging
 from uuid import uuid4
+from decimal import Decimal
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from google.appengine.ext import db
 from geo.geomodel import GeoModel
 from .agency import Agency
 from .imageblob import ImageBlob
+from ..properties import DecimalProperty
 from ..utils.slug import slugify
 from ..utils.datastore import key_and_entity, normalize_to_key, normalize_to_keys, unique_entities, iter_uniquify
 from ..utils.places import CityInfo
@@ -133,6 +135,7 @@ class TransitApp(db.Model):
     title               = db.StringProperty(required = True)
     description         = db.StringProperty()
     url                 = db.LinkProperty()
+    price               = DecimalProperty()
     author_name         = db.StringProperty()
     author_email        = db.EmailProperty()
     long_description    = db.TextProperty()
@@ -164,6 +167,8 @@ class TransitApp(db.Model):
             "rating": self.average_rating,
             "rating_count": self.rating_count,
             "url": str(self.url),
+            "price": str(self.price),
+            "is_free": self.is_free,
             "author_name": cgi.escape(str(self.author_name)), # DO NOT INCLUDE AUTHOR EMAIL.
             "long_description": cgi.escape(self.long_description),
             "tags": [cgi.escape(tag) for tag in self.tags],
@@ -173,7 +178,11 @@ class TransitApp(db.Model):
             "default_180sq_screen_shot_url": self.default_180sq_screen_shot_url,
             "default_80sq_screen_shot_url": self.default_80sq_screen_shot_url,
         }
-    
+
+    @property
+    def is_free(self):
+        return (self.price == Decimal("0"))
+        
     @property
     def screen_shot_count(self):
         return len(self.screen_shot_families)
