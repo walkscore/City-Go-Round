@@ -5,7 +5,6 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
 
 from google.appengine.ext import db
-from google.appengine.api import memcache
 
 from ..models import Agency, TransitApp
 from ..utils.view import render_to_response, redirect_to, not_implemented, bad_request, method_not_allowed, render_to_json
@@ -14,7 +13,7 @@ from ..utils.geohelpers import are_latitude_and_longitude_valid
 from ..decorators import requires_valid_transit_app_slug, requires_valid_agency_key_encoded, requires_GET, memcache_view_response, memcache_parameterized_view_response
 
 @requires_GET
-@memcache_view_response
+@memcache_view_response(time = settings.MEMCACHE_API_SECONDS)
 def api_agencies_all(request):
     """
         Return a list of all agencies.
@@ -71,7 +70,7 @@ def api_agencies_search(request):
     return render_to_json([agency.to_jsonable() for agency in agencies_iter])
 
 @requires_GET
-@memcache_view_response
+@memcache_view_response(time = settings.MEMCACHE_API_SECONDS)
 def api_apps_all(request):
     """
         Return a list of all transit apps.
@@ -112,7 +111,7 @@ def api_apps_search(request):
     return render_to_json([transit_app.to_jsonable() for transit_app in TransitApp.iter_for_location_and_country_code(latitude, longitude, country_code)])
 
 @requires_GET
-@memcache_parameterized_view_response
+@memcache_parameterized_view_response(time = settings.MEMCACHE_API_SECONDS)
 @requires_valid_agency_key_encoded
 def api_apps_for_agency(request, agency):
     """
@@ -123,7 +122,7 @@ def api_apps_for_agency(request, agency):
     
 @requires_GET
 @requires_valid_transit_app_slug
-@memcache_parameterized_view_response
+@memcache_parameterized_view_response(time = settings.MEMCACHE_API_SECONDS)
 def api_agencies_for_app(request, transit_app):
     """
         Return a list of agencies that support the given transit app.
@@ -132,7 +131,7 @@ def api_agencies_for_app(request, transit_app):
     return render_to_json([agency.to_jsonable() for agency in Agency.iter_for_transit_app(transit_app)])
 
 @requires_GET
-@memcache_parameterized_view_response
+@memcache_parameterized_view_response(time = settings.MEMCACHE_API_SECONDS)
 def api_apps_for_agencies(request):
     """
         Return a list of transit apps that support the given agency.
@@ -165,7 +164,7 @@ def api_apps_for_agencies(request):
     return render_to_json([transit_app.to_jsonable() for transit_app in TransitApp.iter_for_agencies(agencies)])
 
 @requires_GET
-@memcache_parameterized_view_response
+@memcache_parameterized_view_response(time = settings.MEMCACHE_API_SECONDS)
 def api_agencies_for_apps(request):
     """
         Return a list of agencies that support the given transit app.

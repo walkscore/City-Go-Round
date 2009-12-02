@@ -51,6 +51,9 @@ MAX_IMAGE_SIZE = 983040  # 960 KB per image -- slightly under 1MB to guard again
 
 SERIALIZATION_SECRET_KEY = '\xcfB\xf6\xb9\xc4\xe4\xfa\x07\x8atE\xdc\xec\xf9zaR\xa4\x13\x88'
 
+MEMCACHE_PAGE_SECONDS = 60 * 60
+MEMCACHE_API_SECONDS = 24 * 60 * 60
+
 LOGIN_URL = "/login/"
 
 REDIRECT_FIELD_NAME = "redirect_url"

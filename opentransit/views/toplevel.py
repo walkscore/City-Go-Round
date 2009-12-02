@@ -11,7 +11,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from google.appengine.api.users import create_login_url, create_logout_url
 
-@memcache_view_response(time = 60 * 60)
+@memcache_view_response(time = settings.MEMCACHE_PAGE_SECONDS)
 def home(request):  
     template_vars = {
         'featured_apps': TransitApp.featured_by_most_recently_added().fetch(8),
