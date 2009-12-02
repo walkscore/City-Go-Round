@@ -14,7 +14,7 @@ from ..utils.view import render_to_response, redirect_to, not_implemented, rende
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
 from ..utils.screenshot import kick_off_resizing_for_screen_shots, kick_off_resizing_for_screen_shot
 from ..utils.misc import chunk_sequence, pad_list, collapse_list
-from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid, requires_POST
+from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid, requires_POST, memcache_parameterized_view_response
 from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress, FeedReference, NamedStat
 
 from django.http import HttpResponse, HttpResponseForbidden
@@ -82,6 +82,7 @@ def details(request, transit_app):
     }    
     return render_to_response(request, 'app/details.html', template_vars)
     
+@memcache_parameterized_view_response(time = settings.MEMCACHE_SCREENSHOT_SECONDS)
 @requires_valid_transit_app_slug
 def screenshot(request, transit_app, screen_shot_index, screen_shot_size_name):
     # NOTE/HACK: right now I just assume the extension is PNG (it's hard coded into the URL)

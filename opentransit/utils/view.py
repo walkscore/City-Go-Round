@@ -65,8 +65,5 @@ def key_for_request(request):
 
     key = "request-%s-%s-%s" % (request.path, request.method, params_string)
     
-    from bootstrap import BREAKPOINT
-    BREAKPOINT()
-    
     return key
 
