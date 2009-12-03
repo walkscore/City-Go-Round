@@ -3,6 +3,7 @@ from uuid import uuid4
 from decimal import Decimal
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.utils.safestring import SafeString
 from google.appengine.ext import db
 from geo.geomodel import GeoModel
 from .agency import Agency
@@ -116,8 +117,12 @@ class TransitApp(db.Model):
         return choices
         
     @staticmethod
-    def gtfs_public_choices():
-        return [("yes_public", "My application supports all publicly available GTFS feeds."), ("no_public", "My application supports specific GTFS feeds. Let me choose them.")]
+    def gtfs_choices():
+        return [
+            ("nothing", "My application does not use transit data."), 
+            ("specific_agencies", "My application uses transit data from specific agencies. (Select from list below.)"),
+            ("public_agencies", SafeString('My application uses transit data from all transit agencies with public <a href="http://code.google.com/transit/spec/transit_feed_specification.html" target="_blank">GTFS feeds</a>.<br /></li><strong>Note:</strong> Choose this option if your app automatically adds new GTFS feeds from transit agencies as they are made available.  If you choose this option, your app will be associated with every public feed listed on the <a href="http://www.gtfs-data-exchange.com/" target="_blank">GTFS Data Exchange</a>.')), 
+        ]
         
     @staticmethod
     def screen_shot_size_from_name(size_name):
@@ -418,7 +423,6 @@ class TransitApp(db.Model):
         if self.rating_count==0:
             return None
         return self.rating_sum/self.rating_count
-        
         
     def average_rating_no_decimal(self):
         if self.rating_count==0:

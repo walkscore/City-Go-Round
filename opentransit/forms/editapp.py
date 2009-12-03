@@ -18,12 +18,13 @@ class EditAppGeneralInfoForm(forms.Form):
     platforms           = forms.MultipleChoiceField(choices = TransitApp.platform_choices(), widget = forms.widgets.CheckboxSelectMultiple(), label = u"Platforms supported:")
     categories          = forms.MultipleChoiceField(choices = TransitApp.category_choices(), widget = forms.widgets.CheckboxSelectMultiple(), initial=[u"public_transit"], label = u"Categories (choose at least one):")
     tags                = forms.CharField(required = False, max_length = 1024, min_length = 0, label = u"Extra Tags (comma separated)")    
-    supports_gtfs       = forms.BooleanField(required = False, label = u"My app uses GTFS feeds or other data from specific transit agencies:", initial = True) 
     
     def clean_title(self):
         if not self.is_unique_slug:
             if self.transit_app_slug != self.cleaned_data["original_slug"]:
                 raise forms.ValidationError("This application title is already in use. Pick a new title.")
+        if (self.transit_app_slug == "nearby") or (self.transit_app_slug == "add"):
+            raise forms.ValidationError("The names 'nearby' and 'add' are reserved and cannot be used by an application.")
         return self.cleaned_data['title']
     
     @property
@@ -47,7 +48,7 @@ class EditAppGeneralInfoForm(forms.Form):
         return uniquify([TransitApp.CATEGORIES[category_choice] for category_choice in self.cleaned_data['categories']])        
 
 class EditAppAgencyForm(forms.Form):
-    gtfs_public_choice = forms.ChoiceField(choices = TransitApp.gtfs_public_choices(), widget = forms.widgets.RadioSelect(), label = u"", initial = "yes_public")
+    gtfs_choice = forms.ChoiceField(choices = TransitApp.gtfs_choices(), widget = forms.widgets.RadioSelect(), label = u"", initial = "nothing")
     agency_list = AgencyListField(required = False, widget = forms.widgets.HiddenInput)
 
 class EditAppLocationForm(forms.Form):
