@@ -39,7 +39,7 @@ $(document).ready(function() {
 			</div>
 			<div class="narrow-col">
 			  <div id="no-data-list">
-			    <a href="{% url opentransit.views.agency.agencies %}us/?public=no_public"><h3>Agencies without open data</h3></a>
+			    <a href="{% url opentransit.views.agency.agencies %}us/?public=no_public"><h4>Agencies without open data</h4></a>
 			    <a href="{% url opentransit.views.agency.agencies %}us/?public=no_public"><h6>{{closed_agencies.count}} agencies</h6></a>
 			    {% include "includes/no-data-list.html" %}
 			    <p><br />
@@ -48,7 +48,7 @@ $(document).ready(function() {
 		  	</div>
 		  <div class="wide-col rightmost">
 		    <div id="recently-added-list">
-		      <a href="{% url opentransit.views.agency.agencies %}us/?public=public"><h3>Agencies with open data</h3></a>
+		      <a href="{% url opentransit.views.agency.agencies %}us/?public=public"><h4>Agencies with open data</h4></a>
 		      <a href="{% url opentransit.views.agency.agencies %}us/?public=public"><h6>{{open_agencies.count}} agencies</h6></a>
 			    {% include "includes/recently-added-list.html" %}      
 		    </div>

@@ -53,11 +53,11 @@ $(document).ready(function() {
 {% endifequal %}{% endifequal %}
 </h2>
 </div>
-<span class="italic">
+<p class="italic">
     Transit agencies in {% ifequal location "us" %}the {%endifequal %}{{location|upper}}: <b>{{agency_count}}</b>. 
     With open data: <span class="green"> <b>{{public_count}}</b></span>.
     Without open data: <span class="red"> <b>{{no_public_count}}</b></span>.
-</span>
+</p>
 <br>
 <select id="public_filter" name="public_filter" onchange="update_filters();">
    <option value="all">All Agencies</option>
