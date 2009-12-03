@@ -13,6 +13,11 @@ function update_filters(){
     var location = jQuery("#location_filter option:selected").val();
     document.location = (location + '?public=' + pd)
     }
+    
+function update_country(){
+    var location = jQuery("#country_filter option:selected").val();
+    document.location = (location + '?public=' + pd)
+    }
 
 $(document).ready(function() { 
     //make sure public dropdown selected appropriately
@@ -66,7 +71,7 @@ $(document).ready(function() {
   {% endfor %}
 </select>
 
-<select id="country_filter" name="country_filter" onchange="">
+<select id="country_filter" name="country_filter" onchange="update_country()">
    <option value="/agencies/">All Countries
   {% for country in countries %}
    <option value="/agencies/{{country}}"{% ifequal location country %} selected {% endifequal %}>{{country|upper}}
