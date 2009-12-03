@@ -20,6 +20,9 @@ def replace_feed_references(old_references, new_references):
     for feed_reference in old_references:
         feed_reference.delete()
     
+    # keep correspondance of gtfs_data_exchange_ids to is_officialness
+    gtfs_is_official = {}
+    
     # add all the new references
     parentKey = db.Key.from_path("FeedReference", "base")
     for feed_reference_json in new_references:
@@ -35,24 +38,38 @@ def replace_feed_references(old_references, new_references):
         fr.state             = feed_reference_json['state']
         fr.license_url       = feed_reference_json['license_url'].strip() if feed_reference_json['license_url'] != "" else None
         fr.date_added        = datetime.fromtimestamp( feed_reference_json['date_added'] )
+        fr.is_official       = feed_reference_json.get('is_official', True) # is_official is True by default
         
         # be hopeful that the api call has the external id. If not, yank it from the url
         if 'external_id' in feed_reference_json:
             fr.gtfs_data_exchange_id = feed_reference_json['external_id']
         else:
             fr.gtfs_data_exchange_id = id_from_gtfs_data_exchange_url( fr.dataexchange_url )
-            
-        # be hopeful the api call includes is_official. It's True by default
-        if 'is_official' in feed_reference_json:
-            fr.is_official   = feed_reference_json['is_official']
         
         fr.put()
         
-        # set the 'date_opened' for every feed reference newly opened
-        agency = Agency.all().filter("gtfs_data_exchange_id =", fr.gtfs_data_exchange_id).get()
+        # mark the date_opened of the feed, for flipping the agency open bit later
+        if fr.is_official:
+            gtfs_is_official[fr.gtfs_data_exchange_id] = fr.date_added
         
-        if agency is not None:
-            agency.date_opened = fr.date_added if fr.is_official else None
+    # flip the date_added prop for every agency
+    for agency in Agency.all():
+        
+        date_agency_opened = None
+        
+        # for every gtfs data exchange page for this agency
+        for gtfs_data_exchange_id in agency.gtfs_data_exchange_id:
+            date_feed_opened = gtfs_is_official.get(gtfs_data_exchange_id)
+            
+            # if the feed is open, and before the current date_agency_opened
+            if date_feed_opened is not None and (date_agency_opened is None or date_feed_opened < date_agency_opened):
+                date_agency_opened = date_feed_opened
+                
+        # the date the agency opened is the date the earliest feed opened
+        agency.date_opened = date_agency_opened
+        
+        # only update the agency if you did something to it
+        if date_agency_opened is not None:
             agency.put()
 
 def update_feed_references(request):
