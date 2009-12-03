@@ -86,15 +86,29 @@ def details(request, transit_app):
     
 @requires_valid_transit_app_slug
 def screenshot(request, transit_app, screen_shot_index, screen_shot_size_name):
-    # NOTE/HACK: right now I just assume the extension is PNG (it's hard coded into the URL)    
-    memcache_key = "screenshot-%s-%s-%s" % (transit_app.slug, screen_shot_index, screen_shot_size_name)
+    # To make caching of images behave better when we update an app's images, use
+    # families instead of indexes as part of the memcache key
+    screen_shot_index = int(screen_shot_index)
+    if screen_shot_index < transit_app.screen_shot_count:
+        screen_shot_family = transit_app.screen_shot_families[screen_shot_index]
+    else:
+        screen_shot_family = "defaultfamily"
+    
+    memcache_key = "screenshot-%s-%s-%s" % (transit_app.slug, screen_shot_family, screen_shot_size_name)
     bytes = memcache.get(memcache_key)
     if bytes is None:
-        bytes, ignored_extension = transit_app.get_screen_shot_bytes_and_extension(index = int(screen_shot_index), size_name = screen_shot_size_name)
-        if not bytes: 
-            return redirect_to_url(settings.DEFAULT_TRANSIT_APP_IMAGE_URL)        
+        bytes, ignored_extension = transit_app.get_screen_shot_bytes_and_extension(index = screen_shot_index, size_name = screen_shot_size_name)
+        if not bytes:
+            # Double check validity of size name -- for safety's sake
+            if not screen_shot_size_name in [name for name, size in TransitApp.SCREEN_SHOT_SIZES]:
+                raise Http404            
+            default_image = open("%s-%s.png" % (settings.DEFAULT_TRANSIT_APP_BASE, screen_shot_size_name))
+            bytes = default_image.read()
+            default_image.close()
         if len(bytes) <= settings.MEMCACHE_SCREENSHOT_MAX_SIZE:
             memcache.set(memcache_key, bytes, time = settings.MEMCACHE_SCREENSHOT_SECONDS)    
+
+    # NOTE/HACK: right now I just assume the extension is PNG (it's hard coded into the URL)    
     return render_image_response(request, bytes)
 
 def add_form(request):

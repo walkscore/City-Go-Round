@@ -39,7 +39,6 @@ def memcache_view_response(*args, **kwargs):
     # function to decorate.
     return decorator
     
-    
 def memcache_parameterized_view_response(*args, **kwargs):
     """Memcache the entire response object of the view. 
     Do so conditionally, taking into account the URL, request method, and parameters in GET or POST.
