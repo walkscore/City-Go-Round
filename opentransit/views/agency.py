@@ -200,9 +200,6 @@ def admin_agencies_list(request):
         if feed.gtfs_data_exchange_id not in matched_gtfs_data_exchange_ids:
             unmatched_feeds.add( feed )
 
-    logging.info( unmatched_agencies )
-    logging.info( unmatched_feeds )
-
     return render_to_response( request, "admin/agencies-list.html", {'agencies':Agency.all(),'feeds':unmatched_feeds} )
 
 def admin_agencies_update_locations(request):
