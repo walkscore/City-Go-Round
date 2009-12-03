@@ -70,7 +70,7 @@
        // on my-rating click, send an ajax call
        $('.auto-submit-star').rating({ 
          callback: function(value, link){
-                     $.getJSON( "/admin/apps/rating/", {'app_key_id':'{{transit_app.key.id|escapejs}}','rating':value}, react_to_vote );
+                     $.getJSON( "{% url app_rating_vote %}", {'app_key_id':'{{transit_app.key.id|escapejs}}','rating':value}, react_to_vote );
                      document.cookie ='{{transit_app.key.id|escapejs}}='+value+'; expires=Thu, 2 Aug 2010 20:47:11 UTC; path=/';
                    } 
        });

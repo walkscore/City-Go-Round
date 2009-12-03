@@ -15,6 +15,7 @@ from ..utils.view import render_to_response, redirect_to, not_implemented, rende
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
 from ..utils.screenshot import kick_off_resizing_for_screen_shots, kick_off_resizing_for_screen_shot
 from ..utils.misc import chunk_sequence, pad_list, collapse_list
+from ..utils.memcache import clear_all_apps
 from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid, requires_POST, memcache_view_response, memcache_parameterized_view_response
 from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress, FeedReference, NamedStat
 
@@ -237,7 +238,8 @@ def add_locations(request, progress_uuid):
             remove_progress_uuid_from_session(request, progress_uuid)
             progress.delete()
 
-            # Wow, we finished!
+            # Wow, we finished! 
+            clear_all_apps()
             return redirect_to("apps_add_success")
     else:
         form = NewAppLocationForm(initial = {"progress_uuid": progress_uuid})
@@ -274,7 +276,9 @@ def admin_apps_edit_basic(request, transit_app):
             transit_app.categories = form.category_list
             transit_app.tags = form.tag_list
             transit_app.is_featured = form.cleaned_data["is_featured"]
-            transit_app.put()            
+            transit_app.put()    
+                    
+            clear_all_apps()
             return redirect_to("admin_apps_edit", transit_app_slug = transit_app.slug)
     else:
         form_initial_values = {
@@ -316,7 +320,9 @@ def admin_apps_edit_locations(request, transit_app):
             transit_app.add_explicitly_supported_countries([country.country_code for country in form.cleaned_data["location_list"].unique_countries])
                         
             # Write the transit app to the data store, along with custom locations (if any)
+            clear_all_apps()
             transit_app.put()
+
             if lazy_locations:
                 real_locations = [lazy_location() for lazy_location in lazy_locations]
                 db.put(real_locations)
@@ -369,6 +375,7 @@ def admin_apps_edit_agencies(request, transit_app):
                     transit_app.supports_all_public_agencies = False
                     transit_app.add_explicitly_supported_agencies(form.cleaned_data['agency_list'])
 
+            clear_all_apps()
             transit_app.put()
             
             return redirect_to("admin_apps_edit", transit_app_slug = transit_app.slug)
@@ -454,6 +461,7 @@ def admin_apps_delete(request, transit_app):
             db.delete(location_chunk)
             
         # Get rid of the transit app itself.
+        clear_all_apps()
         transit_app.delete()        
     except:
         return render_to_json({"success": False, "transit_app_slug": transit_app.slug})
@@ -470,7 +478,6 @@ def app_rating_vote(request):
         
     # if they've already voted and they didn't delete their vote
     if str(app_key_id) in request.COOKIES and request.COOKIES[ str(app_key_id) ] != "":
-
         old_rating = int( request.COOKIES[ str(app_key_id) ] )
         
         #changing a vote
@@ -486,7 +493,11 @@ def app_rating_vote(request):
     else:
         rating_delta = rating
         count_delta = 1
-            
+
+    # Get the current weighted average (int) for the app, for memcache purposes
+    app = TransitApp.get_by_id( app_key_id ) # this will throw an exception for invalid id
+    original_rating = app.average_rating_integer
+    
     # set side-wide rating average for use in creating sorting metric using bayesian average
     all_rating_sum = NamedStat.get_stat( "all_rating_sum" )
     all_rating_sum.value = all_rating_sum.value + rating_delta
@@ -497,17 +508,22 @@ def app_rating_vote(request):
     all_rating_count.put()
     
     # get the app, add the rating
-    app = TransitApp.get_by_id( app_key_id )
     app.rating_sum += rating_delta
     app.rating_count += count_delta
     
     logging.info( rating_delta )
     logging.info( count_delta )
-    
+
     # refresh the app's bayesian average
-    app.refresh_bayesian_average(all_rating_sum, all_rating_count)
-    
+    app.refresh_bayesian_average(all_rating_sum, all_rating_count)    
     app.put()
+    
+    # now see if we should clear the memcache for the app gallery and apps APIs.
+    # we _will_ if this was a first rating, or if the overall rating changed by
+    # enough. Otherwise, we'll wait for our memcache expiry time to arrive.
+    final_rating = app.average_rating_integer
+    if (original_rating == 0) or (abs(average_rating_integer - final_rating) >= 5):
+        clear_all_apps()
     
     return HttpResponse( json.dumps( [app.average_rating, app.num_ratings] )  )
     

@@ -424,7 +424,8 @@ class TransitApp(db.Model):
             return None
         return self.rating_sum/self.rating_count
         
-    def average_rating_no_decimal(self):
+    @property
+    def average_rating_integer(self):
         if self.rating_count==0:
             return 0
         return int(self.rating_sum*10/self.rating_count)

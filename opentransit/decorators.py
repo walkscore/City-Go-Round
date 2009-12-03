@@ -1,4 +1,5 @@
 import types
+from django.conf import settings
 from django.http import Http404, HttpResponseForbidden
 from google.appengine.ext import db
 from google.appengine.api import users
@@ -6,7 +7,8 @@ from google.appengine.api import memcache
 from .models import TransitApp, Agency
 from .utils.httpbasicauth import authenticate_request
 from .utils.progressuuid import is_progress_uuid_valid
-from .utils.view import method_not_allowed, key_for_request
+from .utils.view import method_not_allowed
+from .utils.memcache import key_for_view_function, key_for_request
 
 def memcache_view_response(*args, **kwargs):
     """Memcache the entire response object of the view. 
@@ -20,12 +22,13 @@ def memcache_view_response(*args, **kwargs):
     namespace = kwargs.get('namespace', None)
     
     def decorator(view_function):
-        memcache_key = "view_function-%s.%s" % (str(view_function.__module__), str(view_function.__name__))
+        memcache_key = key_for_view_function(view_function)
         def wrapper(request, *wrapped_args, **wrapped_kwargs):
             response = memcache.get(memcache_key, namespace = namespace)
             if response is None:
                 response = view_function(request, *wrapped_args, **wrapped_kwargs)
-                memcache.set(memcache_key, response, time = time, namespace = namespace)
+                if not settings.RUNNING_APP_ENGINE_LOCAL_SERVER:
+                    memcache.set(memcache_key, response, time = time, namespace = namespace)
             return response
         return wrapper        
         
@@ -53,10 +56,11 @@ def memcache_parameterized_view_response(*args, **kwargs):
     def decorator(view_function):
         def wrapper(request, *wrapped_args, **wrapped_kwargs):
             memcache_key = key_for_request(request)
-            response = memcache.get(memcache_key, namespace = namespace)
+            response = memcache.get(memcache_key, namespace = namespace)          
             if response is None:
                 response = view_function(request, *wrapped_args, **wrapped_kwargs)
-                memcache.set(memcache_key, response, time = time, namespace = namespace)
+                if not settings.RUNNING_APP_ENGINE_LOCAL_SERVER:                
+                    memcache.set(memcache_key, response, time = time, namespace = namespace)
             return response
         return wrapper
         
