@@ -122,7 +122,6 @@ def add_form(request):
                 "platform_list": form.platform_list,
                 "category_list": form.category_list,
                 "tag_list": form.tag_list,
-                "supports_gtfs": form.cleaned_data['supports_gtfs'],
                 "price": form.cleaned_data['price'],
             }
             progress.info_form_pickle = pickle.dumps(info_form, pickle.HIGHEST_PROTOCOL)
@@ -133,14 +132,9 @@ def add_form(request):
             
             # Remember the current UUID in the session.
             add_progress_uuid_to_session(request, progress.progress_uuid)
-            
-            # Redirect to the appropriate next page, based on whether 
-            # they want to associate with agencies, or just associate 
-            # with cities and countries.
-            if form.cleaned_data["supports_gtfs"]:
-                return redirect_to("apps_add_agencies", progress_uuid = progress.progress_uuid)                
-            else:
-                return redirect_to("apps_add_locations", progress_uuid = progress.progress_uuid)                    
+
+            # Go to step 2. With fix of github.com/bmander/CityGoRound/issue #36, we go here always...
+            return redirect_to("apps_add_agencies", progress_uuid = progress.progress_uuid)                
     else:
         form = NewAppGeneralInfoForm()        
     return render_to_response(request, 'app/add-form.html', {'form': form})
@@ -151,7 +145,7 @@ def add_agencies(request, progress_uuid):
         form = NewAppAgencyForm(request.POST)
         if form.is_valid():
             agency_form = {
-                "gtfs_public_choice": form.cleaned_data['gtfs_public_choice'],
+                "gtfs_choice": form.cleaned_data['gtfs_choice'],
                 "encoded_agency_keys": [str(agency_key) for agency_key in form.cleaned_data['agency_list']],
             }
             
@@ -198,16 +192,20 @@ def add_locations(request, progress_uuid):
             transit_app.tags = info_form['tag_list']
             transit_app.platforms = info_form['platform_list']
             transit_app.categories = info_form['category_list']
-            transit_app.supports_any_gtfs = info_form['supports_gtfs']
             transit_app.screen_shot_families = progress.screen_shot_families
             transit_app.refresh_bayesian_average()
             
-            # 2. If present, unpack and handle the agency form
-            if progress.agency_form_pickle and str(progress.agency_form_pickle):
-                agency_form = pickle.loads(progress.agency_form_pickle)
-                if agency_form["gtfs_public_choice"] == "yes_public":
+            # 2. Unpack and handle the agency form
+            agency_form = pickle.loads(progress.agency_form_pickle)
+            if agency_form["gtfs_choice"] == "nothing":
+                transit_app.supports_any_gtfs = False
+                transit_app.supports_all_public_agencies = False
+            else:
+                transit_app.supports_any_gtfs = True
+                if agency_form["gtfs_choice"] == "public_agencies":
                     transit_app.supports_all_public_agencies = True
                 elif agency_form["encoded_agency_keys"]:
+                    transit_app.supports_all_public_agencies = False
                     transit_app.add_explicitly_supported_agencies([db.Key(encoded_agency_key) for encoded_agency_key in agency_form["encoded_agency_keys"]])
             
             # 3. Now handle the locations form (that's this form!)
@@ -261,7 +259,6 @@ def admin_apps_edit_basic(request, transit_app):
             transit_app.platforms = form.platform_list
             transit_app.categories = form.category_list
             transit_app.tags = form.tag_list
-            transit_app.supports_any_gtfs = form.cleaned_data["supports_gtfs"]            
             transit_app.is_featured = form.cleaned_data["is_featured"]
             transit_app.put()            
             return redirect_to("admin_apps_edit", transit_app_slug = transit_app.slug)
@@ -278,7 +275,6 @@ def admin_apps_edit_basic(request, transit_app):
             "platforms": transit_app.platform_choice_list,
             "categories": transit_app.category_choice_list,
             "tags": transit_app.tag_list_as_string,
-            "supports_gtfs": transit_app.supports_any_gtfs,
             "is_featured": transit_app.is_featured,
         }
         form = EditAppGeneralInfoForm(initial = form_initial_values)
@@ -348,14 +344,30 @@ def admin_apps_edit_agencies(request, transit_app):
         form = EditAppAgencyForm(request.POST)
         if form.is_valid():
             transit_app.explicitly_supported_agency_keys = []
-            transit_app.supports_all_public_agencies = (form.cleaned_data["gtfs_public_choice"] == "yes_public")
-            if not transit_app.supports_all_public_agencies:
-                transit_app.add_explicitly_supported_agencies(form.cleaned_data['agency_list'])
+            if form.cleaned_data["gtfs_choice"] == "nothing":
+                transit_app.supports_any_gtfs = False
+                transit_app.supports_all_public_agencies = False
+            else:
+                transit_app.supports_any_gtfs = True
+                if form.cleaned_data["gtfs_choice"] == "public_agencies":
+                    transit_app.supports_all_public_agencies = True
+                else:
+                    transit_app.supports_all_public_agencies = False
+                    transit_app.add_explicitly_supported_agencies(form.cleaned_data['agency_list'])
+
             transit_app.put()
+            
             return redirect_to("admin_apps_edit", transit_app_slug = transit_app.slug)
     else:
+        if transit_app.supports_any_gtfs:
+            if transit_app.supports_all_public_agencies:
+                gtfs_choice = "public_agencies"
+            else:
+                gtfs_choice = "specific_agencies"
+        else:
+            gtfs_choice = "nothing"            
         form_initial_values = {
-            "gtfs_public_choice": "yes_public" if transit_app.supports_all_public_agencies else "no_public",            
+            "gtfs_choice": gtfs_choice,
         }        
         form = EditAppAgencyForm(initial = form_initial_values)    
     

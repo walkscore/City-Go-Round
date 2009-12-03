@@ -24,7 +24,6 @@ class NewAppGeneralInfoForm(forms.Form):
     screen_shot_3       = AppEngineImageField(required = False, label = u"Screen Shot #3 (optional)")
     screen_shot_4       = AppEngineImageField(required = False, label = u"Screen Shot #4 (optional)")
     screen_shot_5       = AppEngineImageField(required = False, label = u"Screen Shot #5 (optional)")
-    supports_gtfs       = forms.BooleanField(required = False, label = u"My app uses GTFS feeds or other data from specific transit agencies:", initial = True) 
     
     def clean_title(self):
         if not self.is_unique_slug:
@@ -53,8 +52,15 @@ class NewAppGeneralInfoForm(forms.Form):
 
 class NewAppAgencyForm(forms.Form):
     progress_uuid = forms.CharField(required = True, widget = forms.widgets.HiddenInput)
-    gtfs_public_choice = forms.ChoiceField(choices = TransitApp.gtfs_public_choices(), widget = forms.widgets.RadioSelect(), label = u"", initial = "yes_public")
+    gtfs_choice = forms.ChoiceField(required = True, choices = TransitApp.gtfs_choices(), widget = forms.widgets.RadioSelect(), label = u"")
     agency_list = AgencyListField(required = False, widget = forms.widgets.HiddenInput)
+    
+    def clean(self):
+        if "gtfs_choice" not in self.cleaned_data:
+            raise forms.ValidationError("You must choose one of the options below.")
+        if (self.cleaned_data["gtfs_choice"] == "specific_agencies") and (len(self.cleaned_data["agency_list"]) < 1):
+            raise forms.ValidationError("Since your application supports data from specific agencies, you must select at least one agency in the list below.")
+        return self.cleaned_data
     
 class NewAppLocationForm(forms.Form):
     progress_uuid = forms.CharField(required = True, widget = forms.widgets.HiddenInput)
