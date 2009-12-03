@@ -172,6 +172,8 @@ class TransitApp(db.Model):
             "author_name": cgi.escape(str(self.author_name)), # DO NOT INCLUDE AUTHOR EMAIL.
             "long_description": cgi.escape(self.long_description),
             "tags": [cgi.escape(tag) for tag in self.tags],
+            "platforms": [cgi.escape(platform) for platform in self.platforms],
+            "is_featured": self.is_featured,
             "details_url": self.details_url,
             "default_300w_screen_shot_url": self.default_300w_screen_shot_url,
             "default_145w_screen_shot_url": self.default_145w_screen_shot_url,

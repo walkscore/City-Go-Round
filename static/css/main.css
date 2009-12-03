@@ -50,33 +50,35 @@
 /*********** Fonts ****************/
 	h1,h2,h3,h4,h5,h6 { 
 		font-family: "trebuchet ms", Geneva, Arial, Helvetica, sans-serif;
-		color: #f79900;
+		color: #ea9306;
 		}
 	
     h1 {
     	font-size:55px; 
     }
     h2 {
-		font-size:22px; 
-		padding: 0 0 7px 0;	}
+		font-size:26px; 
+		padding: 0 0 4px 0;	}
 	h3 {
-		font-size:19px;
-		font-weight: normal;
-		padding: 12px 0 8px 0;
+		font-size:20px;
+		text-indent: 2px;
+		padding: 10px 0 0px 0;
+		margin-bottom: 10px;
+		background: url(/images/header-bar.gif) bottom left repeat-x;
 	}
-	h3 em {
-		font-size: 22px;
-		font-style: normal;
+	.col-group > h3 {
+	   width: 550px;
 	}
 	.boxed-content h2, .boxed-content h3 {
-		padding: 0;
+		padding-top: 0;
 	}
 	h4 {
-		font-size: 16px;
-		font-weight: normal;
+		font-size: 18px;
+		padding: 14px 0 2px 0;
+		margin-bottom: 4px;
 	}
 	h5 {
-		font-size:12px; 
+		font-size:14px; 
 	}
 	h6 {
 		font-size:12px;
@@ -92,8 +94,7 @@
 	#no-data-list h3 { color: #f72e2e; }
 	#recently-added-list h3 { color: #18b541; font-size: 18px; }
 
-	
-  p, a, ul, ol, blockquote, label, span, li {
+	p, a, ul, ol, blockquote, label, li {
 		font:12px Verdana, Arial, Helvetica, sans-serif;
 		color: #555;
 	}
@@ -181,12 +182,16 @@
 		width: 598px;
 		float: left;
 		clear: both;
-		margin-right: 20px;
+		margin-right: 0px;
 		border: 1px solid #fff;
 	}
 	.boxed-content {
 		margin: 8px 10px 0 12px;
 	}
+	.col-group .boxed-content {
+		margin-right: 40px;
+	}
+
 		.col-group .widecontent {
 			padding-bottom: 10px;
 		}
@@ -302,7 +307,7 @@
 /*********** FOOTER ****************/
 	
 	#footer {
-	   margin-top: 40px;
+	   padding-top: 50px;
 	   padding-bottom: 20px;
 	}
 	#footer #license {
@@ -316,24 +321,26 @@
 	}
 	#footer #footer-nav, #footer #footer-nav a {
 		text-decoration: none;
-		color: #444;
 	}
 	#footer #footer-nav a:hover {
 		color: #628dc7;
 		text-decoration: underline;
 	}
 
-	#footer #gtfs-data-exchange-logo {
+	#footer #content-right {
+	   padding-top: 50px;
 		position: absolute;
 		top: 0;
 		right: 0;		
+	}
+	#footer #content-right p#gtfs-data-exchange {
 		font-size: 11px;
 		color: #999;
 	}
-	#footer #gtfs-data-exchange-logo img{
-	float: right;
-	position: relative;
-	top: -10px;
+	#footer #content-right p#gtfs-data-exchange img{
+    	float: right;
+    	position: relative;
+    	top: -10px;
 	}
 
 /*********** LISTS ****************/
@@ -409,15 +416,6 @@ border: 1px solid #999;
 		height: 27px;
 border: 1px solid #999;
 	}	
-	#lede p {
-		font:10px/10px Verdana, Arial, Helvetica, sans-serif;; 
-		color: #888;
-		position: absolute;
-		bottom: 2px;
-		left: 0;
-		width: 693px;
-		text-align: right;
-	}
 
 /*********** PETITION FORM ****************/
 
@@ -950,9 +948,8 @@ border: 1px solid #999;
 		color: #316b84;
 		margin-bottom: 10px;
 	}
-	#biking_apps {
-	   display: none;
-    }
+    #nearby_agencies_header, #nearby_agencies_summary, #no_agencies { visibility: hidden; }
+    
 	
 /*********** APP ADD FORMS ************/
 	
@@ -993,9 +990,6 @@ border: 1px solid #999;
 	#location-entry {
 		clear: both;
 	}
-/*********** ADS ************/
-    .ads {
-    }
 
 /*********** WIDGETS ************/
 
@@ -1023,15 +1017,19 @@ border: 1px solid #999;
 
 /*********** CUSTOM STUFF ************/
 	.bluegreen {
-		font-size: 16px;
 		color: #028dc7;
 	}
 	.bluegreen span {
-		font-size: 16px;
 		color: #18b541;
 	}
-	.bluegreen em {
-		font-size: 22px;
+	h2.bluegreen em {
+		font-size: 30px;
+		font-weight: bold;
+		font-style: normal;
+	}
+	h5.bluegreen em {
+		font-size: 18px;
+		font-weight: bold;
 		font-style: normal;
 	}
 	.bluegreen a {
