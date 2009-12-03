@@ -48,6 +48,12 @@ def render_to_json(jsonable):
     # Ask IANA if you don't believe me.
     return HttpResponse(json.dumps(jsonable), mimetype = 'text/x-json' if settings.DEBUG else 'application/json' )
 
+def render_text(text):
+    return HttpResponse(text, mimetype = 'text/plain')
+
+def render_csv(csv):
+    return HttpResponse(csv, mimetype = 'text/csv')
+    
 def raise_404():
     raise Http404
 

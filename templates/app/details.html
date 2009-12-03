@@ -171,9 +171,17 @@
                 <label>Areas Supported:</label> <ul>{% for i in locations %}<li>{{ i }}</li>{% endfor %}</ul>
             </div>
         {% endif %}
-        {% if agencies %}
+        {% if explicit_agencies or supports_public_agencies %}
             <div class="condensed-list">
-                <label>Uses Data From:</label> <ul>{% for i in agencies %}<li><a href="/agencies/{{ i.urlslug }}">{{ i.name }}</a> {{ i.city }}, {{ i.state}}</li>{% endfor %}</ul>
+                <label>Uses Data From:</label> 
+                <ul>
+                    {% if supports_public_agencies %}
+                        <li>All public transit agencies with open data.</li>
+                    {% endif %}
+                    {% for agency in explicit_agencies %}
+                        <li><a href="/agencies/{{ agency.urlslug }}">{{ agency.name }}</a> {{ agency.city }}, {{agency.state}}</li>
+                    {% endfor %}
+                </ul>
             </div>
         {% endif %}
         <div>
