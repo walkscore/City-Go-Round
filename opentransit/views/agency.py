@@ -167,6 +167,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         'public_filter' : public_filter,
         'no_public_count' : no_public_count,
         'states' : Agency.get_state_list(),
+        'countries' : Agency.get_country_list(),
         'agency_count' : len(agency_list),
         'feed_references': FeedReference.all_by_most_recent(),
         'is_current_user_admin': users.is_current_user_admin(),

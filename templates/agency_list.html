@@ -66,6 +66,13 @@ $(document).ready(function() {
   {% endfor %}
 </select>
 
+<select id="country_filter" name="country_filter" onchange="">
+   <option value="/agencies/">All Countries
+  {% for country in countries %}
+   <option value="/agencies/{{country}}"{% ifequal location country %} selected {% endifequal %}>{{country|upper}}
+  {% endfor %}
+</select>
+
 
 <table id="agency_list"> 
 <thead> 
