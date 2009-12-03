@@ -15,6 +15,7 @@ function update_filters(){
     }
     
 function update_country(){
+    var pd = jQuery("#public_filter option:selected").val();
     var location = jQuery("#country_filter option:selected").val();
     document.location = (location + '?public=' + pd)
     }
@@ -65,9 +66,9 @@ $(document).ready(function() {
 </select>
 
 <select id="location_filter" name="location_filter" onchange="update_filters()">
-   <option value="/agencies/us/">All States
+   <option value="/agencies/">All States
   {% for s in states %}
-   <option value="/agencies/us/{{s}}"{% ifequal location s %} selected {% endifequal %}>{{s|upper}}
+   <option value="/agencies/{{s.0}}/{{s.1}}"{% ifequal location s %} selected {% endifequal %}>{{s.1|upper}} ({{s.0}})
   {% endfor %}
 </select>
 
