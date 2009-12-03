@@ -23,6 +23,8 @@ class EditAppGeneralInfoForm(forms.Form):
         if not self.is_unique_slug:
             if self.transit_app_slug != self.cleaned_data["original_slug"]:
                 raise forms.ValidationError("This application title is already in use. Pick a new title.")
+        if (self.transit_app_slug == "nearby") or (self.transit_app_slug == "add"):
+            raise forms.ValidationError("The names 'nearby' and 'add' are reserved and cannot be used by an application.")
         return self.cleaned_data['title']
     
     @property

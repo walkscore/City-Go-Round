@@ -26,7 +26,7 @@ class NewAppGeneralInfoForm(forms.Form):
     screen_shot_5       = AppEngineImageField(required = False, label = u"Screen Shot #5 (optional)")
     
     def clean_title(self):
-        if not self.is_unique_slug:
+        if (not self.is_unique_slug) or (self.transit_app_slug == "nearby") or (self.transit_app_slug == "add"):
             raise forms.ValidationError("This application title is already in use. Pick a new title.")
         return self.cleaned_data['title']
     
