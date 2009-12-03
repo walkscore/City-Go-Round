@@ -41,7 +41,7 @@ class NewAppGeneralInfoForm(forms.Form):
         
     @property
     def tag_list(self):
-        return uniquify([tag.strip() for tag in self.cleaned_data['tags'].split(',')] + self.platform_list + self.category_list)
+        return uniquify([tag.strip() for tag in self.cleaned_data['tags'].split(',') if tag.strip()!=''] + self.platform_list + self.category_list)
         
     @property
     def platform_list(self):

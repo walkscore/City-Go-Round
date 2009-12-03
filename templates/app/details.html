@@ -163,7 +163,7 @@
         {% endif %}
         {% if transit_app.tags %}
             <div>
-                <label>All Tags:</label> <p>{% for i in transit_app.tags %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}</p>
+                <label>All Tags:</label> <p>{{ transit_app.tag_list_as_string }}</p>
             </div>
         {% endif %}
         {% if locations %}
