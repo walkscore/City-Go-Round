@@ -21,6 +21,7 @@ urlpatterns += patterns(
     url(r'^admin/memcache-statistics/$', 'admin_memcache_statistics', name='admin_memcache_statistics'),
     url(r'^admin/memcache-statistics/json/$', 'admin_memcache_statistics_json', name='admin_memcache_statistics_json'),
     url(r'^admin/clear-memcache/$', 'admin_clear_memcache', name='admin_clear_memcache'),
+    url(r'^admin/all-transit-apps.csv$', 'admin_apps_csv', name='admin_apps_csv'),
 )
 
 
