@@ -1,9 +1,12 @@
 import time
 import logging
+import csv
+import StringIO
+
 from google.appengine.ext import db
 from google.appengine.api import memcache
 from ..forms import PetitionForm, AgencyForm, ContactForm
-from ..utils.view import render_to_response, redirect_to, not_implemented, render_to_json
+from ..utils.view import render_to_response, redirect_to, not_implemented, render_to_json, render_csv
 from ..utils.mailer import send_to_contact
 from ..models import FeedReference, Agency, NamedStat, TransitApp
 from ..decorators import memcache_view_response, requires_GET, requires_POST
@@ -149,6 +152,10 @@ def admin_integrity_check(request):
     }
     return render_to_response(request, 'admin/integrity-check.html', template_vars)
 
+
+def comment(request):
+    return render_to_response(request, 'comment.html', {})
+
 def admin_memcache_statistics(request):
     stats = [(k, v) for k, v in memcache.get_stats().iteritems()]
     template_vars = {
@@ -165,4 +172,15 @@ def admin_memcache_statistics_json(request):
 def admin_clear_memcache(request):
     success = memcache.flush_all()
     return render_to_json({"success": success})
+
+@requires_GET
+def admin_apps_csv(request):
+    string_io = StringIO.StringIO()
+    writer = csv.writer(string_io)
+    writer.writerow(["APP NAME", "APP AUTHOR", "AUTHOR EMAIL", "APP HOMEPAGE", "APP DESCRIPTION"])
+    for transit_app in TransitApp.all():
+        writer.writerow([transit_app.title, transit_app.author_name, transit_app.author_email, transit_app.url, transit_app.description])
+    csv_output = string_io.getvalue()
+    string_io.close()
+    return render_csv(csv_output)
 

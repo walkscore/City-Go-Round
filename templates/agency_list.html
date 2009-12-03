@@ -13,6 +13,12 @@ function update_filters(){
     var location = jQuery("#location_filter option:selected").val();
     document.location = (location + '?public=' + pd)
     }
+    
+function update_country(){
+    var pd = jQuery("#public_filter option:selected").val();
+    var location = jQuery("#country_filter option:selected").val();
+    document.location = (location + '?public=' + pd)
+    }
 
 $(document).ready(function() { 
     //make sure public dropdown selected appropriately
@@ -60,9 +66,16 @@ $(document).ready(function() {
 </select>
 
 <select id="location_filter" name="location_filter" onchange="update_filters()">
-   <option value="/agencies/us/">All States
+   <option value="/agencies/">All States
   {% for s in states %}
-   <option value="/agencies/us/{{s}}"{% ifequal location s %} selected {% endifequal %}>{{s|upper}}
+   <option value="/agencies/{{s.0}}/{{s.1}}"{% ifequal location s %} selected {% endifequal %}>{{s.1|upper}} ({{s.0}})
+  {% endfor %}
+</select>
+
+<select id="country_filter" name="country_filter" onchange="update_country()">
+   <option value="/agencies/">All Countries
+  {% for country in countries %}
+   <option value="/agencies/{{country}}"{% ifequal location country %} selected {% endifequal %}>{{country|upper}}
   {% endfor %}
 </select>
 
@@ -88,7 +101,7 @@ $(document).ready(function() {
 <tr class="{% if a.date_opened %}agency_public{% else %}agency_no_public {%endif %}"> 
     <td><a href="/agencies/{{a.urlslug}}">{{a.name}}</a></td> 
     <td>{% if a.date_opened %}Yes{% else %}No{% endif %}</td>
-    <td>{% if a.date_opened %}{{a.date_opened|date:"N Y"}}{% endif %}</td>
+    <td>{% if a.date_opened %}{{a.date_opened|date:"m/d/Y"}}{% endif %}</td>
     <td>{% if a.has_real_time_data %}Yes{% else %}No{% endif %}</td>
     <td>{{a.city}}</td> 
     <td>{{a.state}}</td> 

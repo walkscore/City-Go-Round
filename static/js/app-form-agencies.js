@@ -6,8 +6,9 @@ $(document).ready(function()
     $("#list-panel").fadeTo(0, 0.33);
     updateUI();
     
-    $("#id_gtfs_public_choice_0").change(updateUI);
-    $("#id_gtfs_public_choice_1").change(updateUI);
+    $("#id_gtfs_choice_0").change(updateUI);
+    $("#id_gtfs_choice_1").change(updateUI);
+    $("#id_gtfs_choice_2").change(updateUI);
 }); 
 
 function updateFilters()
@@ -19,16 +20,16 @@ function updateFilters()
 
 function updateUI() 
 {
-    if ($("#id_gtfs_public_choice_0").eq(0).is(":checked"))
+    if ($("#id_gtfs_choice_1").is(":checked"))
+    {
+        $(":checkbox").attr("disabled", false);
+        $("#list-panel").fadeTo(500, 1.00);
+    }
+    else
     {
 		$(":checkbox").attr("disabled", true);	
-        $("#list-panel").fadeTo(0, 0.33);
+        $("#list-panel").fadeTo(500, 0.33);
 	}
-	else 
-	{
-        $(":checkbox").attr("disabled", false);
-        $("#list-panel").fadeTo(0, 1.00);
-	}       
 }
 
 function updateFilters()
@@ -81,7 +82,7 @@ function getDataString()
 
 function sendDataString() 
 {
-	if ($("#id_gtfs_public_choice_1").eq(0).is(":checked"))
+	if ($("#id_gtfs_choice_1").eq(0).is(":checked"))
 	{
 		$("#id_agency_list").eq(0).val(this.getDataString());
 	}

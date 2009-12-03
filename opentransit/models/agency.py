@@ -120,13 +120,28 @@ class Agency(GeoModel):
         #todo: add other countries (return dict where value includes proper url)
         mem_result = memcache.get('all_states')
         if not mem_result:
-            states = uniquify([a.stateslug for a in Agency.all()])
-            states.sort()
+            states = uniquify([(a.countryslug,a.stateslug) for a in Agency.all()])
+            states.sort(key=lambda x:x[1])
             mc_added = memcache.add('all_states', states, settings.MEMCACHE_DEFAULT_SECONDS)
         else:
             states = mem_result
 
         return states
+        
+    @staticmethod    
+    def get_country_list():
+        #factoring this out since we want all states all the time
+        #and because we want to memcache this
+        #todo: add other countries (return dict where value includes proper url)
+        mem_result = memcache.get('all_countries')
+        if not mem_result:
+            countries = uniquify([a.countryslug for a in Agency.all()])
+            countries.sort()
+            mc_added = memcache.add('all_countries', countries, settings.MEMCACHE_DEFAULT_SECONDS)
+        else:
+            countries = mem_result
+
+        return countries
     
     @staticmethod
     def fetch_for_slugs(countryslug = None, stateslug = None, cityslug = None):

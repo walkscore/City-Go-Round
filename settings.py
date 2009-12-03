@@ -58,6 +58,10 @@ MEMCACHE_SCREENSHOT_SECONDS = MEMCACHE_DEFAULT_SECONDS
 MEMCACHE_SCREENSHOT_MAX_SIZE = 65536 # empirically, 64kb is a good max size for caching screen shots. This covers all the gallery page and home page screen shots.
 
 DEFAULT_TRANSIT_APP_IMAGE_URL = "/images/default-transit-app.png"
+DEFAULT_TRANSIT_APP_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'opentransit/images/'))
+DEFAULT_TRANSIT_APP_BASE = DEFAULT_TRANSIT_APP_PATH + "/default-transit-app"
+DEFAULT_TRANSIT_APP_EXTENSION = "png"
+
 
 LOGIN_URL = "/login/"
 

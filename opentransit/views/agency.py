@@ -167,6 +167,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         'public_filter' : public_filter,
         'no_public_count' : no_public_count,
         'states' : Agency.get_state_list(),
+        'countries' : Agency.get_country_list(),
         'agency_count' : len(agency_list),
         'feed_references': FeedReference.all_by_most_recent(),
         'is_current_user_admin': users.is_current_user_admin(),
@@ -199,9 +200,6 @@ def admin_agencies_list(request):
         # the ones without ids in the matched agencies bucket go into the 'unmatched feeds' bucket
         if feed.gtfs_data_exchange_id not in matched_gtfs_data_exchange_ids:
             unmatched_feeds.add( feed )
-
-    logging.info( unmatched_agencies )
-    logging.info( unmatched_feeds )
 
     return render_to_response( request, "admin/agencies-list.html", {'agencies':Agency.all(),'feeds':unmatched_feeds} )
 

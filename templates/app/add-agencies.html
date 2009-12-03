@@ -14,15 +14,16 @@
 {% block content %}
 
 <div id="add-app-form-container" class="body-content">            
-    <h3>ADD A NEW TRANSIT APP [Step 2 of 3: What Agencies Your App Supports]</h3>
-    <h2>Select agencies that your application supports:</h2>
-    <p>If your app uses feeds and also works in other locations, you can specify those locations in the next step.  If your app doesn't use agency data skip on to the next step now.</p>
+    <h3>ADD A NEW TRANSIT APP [Step 2 of 3]</h3>
+    <h2>Does Your App Use Transit Data?</h2>
+    <p>&nbsp;</p>
     <form id="add-agencies-form" action="" method="POST" onsubmit="sendDataString()">
         <div class="floatleft">
             {# This is only going to spew out hidden input fields, so... whatever. #}
             {{form.as_p}}
         </div>
-        <input style="position:relative; top: 18px; left: 18px;" type="submit" value="Onward to step 3..."></input>
+        <input type="submit" value="Onward to step 3..."></input>
+        <p>&nbsp;</p>
         <div id="list-panel">  
             <p>Please choose from the {{agency_count}} transit agencies below.</p>
             <p>Filter list by:         
