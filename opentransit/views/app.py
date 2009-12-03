@@ -76,10 +76,10 @@ def gallery(request):
     
 @requires_valid_transit_app_slug
 def details(request, transit_app):
-    
     template_vars = {
         'transit_app': transit_app,
-        'agencies': Agency.iter_for_transit_app(transit_app),
+        'explicit_agencies': [agency for agency in Agency.iter_explicitly_supported_for_transit_app(transit_app)],
+        'supports_public_agencies': transit_app.supports_all_public_agencies,
         'locations': transit_app.get_supported_location_list(),
     }    
     return render_to_response(request, 'app/details.html', template_vars)
