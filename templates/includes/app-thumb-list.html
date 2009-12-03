@@ -2,7 +2,8 @@
 	<div class="app {% cycle 'odd' 'even' %}"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.default_80sq_screen_shot_url}}" alt="Application Screen Shot" /></a>
 		<h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
 		<label>By {{transit_app.author_name}}</label>
-		<div class="rating"><div class="stars{{transit_app.average_rating_integer}}"></div><p>({{transit_app.rating_count}} ratings)</p></div>
+		<div class="rating"><div class="stars{{transit_app.average_rating_no_decimal}}"></div><p>({{transit_app.rating_count}} ratings)</p></div>
+		<label>Platforms: {% for i in transit_app.platforms %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}</label>
 		<p>{% if transit_app.is_featured %}<img class="featured" src="{% static_url /images/editors-choice3.gif %}" />{% endif %}{{transit_app.description}}</p>
 	</div>
 {% endfor %}

@@ -40,8 +40,22 @@ jQuery(document).ready(function($)
         return '<img src="' + src + '" alt="' + alt + '" />';
     }
         
+    function html_for_multiple_apps(array) {
+        if (array.length == 0){
+            return '<p>No apps found.  Would you like to <a href="{% url apps_add_form %}">add an app</a>?</p>';
+        }
+        
+        var html = "";
+        for (var i=0; i<array.length; i++){
+            html += html_for_transit_app_thumb(array[i])
+        }
+        return html;
+    }    
+        
     function html_for_transit_app_thumb(transit_app) 
     {
+        var feature_html = (transit_app.is_featured) ? '<img class="featured" src="{% static_url /images/editors-choice3.gif %}" />' : '';
+        
         var html = '<div class="app">';
         html += '<a href="' + transit_app.details_url + '">';
         html += img(transit_app.default_80sq_screen_shot_url, "Application Screen Shot")
@@ -49,14 +63,23 @@ jQuery(document).ready(function($)
         html += '<h5><a href="' + transit_app.details_url + '">' + transit_app.title + '</a></h5>';
         html += '<label>By ' + transit_app.author_name + '</label>';
         html += '<div class="rating"><div class="stars' + (transit_app.rating * 10) + '"></div><p>(' + transit_app.rating_count + ' ratings)</p></div>';
-        html += '<p>' + transit_app.description + '</p>';
+        html += '<label>Platforms: ' + getPlatforms(transit_app) + '</label>';
+        html += '<p>' + feature_html + transit_app.description + '</p>';
         html += '</div>';
+        return html;
+    }
+    
+    function getPlatforms(app) {
+        var html = "";
+        for (var i=0; i<app.platforms.length; i++){
+            html += (( i>0 ) ? ", ":"") + app.platforms[i];
+        }
         return html;
     }
     
     function html_for_agency(agency) {
         var html = '<div><a href="'+agency.details_url+'">'+agency.name+'</a></div>';
-        return html
+        return html;
     }
     
     function appHasTag(app, target_tag){
@@ -69,44 +92,40 @@ jQuery(document).ready(function($)
     
     function query_for_transit_apps(latitude, longitude, country_code)
     {
-        $.getJSON(url_for_transit_app_query(latitude, longitude, country_code), function(transit_apps)
+        $.getJSON(url_for_transit_app_query(latitude, longitude, country_code), function(all_apps)
         {
-            var total_app_count = 0;
-            var biking_app_count = 0;
-            var main_apps_html = "";
-            var biking_apps_html = "";
+            var transit_apps = [];
+            var biking_apps = [];
+            var walking_apps = [];
+            var driving_apps = [];
             
             //sort biking apps from others
-            $.each(transit_apps, function(i, transit_app)
+            $.each(all_apps, function(i, transit_app)
             {
-                total_app_count += 1;
-                if (appHasTag(transit_app, "Biking")) {
-                    biking_apps_html += html_for_transit_app_thumb(transit_app);
-                    biking_app_count ++;
+                if (appHasTag(transit_app, "Public Transit")) {
+                    transit_apps.push(transit_app);
                 }
-                else {
-                    main_apps_html += html_for_transit_app_thumb(transit_app);
+                else if (appHasTag(transit_app, "Biking")) {
+                    biking_apps.push(transit_app);
+                }
+                else if (appHasTag(transit_app, "Walking")) {
+                    walking_apps.push(transit_app);
+                }
+                else if (appHasTag(transit_app, "Driving")) {
+                    driving_apps.push(transit_app);
                 }
             });
             
-            
             var public_data_count = 0; //XXX TODO DAVEPECK
             
-            var subhead_html = "<em>" + total_app_count + "</em> apps";
-            if (public_data_count > 1) 
-                subhead_html += " use data from <span><em>" + public_data_count + "</em> transit agencies.</span>"
-            else if (public_data_count == 1) 
-                subhead_html += " use data from one transit agency."
-            else 
-                subhead_html += "."
+            var subhead_html = '<em>' + all_apps.length + '</em> apps found near {{location_query}}. &nbsp <a href="{% url apps_add_form %}">Add a new app</a>';
 
             $("#transit_app_loading").fadeOut(0.0, function(){});
-            $("#transit_app_headline").hide().html(subhead_html).fadeIn(1000.0, function(){});
-            $("#apps_go_here").hide().html(main_apps_html).fadeIn(1000.0, function(){});
-            if (biking_app_count>0){
-                $("#biking_apps").fadeIn(1000.0);
-                $("#biking_apps_go_here").hide().html(biking_apps_html).fadeIn(1000.0, function(){});
-            }
+            $("#num_apps_found").hide().html(subhead_html).fadeIn(1000.0, function(){});
+            $("#transit_apps").hide().html(html_for_multiple_apps(transit_apps)).fadeIn(1000.0, function(){});
+            $("#biking_apps").hide().html(html_for_multiple_apps(biking_apps)).fadeIn(1000.0, function(){});
+            $("#walking_apps").hide().html(html_for_multiple_apps(walking_apps)).fadeIn(1000.0, function(){});
+            $("#driving_apps").hide().html(html_for_multiple_apps(driving_apps)).fadeIn(1000.0, function(){});
         });
         
 
@@ -133,9 +152,10 @@ jQuery(document).ready(function($)
             
             
             if(closed_agencies_html.length > 0) {
+                $("#nearby_agencies_summary").html(closed_agencies_html.length + " nearby transit agencies do not provide open data.").fadeIn(1000.0, function(){});
                 $("#nearby_agencies_header").fadeIn(1000.0, function(){});
             } else if(agencies.length==0) {
-                $("#no_agencies").html("No nearby transit agencies").fadeIn(1000.0, function(){});
+                //$("#no_agencies").html("No nearby transit agencies").fadeIn(1000.0, function(){});
             }
             $("#fill_nearby_no_public").hide().html( closed_agencies_html ).fadeIn(1000.0, function(){});
             $("#fill_nearby_public").hide().html( open_agencies_html ).fadeIn(1000.0, function(){});
@@ -150,6 +170,8 @@ jQuery(document).ready(function($)
             var latitude = place.Point.coordinates[1];
             var longitude = place.Point.coordinates[0];
             var country_code = String(place.AddressDetails.Country.CountryNameCode);
+            // TODO JESSE -- if got a city and query was not a zip, use geocoded city, state in the headers and the petition
+            // updatePageLocation(city, state);
             query_for_transit_apps(latitude, longitude, country_code);
             query_for_agencies(latitude, longitude, country_code);
         }        
@@ -157,14 +179,13 @@ jQuery(document).ready(function($)
     
     function find_nearby_transit_apps()
     {
-        $("#transit_app_headline").hide();
+        $("#num_apps_found").hide();
         var query = "{{location_query|escapejs}}";
         var googleCoder = new GClientGeocoder();
         googleCoder.getLocations(query, handle_google_geocode_response);    
     }
 
-    $("#nearby_agencies_header").hide();
-    $("#no_agencies").hide();
+    
     find_nearby_transit_apps();
 });
 
@@ -174,40 +195,47 @@ jQuery(document).ready(function($)
 {% block location_query %}{{location_query}}{% endblock %}
 
 {% block content %}
-<div class="col-group body-content">
-    <div id="no_agencies"></div>
-    <div id="petition" class="body-content thinline col-group">
-        <div class="boxed-content"> 
-            
-            <h4 id="nearby_agencies_header">Nearby Agencies with no open data</h4>
-            <div class="agency-text-list" id="fill_nearby_no_public"><span class="loading">LOADING...</span></div>
-
-            <h2>SUPPORT OPEN DATA</h2>
-            <div class="wide-col rightmost">
-                {% include "includes/petition-text.html" %} 
-                {% include "includes/petition-disclaimer.html" %}               
-            </div>
-            
-            <div class="narrow-col">
-                {% include "includes/petition-form.html" %}
-            </div>
-            <br class="clear-all" />
-        </div>
+<div class="col-group body-content">    
+    <h2 class="bluegreen" id="num_apps_found"></h2>
+    <div class="agency-text-list" id="fill_nearby_public"><span class="loading">LOADING...</span></div>
+    <h3 id="transit_app_loading"><img src="{% static_url /images/ajax-loader.gif %}" />LOADING...</h3>
+    
+    <div class="body-content col-group">
+        <h3>Public transit apps near {{location_query}}:</h3>
+        <div id="transit_apps" class="app-gallery"></div>
     </div>
-
-    <div id="nearby-apps" class="body-content col-group">
-        <h2>Transit Apps Near {{location_query}}:</h2>
-        <h4 class="bluegreen" id="transit_app_headline"></h4>
-        <div class="agency-text-list" id="fill_nearby_public"><span class="loading">LOADING...</span></div>
-        <h3 id="transit_app_loading"><img src="{% static_url /images/ajax-loader.gif %}" />LOADING...</h3>
-        <div id="apps_go_here" class="app-gallery"></div>
+    <div class="body-content col-group">
+        <h3>Biking Apps Near {{location_query}}:</h3>
+        <div id="biking_apps" class="app-gallery"></div>
     </div>
-    <div id="biking_apps" class="body-content col-group">
-        <h2>Biking Apps Near {{location_query}}:</h2>
-        <div id="biking_apps_go_here" class="app-gallery"></div>
+    <div class="body-content col-group">
+        <h3>Walking Apps Near {{location_query}}:</h3>
+        <div id="walking_apps" class="app-gallery"></div>
+    </div>
+    <div class="body-content col-group">
+        <h3>Driving Apps Near {{location_query}}:</h3>
+        <div id="driving_apps" class="app-gallery"></div>
     </div>
 </div>
 <div class="wide-col rightmost">
+    <div id="no_agencies"></div>
+    <div id="petition" class="body-content thinline">
+        <div class="boxed-content"> 
+            
+            <h3 id="nearby_agencies_summary"></h3>
+            <div class="agency-text-list" id="fill_nearby_no_public"><span class="loading">LOADING...</span></div>
+
+            <h2>SUPPORT OPEN DATA<br />in {{location_query}}</h2>
+                {% include "includes/petition-text.html" %} 
+                {% include "includes/petition-disclaimer.html" %}               
+                {% include "includes/petition-form.html" %}
+            <br class="clear-all" />
+            <h4 id="nearby_agencies_header">Agencies without open data</h4>
+            <div class="agency-text-list" id="fill_nearby_no_public"><span class="loading">LOADING...</span></div>
+        </div>
+    </div>
+
+
 	{% include "includes/mrec1.html" %}
 </div>
 
