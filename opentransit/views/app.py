@@ -169,7 +169,7 @@ def add_agencies(request, progress_uuid):
     template_vars = {
         "form": form,
         "agencies": agency_list,
-        "states": Agency.get_state_list(),
+        "states": [x[1] for x in Agency.get_state_list()],
         "agency_count": len(agency_list)
     }
 
@@ -365,7 +365,7 @@ def admin_apps_edit_agencies(request, transit_app):
         'transit_app': transit_app,
         'angency_keys_encoded': '|'.join([str(key) for key in transit_app.explicitly_supported_agency_keys]),
         "agencies": agency_list,
-        "states": Agency.get_state_list(),
+        "states": [x[1] for x in Agency.get_state_list()],
         "agency_count": len(agency_list),
     }
     return render_to_response(request, "admin/app-edit-agencies.html", template_vars)
