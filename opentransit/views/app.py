@@ -25,7 +25,7 @@ from django.utils import simplejson as json
 
 def nearby(request):
     petition_form = PetitionForm()
-    location_query = request.GET.get('location_query','')
+    location_query = request.GET.get('q','')
     template_vars = {
         'petition_form': petition_form,
         'location_query': location_query
