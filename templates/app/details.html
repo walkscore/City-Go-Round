@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
 {% block headscripts %}
-<script src="{% static_or_s3_url /js/jquery.tools.min.js %}"></script>
+<script src="{% static_url /js/jquery.tools.min.js %}"></script>
 <link rel="stylesheet" type="text/css" href="/css/jquery.rating.css" media="screen" />
-<script type="text/javascript" src="{% static_or_s3_url /js/jquery.rating.pack.js %}"></script>
-<script type="text/javascript" src="{% static_or_s3_url /js/jquery.metadata.js %}"></script>
+<script type="text/javascript" src="{% static_url /js/jquery.rating.pack.js %}"></script>
+<script type="text/javascript" src="{% static_url /js/jquery.metadata.js %}"></script>
 <script type="text/javascript" src="http://www.google.com/friendconnect/script/friendconnect.js"></script>
 {% endblock %}
 
