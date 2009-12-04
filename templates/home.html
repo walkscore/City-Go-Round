@@ -38,6 +38,7 @@ $(document).ready(function() {
         }
         .col-group label {
     	   font-weight: bold;
+    	   margin-top: 8px;
     	}
         
     </style>
@@ -55,8 +56,7 @@ $(document).ready(function() {
                 <p>{{closed_agencies.count}} agencies do not provide open data to transit app developers.</p>
                 <label>Largest agencies with no open data:</label>
                 {% include "includes/no-data-list.html" %}
-                <p><br />
-                Transit agency? <a href="{% static_url /about/#0.1_agency %}">How to get off this list</a></p>
+                <p>Transit agency? <a href="{% static_url /about/#0.1_agency %}">How to get off this list</a></p>
             </div>
 		    <div id="recently-added-list">
     		    <h2><a href="{% url opentransit.views.agency.agencies %}us/?public=public">Thank You!</a></h2>
