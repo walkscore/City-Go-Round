@@ -91,8 +91,8 @@
 	#petition h2 { color: #028dc7; }
 	#petition h4 { color: #f72e2e; }
 	.data-lists h2 { color: #f72e2e; }
-	#no-data-list h3 { color: #f72e2e; }
-	#recently-added-list h3 { color: #18b541; font-size: 18px; }
+	#no-data-list h4 { color: #f72e2e; }
+	#recently-added-list h4 { color: #18b541; font-size: 18px; }
 
 	p, a, ul, ol, blockquote, label, li {
 		font:12px Verdana, Arial, Helvetica, sans-serif;
@@ -184,6 +184,9 @@
 		clear: both;
 		margin-right: 20px;
 		border: 1px solid #fff;
+	}
+	.boxless-feature {
+	   margin: 0 0 30px 0;
 	}
 	.boxed-content {
 		margin: 8px 10px 0 12px;
@@ -511,7 +514,7 @@ border: 1px solid #999;
 		margin: 14px auto 16px auto;
 		position: relative;
 	}
-	#feat h3 {
+	#feat h4 {
 		position: absolute;
 		left: 60px;
 		top: 15px;
@@ -519,7 +522,7 @@ border: 1px solid #999;
 		color: #546b75; 
 		font-size: 18px;
 	}
-	#feat h3 a {
+	#feat h4 a {
 		text-decoration: underline;
 	}
 	#feat #feat-bigprev {
@@ -629,7 +632,7 @@ border: 1px solid #999;
 /*********** APP GALLERY ****************/
 	
 	.app-gallery .app { 
-		padding-bottom: 15px;
+		padding: 4px 0 4px 0;
 		min-height: 80px;
 		width: 260px;
 		float: left;
@@ -944,7 +947,10 @@ border: 1px solid #999;
 		color: #316b84;
 		margin-bottom: 10px;
 	}
-    #nearby_agencies_header, #nearby_agencies_summary, #no_agencies { visibility: hidden; }
+	#nearby_agencies_header {
+	   color: #f72e2e;
+    }
+    #nearby_agencies_summary, #nearby_agencies_header, #no_agencies, #nearby_with_data, #test { display: none; }
     
 	
 /*********** APP ADD FORMS ************/
