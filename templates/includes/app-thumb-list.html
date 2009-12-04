@@ -6,4 +6,5 @@
 		<label>Platforms: {% for i in transit_app.platforms %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}</label>
 		<p>{% if transit_app.is_featured %}<img class="featured" src="{% static_url /images/editors-choice3.gif %}" />{% endif %}{{transit_app.description}}</p>
 	</div>
+	{% cycle '' '<br class="clear-all" />' %}
 {% endfor %}
