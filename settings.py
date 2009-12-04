@@ -17,6 +17,8 @@ MIDDLEWARE_CLASSES = [
     'opentransit.middleware.AppEngineSecureSessionMiddleware',
 ]
 
+DEBUG_SESSIONS = False # Set to True to get log lines about the contents of the session object
+
 SITE_WIDE_USERNAME_AND_PASSWORD_URL_EXCEPTIONS = [ r'^/admin/taskqueue/.*$' ]
 
 # NOTE davepeck:

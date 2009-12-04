@@ -72,6 +72,7 @@ urlpatterns += patterns(
     url(r'^apps/add/success/$', 'add_success', name='apps_add_success'),
     url(r'^apps/(?P<transit_app_slug>[\w-]+)/$', 'details', name='apps_details'),
     url(r'^apps/(?P<transit_app_slug>[\w-]+)/screenshot-(?P<screen_shot_index>[\d]+)-(?P<screen_shot_size_name>[\w\d]+).png$', 'screenshot', name='apps_screenshot'),
+    url(r'^apps/(?P<transit_app_slug>[\w-]+)/rating/vote/$', 'app_rating_vote', name='app_rating_vote'),    
     url(r'^admin/apps/$', 'admin_apps_list', name='admin_apps_list'),
     url(r'^admin/apps/edit/(?P<transit_app_slug>[\w-]+)/$', 'admin_apps_edit', name='admin_apps_edit'),
     url(r'^admin/apps/edit/(?P<transit_app_slug>[\w-]+)/basic/$', 'admin_apps_edit_basic', name='admin_apps_edit_basic'),
@@ -79,7 +80,6 @@ urlpatterns += patterns(
     url(r'^admin/apps/edit/(?P<transit_app_slug>[\w-]+)/agencies/$', 'admin_apps_edit_agencies', name='admin_apps_edit_agencies'),
     url(r'^admin/apps/edit/(?P<transit_app_slug>[\w-]+)/images/$', 'admin_apps_edit_images', name='admin_apps_edit_images'),
     url(r'^admin/apps/delete/(?P<transit_app_slug>[\w-]+)/$', 'admin_apps_delete', name='admin_apps_delete'),
-    url(r'^app/rating/vote/$', 'app_rating_vote', name='app_rating_vote'),
     url(r'^admin/apps/bayes/refresh/$', 'refresh_all_bayesian_averages', name='refresh_all_bayesian_averages'),
     url(r'^admin/apps/update-schema/$', 'admin_apps_update_schema', name='admin_apps_update_schema'),
 )

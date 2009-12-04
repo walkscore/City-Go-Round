@@ -1,4 +1,5 @@
 import re
+import logging
 
 from django.conf import settings
 
@@ -57,11 +58,27 @@ class AppEngineSecureSessionMiddleware(object):
         setattr(request, 'set_session', set_session)
         setattr(request, 'del_session', del_session)
         setattr(request, 'session_has', session_has)
+        
+        # Debug only -- logs content of sessions. Useful, perhaps.
+        if settings.DEBUG_SESSIONS:
+            debug_info = "\n\n\n*** INCOMING SESSION CONTENTS:"
+            for k, v in request._session.iteritems():
+                debug_info += "\n***\t%s = %r" % (k, v)
+            debug_info += "\n\n"
+            logging.info(debug_info)
                 
     def process_response(self, request, response):
         if hasattr(request, '_session_dirty') and request._session_dirty:
-            # TODO max_age and expires?
             response.set_cookie(SESSION_COOKIE_KEY, serialize_dictionary(request._session))
+            
+            # Debug only -- logs content of sessions. Useful, perhaps.
+            if settings.DEBUG_SESSIONS:
+                debug_info = "\n\n\n*** CHANGED, OUTGOING SESSION CONTENTS:"
+                for k, v in request._session.iteritems():
+                    debug_info += "\n***\t%s = %r" % (k, v)
+                debug_info += "\n\n"
+                logging.info(debug_info)
+            
         return response
         
 class AppEngineGenericUserMiddleware(object):
