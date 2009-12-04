@@ -8,7 +8,7 @@ from opentransit.models import Agency
 
 #note - you will need to modify your $PYTHONPATH 
 # to include both opentransit and opentransit/opentransit:
-# $ export PYTHONPATH=/path/to/opentransitdata:path/to/opentransitdata/opentransit
+# $ export PYTHONPATH=/path/to/citygoround:path/to/citygoround/opentransit
 # $ /home/brandon/downloads/google_appengine/appcfg.py upload_data . --filename=./data/agencies.csv --kind=Agency --config_file=./data/agency_loader.py --url=http://localhost:8080/remote_api --has_header
 
 def smart_utf8(x):
