@@ -242,7 +242,7 @@ jQuery(document).ready(function($)
     function handle_google_geocode_response(response)
     {
         // human-friendly geocode result (default in case something goes wrong)
-        var query_info_html = "&#8220;{{location_query|escapejs}}&#8221;";
+        var query_info_html = "&#8220;{{location_query|force_escape|escapejs}}&#8221;";
         
         if (response && response.Status.code == 200)
         {
@@ -290,7 +290,7 @@ jQuery(document).ready(function($)
 </script>
 {% endblock %}
 
-{% block location_query %}{{location_query}}{% endblock %}
+{% block location_query %}{{location_query|escape}}{% endblock %}
 
 {% block content %}
 <div class="col-group body-content">    
