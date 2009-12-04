@@ -54,7 +54,7 @@ $(document).ready(function() {
 </h2>
 </div>
 <p class="italic">
-    Transit agencies in {% ifequal location "us" %}the {%endifequal %}{{location|upper}}: <b>{{agency_count}}</b>. 
+    Transit agencies in {% ifequal location "" %}all countries{%endifequal%}{% ifequal location "us" %}the {%endifequal %}{{location|upper}}: <b>{{agency_count}}</b>. 
     With open data: <span class="green"> <b>{{public_count}}</b></span>.
     Without open data: <span class="red"> <b>{{no_public_count}}</b></span>.
 </p>
@@ -68,7 +68,7 @@ $(document).ready(function() {
 <select id="location_filter" name="location_filter" onchange="update_filters()">
    <option value="/agencies/">All States
   {% for s in states %}
-   <option value="/agencies/{{s.0}}/{{s.1}}"{% ifequal location s %} selected {% endifequal %}>{{s.1|upper}} ({{s.0}})
+   <option value="/agencies/{{s.0}}/{{s.1}}"{% ifequal location s.1 %} selected {% endifequal %}>{{s.1|upper}} ({{s.0}})
   {% endfor %}
 </select>
 
