@@ -9,11 +9,18 @@
 {% endblock %}
     
 <script type="text/javascript">
-  function goto_search(){
-    var loc = jQuery('#location_query').val()
-    window.location.replace('/apps/nearby/?location_query=' + loc);    
-    return false;
-  }
+    function url_for_search(search_term)
+    {
+        return "{% url apps_nearby %}?q=" + search_term
+    }
+
+    function goto_search()
+    {
+        var search_term = jQuery('#location_query').val();
+        var url = url_for_search(search_term);
+        document.location = url;
+        return false;
+    }
 </script>
 {% block extra_head %}{% endblock %}
 

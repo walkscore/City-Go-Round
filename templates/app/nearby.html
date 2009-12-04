@@ -21,8 +21,7 @@ jQuery(document).ready(function($)
     
     function url_for_transit_app(slug)
     {
-        // TODO DAVEPECK: How to use django's URL template tag here?
-        return '/apps/' + slug + '/';
+        return "{% url apps_details transit_app_slug='REPLACEME' %}".replace('REPLACEME', slug);
     }
     
     function html_for_row(name, item)
@@ -40,8 +39,10 @@ jQuery(document).ready(function($)
         return '<img src="' + src + '" alt="' + alt + '" />';
     }
         
-    function html_for_multiple_apps(array) {
-        if (array.length == 0){
+    function html_for_multiple_apps(array) 
+    {
+        if (array.length == 0)
+        {
             return '<p>No apps found.  Would you like to <a href="{% url apps_add_form %}">add an app</a>?</p>';
         }
         
@@ -65,101 +66,127 @@ jQuery(document).ready(function($)
         html += '<h5><a href="' + transit_app.details_url + '">' + transit_app.title + '</a></h5>';
         html += '<label>By ' + transit_app.author_name + '</label>';
         html += '<div class="rating"><div style="width:' + (transit_app.rating * 79.0/5.0) + 'px;"></div><p>(' + transit_app.rating_count + ' ratings)</p></div>';
-        html += '<p>' + feature_html + transit_app.description + '&nbsp; <span>Platforms: ' + getPlatforms(transit_app) + '</span></p>';
+        html += '<p>' + feature_html + transit_app.description + '&nbsp; <span>Platforms: ' + get_platforms(transit_app) + '</span></p>';
         html += '</div>';
         return html;
     }
     
-    function getPlatforms(app) {
+    function get_platforms(app) 
+    {
         var html = "";
-        for (var i=0; i<app.platforms.length; i++){
+        for (var i=0; i<app.platforms.length; i++)
+        {
             html += (( i>0 ) ? ", ":"") + app.platforms[i];
         }
         return html;
     }
     
-    function html_for_agency(agency) {
+    function html_for_agency(agency) 
+    {
         var html = '<div><a href="'+agency.details_url+'">'+agency.name+'</a></div>';
         return html;
     }
     
-    function appHasTag(app, target_tag){
-        for (var i=0; i<app.tags.length; i++){
-            if(app.tags[i]==target_tag)
+    function app_has_tag(app, target_tag)
+    {
+        for (var i=0; i<app.tags.length; i++)
+        {
+            if (app.tags[i]==target_tag)
+            {
                 return true; 
+            }
         }
         return false;
     }
     
-    function query_for_transit_apps(latitude, longitude, country_code)
+    function handle_transit_app_query_results(all_apps)
     {
-        $.getJSON(url_for_transit_app_query(latitude, longitude, country_code), function(all_apps)
+        var transit_apps = [];
+        var biking_apps = [];
+        var walking_apps = [];
+        var driving_apps = [];
+        
+        //sort biking apps from others
+        $.each(all_apps, function(i, transit_app)
         {
-            var transit_apps = [];
-            var biking_apps = [];
-            var walking_apps = [];
-            var driving_apps = [];
-            
-            //sort biking apps from others
-            $.each(all_apps, function(i, transit_app)
+            if (app_has_tag(transit_app, "Public Transit")) 
             {
-                if (appHasTag(transit_app, "Public Transit")) {
-                    transit_apps.push(transit_app);
-                }
-                else if (appHasTag(transit_app, "Biking")) {
-                    biking_apps.push(transit_app);
-                }
-                else if (appHasTag(transit_app, "Walking")) {
-                    walking_apps.push(transit_app);
-                }
-                else if (appHasTag(transit_app, "Driving")) {
-                    driving_apps.push(transit_app);
-                }
-            });
-            
-            var public_data_count = 0; //XXX TODO DAVEPECK
-            
-            var subhead_html = '<em>' + all_apps.length + '</em> apps found near {{location_query}}. &nbsp <a href="{% url apps_add_form %}">Add a new app</a>';
-            $(".hide-on-load").hide();
-            $("#num_apps_found").hide().html(subhead_html).fadeIn(1000, function(){});
-            $("#transit_apps").hide().html(html_for_multiple_apps(transit_apps)).fadeIn(1000);
-            $("#biking_apps").hide().html(html_for_multiple_apps(biking_apps)).fadeIn(1000);
-            $("#walking_apps").hide().html(html_for_multiple_apps(walking_apps)).fadeIn(1000);
-            $("#driving_apps").hide().html(html_for_multiple_apps(driving_apps)).fadeIn(1000);
+                transit_apps.push(transit_app);
+            }
+            else if (app_has_tag(transit_app, "Biking")) 
+            {
+                biking_apps.push(transit_app);
+            }
+            else if (app_has_tag(transit_app, "Walking")) 
+            {
+                walking_apps.push(transit_app);
+            }
+            else if (app_has_tag(transit_app, "Driving")) 
+            {
+                driving_apps.push(transit_app);
+            }
         });
         
-
+        $(".hide-on-load").hide();
+        if (all_apps.length == 0)
+        {
+            var subhead_html = '<em>No</em> apps';
+        }
+        else if (all_apps.length == 1)
+        {
+            var subhead_html = '<em>1</em> app';
+        }
+        else
+        {
+            var subhead_html = '<em>' + all_apps.length + '</em> apps';
+        }        
+        subhead_html += ' found near {{location_query|escapejs}}. &nbsp <a href="{% url apps_add_form %}">Add a new app</a>';        
+        $("#num_apps_found").html(subhead_html).fadeIn(1000, function(){});
+        
+        if (all_apps.length > 0)
+        {
+            $("#transit_apps").html(html_for_multiple_apps(transit_apps)).fadeIn(1000);
+            $("#biking_apps").html(html_for_multiple_apps(biking_apps)).fadeIn(1000);
+            $("#walking_apps").html(html_for_multiple_apps(walking_apps)).fadeIn(1000);
+            $("#driving_apps").html(html_for_multiple_apps(driving_apps)).fadeIn(1000);        
+            $(".hidden").removeClass("hidden");
+        }
+    }
+    
+    function query_for_transit_apps(latitude, longitude, country_code)
+    {
+        $.getJSON(url_for_transit_app_query(latitude, longitude, country_code), handle_transit_app_query_results);
+    }
+    
+    function handle_agency_query_results(agencies)
+    {
+        var num_closed_agencies = 0;
+        var open_agencies_html = "";
+        var closed_agencies_html = "";
+    
+        $.each(agencies, function(i, agency)
+        {
+            if( agency.is_public ) 
+            {
+                open_agencies_html += html_for_agency( agency );
+            } 
+            else 
+            {
+                closed_agencies_html += html_for_agency( agency );
+                num_closed_agencies++;
+            }
+        });
+        
+        if(closed_agencies_html.length > 0) 
+        {
+            $("#nearby_agencies_header").html(num_closed_agencies + " nearby agencies have no open data:").fadeIn(1000);
+            $("#fill_nearby_no_public").hide().html( closed_agencies_html ).fadeIn(1000);
+        }         
     }
     
     function query_for_agencies(latitude, longitude, country_code)
     {
-
-    
-        $.getJSON(url_for_agency_query(latitude, longitude), function(agencies)
-        {
-            var num_closed_agencies = 0;
-            var open_agencies_html = "";
-            var closed_agencies_html = "";
-        
-            $.each(agencies, function(i, agency)
-            {
-                if( agency.is_public ) {
-                    open_agencies_html += html_for_agency( agency );
-                } else {
-                    closed_agencies_html += html_for_agency( agency );
-                    num_closed_agencies++;
-                }
-            });
-            
-            
-            
-            
-            if(closed_agencies_html.length > 0) {
-                $("#nearby_agencies_header").html(num_closed_agencies + " nearby agencies have no open data:").fadeIn(1000);
-                $("#fill_nearby_no_public").hide().html( closed_agencies_html ).fadeIn(1000);
-            } 
-            
-        });
+        $.getJSON(url_for_agency_query(latitude, longitude), handle_agency_query_results);
     }
     
     function handle_google_geocode_response(response)
@@ -169,12 +196,16 @@ jQuery(document).ready(function($)
             var place = response.Placemark[0];
             var latitude = place.Point.coordinates[1];
             var longitude = place.Point.coordinates[0];
-            var country_code = String(place.AddressDetails.Country.CountryNameCode);
-            // TODO JESSE -- if got a city and query was not a zip, use geocoded city, state in the headers and the petition
-            // updatePageLocation(city, state);
+            var country_code = String(place.AddressDetails.Country.CountryNameCode);            
             query_for_transit_apps(latitude, longitude, country_code);
             query_for_agencies(latitude, longitude, country_code);
-        }        
+        }
+        else
+        {
+            // pretend like we got no results
+            handle_transit_app_query_results([]);
+            handle_agency_query_results([]);
+        }
     }
     
     function find_nearby_transit_apps()
@@ -185,7 +216,6 @@ jQuery(document).ready(function($)
         googleCoder.getLocations(query, handle_google_geocode_response);    
     }
 
-    
     find_nearby_transit_apps();
 });
 
@@ -198,19 +228,19 @@ jQuery(document).ready(function($)
 <div class="col-group body-content">    
     <p class="hide-on-load"><img src="{% static_url /images/ajax-loader.gif %}" /> LOADING...</span></p>
     <h2 class="bluegreen" id="num_apps_found"></h2>
-    <div class="body-content col-group">
+    <div class="body-content col-group hidden">
         <h3>Public transit apps near {{location_query}}:</h3>
         <div id="transit_apps" class="app-gallery"></div>
     </div>
-    <div class="body-content col-group">
+    <div class="body-content col-group hidden">
         <h3>Biking Apps Near {{location_query}}:</h3>
         <div id="biking_apps" class="app-gallery"></div>
     </div>
-    <div class="body-content col-group">
+    <div class="body-content col-group hidden">
         <h3>Walking Apps Near {{location_query}}:</h3>
         <div id="walking_apps" class="app-gallery"></div>
     </div>
-    <div class="body-content col-group">
+    <div class="body-content col-group hidden">
         <h3>Driving Apps Near {{location_query}}:</h3>
         <div id="driving_apps" class="app-gallery"></div>
     </div>
