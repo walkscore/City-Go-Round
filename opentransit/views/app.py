@@ -15,6 +15,8 @@ from ..utils.view import render_to_response, redirect_to, not_implemented, rende
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
 from ..utils.screenshot import kick_off_resizing_for_screen_shots, kick_off_resizing_for_screen_shot
 from ..utils.misc import chunk_sequence, pad_list, collapse_list
+from ..utils.ratings import get_user_rating_for_app, set_user_rating_for_app, adjust_rating_for_app
+from ..utils.memcache import clear_all_apps
 from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid, requires_POST, memcache_view_response, memcache_parameterized_view_response
 from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress, FeedReference, NamedStat
 
@@ -76,10 +78,15 @@ def gallery(request):
     
 @requires_valid_transit_app_slug
 def details(request, transit_app):
+    rating_for_js = get_user_rating_for_app(request, transit_app)
+    if rating_for_js is None:
+        rating_for_js = 'null'
+        
     template_vars = {
         'transit_app': transit_app,
         'explicit_agencies': [agency for agency in Agency.iter_explicitly_supported_for_transit_app(transit_app)],
         'supports_public_agencies': transit_app.supports_all_public_agencies,
+        'current_user_rating': rating_for_js,
         'locations': transit_app.get_supported_location_list(),
     }    
     return render_to_response(request, 'app/details.html', template_vars)
@@ -237,7 +244,8 @@ def add_locations(request, progress_uuid):
             remove_progress_uuid_from_session(request, progress_uuid)
             progress.delete()
 
-            # Wow, we finished!
+            # Wow, we finished! 
+            clear_all_apps()
             return redirect_to("apps_add_success")
     else:
         form = NewAppLocationForm(initial = {"progress_uuid": progress_uuid})
@@ -274,7 +282,9 @@ def admin_apps_edit_basic(request, transit_app):
             transit_app.categories = form.category_list
             transit_app.tags = form.tag_list
             transit_app.is_featured = form.cleaned_data["is_featured"]
-            transit_app.put()            
+            transit_app.put()    
+                    
+            clear_all_apps()
             return redirect_to("admin_apps_edit", transit_app_slug = transit_app.slug)
     else:
         form_initial_values = {
@@ -316,7 +326,9 @@ def admin_apps_edit_locations(request, transit_app):
             transit_app.add_explicitly_supported_countries([country.country_code for country in form.cleaned_data["location_list"].unique_countries])
                         
             # Write the transit app to the data store, along with custom locations (if any)
+            clear_all_apps()
             transit_app.put()
+
             if lazy_locations:
                 real_locations = [lazy_location() for lazy_location in lazy_locations]
                 db.put(real_locations)
@@ -369,6 +381,7 @@ def admin_apps_edit_agencies(request, transit_app):
                     transit_app.supports_all_public_agencies = False
                     transit_app.add_explicitly_supported_agencies(form.cleaned_data['agency_list'])
 
+            clear_all_apps()
             transit_app.put()
             
             return redirect_to("admin_apps_edit", transit_app_slug = transit_app.slug)
@@ -454,6 +467,7 @@ def admin_apps_delete(request, transit_app):
             db.delete(location_chunk)
             
         # Get rid of the transit app itself.
+        clear_all_apps()
         transit_app.delete()        
     except:
         return render_to_json({"success": False, "transit_app_slug": transit_app.slug})
@@ -464,52 +478,30 @@ def increment_stat(request):
     stat_value = NamedStat.increment( stat_name )
     return HttpResponse( "the new value of %s is %s"%(stat_name,stat_value) )
 
-def app_rating_vote(request):
-    app_key_id = int( request.GET['app_key_id'] )
-    rating = int( request.GET['rating'] ) if request.GET['rating'] != "" else None
-        
-    # if they've already voted and they didn't delete their vote
-    if str(app_key_id) in request.COOKIES and request.COOKIES[ str(app_key_id) ] != "":
+@requires_POST
+@requires_valid_transit_app_slug
+def app_rating_vote(request, transit_app):
+    # Get our input
+    new_rating = request.POST.get('rating', None)
+    
+    # Validate that it is a number (or is missing)
+    if new_rating is not None:
+        try:
+            new_rating = int(new_rating)
+        except:
+            return bad_request("Invalid rating: not a number.")
 
-        old_rating = int( request.COOKIES[ str(app_key_id) ] )
-        
-        #changing a vote
-        if rating is not None:
-            rating_delta = rating - old_rating
-            count_delta = 0
-        #removing a vote
-        else:
-            rating_delta = -old_rating
-            count_delta = -1
-    
-    #new vote
-    else:
-        rating_delta = rating
-        count_delta = 1
-            
-    # set side-wide rating average for use in creating sorting metric using bayesian average
-    all_rating_sum = NamedStat.get_stat( "all_rating_sum" )
-    all_rating_sum.value = all_rating_sum.value + rating_delta
-    all_rating_sum.put()
-    
-    all_rating_count = NamedStat.get_stat( "all_rating_count" )
-    all_rating_count.value = all_rating_count.value + count_delta
-    all_rating_count.put()
-    
-    # get the app, add the rating
-    app = TransitApp.get_by_id( app_key_id )
-    app.rating_sum += rating_delta
-    app.rating_count += count_delta
-    
-    logging.info( rating_delta )
-    logging.info( count_delta )
-    
-    # refresh the app's bayesian average
-    app.refresh_bayesian_average(all_rating_sum, all_rating_count)
-    
-    app.put()
-    
-    return HttpResponse( json.dumps( [app.average_rating, app.num_ratings] )  )
+    # Validate that it is "in range"
+    if (new_rating is not None) and ((new_rating < 0) or (new_rating > 5)):
+        return bad_request("Invalid rating: out of range.")
+
+    # Update the rating
+    old_rating = get_user_rating_for_app(request, transit_app)
+    adjust_rating_for_app(transit_app, old_rating, new_rating)
+    set_user_rating_for_app(request, transit_app, new_rating)
+
+    # Done!
+    return render_to_json([transit_app.average_rating, transit_app.num_ratings])
     
 def refresh_all_bayesian_averages(request):
     all_apps = TransitApp.all()
