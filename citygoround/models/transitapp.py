@@ -492,7 +492,7 @@ class TransitApp(db.Model):
     @staticmethod
     def fetch_transit_apps_near(latitude, longitude, max_results = 500, bbox_side_in_miles = settings.BBOX_SIDE_IN_MILES):
         return [transit_app_location.transit_app for transit_app_location in TransitAppLocation.fetch_transit_app_locations_near(latitude, longitude, query = None, max_results = max_results, bbox_side_in_miles = bbox_side_in_miles)]
-                
+    
     @staticmethod
     def iter_for_location_and_country_code(latitude, longitude, country_code, bbox_side_in_miles = settings.BBOX_SIDE_IN_MILES, uniquify = True):
         seen_set = set()
@@ -524,6 +524,9 @@ class TransitApp(db.Model):
     def fetch_for_location_and_country_code(latitude, longitude, country_code, bbox_side_in_miles = settings.BBOX_SIDE_IN_MILES, uniquify = True):
         return [transit_app for transit_app in TransitApp.iter_for_location_and_country_code(latitude, longitude, country_code, uniquify = uniquify, bbox_side_in_miles = bbox_side_in_miles)]
             
+    @staticmethod
+    def count_apps_in_category(category):
+        return TransitApp.all().filter("categories =", category).count()
 
 class TransitAppLocation(GeoModel):
     """Represents a many-many relationship between TransitApps and explcitly named cities where they work."""

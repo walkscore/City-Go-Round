@@ -65,12 +65,11 @@ def gallery(request):
                 main_list.append(a)
                 
     template_vars = {
-        'transit_app_count': TransitAppStats.get_transit_app_count(),
         'main_app_list': main_list,
         'bike_app_list': bike_list,
         'featured_apps': featured_list, 
         'recently_added_apps': recent_list, 
-        'transit_app_count': TransitApp.all().count(),
+        'transit_app_count': TransitApp.count_apps_in_category("Public Transit"),
         'public_feed_count': Agency.all().filter("date_opened != ", None).count(),
     }
         
