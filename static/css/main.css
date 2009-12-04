@@ -56,9 +56,11 @@
     h1 {
     	font-size:55px; 
     }
-    h2 {
-		font-size:26px; 
-		padding: 0 0 4px 0;	}
+    h2, h2 a {
+		font-size:26px;
+		font-weight: bold; 
+		padding: 0 0 4px 0;	
+    }
 	h3 {
 		font-size:20px;
 		text-indent: 2px;
@@ -72,7 +74,7 @@
 	.boxed-content h2, .boxed-content h3 {
 		padding-top: 0;
 	}
-	h4 {
+	h4, h4 a {
 		font-size: 18px;
 		padding: 14px 0 2px 0;
 		margin-bottom: 4px;
@@ -91,8 +93,8 @@
 	#petition h2 { color: #028dc7; }
 	#petition h4 { color: #f72e2e; }
 	.data-lists h2 { color: #f72e2e; }
-	#no-data-list h4 { color: #f72e2e; }
-	#recently-added-list h4 { color: #18b541; font-size: 18px; }
+	#no-data-list h2 a { color: #f72e2e; font-size: 20px; }
+	#recently-added-list h2 a { color: #028dc7; font-size: 20px; }
 
 	p, a, ul, ol, blockquote, label, li {
 		font:12px Verdana, Arial, Helvetica, sans-serif;
@@ -153,10 +155,11 @@
 		height: 115px;
 	}
 	#lede {
-		background-color: #c6e6f2;
+		background-color: #388ec3;
+		background: url(/images/lede-full.gif) 0 0 no-repeat;
 		margin: 0px auto 16px auto;
 		width: 920px;
-		height: 60px;
+		height: 52px;
 	}
 	#outer-wrapper {
 		margin: 0px auto 0 auto;
@@ -237,6 +240,9 @@
 		#no-data-list a, #recently-added-list a{
 			text-decoration: none;
 		}
+		#recently-added-list {
+		  margin-top: 20px;
+		}
 	
 /*********** HEADER ****************/
 	#header h1 {
@@ -282,7 +288,7 @@
 	#friends-and-followers {
 		position: absolute;
 		bottom: 3px;
-		left: 734px;
+		right: 0px;
 	}	
 	#friends-and-followers div {
 		float:left;
@@ -389,32 +395,171 @@
 		position: relative;
 	}
 	#lede label {
-		font: 24px/24px Verdana, Arial, Helvetica, sans-serif;
+		font: 20px/20px Verdana, Arial, Helvetica, sans-serif;
 		font-weight: bold;
-		color: #028dc7;
+		color: #fff;
 		position: absolute;
-		top: 16px;
-		left: 30px;
+		top: 15px;
+		left: 33px;
 	}	
 	#lede input#location_query {
 		font: 18px/18px Verdana, Arial, Helvetica, sans-serif;
 		color: #888;
 		position: absolute;
-		top: 17px;
-		left: 305px;
-		width: 380px;
-height: 27px;
-border: 1px solid #999;
+		top: 13px;
+		left: 264px;
+		width: 270px;
+        height: 27px;
+        border: 1px solid #999;
 		padding: 0 0 0 6px;
 		margin: 0;		
 	}	
 	#lede input#search {
 		position: absolute;
-		top: 17px;
-		left: 705px;
-		height: 27px;
-border: 1px solid #999;
+		top: 13px;
+		left: 561px;
+		height: 29px;
 	}	
+	
+	/*********** FEATURED APPS ****************/
+	#features {
+		width: 100%;
+		background: url(/images/feature-box-bottom.gif) bottom left no-repeat;
+		background-color: #40545f;
+		text-align: center;
+		height: 226px;
+		padding-top: 4px;
+		margin-bottom: 16px;
+	}
+	#feat {
+		text-align: left;
+		background: url(/images/feature-gradient-bg2.gif) 0 0 repeat-x; 
+		width: 533px;
+		height: 220px;
+		margin: 0 auto 0 auto;
+		position: relative;
+	}
+	#feat h4 {
+		position: absolute;
+		left: 60px;
+		top: 15px;
+		padding: 0;
+		color: #546b75; 
+		font-size: 18px;
+	}
+	#feat h4 a {
+		text-decoration: underline;
+	}
+	#feat #feat-bigprev {
+		position: absolute;
+		top: 95px;
+		left: 10px;
+		width: 30px;
+		height: 65px;
+		background: url(/images/big-arrows.png) 0px 15px no-repeat;
+		cursor: pointer;
+		z-index: 90000;
+	}
+	#feat #feat-bigprev:hover {
+		background-position: -30px 15px;
+	}
+	#feat #feat-bignext {
+		position: absolute;
+		top: 95px;
+		right: 10px;
+		width: 30px;
+		height: 65px;
+		background: url(/images/big-arrows.png) -60px 15px no-repeat;
+		cursor: pointer;
+		z-index: 90000;
+	}
+	#feat #feat-bignext:hover {
+		background-position: -90px 15px;
+	}
+	#feat-controls {
+		position: absolute;
+		bottom: 3px;
+		left: 190px;
+		width: 212px;
+		text-align: center;
+	}
+	#feat-controls #feat-controls-prev, #feat-controls #feat-controls-next, #feat-controls #jumplinks a {
+		width: 16px;
+		height: 21px;
+		float: left;
+		background: url(/images/feat-controls2.gif) no-repeat;
+		cursor: pointer;
+	}
+	#feat-controls #feat-controls-prev { background-position: 0px 5px; }
+	#feat-controls #feat-controls-prev:hover { background-position: -16px 5px; }
+	#feat-controls #feat-controls-next { background-position: -32px 5px; }
+	#feat-controls #feat-controls-next:hover { background-position: -48px 5px; }
+
+	#feat-controls #jumplinks a { 
+		width: 22px; 
+		background-position: -64px 5px;
+	}	
+	#feat-controls #jumplinks a:hover { background-position: -86px 5px; }
+	#feat-controls #jumplinks a.current, #feat-controls #jumplinks a.current:hover { background-position: -108px 5px; }
+	#feat #view-all {
+		position: absolute;
+		bottom: 8px;
+		right: 15px;
+	}
+	#flowpanes {
+		width: 100%;
+		height: 150px;
+        padding-top: 44px;
+        position:relative; 
+        overflow:hidden; 
+        clear:both; 
+
+	}
+	#flowpanes .items { 
+        width:20000em; 
+        position:absolute; 
+        clear:both; 
+        margin:0; 
+        padding:0; 
+    } 
+    #flowpanes .items div { 
+        float:left; 
+        display:block; 
+        width:533px; 
+        font-size:14px; 
+    } 
+
+	#flowpanes .items div img {
+		float: left;	
+		margin: 0 15px 0 60px;
+		width: 150px;
+		height: 150px;
+	}
+	
+	#flowpanes .items div h4 {
+	   position: static;
+	   
+	}
+	#flowpanes .items div h4 a {
+		color: #c76402; 
+		font-size: 22px; 
+		text-decoration: none;
+		line-height: 22px; 
+		padding: 0 0 12px 0;
+		margin: 0;
+	}
+	#flowpanes .items div p {
+		font-size: 18px;
+		color: #6c6c6c;
+		margin-right: 80px;
+	}
+	
+    #flowpanes .less, #flowpanes .less a { 
+        color:#999 !important; 
+        font-size:11px; 
+    }
+
+	
 
 /*********** PETITION FORM ****************/
 
@@ -501,136 +646,6 @@ border: 1px solid #999;
 	  width: 700px;
 	  margin-left: 40px;
 	}
-	
-
-
-/*********** FEATURED APPS ****************/
-	#features {
-		width: 100%;
-		text-align: center;
-	}
-	#feat {
-		text-align: left;
-		background: url(/images/feature-gradient-bg.gif) 0 0 repeat-x; 
-		width: 620px;
-		height: 255px;
-		margin: 14px auto 16px auto;
-		position: relative;
-	}
-	#feat h4 {
-		position: absolute;
-		left: 60px;
-		top: 15px;
-		padding: 0;
-		color: #546b75; 
-		font-size: 18px;
-	}
-	#feat h4 a {
-		text-decoration: underline;
-	}
-	#feat #feat-bigprev {
-		position: absolute;
-		top: 95px;
-		left: 10px;
-		width: 30px;
-		height: 65px;
-		background: url(/images/big-arrows.png) 0px 15px no-repeat;
-		cursor: pointer;
-		z-index: 90000;
-	}
-	#feat #feat-bigprev:hover {
-		background-position: -30px 15px;
-	}
-	#feat #feat-bignext {
-		position: absolute;
-		top: 95px;
-		right: 10px;
-		width: 30px;
-		height: 65px;
-		background: url(/images/big-arrows.png) -60px 15px no-repeat;
-		cursor: pointer;
-		z-index: 90000;
-	}
-	#feat #feat-bignext:hover {
-		background-position: -90px 15px;
-	}
-	#feat-controls {
-		position: absolute;
-		bottom: 3px;
-		left: 190px;
-		width: 212px;
-		text-align: center;
-	}
-	#feat-controls #feat-controls-prev, #feat-controls #feat-controls-next, #feat-controls #jumplinks a {
-		width: 16px;
-		height: 21px;
-		float: left;
-		background: url(/images/feat-controls.gif) no-repeat;
-		cursor: pointer;
-	}
-	#feat-controls #feat-controls-prev { background-position: 0px 5px; }
-	#feat-controls #feat-controls-prev:hover { background-position: -16px 5px; }
-	#feat-controls #feat-controls-next { background-position: -32px 5px; }
-	#feat-controls #feat-controls-next:hover { background-position: -48px 5px; }
-
-	#feat-controls #jumplinks a { 
-		width: 22px; 
-		background-position: -64px 5px;
-	}	
-	#feat-controls #jumplinks a:hover { background-position: -86px 5px; }
-	#feat-controls #jumplinks a.current, #feat-controls #jumplinks a.current:hover { background-position: -108px 5px; }
-	#feat #view-all {
-		position: absolute;
-		bottom: 8px;
-		right: 15px;
-	}
-	#flowpanes {
-		width: 100%;
-		height: 180px;
-        padding-top: 44px;
-        position:relative; 
-        overflow:hidden; 
-        clear:both; 
-
-	}
-	#flowpanes .items { 
-        width:20000em; 
-        position:absolute; 
-        clear:both; 
-        margin:0; 
-        padding:0; 
-    } 
-    #flowpanes .items div { 
-        float:left; 
-        display:block; 
-        width:620px; 
-        font-size:14px; 
-    } 
-
-	#flowpanes .items div img {
-		float: left;	
-		margin: 0 15px 0 60px;
-		width: 180px;
-		height: 180px;
-	}
-	#flowpanes .items div h4 a {
-		color: #c76402; 
-		font-size: 22px; 
-		line-height: 22px; 
-		padding: 0 0 12px 0;
-		margin: 0;
-	}
-	#flowpanes .items div p {
-		font-size: 18px;
-		color: #6c6c6c;
-		margin-right: 80px;
-	}
-	
-    #flowpanes .less, #flowpanes .less a { 
-        color:#999 !important; 
-        font-size:11px; 
-    }
-
 
 /*********** APP GALLERY ****************/
 	

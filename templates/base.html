@@ -41,9 +41,9 @@
 <div id="lede">
     {% block lede %}
     <form onsubmit="goto_search(); return false;">
-        <label>Find apps near you:</label>
+        <label>Find apps near me:</label>
         <input id="location_query" name="location_query" type="text" value="{% block location_query %}Type a city or ZIP{% endblock %}">
-        <input id="search" name="search" type="image" src="{% static_url /images/button-search.gif %}">
+        <input id="search" name="search" type="image" src="{% static_url /images/search-button.gif %}">
     </form>
   {% endblock %}
 </div>

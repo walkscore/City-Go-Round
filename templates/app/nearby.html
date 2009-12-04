@@ -65,8 +65,7 @@ jQuery(document).ready(function($)
         html += '<h5><a href="' + transit_app.details_url + '">' + transit_app.title + '</a></h5>';
         html += '<label>By ' + transit_app.author_name + '</label>';
         html += '<div class="rating"><div style="width:' + (transit_app.rating * 79.0/5.0) + 'px;"></div><p>(' + transit_app.rating_count + ' ratings)</p></div>';
-        html += '<label>Platforms: ' + getPlatforms(transit_app) + '</label>';
-        html += '<p>' + feature_html + transit_app.description + '</p>';
+        html += '<p>' + feature_html + transit_app.description + '&nbsp; <span>Platforms: ' + getPlatforms(transit_app) + '</span></p>';
         html += '</div>';
         return html;
     }
