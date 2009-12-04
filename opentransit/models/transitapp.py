@@ -433,6 +433,12 @@ class TransitApp(db.Model):
         return int(self.rating_sum*10/self.rating_count)
         
     @property
+    def average_rating_out_of_80(self):
+        if self.rating_count==0:
+            return 0
+        return int( (self.rating_sum * 79.0) / ( self.rating_count*5.0) )
+        
+    @property
     def num_ratings(self):
         return self.rating_count
     
