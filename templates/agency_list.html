@@ -68,14 +68,14 @@ $(document).ready(function() {
 <select id="location_filter" name="location_filter" onchange="update_filters()">
    <option value="/agencies/">All States
   {% for s in states %}
-   <option value="/agencies/{{s.0}}/{{s.1}}"{% ifequal location.state s.1 %} selected {% endifequal %}>{{s.1|upper}} ({{s.0}})
+   <option value="/agencies/{{s.0}}/{{s.1}}"{% ifequal location.state s.1 %}{% ifequal location.country s.0 %} selected {% endifequal %}{% endifequal %}>{{s.1|upper}} ({{s.0}})
   {% endfor %}
 </select>
 
 <select id="country_filter" name="country_filter" onchange="update_country()">
    <option value="/agencies/">All Countries
   {% for country in countries %}
-   <option value="/agencies/{{country}}"{% ifequal location.country country %} selected {% endifequal %}>{{country|upper}}
+   <option value="/agencies/{{country}}"{% ifequal location.country country %}{% ifequal location.state None %} selected {% endifequal %}{% endifequal %}>{{country|upper}}
   {% endfor %}
 </select>
 

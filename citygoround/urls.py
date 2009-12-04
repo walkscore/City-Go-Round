@@ -5,7 +5,7 @@ urlpatterns = patterns('')
 
 # Top Level Views -- Home Page, about, etc.
 urlpatterns += patterns(
-    'opentransit.views.toplevel',
+    'citygoround.views.toplevel',
     url(r'^$', 'home', name='home'),
     url(r'^comment/$', 'comment', name='comment'),
     url(r'^contact/$', 'contact', name='contact'),
@@ -27,7 +27,7 @@ urlpatterns += patterns(
 
 # Petition Views -- Currently only has examples
 urlpatterns += patterns(
-    'opentransit.views.petition',
+    'citygoround.views.petition',
     url(r'^example_petition_form/$', 'example_petition_form', name='example_petition_form'),
     url(r'^example_petition_success/$', 'example_petition_success', name='example_petition_success'),
 )
@@ -35,7 +35,7 @@ urlpatterns += patterns(
 
 # Feed Views -- Lists, Update Hooks, etc.
 urlpatterns += patterns(
-    'opentransit.views.feed',
+    'citygoround.views.feed',
     url(r'^admin/feeds/update/$', 'update_feed_references', name='update_feed_references'),
     url(r'^admin/feeds/references/$', 'admin_feed_references', name='admin_feed_references'),
 )
@@ -43,7 +43,7 @@ urlpatterns += patterns(
 
 # Agency Views -- Full URL structure for viewing agencies, and for adding/editing them
 urlpatterns += patterns(
-    'opentransit.views.agency',
+    'citygoround.views.agency',
     url(r'^agencies/$', 'agencies', name='agencies'),
     url(r'^agencies/(?P<countryslug>[\w-]+)/$', 'agencies'),
     url(r'^agencies/(?P<countryslug>[\w-]+)/(?P<stateslug>[\w-]+)/$', 'agencies'),
@@ -63,7 +63,7 @@ urlpatterns += patterns(
 
 # Apps Views -- Full URL structure for viewing transit apps, and for adding/editing them
 urlpatterns += patterns(
-    'opentransit.views.app',
+    'citygoround.views.app',
     url(r'^apps/$', 'gallery', name='apps_gallery'),
     url(r'^apps/nearby/$', 'nearby', name='apps_nearby'),
     url(r'^apps/add/$', 'add_form', name='apps_add_form'),
@@ -88,7 +88,7 @@ urlpatterns += patterns(
 # API Views -- All URLs that return JSON (maybe XML in the future) back. 
 # Want to break these out just to make clear what our programmatic API surface is.
 urlpatterns += patterns(
-    'opentransit.views.api',
+    'citygoround.views.api',
     url(r'^api/agencies/search/$', 'api_agencies_search', name = 'api_agencies_search'),    
     url(r'^api/agencies/all/$', 'api_agencies_all', name = 'api_agencies_all'),
     url(r'^api/apps/search/$', 'api_apps_search', name = 'api_apps_search'),
@@ -101,7 +101,7 @@ urlpatterns += patterns(
     
 # Task Queue Views -- All URLs that service task queue items
 urlpatterns += patterns(
-    'opentransit.views.taskqueue',
+    'citygoround.views.taskqueue',
     url(r'^admin/taskqueue/screen-shot-resize/', 'taskqueue_screen_shot_resize', name = 'taskqueue_screen_shot_resize'),
 )
     

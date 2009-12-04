@@ -63,7 +63,7 @@ django.core.signals.got_request_exception.disconnect(django.db._rollback_on_exce
 
 def main():
     application = django.core.handlers.wsgi.WSGIHandler()
-    template_registrar.register_template_library('opentransit.tags')    
+    template_registrar.register_template_library('citygoround.tags')    
     util.run_wsgi_app(application)
 
 if __name__ == "__main__":

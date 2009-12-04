@@ -9,8 +9,8 @@ bootstrap_django()
 from django import forms
 
 from google.appengine.ext import db
-from opentransit.models import Agency
-from opentransit.formfields import AgencyListField
+from citygoround.models import Agency
+from citygoround.formfields import AgencyListField
 
 class TestAgencyListField(unittest.TestCase):
     def setUp(self):

@@ -65,7 +65,6 @@ def gallery(request):
                 main_list.append(a)
                 
     template_vars = {
-        'transit_app_count': TransitAppStats.get_transit_app_count(),
         'main_app_list': main_list,
         'bike_app_list': bike_list,
         'featured_apps': featured_list, 

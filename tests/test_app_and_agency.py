@@ -2,9 +2,9 @@ import unittest
 import logging
 from copy import copy
 from google.appengine.ext import db
-from opentransit.models import Agency, TransitApp
-from opentransit.utils.slug import slugify
-from opentransit.utils.places import CityInfo, CitiesAndCountries, CountryInfo
+from citygoround.models import Agency, TransitApp
+from citygoround.utils.slug import slugify
+from citygoround.utils.places import CityInfo, CitiesAndCountries, CountryInfo
 from datetime import datetime
 
 class TestAppAndAgency(unittest.TestCase):

@@ -8,13 +8,13 @@ S3_URL_ROOT = "http://files.citygoround.org.s3.amazonaws.com"
 
 APPEND_SLASH = True
 
-INSTALLED_APPS = ['opentransit', 'gaeunit']
+INSTALLED_APPS = ['citygoround', 'gaeunit']
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
-    'opentransit.middleware.SiteWideUsernameAndPasswordMiddleware',
-    'opentransit.middleware.AppEngineSecureSessionMiddleware',
+    'citygoround.middleware.SiteWideUsernameAndPasswordMiddleware',
+    'citygoround.middleware.AppEngineSecureSessionMiddleware',
 ]
 
 DEBUG_SESSIONS = False # Set to True to get log lines about the contents of the session object
@@ -27,18 +27,18 @@ SITE_WIDE_USERNAME_AND_PASSWORD_URL_EXCEPTIONS = [ r'^/admin/taskqueue/.*$' ]
 # if you want support for users in this application
 # (I wrote these classes myself for another project)
 #
-# 'opentransit.middleware.AppEngineGenericUserMiddleware',
+# 'citygoround.middleware.AppEngineGenericUserMiddleware',
 
 
 ROOT_URLCONF = 'urls'
 
-TEMPLATE_CONTEXT_PROCESSORS = ['opentransit.context.api_keys'] 
+TEMPLATE_CONTEXT_PROCESSORS = ['citygoround.context.api_keys'] 
 
 # NOTE davepeck:
 #
 # (also add the following context processor if you want user support)
 #
-# 'opentransit.context.appengine_user'
+# 'citygoround.context.appengine_user'
 
 TEMPLATE_DEBUG = DEBUG
 
@@ -60,7 +60,7 @@ MEMCACHE_SCREENSHOT_SECONDS = MEMCACHE_DEFAULT_SECONDS
 MEMCACHE_SCREENSHOT_MAX_SIZE = 65536 # empirically, 64kb is a good max size for caching screen shots. This covers all the gallery page and home page screen shots.
 
 DEFAULT_TRANSIT_APP_IMAGE_URL = "/images/default-transit-app.png"
-DEFAULT_TRANSIT_APP_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'opentransit/images/'))
+DEFAULT_TRANSIT_APP_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), 'citygoround/images/'))
 DEFAULT_TRANSIT_APP_BASE = DEFAULT_TRANSIT_APP_PATH + "/default-transit-app"
 DEFAULT_TRANSIT_APP_EXTENSION = "png"
 

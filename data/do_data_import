@@ -1,5 +1,5 @@
 #!/bin/sh
 
-export PYTHONPATH=.:./opentransit
+export PYTHONPATH=.:./citygoround
 export DJANGO_SETTINGS_MODULE=settings
 appcfg.py upload_data . --filename=./data/agencies.csv --kind=Agency --config_file=./data/agency_loader.py --url=http://localhost:8080/remote_api --has_header
