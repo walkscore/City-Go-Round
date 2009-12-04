@@ -4,11 +4,11 @@ bootstrap_django()
 import datetime
 from google.appengine.ext import db
 from google.appengine.tools import bulkloader
-from opentransit.models import Agency
+from citygoround.models import Agency
 
 #note - you will need to modify your $PYTHONPATH 
-# to include both opentransit and opentransit/opentransit:
-# $ export PYTHONPATH=/path/to/citygoround:path/to/citygoround/opentransit
+# to include both (root of source tree) and (root)/citygoround:
+# $ export PYTHONPATH=/path/to/source:path/to/source/citygoround
 # $ /home/brandon/downloads/google_appengine/appcfg.py upload_data . --filename=./data/agencies.csv --kind=Agency --config_file=./data/agency_loader.py --url=http://localhost:8080/remote_api --has_header
 
 def smart_utf8(x):

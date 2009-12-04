@@ -7,7 +7,7 @@ bootstrap_django()
 
 from django import forms
 
-from opentransit.formfields import LocationListField
+from citygoround.formfields import LocationListField
 
 
 class TestLocationListField(unittest.TestCase):
