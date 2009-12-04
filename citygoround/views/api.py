@@ -109,8 +109,11 @@ def api_apps_search(request):
     if len(country_code) != 2:
         return bad_request('country parameter must be two characters')
     
-    # Query and render JSON!
-    return render_to_json([transit_app.to_jsonable() for transit_app in TransitApp.iter_for_location_and_country_code(latitude, longitude, country_code)])
+    # Query, sort by rating, and render JSON!
+    transit_apps = list(TransitApp.iter_for_location_and_country_code(latitude, longitude, country_code))
+    transit_apps.sort(key=lambda x:x.bayesian_average,reverse=True)
+    
+    return render_to_json([transit_app.to_jsonable() for transit_app in transit_apps])
 
 @requires_GET
 @memcache_parameterized_view_response(time = settings.MEMCACHE_API_SECONDS)
