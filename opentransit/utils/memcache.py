@@ -1,6 +1,7 @@
+import logging
 from google.appengine.api import memcache
 
-def key_for_view_function(view_function):    
+def key_for_view_function(view_function):   
     return "view_function-%s.%s" % (str(view_function.__module__), str(view_function.__name__))
 
 def key_for_request(request):
