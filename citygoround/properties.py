@@ -8,8 +8,8 @@ class DecimalProperty(db.Property):
         return str(super(DecimalProperty, self).get_value_for_datastore(model_instance))
 
     def make_value_from_datastore(self, value):
-        if (value is None) or (value == u'None'):
-            # HACK HACK to deal cleanly with out-of-date transit apps.
+        if (value is None) or (value == str(None)):
+            # Deal cleanly with out-of-date transit apps.
             return None
         else:
             return Decimal(value)
