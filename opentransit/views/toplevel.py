@@ -179,7 +179,7 @@ def admin_apps_csv(request):
     writer = csv.writer(string_io)
     writer.writerow(["APP NAME", "APP AUTHOR", "AUTHOR EMAIL", "APP HOMEPAGE", "APP DESCRIPTION"])
     for transit_app in TransitApp.all():
-        writer.writerow([transit_app.title, transit_app.author_name, transit_app.author_email, transit_app.url, transit_app.description])
+        writer.writerow([transit_app.title.encode('utf8'), transit_app.author_name.encode('utf8'), str(transit_app.author_email).encode('utf8'), str(transit_app.url).encode('utf8'), transit_app.description.encode('utf8')])
     csv_output = string_io.getvalue()
     string_io.close()
     return render_csv(csv_output)
