@@ -1,3 +1,6 @@
+from bootstrap import bootstrap_django
+bootstrap_django()
+
 import datetime
 from google.appengine.ext import db
 from google.appengine.tools import bulkloader
