@@ -119,13 +119,12 @@ jQuery(document).ready(function($)
             var public_data_count = 0; //XXX TODO DAVEPECK
             
             var subhead_html = '<em>' + all_apps.length + '</em> apps found near {{location_query}}. &nbsp <a href="{% url apps_add_form %}">Add a new app</a>';
-
-            $("#transit_app_loading").fadeOut(0.0, function(){});
-            $("#num_apps_found").hide().html(subhead_html).fadeIn(1000.0, function(){});
-            $("#transit_apps").hide().html(html_for_multiple_apps(transit_apps)).fadeIn(1000.0, function(){});
-            $("#biking_apps").hide().html(html_for_multiple_apps(biking_apps)).fadeIn(1000.0, function(){});
-            $("#walking_apps").hide().html(html_for_multiple_apps(walking_apps)).fadeIn(1000.0, function(){});
-            $("#driving_apps").hide().html(html_for_multiple_apps(driving_apps)).fadeIn(1000.0, function(){});
+            $(".hide-on-load").hide();
+            $("#num_apps_found").hide().html(subhead_html).fadeIn(1000, function(){});
+            $("#transit_apps").hide().html(html_for_multiple_apps(transit_apps)).fadeIn(1000);
+            $("#biking_apps").hide().html(html_for_multiple_apps(biking_apps)).fadeIn(1000);
+            $("#walking_apps").hide().html(html_for_multiple_apps(walking_apps)).fadeIn(1000);
+            $("#driving_apps").hide().html(html_for_multiple_apps(driving_apps)).fadeIn(1000);
         });
         
 
@@ -151,14 +150,17 @@ jQuery(document).ready(function($)
             
             
             
+            
             if(closed_agencies_html.length > 0) {
-                $("#nearby_agencies_summary").html(closed_agencies_html.length + " nearby transit agencies do not provide open data.").fadeIn(1000.0, function(){});
-                $("#nearby_agencies_header").fadeIn(1000.0, function(){});
-            } else if(agencies.length==0) {
-                //$("#no_agencies").html("No nearby transit agencies").fadeIn(1000.0, function(){});
-            }
-            $("#fill_nearby_no_public").hide().html( closed_agencies_html ).fadeIn(1000.0, function(){});
-            $("#fill_nearby_public").hide().html( open_agencies_html ).fadeIn(1000.0, function(){});
+                $("#nearby_agencies_summary").html(closed_agencies_html.length + " nearby transit agencies do not provide open data.").fadeIn(1000);
+                $("#nearby_agencies_header").fadeIn(1000);
+                $("#fill_nearby_no_public").hide().html( closed_agencies_html ).fadeIn(1000);
+            } 
+            if(open_agencies_html.length > 0) {
+                $("#fill_nearby_public").html( open_agencies_html );
+                $("#nearby-with-data").fadeIn(1000);
+            } 
+            
         });
     }
     
@@ -196,10 +198,8 @@ jQuery(document).ready(function($)
 
 {% block content %}
 <div class="col-group body-content">    
+    <p class="hide-on-load"><img src="{% static_url /images/ajax-loader.gif %}" /> LOADING...</span></p>
     <h2 class="bluegreen" id="num_apps_found"></h2>
-    <div class="agency-text-list" id="fill_nearby_public"><span class="loading">LOADING...</span></div>
-    <h3 id="transit_app_loading"><img src="{% static_url /images/ajax-loader.gif %}" />LOADING...</h3>
-    
     <div class="body-content col-group">
         <h3>Public transit apps near {{location_query}}:</h3>
         <div id="transit_apps" class="app-gallery"></div>
@@ -218,21 +218,24 @@ jQuery(document).ready(function($)
     </div>
 </div>
 <div class="wide-col rightmost">
-    <div id="no_agencies"></div>
     <div id="petition" class="body-content thinline">
         <div class="boxed-content"> 
             
-            <h3 id="nearby_agencies_summary"></h3>
-            <div class="agency-text-list" id="fill_nearby_no_public"><span class="loading">LOADING...</span></div>
-
+            <h5 id="nearby_agencies_summary"></h5>
+            
             <h2>SUPPORT OPEN DATA<br />in {{location_query}}</h2>
                 {% include "includes/petition-text.html" %} 
                 {% include "includes/petition-disclaimer.html" %}               
                 {% include "includes/petition-form.html" %}
             <br class="clear-all" />
             <h4 id="nearby_agencies_header">Agencies without open data</h4>
-            <div class="agency-text-list" id="fill_nearby_no_public"><span class="loading">LOADING...</span></div>
+            <div class="agency-text-list" id="fill_nearby_no_public"></div>
         </div>
+    </div>
+    <div id="nearby-with-data" class="boxless-feature">
+        <h4 class="bluegreen">Thank You!</h4>
+        <p>To the X nearby agencies who do provide public data:</p>
+        <div class="agency-text-list" id="fill_nearby_public"></div>
     </div>
 
 
