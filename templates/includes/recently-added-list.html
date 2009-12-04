@@ -1,19 +1,8 @@
 <ul class="agency-list">
-<li class="even">
-
-    <h5 class="agency_title"><a href="agencies/us/ca/weaverville/trinity-transit">Trinity Transit</a></h5>
-      <span>added: Dec. 2, 2009</span></p>
+  {% for open_agency in open_agencies|slice:":3" %}
+  <li>
+    <h5 class="agency_title"><a href="agencies/{{open_agency.urlslug}}">{{open_agency.name}}</a></h5>
+      <span>added: {{open_agency.date_opened|date}}</span></p>
   </li>
-  
-  <li class="odd">
-
-    <h5 class="agency_title"><a href="agencies/us/or/hood-river/columbia-area-transit">Columbia Area Transit</a></h5>
-      <span>added: Dec. 2, 2009</span></p>
-
-  </li>
-  
-  <li class="even">
-    <h5 class="agency_title"><a href="agencies/ca/bc/vancouver/translink">TransLink</a></h5>
-      <span>added: Nov. 29, 2009</span></p>
-  </li>
+  {% endfor %}
 </ul>

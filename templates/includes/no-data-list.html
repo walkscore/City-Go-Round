@@ -1,25 +1,8 @@
 <ol class="agency-list">
-
-    <li class="even">
-    <h5 class="agency_title"><a href="agencies/us/ny/new-york/mta-new-york-city-transit">MTA New York City Transit</a></h5>
-      <span>Mr. Jay H. Walder</span></p>
-  </li>
-  
-  <li class="odd">
-    <h5 class="agency_title"><a href="agencies/us/nj/newark/new-jersey-transit-corporation">New Jersey Transit Corporation</a></h5>
-
-      <span>Mr. Richard Sarles (Executive Director)</span></p>
-  </li>
-  
-  <li class="even">
-    <h5 class="agency_title"><a href="agencies/us/ny/new-york/metro-north-commuter-railroad-company-dba-mta-metro-north-railroad">Metro-North Commuter Railroad Company, dba: MTA Metro-North Railroad</a></h5>
-      <span>Mr. Howard Permut (President)</span></p>
-  </li>
-  
-  <li class="odd">
-
-    <h5 class="agency_title"><a href="agencies/us/il/chicago/chicago-transit-authority">Chicago Transit Authority</a></h5>
-      <span>Mr. Richard Rodriguez (President)</span></p>
-  </li>
-
+    {% for closed_agency in closed_agencies|slice:":10" %}
+    <li class="{% cycle 'even' 'odd' %}">
+        <h5 class="agency_title"><a href="agencies/{{closed_agency.urlslug}}">{{closed_agency.name}}</a></h5>
+        <span>{{closed_agency.executive}}</span></p>
+    </li>
+    {% endfor %}
 </ol>

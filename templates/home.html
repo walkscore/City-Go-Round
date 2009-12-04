@@ -8,7 +8,7 @@
 $(document).ready(function() { 
  
     // select #flowplanes and make it scrollable. use circular and navigator plugins 
-    $("#flowpanes").scrollable({size: 1, clickable:false}).circular().mousewheel(400).navigator({ 
+    $("#flowpanes").scrollable({size: 1, clickable:false}).circular().navigator({ 
  
         // select #flowtabs to be used as navigator 
         navi: "#jumplinks", 
@@ -49,7 +49,7 @@ $(document).ready(function() {
 	<div id="features">
     {% include "includes/featured-apps.html" %}			
 	</div>
-	<div class="col-group data-lists thinline">
+	<div class="col-group data-lists body-content thinline">
 		<div class="boxed-content">
             <div id="no-data-list">
     			<h2><a href="{% url opentransit.views.agency.agencies %}us/?public=no_public">Transit agencies with no open data</a></h2>
