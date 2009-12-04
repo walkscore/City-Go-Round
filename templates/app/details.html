@@ -162,9 +162,16 @@
                 <label>All Tags:</label> <p>{{ transit_app.tag_list_as_string }}</p>
             </div>
         {% endif %}
-        {% if locations %}
+        {% if locations or transit_app.explicitly_supports_the_entire_world %}
             <div class="condensed-list">
-                <label>Areas Supported:</label> <ul>{% for i in locations %}<li>{{ i }}</li>{% endfor %}</ul>
+                <label>Areas Supported:</label> 
+                <ul>
+                    {% if transit_app.explicitly_supports_the_entire_world %}
+                        <li>Global</li>
+                    {% else %}                    
+                        {% for i in locations %}<li>{{ i }}</li>{% endfor %}
+                    {% endif %}
+                </ul>
             </div>
         {% endif %}
         {% if explicit_agencies or supports_public_agencies %}
