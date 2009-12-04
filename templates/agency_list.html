@@ -75,7 +75,7 @@ $(document).ready(function() {
 <select id="country_filter" name="country_filter" onchange="update_country()">
    <option value="/agencies/">All Countries
   {% for country in countries %}
-   <option value="/agencies/{{country}}"{% ifequal location.country country %} selected {% endifequal %}>{{country|upper}}
+   <option value="/agencies/{{country}}"{% ifequal location.country country %}{% ifequal location.state None %} selected {% endifequal %}{% endifequal %}>{{country|upper}}
   {% endfor %}
 </select>
 
