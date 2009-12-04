@@ -632,7 +632,7 @@ border: 1px solid #999;
 /*********** APP GALLERY ****************/
 	
 	.app-gallery .app { 
-		padding-bottom: 15px;
+		padding: 4px 0 4px 0;
 		min-height: 80px;
 		width: 260px;
 		float: left;
@@ -947,6 +947,9 @@ border: 1px solid #999;
 		color: #316b84;
 		margin-bottom: 10px;
 	}
+	#nearby_agencies_header {
+	   color: #f72e2e;
+    }
     #nearby_agencies_summary, #nearby_agencies_header, #no_agencies, #nearby_with_data, #test { display: none; }
     
 	
