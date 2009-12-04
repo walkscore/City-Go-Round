@@ -2,7 +2,7 @@
     {% for closed_agency in closed_agencies|slice:":10" %}
     <li class="{% cycle 'even' 'odd' %}">
         <h5 class="agency_title"><a href="agencies/{{closed_agency.urlslug}}">{{closed_agency.name}}</a></h5>
-        <span>{{closed_agency.executive}}</span></p>
+        <span>{{closed_agency.executive}}</span>
     </li>
     {% endfor %}
 </ol>
