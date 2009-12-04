@@ -418,6 +418,9 @@ border: 1px solid #999;
 
 /*********** PETITION FORM ****************/
 
+    #petition {
+		overflow: hidden;
+    }
 	.body-content blockquote {
 		margin: 8px 15px 0 0;
 		padding-bottom: 10px;
@@ -658,13 +661,14 @@ border: 1px solid #999;
 	.app-gallery .app label { 
 		font-size: 11px;
 		line-height: 11px;
-		color: #777;
+		color: #778;
 		display: block;
 		padding-bottom: 3px;
 	}	
-	.app-gallery .app p span { 
+	.app-gallery .app span { 
 		font-size: 11px;
-		color: #777;
+		font-style: italic;
+		color: #779;
 		margin: 0;
 		padding: 0;
 	}	
