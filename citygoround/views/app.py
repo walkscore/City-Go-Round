@@ -69,7 +69,7 @@ def gallery(request):
         'bike_app_list': bike_list,
         'featured_apps': featured_list, 
         'recently_added_apps': recent_list, 
-        'transit_app_count': TransitApp.count_apps_in_category("Public Transit"),
+        'transit_app_count': TransitApp.all().count(),
         'public_feed_count': Agency.all().filter("date_opened != ", None).count(),
     }
         
