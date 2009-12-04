@@ -947,7 +947,7 @@ border: 1px solid #999;
 		color: #316b84;
 		margin-bottom: 10px;
 	}
-    #nearby_agencies_summary, #nearby_agencies_header, #no_agencies, #nearby-with-data { visibility: hidden; }
+    #nearby_agencies_summary, #nearby_agencies_header, #no_agencies, #nearby_with_data, #test { display: none; }
     
 	
 /*********** APP ADD FORMS ************/
