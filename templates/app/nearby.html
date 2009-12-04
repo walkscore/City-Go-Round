@@ -191,65 +191,80 @@ jQuery(document).ready(function($)
         $.getJSON(url_for_agency_query(latitude, longitude), handle_agency_query_results);
     }
     
+    // TODO davepeck: move this to shared utils and rationalize with similar code.
+    function shorthand_for_place(place)
+    {
+        // Basic sanity check.
+        if (!place.AddressDetails.Country)
+        {
+            return null;
+        }        
+        var country_name = String(place.AddressDetails.Country.CountryName);
+        
+        // do we have any details? Or just a country?
+        if (!place.AddressDetails.Country.AdministrativeArea)
+        {
+            // in this case, the 'address' value has the best representation for what we want.
+            return place.address;
+        }
+        
+        // get our basic administrative details
+        var admin_area = String(place.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName);                    
+        
+        // try and get a detailed locality...
+        var locality = null;
+        if (place.AddressDetails.Country.AdministrativeArea.Locality)
+        {
+            var locality = String(place.AddressDetails.Country.AdministrativeArea.Locality.LocalityName);
+        }
+        else if (place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality)
+        {
+            var locality = String(place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.LocalityName);
+        }
+
+        // don't use the locality if it simply duplicates the administrative area...
+        if (locality == admin_area)
+        {
+            locality = null;
+        }
+        
+        // return whatever is most detailed
+        if (locality)
+        {
+            return [locality, admin_area, country_name].join(", ");
+        }
+        else
+        {
+            return [admin_area, country_name].join(", ");                        
+        }
+    }
+    
     function handle_google_geocode_response(response)
     {
+        // human-friendly geocode result (default in case something goes wrong)
         var query_info_html = "&#8220;{{location_query|escapejs}}&#8221;";
+        
         if (response && response.Status.code == 200)
         {
             var place = response.Placemark[0];
             var latitude = place.Point.coordinates[1];
             var longitude = place.Point.coordinates[0];
             
-            var country_code = "US"; // default in case we get a strange response
-            
-            // Generate prettier query_info_html based on where
-            // the geocode _actually_ landed -- but only do this
-            // if the geocode contains useful results.
+            // What's the country code? (default to US)
+            var country_code = "US"; 
             if (place.AddressDetails.Country)
             {
-                country_code = String(place.AddressDetails.Country.CountryNameCode);
-                var country_name = String(place.AddressDetails.Country.CountryName);
-                
-                if (place.AddressDetails.Country.AdministrativeArea)
-                {
-                    var admin_area = String(place.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName);                    
-
-                    if (place.AddressDetails.Country.AdministrativeArea.Locality)
-                    {
-                        var locality = String(place.AddressDetails.Country.AdministrativeArea.Locality.LocalityName);
-                        query_info_html = [locality, admin_area, country_name].join(", ");                        
-                    }
-                    else if (place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea)
-                    {
-                        if (place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality)
-                        {
-                            var locality = String(place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.LocalityName);
-                            if (locality == admin_area)
-                            {
-                                query_info_html = [admin_area, country_name].join(", ");
-                            }
-                            else
-                            {
-                                query_info_html = [locality, admin_area, country_name].join(", ");
-                            }
-                        }
-                        else
-                        {
-                            query_info_html = [admin_area, country_name].join(", ");                        
-                        }
-                    }
-                    else
-                    {
-                        query_info_html = [admin_area, country_name].join(", ");                        
-                    }
-                }
-                else
-                {
-                    // got no administrative area
-                    query_info_html = place.address; // in this case, CountryName is in the local language -- we just want the address, which will be the country name in the entered language.
-                }
+                country_code = String(place.AddressDetails.Country.CountryNameCode);                
             }
             
+            // What's the human-friendly description of where the geocode landed?
+            var shorthand = shorthand_for_place(place);            
+            if (shorthand)
+            {
+                query_info_html = shorthand;
+            }
+            
+            // Perform the transit app and agencies queries            
             query_for_transit_apps(latitude, longitude, country_code, query_info_html);
             query_for_agencies(latitude, longitude, country_code);
         }
