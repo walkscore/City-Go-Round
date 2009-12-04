@@ -145,7 +145,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         location['state'] = stateslug
     elif countryslug:
         location['country'] = countryslug
-    location_string = countryslug or stateslug or cityslug
+    location_string = cityslug or stateslug or countryslug
     
     #TODO: clean this up -- better form not to set new properties on defined model objects
     enhanced_list = [];

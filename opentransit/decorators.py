@@ -30,6 +30,8 @@ def memcache_view_response(*args, **kwargs):
                 if not settings.RUNNING_APP_ENGINE_LOCAL_SERVER:
                     memcache.set(memcache_key, response, time = time, namespace = namespace)
             return response
+        wrapper.__name__ = view_function.__name__
+        wrapper.__module__ = view_function.__module__
         return wrapper        
         
     # Was memcache_view_response called with no parameters? If so,
@@ -62,6 +64,8 @@ def memcache_parameterized_view_response(*args, **kwargs):
                 if not settings.RUNNING_APP_ENGINE_LOCAL_SERVER:                
                     memcache.set(memcache_key, response, time = time, namespace = namespace)
             return response
+        wrapper.__name__ = view_function.__name__
+        wrapper.__module__ = view_function.__module__
         return wrapper
         
     # Was memcache_parameterized_view_response called with no parameters? If so,
@@ -79,6 +83,8 @@ def _requires_method(view_function, method):
         if request.method != method:
             return method_not_allowed("Must be called with %s." % method)
         return view_function(request, *args, **kwargs)
+    wrapper.__name__ = view_function.__name__
+    wrapper.__module__ = view_function.__module__
     return wrapper
 
 def requires_GET(view_function):
@@ -93,6 +99,8 @@ def requires_http_basic_authentication(view_function, correct_username, correct_
         if authentication_response is not None:
             return authentication_response
         return view_function(request, *args, **kwargs)   
+    wrapper.__name__ = view_function.__name__
+    wrapper.__module__ = view_function.__module__
     return wrapper     
 
 def requires_valid_transit_app_slug(view_function):
@@ -102,6 +110,8 @@ def requires_valid_transit_app_slug(view_function):
             return view_function(request, transit_app, *args, **kwargs)
         else:
             raise Http404
+    wrapper.__name__ = view_function.__name__
+    wrapper.__module__ = view_function.__module__
     return wrapper
     
 def requires_valid_progress_uuid(view_function):
@@ -109,6 +119,8 @@ def requires_valid_progress_uuid(view_function):
         if not is_progress_uuid_valid(request, progress_uuid):
             raise Http404
         return view_function(request, progress_uuid, *args, **kwargs)
+    wrapper.__name__ = view_function.__name__
+    wrapper.__module__ = view_function.__module__
     return wrapper
     
 def requires_valid_agency_key_encoded(view_function):
@@ -120,6 +132,8 @@ def requires_valid_agency_key_encoded(view_function):
         if agency is None:
             raise Http404
         return view_function(request, agency = agency, *args, **kwargs)
+    wrapper.__name__ = view_function.__name__
+    wrapper.__module__ = view_function.__module__
     return wrapper
 
 def requires_google_admin_login(view_function):
@@ -128,4 +142,6 @@ def requires_google_admin_login(view_function):
             return HttpResponseForbidden()
         else:
             return view_function(request, *args, **kwargs)
+    wrapper.__name__ = view_function.__name__
+    wrapper.__module__ = view_function.__module__
     return wrapper

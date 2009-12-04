@@ -3,7 +3,8 @@
 		<h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
 		<label>By {{transit_app.author_name}}</label>
 		<div class="rating"><div style="width:{{transit_app.average_rating_out_of_80}}px;"></div><p>({{transit_app.rating_count}} ratings)</p></div>
-		<p>{% if transit_app.is_featured %}<img class="featured" src="{% static_url /images/editors-choice3.gif %}" />{% endif %}{{transit_app.description}}&nbsp; <span>Platforms: {% for i in transit_app.platforms %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}</span></p>
+		<p>{% if transit_app.is_featured %}<img class="featured" src="{% static_url /images/editors-choice3.gif %}" />{% endif %}{{transit_app.description}}&nbsp; <span>Platforms: {% for i in transit_app.platforms %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}</span>
+ {% if_user_is_google_admin %}<label>(admin)sort value:{{transit_app.bayesian_average}}</label>{% end_if_user_is_google_admin %}</p>
 	</div>
 	{% cycle '' '<br class="clear-all" />' %}
 {% endfor %}

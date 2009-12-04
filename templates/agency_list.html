@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{location}} transit agencies on City-Go-Round{% endblock %}
+{% block title %}{{location_string|upper}} transit agencies on City-Go-Round{% endblock %}
 
 {% block headscripts %}
 <script type="text/javascript" src="{% static_or_s3_url /js/jquery.tablesorter.min.js %}"></script>
@@ -54,7 +54,7 @@ $(document).ready(function() {
 </h2>
 </div>
 <p class="italic">
-    Transit agencies in {% if not location.country %}all countries{% endif %}{% ifequal location_string "us" %}the {%endifequal %}{{location_string|upper}}: <b>{{agency_count}}</b>. 
+    Transit agencies in {% ifequal location_string "" %}all countries{% endifequal %}{% ifequal location_string "us" %}the {%endifequal %}{{location_string|upper}}: <b>{{agency_count}}</b>. 
     With open data: <span class="green"> <b>{{public_count}}</b></span>.
     Without open data: <span class="red"> <b>{{no_public_count}}</b></span>.
 </p>
