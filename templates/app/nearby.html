@@ -152,13 +152,8 @@ jQuery(document).ready(function($)
             
             
             if(closed_agencies_html.length > 0) {
-                $("#nearby_agencies_summary").html(closed_agencies_html.length + " nearby transit agencies do not provide open data.").fadeIn(1000);
-                $("#nearby_agencies_header").fadeIn(1000);
+                $("#nearby_agencies_header").html(closed_agencies_html.length + " nearby agencies have no open data:").fadeIn(1000);
                 $("#fill_nearby_no_public").hide().html( closed_agencies_html ).fadeIn(1000);
-            } 
-            if(open_agencies_html.length > 0) {
-                $("#fill_nearby_public").html( open_agencies_html );
-                $("#nearby-with-data").fadeIn(1000);
             } 
             
         });
@@ -221,21 +216,14 @@ jQuery(document).ready(function($)
     <div id="petition" class="body-content thinline">
         <div class="boxed-content"> 
             
-            <h5 id="nearby_agencies_summary"></h5>
-            
             <h2>SUPPORT OPEN DATA<br />in {{location_query}}</h2>
                 {% include "includes/petition-text.html" %} 
                 {% include "includes/petition-disclaimer.html" %}               
                 {% include "includes/petition-form.html" %}
             <br class="clear-all" />
-            <h4 id="nearby_agencies_header">Agencies without open data</h4>
+            <h5 id="nearby_agencies_header"></h5>
             <div class="agency-text-list" id="fill_nearby_no_public"></div>
         </div>
-    </div>
-    <div id="nearby-with-data" class="boxless-feature">
-        <h4 class="bluegreen">Thank You!</h4>
-        <p>To the X nearby agencies who do provide public data:</p>
-        <div class="agency-text-list" id="fill_nearby_public"></div>
     </div>
 
 
