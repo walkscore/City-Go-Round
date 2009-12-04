@@ -224,7 +224,14 @@ jQuery(document).ready(function($)
                         if (place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality)
                         {
                             var locality = String(place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.LocalityName);
-                            query_info_html = [locality, admin_area, country_name].join(", ");                        
+                            if (locality == admin_area)
+                            {
+                                query_info_html = [admin_area, country_name].join(", ");
+                            }
+                            else
+                            {
+                                query_info_html = [locality, admin_area, country_name].join(", ");
+                            }
                         }
                         else
                         {
