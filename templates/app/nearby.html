@@ -128,15 +128,30 @@ jQuery(document).ready(function($)
             }
         });
         
-        var public_data_count = 0; //XXX TODO DAVEPECK
-        
-        var subhead_html = '<em>' + all_apps.length + '</em> apps found near {{location_query}}. &nbsp <a href="{% url apps_add_form %}">Add a new app</a>';
         $(".hide-on-load").hide();
-        $("#num_apps_found").hide().html(subhead_html).fadeIn(1000, function(){});
-        $("#transit_apps").hide().html(html_for_multiple_apps(transit_apps)).fadeIn(1000);
-        $("#biking_apps").hide().html(html_for_multiple_apps(biking_apps)).fadeIn(1000);
-        $("#walking_apps").hide().html(html_for_multiple_apps(walking_apps)).fadeIn(1000);
-        $("#driving_apps").hide().html(html_for_multiple_apps(driving_apps)).fadeIn(1000);        
+        if (all_apps.length == 0)
+        {
+            var subhead_html = '<em>No</em> apps were';
+        }
+        else if (all_apps.length == 1)
+        {
+            var subhead_html = '<em>1</em> app was';
+        }
+        else
+        {
+            var subhead_html = '<em>' + all_apps.length + '</em> apps were';
+        }        
+        subhead_html += ' found near {{location_query|escapejs}}. &nbsp <a href="{% url apps_add_form %}">Add a new app</a>';        
+        $("#num_apps_found").html(subhead_html).fadeIn(1000, function(){});
+        
+        if (all_apps.length > 0)
+        {
+            $("#transit_apps").html(html_for_multiple_apps(transit_apps)).fadeIn(1000);
+            $("#biking_apps").html(html_for_multiple_apps(biking_apps)).fadeIn(1000);
+            $("#walking_apps").html(html_for_multiple_apps(walking_apps)).fadeIn(1000);
+            $("#driving_apps").html(html_for_multiple_apps(driving_apps)).fadeIn(1000);        
+            $(".hidden").removeClass("hidden");
+        }
     }
     
     function query_for_transit_apps(latitude, longitude, country_code)
@@ -214,19 +229,19 @@ jQuery(document).ready(function($)
 <div class="col-group body-content">    
     <p class="hide-on-load"><img src="{% static_url /images/ajax-loader.gif %}" /> LOADING...</span></p>
     <h2 class="bluegreen" id="num_apps_found"></h2>
-    <div class="body-content col-group">
+    <div class="body-content col-group hidden">
         <h3>Public transit apps near {{location_query}}:</h3>
         <div id="transit_apps" class="app-gallery"></div>
     </div>
-    <div class="body-content col-group">
+    <div class="body-content col-group hidden">
         <h3>Biking Apps Near {{location_query}}:</h3>
         <div id="biking_apps" class="app-gallery"></div>
     </div>
-    <div class="body-content col-group">
+    <div class="body-content col-group hidden">
         <h3>Walking Apps Near {{location_query}}:</h3>
         <div id="walking_apps" class="app-gallery"></div>
     </div>
-    <div class="body-content col-group">
+    <div class="body-content col-group hidden">
         <h3>Driving Apps Near {{location_query}}:</h3>
         <div id="driving_apps" class="app-gallery"></div>
     </div>
