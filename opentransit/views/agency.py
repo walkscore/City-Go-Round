@@ -138,13 +138,14 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
 
     public_filter = request.GET.get('public','all')
     public_count = no_public_count = 0
-    location = ''    
+    location = {'country':None,'state':None,'city':None}
     if cityslug:
-        location = cityslug
+        location['city'] = cityslug
     elif stateslug:
-        location = stateslug 
+        location['state'] = stateslug
     elif countryslug:
-        location = countryslug
+        location['country'] = countryslug
+    location_string = countryslug or stateslug or cityslug
     
     #TODO: clean this up -- better form not to set new properties on defined model objects
     enhanced_list = [];
@@ -163,6 +164,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
     template_vars = {
         'agencies': agency_list,
         'location' : location,
+        'location_string' : location_string,
         'public_count' : public_count,
         'public_filter' : public_filter,
         'no_public_count' : no_public_count,
