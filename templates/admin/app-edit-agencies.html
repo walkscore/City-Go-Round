@@ -3,7 +3,7 @@
 {% block title %}Edit Agencies for {{transit_app.title}}{% endblock %}
 
 {% block headscripts %}
-<script type="text/javascript" src="{% static_or_s3_url /js/jquery.tablesorter.min.js %}"></script>
+<script type="text/javascript" src="{% static_url /js/jquery.tablesorter.min.js %}"></script>
 <script type="text/javascript" src="{% static_url /js/app-form-agencies.js %}"></script>
 <script type="text/javascript">
     jQuery(document).ready(function($)
