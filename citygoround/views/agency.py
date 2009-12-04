@@ -141,9 +141,9 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
     location = {'country':None,'state':None,'city':None}
     if cityslug:
         location['city'] = cityslug
-    elif stateslug:
+    if stateslug:
         location['state'] = stateslug
-    elif countryslug:
+    if countryslug:
         location['country'] = countryslug
     location_string = cityslug or stateslug or countryslug
     
