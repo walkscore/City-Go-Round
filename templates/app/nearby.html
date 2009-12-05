@@ -99,7 +99,7 @@ jQuery(document).ready(function($)
         return false;
     }
     
-    function handle_transit_app_query_results(all_apps)
+    function handle_transit_app_query_results(all_apps, query_info_html)
     {
         var transit_apps = [];
         var biking_apps = [];
@@ -128,6 +128,8 @@ jQuery(document).ready(function($)
         });
         
         $(".hide-on-load").hide();
+        $(".clean_query_text").html(query_info_html);
+        
         if (all_apps.length == 0)
         {
             var subhead_html = '<em>No</em> apps';
@@ -140,7 +142,7 @@ jQuery(document).ready(function($)
         {
             var subhead_html = '<em>' + all_apps.length + '</em> apps';
         }        
-        subhead_html += ' found near {{location_query|escapejs}}. &nbsp <a href="{% url apps_add_form %}">Add a new app</a>';        
+        subhead_html += ' found near ' + query_info_html + '. &nbsp <a href="{% url apps_add_form %}">Add a new app</a>';        
         $("#num_apps_found").html(subhead_html).fadeIn(1000, function(){});
         
         if (all_apps.length > 0)
@@ -153,9 +155,9 @@ jQuery(document).ready(function($)
         }
     }
     
-    function query_for_transit_apps(latitude, longitude, country_code)
+    function query_for_transit_apps(latitude, longitude, country_code, query_info_html)
     {
-        $.getJSON(url_for_transit_app_query(latitude, longitude, country_code), handle_transit_app_query_results);
+        $.getJSON(url_for_transit_app_query(latitude, longitude, country_code), function(all_apps){ handle_transit_app_query_results(all_apps, query_info_html); });
     }
     
     function handle_agency_query_results(agencies)
@@ -209,21 +211,87 @@ jQuery(document).ready(function($)
         $.getJSON(url_for_agency_query(latitude, longitude), handle_agency_query_results);
     }
     
+    // TODO davepeck: move this to shared utils and rationalize with similar code.
+    function shorthand_for_place(place)
+    {
+        // Basic sanity check.
+        if (!place.AddressDetails.Country)
+        {
+            return null;
+        }        
+        var country_name = String(place.AddressDetails.Country.CountryName);
+        
+        // do we have any details? Or just a country?
+        if (!place.AddressDetails.Country.AdministrativeArea)
+        {
+            // in this case, the 'address' value has the best representation for what we want.
+            return place.address;
+        }
+        
+        // get our basic administrative details
+        var admin_area = String(place.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName);                    
+        
+        // try and get a detailed locality...
+        var locality = null;
+        if (place.AddressDetails.Country.AdministrativeArea.Locality)
+        {
+            var locality = String(place.AddressDetails.Country.AdministrativeArea.Locality.LocalityName);
+        }
+        else if (place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality)
+        {
+            var locality = String(place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.LocalityName);
+        }
+
+        // don't use the locality if it simply duplicates the administrative area...
+        if (locality == admin_area)
+        {
+            locality = null;
+        }
+        
+        // return whatever is most detailed
+        if (locality)
+        {
+            return [locality, admin_area, country_name].join(", ");
+        }
+        else
+        {
+            return [admin_area, country_name].join(", ");                        
+        }
+    }
+    
     function handle_google_geocode_response(response)
     {
+        // human-friendly geocode result (default in case something goes wrong)
+        var query_info_html = "&#8220;{{location_query|force_escape|escapejs}}&#8221;";
+        
         if (response && response.Status.code == 200)
         {
             var place = response.Placemark[0];
             var latitude = place.Point.coordinates[1];
             var longitude = place.Point.coordinates[0];
-            var country_code = String(place.AddressDetails.Country.CountryNameCode);            
-            query_for_transit_apps(latitude, longitude, country_code);
+            
+            // What's the country code? (default to US)
+            var country_code = "US"; 
+            if (place.AddressDetails.Country)
+            {
+                country_code = String(place.AddressDetails.Country.CountryNameCode);                
+            }
+            
+            // What's the human-friendly description of where the geocode landed?
+            var shorthand = shorthand_for_place(place);            
+            if (shorthand)
+            {
+                query_info_html = shorthand;
+            }
+            
+            // Perform the transit app and agencies queries            
+            query_for_transit_apps(latitude, longitude, country_code, query_info_html);
             query_for_agencies(latitude, longitude, country_code);
         }
         else
         {
             // pretend like we got no results
-            handle_transit_app_query_results([]);
+            handle_transit_app_query_results([], query_info_html);
             handle_agency_query_results([]);
         }
     }
@@ -242,28 +310,28 @@ jQuery(document).ready(function($)
 </script>
 {% endblock %}
 
-{% block location_query %}{{location_query}}{% endblock %}
+{% block location_query %}{{location_query|escape}}{% endblock %}
 
 {% block content %}
 <div class="col-group body-content">    
-    <p class="hide-on-load"><img src="{% static_url /images/ajax-loader.gif %}" /> LOADING...</p>
+    <h2 class="hide-on-load bluegreen"><img src="{% static_url /images/ajax-loader-bluegreen.gif %}" width="16" height="16" />&nbsp;searching...</h2>
     <h2 class="bluegreen" id="num_apps_found"></h2>
     <h5 class="dark-red" id="nearby-agency-summary">&nbsp;</h5>
     <div id="nearby-agency-details"></div>
     <div class="body-content col-group hidden">
-        <h3>Public transit apps near {{location_query}}:</h3>
+        <h3>Public transit apps near <span class="clean_query_text">&nbsp;</span>:</h3>
         <div id="transit_apps" class="app-gallery"></div>
     </div>
     <div class="body-content col-group hidden">
-        <h3>Biking Apps Near {{location_query}}:</h3>
+        <h3>Biking Apps Near <span class="clean_query_text">&nbsp;</span>:</h3>
         <div id="biking_apps" class="app-gallery"></div>
     </div>
     <div class="body-content col-group hidden">
-        <h3>Walking Apps Near {{location_query}}:</h3>
+        <h3>Walking Apps Near <span class="clean_query_text">&nbsp;</span>:</h3>
         <div id="walking_apps" class="app-gallery"></div>
     </div>
     <div class="body-content col-group hidden">
-        <h3>Driving Apps Near {{location_query}}:</h3>
+        <h3>Driving Apps Near <span class="clean_query_text">&nbsp;</span>:</h3>
         <div id="driving_apps" class="app-gallery"></div>
     </div>
 </div>
@@ -271,7 +339,7 @@ jQuery(document).ready(function($)
     <div id="petition" class="body-content thinline">
         <div class="boxed-content"> 
             
-            <h2>SUPPORT OPEN DATA<br />in {{location_query}}</h2>
+            <h2>SUPPORT OPEN DATA<br /></h2>
                 {% include "includes/petition-text.html" %} 
                 {% include "includes/petition-disclaimer.html" %}               
                 {% include "includes/petition-form.html" %}
