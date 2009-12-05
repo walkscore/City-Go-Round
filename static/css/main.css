@@ -84,10 +84,10 @@
 	}
 	h6 {
 		font-size:12px;
-		font-weight: normal;
+		font-weight: bold;
 		line-height:12px; 
-		color: #777;
-		margin: 2px 0 8px 0;
+		color: #555;
+		margin: 4px 0 4px 0;
 	}
 	
 	#petition h2 { color: #028dc7; }
@@ -978,7 +978,12 @@
 	   color: #f72e2e;
     }
     #nearby_agencies_summary, #nearby_agencies_header, #no_agencies, #nearby_with_data, #test { display: none; }
-    
+    #nearby-agency-details{
+        margin-left: 14px;
+    }
+    #nearby-agency-details div {
+        margin-left: 10px;
+    }
 	
 /*********** APP ADD FORMS ************/
 	
@@ -1061,10 +1066,22 @@
 		font-weight: bold;
 		font-style: normal;
 	}
-	.bluegreen a {
+	.bluegreen a, .dark-red a {
 	font-size: 12px;
 	font-weight: normal;
 	text-decoration: underline;
+	}
+	
+	.dark-red {
+        margin-left: 2px;
+        color: #a32b20;
+    }
+	
+	.open-agency-links a {
+        color: #555;
+	}
+	.closed-agency-links a {
+        color: #a32b20; 
 	}
 	
 	

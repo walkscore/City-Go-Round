@@ -163,6 +163,7 @@ jQuery(document).ready(function($)
     function handle_agency_query_results(agencies)
     {
         var num_closed_agencies = 0;
+        var num_open_agencies = 0;
         var open_agencies_html = "";
         var closed_agencies_html = "";
     
@@ -171,6 +172,7 @@ jQuery(document).ready(function($)
             if( agency.is_public ) 
             {
                 open_agencies_html += html_for_agency( agency );
+                num_open_agencies++;
             } 
             else 
             {
@@ -178,12 +180,30 @@ jQuery(document).ready(function($)
                 num_closed_agencies++;
             }
         });
+        var total_agencies
         
-        if(closed_agencies_html.length > 0) 
-        {
-            $("#nearby_agencies_header").html(num_closed_agencies + " nearby agencies have no open data:").fadeIn(1000);
-            $("#fill_nearby_no_public").hide().html( closed_agencies_html ).fadeIn(1000);
-        }         
+        if (agencies.length > 0){
+            var agency_details = "<h6>Agencies with open data:</h6>";
+            agency_details += "<div class='open-agency-links'>" + open_agencies_html + "</div>";
+            agency_details += "<h6>Agencies with no open data:</h6>";
+            agency_details += "<div class='closed-agency-links'>" + closed_agencies_html + "</div>";
+            
+            $("#nearby-agency-details").hide().html(agency_details);
+            
+            var agency_summary = num_open_agencies + ' of ' + agencies.length + ' nearby transit agencies provide open data to app developers. &nbsp; <a class="expandable">Details</a>';            
+            $("#nearby-agency-summary").hide().html(agency_summary).fadeIn(1000);
+            $("#nearby-agency-summary").children("a").eq(0).bind("click", function(e){
+                                                                    if ( $(e.target).hasClass("expanded") ) {
+                                                                        $(e.target).removeClass("expanded");
+                                                                        $(e.target).html("Details");
+                                                                    }
+                                                                    else {
+                                                                        $(e.target).addClass("expanded");
+                                                                        $(e.target).html("Hide details");
+                                                                    }
+                                                                    $("#nearby-agency-details").toggle("blind", { direction: "vertical" }, 800);
+                                                                });
+        }    
     }
     
     function query_for_agencies(latitude, longitude, country_code)
@@ -296,6 +316,8 @@ jQuery(document).ready(function($)
 <div class="col-group body-content">    
     <h2 class="hide-on-load bluegreen"><img src="{% static_url /images/ajax-loader-bluegreen.gif %}" width="16" height="16" />&nbsp;searching...</h2>
     <h2 class="bluegreen" id="num_apps_found"></h2>
+    <h5 class="dark-red" id="nearby-agency-summary">&nbsp;</h5>
+    <div id="nearby-agency-details"></div>
     <div class="body-content col-group hidden">
         <h3>Public transit apps near <span class="clean_query_text">&nbsp;</span>:</h3>
         <div id="transit_apps" class="app-gallery"></div>
@@ -321,9 +343,6 @@ jQuery(document).ready(function($)
                 {% include "includes/petition-text.html" %} 
                 {% include "includes/petition-disclaimer.html" %}               
                 {% include "includes/petition-form.html" %}
-            <br class="clear-all" />
-            <h5 id="nearby_agencies_header"></h5>
-            <div class="agency-text-list" id="fill_nearby_no_public"></div>
         </div>
     </div>
 
