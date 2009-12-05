@@ -11,7 +11,16 @@
 <div class="body-content">
 
   <h3>ADD A NEW TRANSIT APP [Step 3 of 3]</h3>    
+  {% if agencies_selected %}
   <h2>Where else does your application work?</h2>
+  <p style="width: 500px"><strong>Note</strong>: You don't need to add locations where you have already specified a transit agency.  Also, please do not overstate the locations where your app works, or your app will be marked as spam.</p>
+  {% else %}
+  <h2>Where does your application work?</h2>
+  <p>Please specify at least one location where your application works.</p>
+  <p style="width: 500px"><strong>Note</strong>: Please do not overstate the locations where your app works, or your app will be marked as spam.</p>
+  {% endif %}
+  
+  
   <form id="locations-form" class="add-locations-form" action="" method="POST" onkeypress="return event.keyCode!=13">
     {# This will mostly spit out hidden fields, but it also spits out the global field. #}
     {{form.as_p}}    

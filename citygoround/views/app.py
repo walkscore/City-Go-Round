@@ -249,8 +249,18 @@ def add_locations(request, progress_uuid):
     else:
         form = NewAppLocationForm(initial = {"progress_uuid": progress_uuid})
     
+    # 2. Unpack the agency form to see if they selected agencies...
+    progress = TransitAppFormProgress.get_with_uuid(progress_uuid)
+    if progress and progress.agency_form_pickle:
+        agency_form = pickle.loads(progress.agency_form_pickle)
+        agencies_selected = (agency_form["gtfs_choice"] != "nothing")
+    else:
+        # this should happen in debug/local server only
+        agencies_selected = False # for test purposes
+    
     template_vars = {
         "form": form,
+        "agencies_selected": agencies_selected,
     }
     return render_to_response(request, 'app/add-locations.html', template_vars)
         
