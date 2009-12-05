@@ -142,7 +142,7 @@ jQuery(document).ready(function($)
         {
             var subhead_html = '<em>' + all_apps.length + '</em> apps';
         }        
-        subhead_html += ' found near ' + query_info_html + '. &nbsp <a href="{% url apps_add_form %}">Add a new app</a>';        
+        subhead_html += ' near ' + query_info_html + '. &nbsp <a href="{% url apps_add_form %}">Add a new app</a>';        
         $("#num_apps_found").html(subhead_html).fadeIn(1000, function(){});
         
         if (all_apps.length > 0)
@@ -182,15 +182,24 @@ jQuery(document).ready(function($)
         });
         var total_agencies
         
-        if (agencies.length > 0){
-            var agency_details = "<h6>Agencies with open data:</h6>";
-            agency_details += "<div class='open-agency-links'>" + open_agencies_html + "</div>";
-            agency_details += "<h6>Agencies with no open data:</h6>";
-            agency_details += "<div class='closed-agency-links'>" + closed_agencies_html + "</div>";
-            
+        if (agencies.length > 0) {
+            var agency_details = "";
+            if (num_open_agencies > 0) {
+                agency_details += "<h6>Agencies with open data:</h6>";
+                agency_details += "<div class='open-agency-links'>" + open_agencies_html + "</div>";
+            }
+            if (num_closed_agencies > 0) {
+                agency_details += "<h6>Agencies with no open data:</h6>";
+                agency_details += "<div class='closed-agency-links'>" + closed_agencies_html + "</div>";
+            }
             $("#nearby-agency-details").hide().html(agency_details);
             
-            var agency_summary = num_open_agencies + ' of ' + agencies.length + ' nearby transit agencies provide open data to app developers. &nbsp; <a class="expandable">Details</a>';            
+            var agency_summary = num_open_agencies + ' of ' + agencies.length;
+            agency_summary += ' nearby transit agencies provide open data to app developers. &nbsp; <a class="expandable">Details</a>';            
+            if ( num_open_agencies == agencies.length ) {
+                agency_summary = "Perfect!  " + agency_summary;
+                $("#nearby-agency-summary").removeClass("dark-red").addClass("green");
+            }
             $("#nearby-agency-summary").hide().html(agency_summary).fadeIn(1000);
             $("#nearby-agency-summary").children("a").eq(0).bind("click", function(e){
                                                                     if ( $(e.target).hasClass("expanded") ) {
@@ -251,10 +260,14 @@ jQuery(document).ready(function($)
         // return whatever is most detailed
         if (locality)
         {
+            if (country_name == "USA")
+                return [locality, admin_area].join(", ");
             return [locality, admin_area, country_name].join(", ");
         }
         else
         {
+            if (country_name == "USA")
+                return admin_area;
             return [admin_area, country_name].join(", ");                        
         }
     }

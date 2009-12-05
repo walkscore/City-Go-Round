@@ -32,15 +32,7 @@ $(document).ready(function() {
         #lede {
     		background: url({% static_url /images/feature-box-top.gif %}) 0 0 no-repeat #388ec3;
     		margin-bottom: 0;
-        }
-        .col-group {
-            width: 443px;
-        }
-        .col-group label {
-    	   font-weight: bold;
-    	   margin-top: 8px;
-    	}
-        
+        }        
     </style>
 {% endblock %}
 
@@ -49,27 +41,25 @@ $(document).ready(function() {
 	<div id="features">
     {% include "includes/featured-apps.html" %}			
 	</div>
-	<div class="col-group data-lists body-content thinline">
-		<div class="boxed-content">
-            <div id="no-data-list">
-    			<h2><a href="{% url citygoround.views.agency.agencies %}us/?public=no_public">Transit agencies with no open data</a></h2>
-                <p>{{closed_agencies.count}} agencies do not provide open data to transit app developers.</p>
-                <label>Largest agencies with no open data:</label>
-                {% include "includes/no-data-list.html" %}
-                <p>Transit agency? <a href="{% static_url /about/#0.1_agency %}">How to get off this list</a></p>
-            </div>
-		    <div id="recently-added-list">
-    		    <h2><a href="{% url citygoround.views.agency.agencies %}us/?public=public">Thank You!</a></h2>
-    		    <p>To the {{open_agencies.count}} transit agencies who provide open data.</p>
-                <label>Most recently added:</label>
-                {% include "includes/recently-added-list.html" %}      
-		    </div>
+	<div style="float: left;">
+    	<div id="no-data-list" class="data-lists body-content">
+    		<h2><a href="{% url citygoround.views.agency.agencies %}us/?public=no_public">Apps Need Open Data</a></h2>
+            <p>{{closed_agencies.count}} transit agencies do not provide open data to app developers.</p>
+            <label>Largest agencies with no open data:</label>
+            {% include "includes/no-data-list.html" %}
+            <p>Transit agency? <a href="{% static_url /about/#0.1_agency %}">How to get off this list</a></p>
+        </div>
+        <div id="recently-added-list" class="data-lists body-content">
+    	    <h2><a href="{% url citygoround.views.agency.agencies %}us/?public=public">Thank You!</a></h2>
+    	    <p>To the {{open_agencies.count}} transit agencies who provide open data.</p>
+            <label>Most recently added:</label>
+            {% include "includes/recently-added-list.html" %}      
         </div>
     </div>
     <div class="wide-col rightmost">
         <div id="petition" class="body-content thinline">
 			<div class="boxed-content">
-		    <h2>SUPPORT OPEN DATA</h2>
+		    <h2>Support Open Data</h2>
 		    {% include "includes/petition-text.html" %}
 		    {% include "includes/petition-form.html" %}
 		    {% include "includes/petition-disclaimer.html" %}
