@@ -12,6 +12,7 @@ from google.appengine.api import memcache
 
 from ..forms import NewAppGeneralInfoForm, NewAppAgencyForm, NewAppLocationForm, PetitionForm, EditAppGeneralInfoForm, EditAppLocationForm, EditAppAgencyForm, EditAppImagesForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, render_image_response, redirect_to_url, method_not_allowed, render_to_json
+from ..utils.prettyprint import pretty_print_price
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
 from ..utils.screenshot import kick_off_resizing_for_screen_shots, kick_off_resizing_for_screen_shot
 from ..utils.misc import chunk_sequence, pad_list, collapse_list
@@ -83,6 +84,7 @@ def details(request, transit_app):
         
     template_vars = {
         'transit_app': transit_app,
+        'formatted_price': pretty_print_price(transit_app.price),
         'explicit_agencies': [agency for agency in Agency.iter_explicitly_supported_for_transit_app(transit_app)],
         'supports_public_agencies': transit_app.supports_all_public_agencies,
         'current_user_rating': rating_for_js,
