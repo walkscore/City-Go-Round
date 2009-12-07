@@ -22,8 +22,8 @@ def memcache_view_response(*args, **kwargs):
     namespace = kwargs.get('namespace', None)
     
     def decorator(view_function):
-        memcache_key = key_for_view_function(view_function)
         def wrapper(request, *wrapped_args, **wrapped_kwargs):
+            memcache_key = key_for_view_function(view_function)
             response = memcache.get(memcache_key, namespace = namespace)
             if response is None:
                 response = view_function(request, *wrapped_args, **wrapped_kwargs)
