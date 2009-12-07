@@ -61,7 +61,7 @@ def kick_off_new_app_notification(transit_app):
         params = {
             "id": transit_app.key().id(),
             "title": transit_app.title,
-            "url": transit_app.url,
+            "url": transit_app.details_url,
         },
     )
     task.add(queue_name = "notify-new-app-queue")
