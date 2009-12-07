@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{transit_app.title}}{% endblock %}
+{% block title %}City-Go-Round &raquo; Details For {{transit_app.title}}{% endblock %}
 
 {% block headscripts %}
 <script src="{% static_url /js/jquery.tools.min.js %}"></script>
@@ -80,8 +80,6 @@
     </script>
 
 {% endblock %}
-
-{% block title %}City-Go-Round &raquo; Details For {{transit_app.title}}{% endblock %}
 
 {% block content %}
     
