@@ -17,9 +17,9 @@ $(document).ready(function()
     }
     updateUI();
     
-    $("#id_gtfs_choice_0").change(updateUI);
-    $("#id_gtfs_choice_1").change(updateUI);
-    $("#id_gtfs_choice_2").change(updateUI);
+    $("#id_gtfs_choice_0").click(updateUI);
+    $("#id_gtfs_choice_1").click(updateUI);
+    $("#id_gtfs_choice_2").click(updateUI);
 }); 
 
 function updateFilters()
