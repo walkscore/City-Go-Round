@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% block title %}City-Go-Round &raquo; Details For {{transit_app.title}}{% endblock %}
+
 {% block headscripts %}
 <script src="{% static_url /js/jquery.tools.min.js %}"></script>
 <link rel="stylesheet" type="text/css" href="/css/jquery.rating.css" media="screen" />
@@ -78,8 +80,6 @@
     </script>
 
 {% endblock %}
-
-{% block title %}City-Go-Round &raquo; Details For {{transit_app.title}}{% endblock %}
 
 {% block content %}
     

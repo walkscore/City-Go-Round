@@ -75,12 +75,13 @@ import cgi
 
 class TransitApp(db.Model):
     PLATFORMS = { 
-        "android": "Android", 
-        "blackberry": "Blackberry",
-        "iphone": "iPhone", 
-        "palm_webos": "Palm WebOS", 
+        "android": "Android App", 
+        "blackberry": "Blackberry App",
+        "iphone": "iPhone App", 
+        "palm_webos": "Palm WebOS App", 
         "sms": "SMS",
-        "web": "Web",
+        "web": "Website (Desktop/Laptop)",
+        "mobile_web": "Website (Mobile-Optimized)",
         "other": "Other",
     }
     
@@ -297,7 +298,9 @@ class TransitApp(db.Model):
     
     @property
     def platform_choice_list(self):
-        return [key_for_value(TransitApp.PLATFORMS, platform) for platform in self.platforms]
+        platforms = [key_for_value(TransitApp.PLATFORMS, platform) for platform in self.platforms]
+        platforms.sort()
+        return platforms
 
     supports_any_gtfs = db.BooleanProperty(default = False)
     supports_all_public_agencies = db.BooleanProperty(default = False, indexed = True)

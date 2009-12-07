@@ -88,6 +88,8 @@ def edit_agency(request, agency_id=None):
   
 @memcache_parameterized_view_response(time = settings.MEMCACHE_PAGE_SECONDS)  
 def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):        
+    # TODO davepeck: I just looked at this code -- we _really_ need to clean this stuff up
+    # and rationalize it with our API. I think this code is doing 'far too much dude'
 
     #for a single agency:
     if nameslug:
@@ -161,6 +163,12 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
                 a.hide = True
         enhanced_list.append(a)  #listify now so we dont have to do it again for count(), etc
 
+
+    if countryslug:
+        page_title = "%s transit agencies on City-Go-Round" % location_string.upper();
+    else:
+        page_title = "List of Public Transit Agencies on City-Go-Round"    
+    
     template_vars = {
         'agencies': agency_list,
         'location' : location,
@@ -173,6 +181,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         'agency_count' : len(agency_list),
         'feed_references': FeedReference.all_by_most_recent(),
         'is_current_user_admin': users.is_current_user_admin(),
+        'page_title': page_title,
     }
     
     return render_to_response( request, "agency_list.html", template_vars)
