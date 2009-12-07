@@ -1243,3 +1243,8 @@ margin-top: 20px;
 .hide-on-load
 {
 }
+
+
+/* jQuery fadeIn IE bugfixes */
+#num_apps_found, #transit_apps, #biking_apps, #walking_apps, #driving_apps, #nearby-agency-summary { background-color: #fff; }
+
