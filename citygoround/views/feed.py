@@ -92,7 +92,7 @@ def admin_feed_references(request):
     refs_with_elapsed = []
     present_moment = datetime.now()
     for ref in all_references:
-        refs_with_elapsed.append( {'ref':ref, 'ago':str(present_moment-ref.date_added)} )
+        refs_with_elapsed.append( {'ref':ref, 'ago':str(present_moment-ref.date_added), 'date_added':ref.date_added} )
     
     return render_to_response( request, "feed_references.html", {'all_references':refs_with_elapsed} )
     
