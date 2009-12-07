@@ -77,7 +77,9 @@ class Agency(GeoModel):
             'state': cgi.escape(self.state),
             'details_url': self.details_url,
             'key_encoded': str(self.key()),
-            'has_real_time_data': self.has_real_time_data,            
+            'has_real_time_data': self.has_real_time_data,
+            'latitude':self.location.lat,
+            'longitude':self.location.lon,
         }
 
     @staticmethod
