@@ -53,7 +53,7 @@ class EditAppAgencyForm(forms.Form):
 
 class EditAppLocationForm(forms.Form):
     location_list = LocationListField(required = False, widget = forms.widgets.HiddenInput)
-    available_globally = forms.BooleanField(required = False, label = u"Globally", widget = forms.widgets.CheckboxInput(attrs={'onchange': 'updateUI()', 'id': 'global'}))
+    available_globally = forms.BooleanField(required = False, label = u"Globally", widget = forms.widgets.CheckboxInput(attrs={'id': 'global'}))
 
 class EditAppImagesForm(forms.Form):
     SCREEN_SHOT_COUNT = 5

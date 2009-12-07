@@ -659,10 +659,11 @@ margin-top: 20px;
     .add-app-form td {
         width: 350px;
     }
-    .add-app-form table input {
+    .add-app-form table input[type="text"] {
         font: 12px/12px Verdana, Arial, Helvetica, sans-serif;
-        margin-bottom: 2px;
+        padding: 0.25em;
         border: 1px solid #999;
+        width: 244px;
     }
 
     .add-app-form table textarea {

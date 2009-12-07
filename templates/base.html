@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> 
 <head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8" /> 
 <title>{% block title %}City-Go-Round - A searchable directory of transit apps and public transit agencies{% endblock %}</title>
 <link rel="stylesheet" type="text/css" href="{% static_url /css/main.css %}" media="screen" />
 <script type="text/javascript" src="http://www.google.com/jsapi?key={{GOOGLE_API_KEY}}"></script>
@@ -30,11 +31,12 @@
   {% block header %}
     <h1 onclick="document.location='{% url home %}'">City-Go-Round</h1>
     <h2>Apps that help you get around</h2>
-    <a id="front-seat-logo" href="http://www.frontseat.org"><img src="{% static_url /images/front-seat-logo.gif %}" /></a>
+    <a id="front-seat-logo" href="http://www.frontseat.org"><img src="{% static_url /images/front-seat-logo.gif %}" alt="Front Seat Logo" /></a>
     <p id="nav">
         <a href="{% url apps_gallery %}">Apps</a> &nbsp; | &nbsp;
         <a href="{% url agencies %}">Agencies</a> &nbsp; | &nbsp;
         <a href="{% url about %}">About</a> 
+    </p>
     <div id="friends-and-followers">
       <div class="clickable2 friend-twitter" onclick='trackNavigationNewWindow("http://twitter.com/citygoround", "header", "follow us", "twitter")'>
         <p>Follow us</p>
@@ -47,10 +49,10 @@
 </div>
 <div id="lede">
     {% block lede %}
-    <form onsubmit="goto_search(); return false;">
+    <form onsubmit="goto_search(); return false;" action="">
         <label>Find apps near me:</label>
-        <input id="location_query" name="location_query" type="text" value="{% block location_query %}Type a city or ZIP{% endblock %}">
-        <input id="search" name="search" type="image" src="{% static_url /images/search-button.gif %}">
+        <input id="location_query" name="location_query" type="text" value="{% block location_query %}Type a city or ZIP{% endblock %}" />
+        <input id="search" name="search" type="image" src="{% static_url /images/search-button.gif %}" />
     </form>
   {% endblock %}
 </div>
@@ -67,12 +69,11 @@
     <div id="license"><p><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/us/80x15.png" /></a></p></div>
 
 
-    <div id="content-right"><p id="gtfs-data-exchange"><a href="http://www.gtfs-data-exchange.com/"><img src="{% static_url /images/gtfs-data-exchange-logo.gif %}" /></a>Data provided by GTFS Data Exchange</p></div>
+    <div id="content-right"><p id="gtfs-data-exchange"><a href="http://www.gtfs-data-exchange.com/"><img src="{% static_url /images/gtfs-data-exchange-logo.gif %}" alt="GTFS Data Exchange Logo" /></a>Data provided by GTFS Data Exchange</p></div>
 </div>
 
 {% block extra-content %}
 {% endblock %}
-</body>
 <script src="{% static_url /js/util.js %}" type="text/javascript"></script>
 {% block scripts %}
 {% endblock %}
@@ -115,4 +116,6 @@ var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
         pageTracker._trackPageview();
     } catch(err) {}
 </script>
+
+</body>
 </html>
