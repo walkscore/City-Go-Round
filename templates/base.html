@@ -4,6 +4,9 @@
 <meta http-equiv="Content-type" content="text/html;charset=UTF-8" /> 
 <title>{% block title %}City-Go-Round - A searchable directory of transit apps and public transit agencies{% endblock %}</title>
 <link rel="stylesheet" type="text/css" href="{% static_url /css/main.css %}" media="screen" />
+<!--[if IE]>
+	<link rel="stylesheet" type="text/css" href="{% static_url /css/ie.css %}" />
+<![endif]-->
 <script type="text/javascript" src="http://www.google.com/jsapi?key={{GOOGLE_API_KEY}}"></script>
 {% include "includes/jquery_scripts.html" %}
 {% block headscripts %}

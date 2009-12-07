@@ -1,0 +1,23 @@
+/* Special fix for IE -- which is a very special browser */
+
+#lede label {
+    font: 20px/20px Verdana, Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    color: #fff;
+    position: absolute;
+    top: 17px;
+    left: 33px;
+}   
+
+#lede input#location_query 
+{
+    font: 18px Verdana, Arial, Helvetica, sans-serif;
+    color: #888;
+    position: absolute;
+    top: 13px;
+    left: 264px;
+    width: 270px;
+    height: 27px;
+    border: 1px solid #999;
+    padding-top: 3px;
+}   
