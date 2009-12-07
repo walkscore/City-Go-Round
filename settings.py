@@ -97,3 +97,8 @@ if RUNNING_APP_ENGINE_LOCAL_SERVER:
     except ImportError, exp:
         pass
 
+NEW_APP_EMAIL_RECIPIENTS = ["badhill@gmail.com", 
+                            "davepeck@davepeck.org",
+                            "jesse@frontseat.org",
+                            "matt@frontseat.org",
+                            "aleisha@frontseat.org"]

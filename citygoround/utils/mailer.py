@@ -1,8 +1,10 @@
 import logging
 import time
 from google.appengine.api import mail, memcache
+from google.appengine.api.labs import taskqueue
 from google.appengine.runtime.apiproxy_errors import OverQuotaError
 
+from django.core.urlresolvers import reverse
 
 import sys
 import traceback
@@ -32,9 +34,9 @@ Used to mail API users and administrators regarding errors, reports, etc.
 Contains core mail functions, plus convenience functions for common cases
 """
 
-def send_to_contact(subject, body):
+def send_to_contact(subject, body, recipient="jesse@frontseat.org"):
     message = mail.EmailMessage(sender="no-reply@citygoround.org")
-    message.to = "jesse@frontseat.org"
+    message.to = recipient
     logging.info("MAIL: %s :: %s" % (subject, body))
     message.subject = subject
     message.body = body
@@ -48,7 +50,21 @@ def send_to_contact(subject, body):
         logging.error("Unknown error: failed to send mail: %s\n%s" % (subject, exc_str))
     return  
 
+"""
+New app email notification taskqueue function
+"""
 
+def kick_off_new_app_notification(transit_app):
+    task = taskqueue.Task(
+        url = reverse("taskqueue_notify_new_app"),
+        name = "notify-transit-app-%s" % (transit_app.key().id()),
+        params = {
+            "id": transit_app.key().id(),
+            "title": transit_app.title,
+            "url": transit_app.url,
+        },
+    )
+    task.add(queue_name = "notify-new-app-queue")
 
 """
 throttle_mail Returns True if a mail with this subject HAS been sent in the last 

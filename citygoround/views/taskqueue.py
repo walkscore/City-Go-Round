@@ -4,6 +4,7 @@ from ..forms import NewAppGeneralInfoForm, NewAppAgencyForm, NewAppLocationForm,
 from ..decorators import requires_POST
 from ..utils.view import render_to_json
 from ..utils.screenshot import create_and_store_screen_shot_blob_for_family
+from ..utils.mailer import send_to_contact
 
 @requires_POST
 def taskqueue_screen_shot_resize(request):
@@ -28,5 +29,18 @@ def taskqueue_screen_shot_resize(request):
     # Done. HTTP 200 is all AppEngine needs to be happy.    
     return render_to_json({"success": True})
     
-
-        
+from django.http import HttpResponse
+#@requires_POST
+def taskqueue_notify_new_app(request):
+    
+    # get params from post
+    app_id = request.POST.get('id', None)
+    title = request.POST.get('title', None)
+    app_url = request.POST.get('url', None)
+    
+    # do real work
+    send_to_contact( "new app: %s"%title, "new app %s (%s) at %s"%(title, app_id, app_url), recipient="badhill@gmail.com" )
+    
+    # Done. HTTP 200 is all AppEngine needs to be happy.   
+    return render_to_json({"success": True})
+    
