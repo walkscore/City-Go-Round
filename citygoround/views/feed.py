@@ -88,7 +88,7 @@ def update_feed_references(request):
           
         # redirect to a page for viewing all your new feed references
         return redirect_to("admin_feed_references")
-    except Exception e:
+    except Exception, e:
         send_to_contact( "Cron job messed up", "The Update Feeds cron job messed up: %s at %s"%(e, time.time()), "badhill@gmail.com" )
     
 def admin_feed_references(request):
