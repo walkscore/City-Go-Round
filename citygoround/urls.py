@@ -103,5 +103,6 @@ urlpatterns += patterns(
 urlpatterns += patterns(
     'citygoround.views.taskqueue',
     url(r'^admin/taskqueue/screen-shot-resize/', 'taskqueue_screen_shot_resize', name = 'taskqueue_screen_shot_resize'),
+    url(r'^admin/taskqueue/notify-new-app/', 'taskqueue_notify_new_app', name = 'taskqueue_notify_new_app'),
 )
     

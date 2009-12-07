@@ -78,8 +78,8 @@ class Agency(GeoModel):
             'details_url': self.details_url,
             'key_encoded': str(self.key()),
             'has_real_time_data': self.has_real_time_data,
-            'latitude':self.location.lat,
-            'longitude':self.location.lon,
+            'latitude':(self.location.lat if self.location else None),
+            'longitude':(self.location.lon if self.location else None),
         }
 
     @staticmethod
