@@ -2,4 +2,6 @@ queue:
 - name: screen-shot-resize-queue
   rate: 5/s
   bucket_size: 5
-
+- name: notify-new-app-queue
+  rate: 5/s
+  bucket_size: 5

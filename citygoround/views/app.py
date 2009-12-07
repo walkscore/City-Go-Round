@@ -12,11 +12,13 @@ from google.appengine.api import memcache
 
 from ..forms import NewAppGeneralInfoForm, NewAppAgencyForm, NewAppLocationForm, PetitionForm, EditAppGeneralInfoForm, EditAppLocationForm, EditAppAgencyForm, EditAppImagesForm
 from ..utils.view import render_to_response, redirect_to, not_implemented, render_image_response, redirect_to_url, method_not_allowed, render_to_json
+from ..utils.prettyprint import pretty_print_price
 from ..utils.progressuuid import add_progress_uuid_to_session, remove_progress_uuid_from_session
 from ..utils.screenshot import kick_off_resizing_for_screen_shots, kick_off_resizing_for_screen_shot
 from ..utils.misc import chunk_sequence, pad_list, collapse_list
 from ..utils.ratings import get_user_rating_for_app, set_user_rating_for_app, adjust_rating_for_app
 from ..utils.memcache import clear_all_apps
+from ..utils.mailer import kick_off_new_app_notification
 from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid, requires_POST, memcache_view_response, memcache_parameterized_view_response
 from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress, FeedReference, NamedStat
 
@@ -83,6 +85,7 @@ def details(request, transit_app):
         
     template_vars = {
         'transit_app': transit_app,
+        'formatted_price': pretty_print_price(transit_app.price),
         'explicit_agencies': [agency for agency in Agency.iter_explicitly_supported_for_transit_app(transit_app)],
         'supports_public_agencies': transit_app.supports_all_public_agencies,
         'current_user_rating': rating_for_js,
@@ -238,6 +241,9 @@ def add_locations(request, progress_uuid):
             if lazy_locations:
                 real_locations = [lazy_location() for lazy_location in lazy_locations]
                 db.put(real_locations)
+                
+            # Fire off a notification email
+            kick_off_new_app_notification(transit_app)
             
             # Done with this particular progress UUID. Goodbye.
             remove_progress_uuid_from_session(request, progress_uuid)

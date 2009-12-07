@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}{{transit_app.title}}{% endblock %}
+{% block title %}City-Go-Round &raquo; Details For {{transit_app.title}}{% endblock %}
 
 {% block headscripts %}
 <script src="{% static_url /js/jquery.tools.min.js %}"></script>
@@ -157,6 +157,9 @@
                 <label>Platforms:</label> <p>{% for i in transit_app.platforms %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}</p>
             </div>
         {% endif %}
+        <div>
+            <label>Price:</label> <p>{{ formatted_price }}</p>
+        </div>
         {% if transit_app.tags %}
             <div>
                 <label>All Tags:</label> <p>{{ transit_app.tag_list_as_string }}</p>
