@@ -1,9 +1,20 @@
+// TODO davepeck: HACK HACK. You'll notice a bunch of uses of jQuery 
+// browser detection in here. That's because this fading stuff
+// just isn't working in MSIE, and we're launching in < 24 hours.
+// Rather than fix it right, I'm just turning it off for IE entirely.
+// 
+// Using browser detection (jQuery or otherwise) is evil, bad, and 
+// should not be necessary -- but this is a good pragmatic solution for now.
+
 $(document).ready(function() 
 { 
     //make sure public dropdown selected appropriately
     $("#agency_list").tablesorter({ sortList: [[6,0],[5,0]] });
 
-    $("#list-panel").fadeTo(0, 0.33);
+    if (!$.browser.msie)
+    {
+        $("#list-panel").fadeTo(0, 0.33);
+    }
     updateUI();
     
     $("#id_gtfs_choice_0").change(updateUI);
@@ -20,6 +31,11 @@ function updateFilters()
 
 function updateUI() 
 {
+    if ($.browser.msie)
+    {
+        return;
+    }
+    
     if ($("#id_gtfs_choice_1").is(":checked"))
     {
         $(":checkbox").attr("disabled", false);

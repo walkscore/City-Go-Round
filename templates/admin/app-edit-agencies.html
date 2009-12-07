@@ -22,7 +22,7 @@
 <div id="add-app-form-container" class="body-content">            
     <h2>Edit Agency Information For "{{transit_app.title}}":</h2>
     <h2>Select agencies that your application supports:</h2>
-    <form id="add-agencies-form" action="" method="POST" onsubmit="sendDataString()">
+    <form id="add-agencies-form" action="" method="post" onsubmit="sendDataString()">
         <div class="floatleft">
             {# This is only going to spew out hidden input fields, so... whatever. #}
             {{form.as_p}}

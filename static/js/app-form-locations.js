@@ -374,25 +374,29 @@ var countryLookups = {"AX":"Aland Islands","AL":"Albania","DZ":"Algeria","AS":"A
 function updateUI()
 {			
 	//when global is checked, others should be disabled
-	if ( $("#global").eq(0).is(":checked") )
-	{
-		$("#entire-us").attr("disabled", true);
-		$("#choose-locations").attr("disabled", true);			 
-	}
-	else 
-	{
-		$("#entire-us").attr("disabled", false);
-		$("#choose-locations").attr("disabled", false);
+    if (!$.browser.msie)
+    {
+    	// TODO DAVEPECK HACK HACK
+    	if ( $("#global").eq(0).is(":checked") )
+    	{
+    		$("#entire-us").attr("disabled", true);
+    		$("#choose-locations").attr("disabled", true);			 
+    	}
+    	else 
+    	{
+    		$("#entire-us").attr("disabled", false);
+    		$("#choose-locations").attr("disabled", false);
+    	}
 	}
 	
 	//show the location picker?
-	if ( !$("#global").eq(0).is(":checked") && $("#choose-locations").eq(0).is(":checked") )
+	if ( !$("#global").is(":checked") && $("#choose-locations").is(":checked") )
 	{
-		$("#location-list").eq(0).show();
-	}
-	else
-	{
-		$("#location-list").eq(0).hide();	
+		$("#location-list").show();
+	}                      
+	else                   
+	{                      
+		$("#location-list").hide();	
 	}
 }
 
