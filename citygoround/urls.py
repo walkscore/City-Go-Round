@@ -59,6 +59,7 @@ urlpatterns += patterns(
     url(r'^admin/agencies/create-from-feed/(?P<feed_id>[-\w ]+)/$', 'create_agency_from_feed', name='admin_agencies_create_from_feed'),
     url(r'^admin/agencies/add/$', 'edit_agency', name='admin_agencies_add'),
     url(r'^admin/agencies/update-locations/$', 'admin_agencies_update_locations', name='admin_agencies_update_locations'),
+    url(r'^admin/agencies/appcounts/$', 'agency_app_counts', name='agency_app_counts'),
 )
 
 
