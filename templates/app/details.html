@@ -138,11 +138,11 @@
                 <div id="your-rating-panel">
                     <p style="float:left">Your rating:</p>
                     <form id="ratingform" name="rating" action="{% url app_rating_vote transit_app_slug=transit_app.slug %}" method="post">
-                    <input id="rating1" type="radio" name="rating" value="1" class="auto-submit-star" onclick="trackEvent('rate app', '1 star', '{{transit_app.title}}')">
-                    <input id="rating2" type="radio" name="rating" value="2" class="auto-submit-star" onclick="trackEvent('rate app', '2 star', '{{transit_app.title}}')">
-                    <input id="rating3" type="radio" name="rating" value="3" class="auto-submit-star" onclick="trackEvent('rate app', '3 star', '{{transit_app.title}}')">
-                    <input id="rating4" type="radio" name="rating" value="4" class="auto-submit-star" onclick="trackEvent('rate app', '4 star', '{{transit_app.title}}')">
-                    <input id="rating5" type="radio" name="rating" value="5" class="auto-submit-star" onclick="trackEvent('rate app', '5 star', '{{transit_app.title}}')"></form>
+                    <input id="rating1" type="radio" name="rating" value="1" class="auto-submit-star" onclick="trackEvent('rate app', '1 star', '{{transit_app.title}}')" />
+                    <input id="rating2" type="radio" name="rating" value="2" class="auto-submit-star" onclick="trackEvent('rate app', '2 star', '{{transit_app.title}}')" />
+                    <input id="rating3" type="radio" name="rating" value="3" class="auto-submit-star" onclick="trackEvent('rate app', '3 star', '{{transit_app.title}}')" />
+                    <input id="rating4" type="radio" name="rating" value="4" class="auto-submit-star" onclick="trackEvent('rate app', '4 star', '{{transit_app.title}}')" />
+                    <input id="rating5" type="radio" name="rating" value="5" class="auto-submit-star" onclick="trackEvent('rate app', '5 star', '{{transit_app.title}}')" /></form>
                 </div>
             </div>
         </div>
