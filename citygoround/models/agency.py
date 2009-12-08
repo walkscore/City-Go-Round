@@ -80,6 +80,7 @@ class Agency(GeoModel):
             'has_real_time_data': self.has_real_time_data,
             'latitude':(self.location.lat if self.location else None),
             'longitude':(self.location.lon if self.location else None),
+            'executive_email':executive_email,
         }
 
     @staticmethod
@@ -194,4 +195,4 @@ class Agency(GeoModel):
         seen_set = set()
         for transit_app in transit_apps:
             for agency in iter_uniquify(Agency.iter_for_transit_app(transit_app, uniquify = False), seen_set, uniquify):
-                yield agency        
+                yield agency         
