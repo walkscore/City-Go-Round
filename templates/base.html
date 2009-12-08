@@ -1,14 +1,19 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en"> 
 <head>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8" /> 
 <title>{% block title %}City-Go-Round - A searchable directory of transit apps and public transit agencies{% endblock %}</title>
 <link rel="stylesheet" type="text/css" href="{% static_url /css/main.css %}" media="screen" />
+<!--[if IE]>
+	<link rel="stylesheet" type="text/css" href="{% static_url /css/ie.css %}" />
+<![endif]-->
 <script type="text/javascript" src="http://www.google.com/jsapi?key={{GOOGLE_API_KEY}}"></script>
 {% include "includes/jquery_scripts.html" %}
 {% block headscripts %}
 {% endblock %}
     
 <script type="text/javascript">
+<![CDATA[
     function url_for_search(search_term)
     {
         return "{% url apps_nearby %}?q=" + search_term
@@ -21,6 +26,7 @@
         document.location = url;
         return false;
     }
+]]>
 </script>
 {% block extra_head %}{% endblock %}
 
@@ -30,11 +36,12 @@
   {% block header %}
     <h1 onclick="document.location='{% url home %}'">City-Go-Round</h1>
     <h2>Apps that help you get around</h2>
-    <a id="front-seat-logo" href="http://www.frontseat.org"><img src="{% static_url /images/front-seat-logo.gif %}" /></a>
+    <a id="front-seat-logo" href="http://www.frontseat.org"><img src="{% static_url /images/front-seat-logo.gif %}" alt="Front Seat Logo" /></a>
     <p id="nav">
         <a href="{% url apps_gallery %}">Apps</a> &nbsp; | &nbsp;
         <a href="{% url agencies %}">Agencies</a> &nbsp; | &nbsp;
         <a href="{% url about %}">About</a> 
+    </p>
     <div class="hover-buttons">
       <div class="clickable2 button-twitter" onclick='trackNavigationNewWindow("http://twitter.com/citygoround", "header", "follow us", "twitter")'>
         <p>Follow us</p>
@@ -47,10 +54,10 @@
 </div>
 <div id="lede">
     {% block lede %}
-    <form onsubmit="goto_search(); return false;">
+    <form onsubmit="goto_search(); return false;" action="">
         <label>Find apps near me:</label>
-        <input id="location_query" name="location_query" type="text" value="{% block location_query %}Type a city or ZIP{% endblock %}">
-        <input id="search" name="search" type="image" src="{% static_url /images/search-button.gif %}">
+        <input id="location_query" name="location_query" type="text" value="{% block location_query %}Type a city or ZIP{% endblock %}" />
+        <input id="search" name="search" type="image" src="{% static_url /images/search-button.gif %}" />
     </form>
   {% endblock %}
 </div>
@@ -67,30 +74,34 @@
     <div id="license"><p><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/us/80x15.png" /></a></p></div>
 
 
-    <div id="content-right"><p id="gtfs-data-exchange"><a href="http://www.gtfs-data-exchange.com/"><img src="{% static_url /images/gtfs-data-exchange-logo.gif %}" /></a>Data provided by GTFS Data Exchange</p></div>
+    <div id="content-right"><p id="gtfs-data-exchange"><a href="http://www.gtfs-data-exchange.com/"><img src="{% static_url /images/gtfs-data-exchange-logo.gif %}" alt="GTFS Data Exchange Logo" /></a>Data provided by GTFS Data Exchange</p></div>
 </div>
 
 {% block extra-content %}
 {% endblock %}
-</body>
-<script src="{% static_url /js/util.js %}" type="text/javascript"></script>
+<script type="text/javascript" src="{% static_url /js/util.js %}"></script>
 {% block scripts %}
 {% endblock %}
 
 <script type="text/javascript">
+<![CDATA[
 jQuery("#location_query").bind("focus", function(e) { if (this.value=='Type a city or ZIP') this.value=''; jQuery(this).css("color","#444"); });
 jQuery("#location_query").bind("blur", function(e) { if (this.value=='') { this.value='Type a city or ZIP'; jQuery(this).css("color","#888");} });
+]]>
 </script>
 
 
 {% if no_getsatisfaction %}{% else %}
 <script type="text/javascript" charset="utf-8">
+<![CDATA[
 var is_ssl = ("https:" == document.location.protocol);
 var asset_host = is_ssl ? "https://s3.amazonaws.com/getsatisfaction.com/" : "http://s3.amazonaws.com/getsatisfaction.com/";
 document.write(unescape("%3Cscript src='" + asset_host + "javascripts/feedback-v2.js' type='text/javascript'%3E%3C/script%3E"));
+]]>
 </script>
 
 <script type="text/javascript" charset="utf-8">
+<![CDATA[
 var feedback_widget_options = {};
 
 feedback_widget_options.display = "overlay";
@@ -100,11 +111,13 @@ feedback_widget_options.color = "#bbbbbb";
 feedback_widget_options.style = "idea";
 
 var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
+]]>
 </script>
 
 {% endif %}
 
 <script type="text/javascript">
+<![CDATA[
     var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
     document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
 </script>
@@ -114,5 +127,8 @@ var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
         var pageTracker = _gat._getTracker("UA-11669017-1");
         pageTracker._trackPageview();
     } catch(err) {}
+]]>
 </script>
+
+</body>
 </html>

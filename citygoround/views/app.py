@@ -50,29 +50,30 @@ def gallery(request):
 
     recent_list = TransitApp.all_by_most_recently_added().fetch(NUM_RECENT_APPS)
     featured_list = []
-    bike_list = []
-    main_list = []
+    categorized_list = {}
     
-    for a in all_apps:   
+    for a in all_apps:
         if app_in_list(a, recent_list):
             continue
         
         if a.is_featured and len(featured_list) < NUM_FEATURED_APPS:
             featured_list.append(a)
-        else:  
-            has_bike = False
-            if "Biking" in a.tags and not "Public Transit" in a.tags:
-                bike_list.append(a)
-            else:
-                main_list.append(a)
+            continue
+
+        for category in a.categories:
+            if category not in categorized_list:
+                categorized_list[category] = []
+            categorized_list[category].append( a )
                 
     template_vars = {
-        'main_app_list': main_list,
-        'bike_app_list': bike_list,
-        'featured_apps': featured_list, 
+        'biking_apps':         categorized_list.get('Biking',[]),
+        'walking_apps':        categorized_list.get('Walking',[]),
+        'driving_apps':        categorized_list.get('Driving',[]),
+        'transit_apps':        categorized_list.get('Public Transit',[]),
+        'featured_apps':       featured_list, 
         'recently_added_apps': recent_list, 
-        'transit_app_count': TransitApp.all().count(),
-        'public_feed_count': Agency.all().filter("date_opened != ", None).count(),
+        'transit_app_count':   TransitApp.all().count(),
+        'public_feed_count':   Agency.all().filter("date_opened != ", None).count(),
     }
         
     return render_to_response(request, 'app/gallery.html', template_vars)

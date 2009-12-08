@@ -3,7 +3,7 @@
 {% block title %}City-Go-Round &raquo; Details For {{transit_app.title}}{% endblock %}
 
 {% block headscripts %}
-<script src="{% static_url /js/jquery.tools.min.js %}"></script>
+<script type="text/javascript" src="{% static_url /js/jquery.tools.min.js %}"></script>
 <link rel="stylesheet" type="text/css" href="/css/jquery.rating.css" media="screen" />
 <script type="text/javascript" src="{% static_url /js/jquery.rating.pack.js %}"></script>
 <script type="text/javascript" src="{% static_url /js/jquery.metadata.js %}"></script>
@@ -13,6 +13,7 @@
 {% block extra_head %}
 
     <script type="text/javascript">
+<![CDATA[
     
     function get_current_user_rating() 
     {
@@ -77,6 +78,7 @@
      
      });
 
+]]>
     </script>
 
 {% endblock %}
@@ -135,7 +137,7 @@
     
                 <div id="your-rating-panel">
                     <p style="float:left">Your rating:</p>
-                    <form id="ratingform" name="rating" action="/app/rating" method="POST">
+                    <form id="ratingform" name="rating" action="/app/rating" method="post">
                     <input id="rating1" type="radio" name="rating" value="1" class="auto-submit-star" onclick='trackEvent("rate app", "1 star", "{{transit_app.title}}")'>
                     <input id="rating2" type="radio" name="rating" value="2" class="auto-submit-star" onclick='trackEvent("rate app", "2 star", "{{transit_app.title}}")'>
                     <input id="rating3" type="radio" name="rating" value="3" class="auto-submit-star" onclick='trackEvent("rate app", "3 star", "{{transit_app.title}}")'>
@@ -217,6 +219,7 @@
 
 {% block scripts %}
 <script type="text/javascript">
+<![CDATA[
 // select the thumbnails and make them trigger our overlay 
 $("#triggers a").overlay({ 
  
@@ -232,6 +235,7 @@ $("#triggers a").overlay({
     // the plugin accepts its own set of configuration options 
     speed: 800 
 });
+]]>
 </script>
 
 <script type="text/javascript">

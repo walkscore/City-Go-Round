@@ -4,6 +4,7 @@
 
 {% block extra_head %}
 <script type="text/javascript">
+<![CDATA[
 google.load("maps", "2.167");
 jQuery.noConflict();
 jQuery(document).ready(function($) 
@@ -142,15 +143,15 @@ jQuery(document).ready(function($)
         {
             var subhead_html = '<em>' + all_apps.length + '</em> apps';
         }        
-        subhead_html += ' near ' + query_info_html + '. &nbsp <a href="{% url apps_add_form %}">Add a new app</a>';        
-        $("#num_apps_found").html(subhead_html).fadeIn(1000, function(){});
+        subhead_html += ' near ' + query_info_html + '. &nbsp <a href="{% url apps_add_form %}">Add a new app</a>';
         
+        $("#num_apps_found").html(subhead_html).fadeIn(1000);        
         if (all_apps.length > 0)
         {
             $("#transit_apps").html(html_for_multiple_apps(transit_apps)).fadeIn(1000);
             $("#biking_apps").html(html_for_multiple_apps(biking_apps)).fadeIn(1000);
             $("#walking_apps").html(html_for_multiple_apps(walking_apps)).fadeIn(1000);
-            $("#driving_apps").html(html_for_multiple_apps(driving_apps)).fadeIn(1000);        
+            $("#driving_apps").html(html_for_multiple_apps(driving_apps)).fadeIn(1000);
             $(".hidden").removeClass("hidden");
         }
     }
@@ -319,7 +320,7 @@ jQuery(document).ready(function($)
 
     find_nearby_transit_apps();
 });
-
+]]>
 </script>
 {% endblock %}
 

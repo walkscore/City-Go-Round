@@ -4,6 +4,7 @@
 
 {% block headscripts %}
 <script type="text/javascript">
+<![CDATA[
 jQuery(document).ready(function($)
 {
     function get_screen_shots()
@@ -85,6 +86,7 @@ jQuery(document).ready(function($)
     
     initialize_from_screen_shots(get_screen_shots());
 });
+]]>
 </script>
 {% endblock %}
 
@@ -92,7 +94,7 @@ jQuery(document).ready(function($)
     <div id="add-app-form-container" class="body-content">            
         <h2>Edit Images For "{{transit_app.title}}":</h2>
         <h2>{{too_few_error}}</h2>
-        <form class="add-app-form" action="" method="POST" enctype="multipart/form-data">
+        <form class="add-app-form" action="" method="post" enctype="multipart/form-data">
             <div id="image_input_list">
                 {{ form.as_p }}                
             </div>

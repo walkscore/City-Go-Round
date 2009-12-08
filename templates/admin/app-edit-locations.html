@@ -6,30 +6,32 @@
 {% block headscripts %}
 <script type="text/javascript" src="{% static_url /js/app-form-locations.js %}"></script>
 <script type="text/javascript">
+<![CDATA[
 jQuery(document).ready(function($) 
 {
     reconstitute_locations("{{location_list|escapejs}}"); 
     // $("#debug-input").click(function () { $("#dbug").text($("#id_location_list").val()); });
 });
+]]>
 </script>
 {% endblock %}
 
 {% block content %}
     <div id="add-app-form-container" class="body-content">            
         <h2>Edit Location Information For "{{transit_app.title}}":</h2>
-        <form id="locations-form" class="add-app-form" action="" method="POST" enctype="multipart/form-data">
+        <form id="locations-form" class="add-app-form" action="" method="post" enctype="multipart/form-data">
             <table>
             {{ form.as_table }}
             </table>
-            <p><input type="checkbox" name="entire-us" id="entire-us" onchange="updateUI()" />Entire U.S.</p>
-            <p><input type="checkbox" name="choose-locations" id="choose-locations" onchange="updateUI()" />Select countries or cities</p>
+            <p><input type="checkbox" name="entire-us" id="entire-us" />Entire U.S.</p>
+            <p><input type="checkbox" name="choose-locations" id="choose-locations" />Select countries or cities</p>
             <div id="location-list">		
         			<div id="locations">
         			</div>
         			<div id="location-entry">
           			<label>Enter a city or Country name: </label>
           			<input type="text" id="query" />
-          			<input id="add-query-button" type="button" id="add" value="Add" />
+          			<input id="add-query-button" type="button" value="Add" />
         			</div>
         		</div>
             <input type="submit" value="Save These Changes"></input>

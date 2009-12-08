@@ -450,7 +450,7 @@ margin-top: 20px;
         font-weight: bold;
         color: #fff;
         position: absolute;
-        top: 15px;
+        top: 16px;
         left: 33px;
     }   
     #lede input#location_query {
@@ -660,10 +660,11 @@ margin-top: 20px;
     .add-app-form td {
         width: 350px;
     }
-    .add-app-form table input {
+    .add-app-form table input[type="text"] {
         font: 12px/12px Verdana, Arial, Helvetica, sans-serif;
-        margin-bottom: 2px;
+        padding: 0.25em;
         border: 1px solid #999;
+        width: 244px;
     }
 
     .add-app-form table textarea {
@@ -1274,3 +1275,8 @@ margin-top: 20px;
 .hide-on-load
 {
 }
+
+
+/* jQuery fadeIn IE bugfixes */
+#num_apps_found, #transit_apps, #biking_apps, #walking_apps, #driving_apps, #nearby-agency-summary { background-color: #fff; }
+

@@ -4,6 +4,7 @@ from django.utils import simplejson as json
 from google.appengine.ext import db
 from google.appengine.api.urlfetch import fetch as fetch_url
 from ..utils.view import render_to_response, redirect_to, not_implemented
+from ..utils.mailer import send_to_contact
 from ..utils.prettyprint import pretty_print_time_elapsed
 from ..models import FeedReference, Agency
 from urlparse import urlparse
@@ -73,18 +74,22 @@ def replace_feed_references(old_references, new_references):
             agency.put()
 
 def update_feed_references(request):
-    FEED_REFS_URL = "http://www.gtfs-data-exchange.com/api/agencies"
-    
-    # grab feed references and load into json
-    feed_refs_json = json.loads( fetch_url( FEED_REFS_URL ).content )['data']
-    
-    # replace feed references in a transaction
-    old_references = FeedReference.all().fetch(1000)
-    replace_feed_references( old_references, feed_refs_json )
-    #db.run_in_transaction(replace_feed_references, old_references, feed_refs_json)
-      
-    # redirect to a page for viewing all your new feed references
-    return redirect_to("admin_feed_references")
+    try:
+        FEED_REFS_URL = "http://www.gtfs-data-exchange.com/api/agencies"
+        
+        # grab feed references and load into json
+        feed_refs_json = json.loads( fetch_url( FEED_REFS_URL ).content )['data']
+        
+        # replace feed references in a transaction
+        old_references = FeedReference.all().fetch(1000)
+        replace_feed_references( old_references, feed_refs_json )
+        
+        send_to_contact( "Cron job ran successfully", "Cron job ran successfully at %s"%time.time(), "badhill@gmail.com" )
+          
+        # redirect to a page for viewing all your new feed references
+        return redirect_to("admin_feed_references")
+    except Exception, e:
+        send_to_contact( "Cron job messed up", "The Update Feeds cron job messed up: %s at %s"%(e, time.time()), "badhill@gmail.com" )
     
 def admin_feed_references(request):
     all_references = FeedReference.all().order("-date_added")
@@ -92,7 +97,7 @@ def admin_feed_references(request):
     refs_with_elapsed = []
     present_moment = datetime.now()
     for ref in all_references:
-        refs_with_elapsed.append( {'ref':ref, 'ago':str(present_moment-ref.date_added)} )
+        refs_with_elapsed.append( {'ref':ref, 'ago':str(present_moment-ref.date_added), 'date_added':ref.date_added} )
     
     return render_to_response( request, "feed_references.html", {'all_references':refs_with_elapsed} )
     
