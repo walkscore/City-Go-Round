@@ -107,7 +107,7 @@
             <div id="ratings-panel">    
                 <label>Ratings:</label> 
                 <div id="avg-rating-panel">
-                    <form id="avgratingform">
+                    <form id="avgratingform" action="">
                         <input name="adv1" type="radio" class="star {split:4}" /> 
                         <input name="adv1" type="radio" class="star {split:4}" /> 
                         <input name="adv1" type="radio" class="star {split:4}" /> 
@@ -137,7 +137,7 @@
     
                 <div id="your-rating-panel">
                     <p style="float:left">Your rating:</p>
-                    <form id="ratingform" name="rating" action="/app/rating" method="post">
+                    <form id="ratingform" name="rating" action="{% url app_rating_vote transit_app_slug=transit_app.slug %}" method="post">
                     <input id="rating1" type="radio" name="rating" value="1" class="auto-submit-star" onclick='trackEvent("rate app", "1 star", "{{transit_app.title}}")'>
                     <input id="rating2" type="radio" name="rating" value="2" class="auto-submit-star" onclick='trackEvent("rate app", "2 star", "{{transit_app.title}}")'>
                     <input id="rating3" type="radio" name="rating" value="3" class="auto-submit-star" onclick='trackEvent("rate app", "3 star", "{{transit_app.title}}")'>
