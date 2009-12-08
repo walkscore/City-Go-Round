@@ -13,6 +13,7 @@
 {% endblock %}
     
 <script type="text/javascript">
+<![CDATA[
     function url_for_search(search_term)
     {
         return "{% url apps_nearby %}?q=" + search_term
@@ -25,6 +26,7 @@
         document.location = url;
         return false;
     }
+]]>
 </script>
 {% block extra_head %}{% endblock %}
 
@@ -82,19 +84,24 @@
 {% endblock %}
 
 <script type="text/javascript">
+<![CDATA[
 jQuery("#location_query").bind("focus", function(e) { if (this.value=='Type a city or ZIP') this.value=''; jQuery(this).css("color","#444"); });
 jQuery("#location_query").bind("blur", function(e) { if (this.value=='') { this.value='Type a city or ZIP'; jQuery(this).css("color","#888");} });
+]]>
 </script>
 
 
 {% if no_getsatisfaction %}{% else %}
 <script type="text/javascript" charset="utf-8">
+<![CDATA[
 var is_ssl = ("https:" == document.location.protocol);
 var asset_host = is_ssl ? "https://s3.amazonaws.com/getsatisfaction.com/" : "http://s3.amazonaws.com/getsatisfaction.com/";
 document.write(unescape("%3Cscript src='" + asset_host + "javascripts/feedback-v2.js' type='text/javascript'%3E%3C/script%3E"));
+]]>
 </script>
 
 <script type="text/javascript" charset="utf-8">
+<![CDATA[
 var feedback_widget_options = {};
 
 feedback_widget_options.display = "overlay";
@@ -104,11 +111,13 @@ feedback_widget_options.color = "#bbbbbb";
 feedback_widget_options.style = "idea";
 
 var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
+]]>
 </script>
 
 {% endif %}
 
 <script type="text/javascript">
+<![CDATA[
     var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
     document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
 </script>
@@ -118,6 +127,7 @@ var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
         var pageTracker = _gat._getTracker("UA-11669017-1");
         pageTracker._trackPageview();
     } catch(err) {}
+]]>
 </script>
 
 </body>
