@@ -143,7 +143,7 @@ jQuery(document).ready(function($)
         {
             var subhead_html = '<em>' + all_apps.length + '</em> apps';
         }        
-        subhead_html += ' near ' + query_info_html + '. &nbsp <a href="{% url apps_add_form %}">Add a new app</a>';
+        subhead_html += ' near ' + query_info_html + '. &nbsp; <a href="{% url apps_add_form %}">Add a new app</a>';
         
         $("#num_apps_found").html(subhead_html).fadeIn(1000);        
         if (all_apps.length > 0)
