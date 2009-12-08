@@ -13,6 +13,7 @@
 {% block extra_head %}
 
     <script type="text/javascript">
+//<![CDATA[
     
     function get_current_user_rating() 
     {
@@ -77,6 +78,7 @@
      
      });
 
+//]]>
     </script>
 
 {% endblock %}
@@ -101,11 +103,11 @@
     </div>
     
     <div class="app-info">
-        <div id="app-details" class="body-content">
+        <div id="app-inner-details" class="body-content">
             <div id="ratings-panel">    
                 <label>Ratings:</label> 
                 <div id="avg-rating-panel">
-                    <form id="avgratingform">
+                    <form id="avgratingform" action="">
                         <input name="adv1" type="radio" class="star {split:4}" /> 
                         <input name="adv1" type="radio" class="star {split:4}" /> 
                         <input name="adv1" type="radio" class="star {split:4}" /> 
@@ -135,16 +137,16 @@
     
                 <div id="your-rating-panel">
                     <p style="float:left">Your rating:</p>
-                    <form id="ratingform" name="rating" action="/app/rating" method="post">
-                    <input id="rating1" type="radio" name="rating" value="1" class="auto-submit-star" onclick='trackEvent("rate app", "1 star", "{{transit_app.title}}")'>
-                    <input id="rating2" type="radio" name="rating" value="2" class="auto-submit-star" onclick='trackEvent("rate app", "2 star", "{{transit_app.title}}")'>
-                    <input id="rating3" type="radio" name="rating" value="3" class="auto-submit-star" onclick='trackEvent("rate app", "3 star", "{{transit_app.title}}")'>
-                    <input id="rating4" type="radio" name="rating" value="4" class="auto-submit-star" onclick='trackEvent("rate app", "4 star", "{{transit_app.title}}")'>
-                    <input id="rating5" type="radio" name="rating" value="5" class="auto-submit-star" onclick='trackEvent("rate app", "5 star", "{{transit_app.title}}")'></form>
+                    <form id="ratingform" name="rating" action="{% url app_rating_vote transit_app_slug=transit_app.slug %}" method="post">
+                    <input id="rating1" type="radio" name="rating" value="1" class="auto-submit-star" onclick="trackEvent('rate app', '1 star', '{{transit_app.title}}')" />
+                    <input id="rating2" type="radio" name="rating" value="2" class="auto-submit-star" onclick="trackEvent('rate app', '2 star', '{{transit_app.title}}')" />
+                    <input id="rating3" type="radio" name="rating" value="3" class="auto-submit-star" onclick="trackEvent('rate app', '3 star', '{{transit_app.title}}')" />
+                    <input id="rating4" type="radio" name="rating" value="4" class="auto-submit-star" onclick="trackEvent('rate app', '4 star', '{{transit_app.title}}')" />
+                    <input id="rating5" type="radio" name="rating" value="5" class="auto-submit-star" onclick="trackEvent('rate app', '5 star', '{{transit_app.title}}')" /></form>
                 </div>
             </div>
         </div>
-        <br>
+        <br />
         <label>Full Description:</label> <p>{{transit_app.long_description}}</p>
         <p><a href="{{transit_app.url}}" onclick='trackEvent("app details", "agency link click", "{{transit_app.title}}")'>Visit developer's website</a></p>
         {% if transit_app.categories %}
@@ -211,12 +213,13 @@
     <!-- image information --> 
     <div class="info"></div> 
     <!-- load indicator (animated gif) --> 
-    <img class="progress" src="http://static.flowplayer.org/tools/img/overlay/loading.gif" /> 
+    <img class="progress" src="http://static.flowplayer.org/tools/img/overlay/loading.gif" alt="progress spinner" /> 
 </div>
 {% endblock %}
 
 {% block scripts %}
 <script type="text/javascript">
+//<![CDATA[
 // select the thumbnails and make them trigger our overlay 
 $("#triggers a").overlay({ 
  
@@ -232,6 +235,7 @@ $("#triggers a").overlay({
     // the plugin accepts its own set of configuration options 
     speed: 800 
 });
+//]]>
 </script>
 
 <script type="text/javascript">

@@ -6,7 +6,7 @@
 <script type="text/javascript" src="{% static_or_s3_url /js/jquery.tablesorter.min.js %}"></script>
 <script type="text/javascript" src="{% static_or_s3_url /js/jquery.tablesorter.pager.js %}"></script>
 <script type="text/javascript">
-
+//<![CDATA[
 var agency_count = {{agency_count|escapejs}}; 
 function update_filters(){
     var pd = jQuery("#public_filter option:selected").val();
@@ -35,8 +35,8 @@ $(document).ready(function() {
         .tablesorter()
         jQuery('#pager')[0].style.display='none';
         }
-    }); 
-   
+    });  
+//]]>
 </script>
 {% endblock %}
 
@@ -58,7 +58,7 @@ $(document).ready(function() {
     With open data: <span class="green"> <b>{{public_count}}</b></span>.
     Without open data: <span class="red"> <b>{{no_public_count}}</b></span>.
 </p>
-<br>
+<br />
 <select id="public_filter" name="public_filter" onchange="update_filters();">
    <option value="all">All Agencies</option>
    <option value="public">With Open Data</option>
@@ -66,16 +66,16 @@ $(document).ready(function() {
 </select>
 
 <select id="location_filter" name="location_filter" onchange="update_filters()">
-   <option value="/agencies/">All States
+   <option value="/agencies/">All States</option>
   {% for s in states %}
-   <option value="/agencies/{{s.0}}/{{s.1}}"{% ifequal location.state s.1 %}{% ifequal location.country s.0 %} selected {% endifequal %}{% endifequal %}>{{s.1|upper}} ({{s.0}})
+   <option value="/agencies/{{s.0}}/{{s.1}}"{% ifequal location.state s.1 %}{% ifequal location.country s.0 %} selected {% endifequal %}{% endifequal %}>{{s.1|upper}} ({{s.0}})</option>
   {% endfor %}
 </select>
 
 <select id="country_filter" name="country_filter" onchange="update_country()">
-   <option value="/agencies/">All Countries
+   <option value="/agencies/">All Countries</option>
   {% for country in countries %}
-   <option value="/agencies/{{country}}"{% ifequal location.country country %}{% ifequal location.state None %} selected {% endifequal %}{% endifequal %}>{{country|upper}}
+   <option value="/agencies/{{country}}"{% ifequal location.country country %}{% ifequal location.state None %} selected {% endifequal %}{% endifequal %}>{{country|upper}}</option>
   {% endfor %}
 </select>
 
@@ -116,12 +116,12 @@ $(document).ready(function() {
 </table>
 
 <div id="pager" class="pager">
-    <form>
-        <img src="/images/tablesort/pager/first.png" class="first"/>
-        <img src="/images/tablesort/pager/prev.png" class="prev"/>
+    <form action="">
+        <img src="/images/tablesort/pager/first.png" alt="first" class="first"/>
+        <img src="/images/tablesort/pager/prev.png" alt="prev" class="prev"/>
         <input type="text" class="pagedisplay"/>
-        <img src="/images/tablesort/pager/next.png" class="next"/>
-        <img src="/images/tablesort/pager/last.png" class="last"/>
+        <img src="/images/tablesort/pager/next.png" alt="next" class="next"/>
+        <img src="/images/tablesort/pager/last.png" alt="last" class="last"/>
         <select class="pagesize">
 
             <option value="25">25</option>
@@ -132,7 +132,7 @@ $(document).ready(function() {
         </select>
     </form>
 </div>
-<br><br><br>
+<br /><br /><br />
 
 
 {% endblock %}

@@ -6,10 +6,12 @@
 <script type="text/javascript" src="{% static_url /js/jquery.tablesorter.min.js %}"></script>
 <script type="text/javascript" src="{% static_url /js/app-form-agencies.js %}"></script>
 <script type="text/javascript">
+//<![CDATA[
     jQuery(document).ready(function($)
     {
         reconstitute_from_keys("{{angency_keys_encoded|escapejs}}");
     });
+//]]>
 </script>
 {% endblock %}
 
@@ -39,9 +41,9 @@
             </select>
             
             <select id="location_filter" name="location_filter" onchange="updateFilters()">
-               <option value="all" selected>All States
+               <option value="all" selected>All States</option>
               {% for s in states %}
-               <option value="{{s|upper}}">{{s|upper}}
+               <option value="{{s|upper}}">{{s|upper}}</option>
               {% endfor %}
             </select>
             <br />Sort the list by clicking column headers.  Shift-click for multi-sort.</p>
