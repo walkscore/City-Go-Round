@@ -45,25 +45,31 @@ def gallery(request):
         
     NUM_RECENT_APPS = 3
     NUM_FEATURED_APPS = 3
+    CATEGORIES = ["Public Transit", "Biking", "Walking", "Driving"]
     
     all_apps = TransitApp.all().order('-bayesian_average').fetch(500);
 
     recent_list = TransitApp.all_by_most_recently_added().fetch(NUM_RECENT_APPS)
     featured_list = []
-    categorized_list = {}
+    # make dict of category_name:[]
+    categorized_list = dict([(x,[]) for x in CATEGORIES])
     
-    for a in all_apps:
-        if app_in_list(a, recent_list):
+    for app in all_apps:
+        # if it's recently added, don't show it again
+        if app_in_list(app, recent_list):
             continue
         
-        if a.is_featured and len(featured_list) < NUM_FEATURED_APPS:
-            featured_list.append(a)
+        # if it's featured, don't show it again
+        if app.is_featured and len(featured_list) < NUM_FEATURED_APPS:
+            featured_list.append(app)
             continue
 
-        for category in a.categories:
-            if category not in categorized_list:
-                categorized_list[category] = []
-            categorized_list[category].append( a )
+        # if an app is in a category, add it to that category's list and then
+        # break to prevent it from being added to any other category's list
+        for category in CATEGORIES:
+            if category in app.categories:
+                categorized_list[category].append( app )
+                break
                 
     template_vars = {
         'biking_apps':         categorized_list.get('Biking',[]),
