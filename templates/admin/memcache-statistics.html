@@ -5,7 +5,6 @@
 {% block headscripts %}
 <script type="text/javascript" src="{% static_url /js/jquery.timers.js %}"></script>
 <script type="text/javascript">
-<![CDATA[
     jQuery(document).ready(function($)
     {
         $("#clean_memcache").click(function(event)
@@ -42,7 +41,6 @@
             });
         });     
     });
-]]>
 </script>
 {% endblock %}
 
