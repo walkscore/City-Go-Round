@@ -289,11 +289,14 @@
     .hover-buttons div.button-twitter {
         margin-right: 4px;
     }
-    .hover-buttons div.button-email p {
-        margin: 0;
-        padding: 0;
-
+    .hover-buttons div p {
+        padding: 4px 0 0 29px;
+        margin-left: 3px;
+        height: 18px;
+        color: #999;
+        font-size: 11px;
     }
+
     .hover-buttons div.button-facebook p { background: url(/images/otd-icons.png) 0 0 no-repeat; }
     .hover-buttons div.button-twitter p { background: url(/images/otd-icons.png) 0 -22px no-repeat; }
     .hover-buttons div.button-email p { background: url(/images/otd-icons.png) 0 -44px no-repeat; }

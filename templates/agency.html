@@ -10,11 +10,11 @@
         <h4 class="green">Provides open data</h4>
     {% else %}
         <h2>{{agency.short_name}}</h2>
-        <h4 class="red">Has no open data</h4>
+        <h4 class="red">Does not provide open data</h4>
     {% endif %}
     
     {% if agency.contact_email %}
-        <div class="action-links">
+        <!--div class="action-links">
             <div class="button-email">
                 <p><a href="mailto:{{agency.contact_email}}" title="Send mail to {{agency.short_name}}" onclick='trackEvent("agency details", "send email", "{{agency.short_name}}"})'>Send email</a></p>
             </div>
@@ -23,7 +23,7 @@
                 <p><a href="http://twitter.com/{{agency.twitter}}" title="See {{agency.short_name}} on Twitter" onclick='trackNavigationNewWindow("http://twitter.com/{{agency.twitter}}", "agency details", "twitter link", "{{agency.short_name}}"); return false;'>On Twitter</a></p>
                 </div>
             {% endif %}
-        </div>
+        </div-->
     {% endif %}
     
     {% if agency.agency_url %}
