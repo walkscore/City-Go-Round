@@ -90,11 +90,11 @@
         <p>Logged in as admin: you can <a href="{% url admin_apps_edit transit_app_slug=transit_app.slug %}">edit this application</a>.</p>
     {% end_if_user_is_google_admin %}    
     <div class="app-images" id="triggers">
-        <a href="{% screen_shot_image_url transit_app default original %}" title="{{transit_app.title}} screenshot"><img src="{{transit_app.default_300w_screen_shot_url}}" alt="Application Screen Shot" /></a>
+        <a href="{% screen_shot_image_url transit_app default original %}" title="{{transit_app.title}} screenshot" onclick='trackEvent("app details", "image click", "featured image")'><img src="{{transit_app.default_300w_screen_shot_url}}" alt="Application Screen Shot" /></a>
         <label>Additional Images:</label>
         <div class="app-images-thumbs">
             {% for i in transit_app.screen_shot_non_default_indexes %}
-                <a href="{% screen_shot_image_url transit_app i original %}" title="{{transit_app.title}} screenshot"><img src="{% screen_shot_image_url transit_app i 145w %}" alt="Application Screen Shot" /></a>
+                <a href="{% screen_shot_image_url transit_app i original %}" title="{{transit_app.title}} screenshot" onclick='trackEvent("app details", "image click", "thumbnail {{forloop.counter}}")'><img src="{% screen_shot_image_url transit_app i 145w %}" alt="Application Screen Shot" /></a>
             {% endfor %}
         </div>
 
@@ -136,17 +136,17 @@
                 <div id="your-rating-panel">
                     <p style="float:left">Your rating:</p>
                     <form id="ratingform" name="rating" action="/app/rating" method="POST">
-                    <input id="rating1" type="radio" name="rating" value="1" class="auto-submit-star">
-                    <input id="rating2" type="radio" name="rating" value="2" class="auto-submit-star">
-                    <input id="rating3" type="radio" name="rating" value="3" class="auto-submit-star">
-                    <input id="rating4" type="radio" name="rating" value="4" class="auto-submit-star">
-                    <input id="rating5" type="radio" name="rating" value="5" class="auto-submit-star"></form>
+                    <input id="rating1" type="radio" name="rating" value="1" class="auto-submit-star" onclick='trackEvent("rate app", "1 star", "{{transit_app.title}}")'>
+                    <input id="rating2" type="radio" name="rating" value="2" class="auto-submit-star" onclick='trackEvent("rate app", "2 star", "{{transit_app.title}}")'>
+                    <input id="rating3" type="radio" name="rating" value="3" class="auto-submit-star" onclick='trackEvent("rate app", "3 star", "{{transit_app.title}}")'>
+                    <input id="rating4" type="radio" name="rating" value="4" class="auto-submit-star" onclick='trackEvent("rate app", "4 star", "{{transit_app.title}}")'>
+                    <input id="rating5" type="radio" name="rating" value="5" class="auto-submit-star" onclick='trackEvent("rate app", "5 star", "{{transit_app.title}}")'></form>
                 </div>
             </div>
         </div>
         <br>
         <label>Full Description:</label> <p>{{transit_app.long_description}}</p>
-        <p><a href="{{transit_app.url}}">Visit developer's website</a></p>
+        <p><a href="{{transit_app.url}}" onclick='trackEvent("app details", "agency link click", "{{transit_app.title}}")'>Visit developer's website</a></p>
         {% if transit_app.categories %}
             <div>
                 <label>Categories:</label> <p>{% for i in transit_app.categories %}{% if not forloop.first %}, {% endif %}{{ i }}{% endfor %}</p>
@@ -205,9 +205,9 @@
 <!-- gallery overlay element --> 
 <div class="simple_overlay" id="gallery"> 
      <!-- "previous image" action --> 
-    <a class="prev">prev</a> 
+    <a class="prev" onclick='trackEvent("app details", "gallery view next", "{{transit_app.title}}")'>prev</a> 
     <!-- "next image" action --> 
-    <a class="next">next</a> 
+    <a class="next" onclick='trackEvent("app details", "gallery view previous", "{{transit_app.title}}")'>next</a> 
     <!-- image information --> 
     <div class="info"></div> 
     <!-- load indicator (animated gif) --> 

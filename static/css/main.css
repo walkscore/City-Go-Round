@@ -273,29 +273,30 @@
         color: #628dc7;
         text-decoration: underline;
     }
-    #friends-and-followers {
+    #header .hover-buttons {
         position: absolute;
         bottom: 3px;
         right: 0px;
     }   
-    #friends-and-followers div {
+    #header .hover-buttons div {
         float:left;
+    }
+    .hover-buttons div {
         white-space: nowrap;        
         width: 85px;
         padding: 3px 4px 2px 0;
     }
-    #friends-and-followers div.friend-twitter {
+    .hover-buttons div.button-twitter {
         margin-right: 4px;
     }
-    #friends-and-followers div p {
-        padding: 4px 0 0 29px;
-        margin-left: 3px;
-        height: 18px;
-        color: #999;
-        font-size: 11px;
+    .hover-buttons div.button-email p {
+        margin: 0;
+        padding: 0;
+
     }
-    #friends-and-followers div.friend-facebook p { background: url(/images/otd-icons.png) 0 0 no-repeat; }
-    #friends-and-followers div.friend-twitter p { background: url(/images/otd-icons.png) 0 -22px no-repeat; }
+    .hover-buttons div.button-facebook p { background: url(/images/otd-icons.png) 0 0 no-repeat; }
+    .hover-buttons div.button-twitter p { background: url(/images/otd-icons.png) 0 -22px no-repeat; }
+    .hover-buttons div.button-email p { background: url(/images/otd-icons.png) 0 -44px no-repeat; }
     
 /*********** FOOTER ****************/
     
@@ -856,7 +857,38 @@ margin-top: 20px;
         margin: 0;
         padding: 0;
     }
+
+/*********** AGENCY DETAILS ****************/
     
+    #agency-details label {
+        font-weight: bold;
+        margin: 0;
+        padding: 0;
+    }
+    #agency-details h4 {
+        padding-top: 0px;
+    }
+    #agency-details div.action-links {
+        width: 115px;
+        margin-right: 120px;
+        float: right;
+        border: 1px solid #ccc;
+        padding: 10px 20px;
+    }
+    #agency-details div.action-links p {
+        text-indent: 30px;
+    }
+    #agency-details .action-links .button-twitter, #agency-details .action-links .button-email {
+        height: 22px;
+    }
+    #agency-details .action-links .button-email {
+        background: url(/images/otd-icons.png) 0 -44px no-repeat;
+    }
+    #agency-details .action-links .button-twitter {
+        background: url(/images/otd-icons.png) 0 -22px no-repeat;
+    }
+
+
 /**************** jquery tools ui gallery css ***************/
 
  /* the active thumbnail */
@@ -1117,13 +1149,13 @@ margin-top: 20px;
         font-weight: bold;
         font-style: normal;
     }
-    .bluegreen a, .dark-red a, .green a {
+    .bluegreen a, .red a, .green a {
     font-size: 12px;
     font-weight: normal;
     text-decoration: underline;
     }
     
-    .dark-red {
+    .red {
         margin-left: 2px;
         color: #a32b20;
     }

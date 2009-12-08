@@ -4,31 +4,63 @@
 
 {% block content %}
 
-{% if agency.date_opened %}
-<div class="big_green">Provides Open Data</div>
-{{ agency.name }} ({{agency.short_name}}) provides open data.<br>
-{% else %}
-<div class="big_red">No Open Data</div>
-{{ agency.name }} ({{agency.short_name}}) does not make their data public.<br>
-{{ agency.city }} residents can't take advantage of our <a href="/apps">transit app gallery</a>.
-
-
-{% endif %}
-
-
-<p>
-<b>Agency URL</b>: <a href="{{a.agency_url}}" target="_blank">{{a.agency_url}}</a> 
-<b>Director</b>:{{agency.executive}}<br>
-<a href="mailto:{{agency.contact_email}}">Send Email</a> 
-{% if agency.twitter %}<a href="agency.twitter">Twitter</a>{% endif %}
-<br>
-
-{% if agency.date_opened %}{% if apps %}
-    <h3> Transit Apps for this agency</h3>
-    {% for app in app %}
-        {{app}}
-    {% endfor %}
-{% endif %}{% endif %}
-
+<div id="agency-details" class="body-content col-group">    
+    {% if agency.date_opened %}
+        <h2>{{agency.short_name}}</h2>
+        <h4 class="green">Provides open data</h4>
+    {% else %}
+        <h2>{{agency.short_name}}</h2>
+        <h4 class="red">Has no open data</h4>
+    {% endif %}
     
+    {% if agency.contact_email %}
+        <div class="action-links">
+            <div class="button-email">
+                <p><a href="mailto:{{agency.contact_email}}" title="Send mail to {{agency.short_name}}" onclick='trackEvent("agency details", "send email", "{{agency.short_name}}"})'>Send email</a></p>
+            </div>
+            {% if agency.twitter %}
+                <div class="button-twitter">
+                <p><a href="http://twitter.com/{{agency.twitter}}" title="See {{agency.short_name}} on Twitter" onclick='trackNavigationNewWindow("http://twitter.com/{{agency.twitter}}", "agency details", "twitter link", "{{agency.short_name}}"); return false;'>On Twitter</a></p>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+    
+    {% if agency.agency_url %}
+        <div>
+            <label>Agency URL:</label>
+            <p><a href="{{agency.agency_url}}" target="_blank">{{agency.agency_url}}</a></p>
+        </div>
+    {% endif %}
+    
+    {% if agency.executive %}
+        <div>
+            <label>Director:</label>
+            <p>{{agency.executive}}</p>
+        </div>  
+    {% endif %} 
+    
+       
+    {% if agency.date_opened %}
+    {% else %}
+        <div id="petition" class="body-content thinline">
+    		<div class="boxed-content">
+                <h2>Support Open Data</h2>
+                <div class="narrow-col">
+                    {% include "includes/petition-text.html" %}
+                    {% include "includes/petition-disclaimer.html" %}
+                </div>
+                <div class="narrow-col rightmost">
+                    {% include "includes/petition-form.html" %}
+                </div>
+            </div>
+        </div>
+
+    {% endif %}
+
+</div> 
+    
+    
+        
+
 {% endblock %}

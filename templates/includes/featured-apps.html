@@ -1,19 +1,19 @@
 <div id="feat">    
     <h4>Featured Apps</h4>
-    <div id="feat-bigprev" class="prevPage browse left"></div>  
-    <div id="feat-bignext" class="nextPage browse right"></div> 
+    <div id="feat-bigprev" class="prevPage browse left" onclick='trackEvent("featured_apps", "big-prev")'></div>  
+    <div id="feat-bignext" class="nextPage browse right" onclick='trackEvent("featured_apps", "big-next")'></div> 
     
       
     <div id="feat-controls">
-        <div id="feat-controls-prev" class="prevPage browse left"></div>
+        <div id="feat-controls-prev" class="prevPage browse left"  onclick='trackEvent("featured_apps", "small-prev")'></div>
         <div id="jumplinks">
             <!-- loop here for jump control links -->
             {% for transit_app in featured_apps %}
-                <a href="{{forloop.counter}}"></a>
+                <a href="{{forloop.counter}}" onclick='trackEvent("featured_apps", "jump-to", {{forloop.counter}})'></a>
             {% endfor %}
             
         </div>
-        <div id="feat-controls-next" class="nextPage browse right"></div>
+        <div id="feat-controls-next" class="nextPage browse right" onclick='trackEvent("featured_apps", "small-next")'></div>
          
     </div>  
     <a id="view-all" href="{% url apps_gallery %}">View all {{transit_app_count}} apps</a>

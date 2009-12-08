@@ -198,7 +198,7 @@ jQuery(document).ready(function($)
             agency_summary += ' nearby transit agencies provide open data to app developers. &nbsp; <a class="expandable">Details</a>';            
             if ( num_open_agencies == agencies.length ) {
                 agency_summary = "Perfect!  " + agency_summary;
-                $("#nearby-agency-summary").removeClass("dark-red").addClass("green");
+                $("#nearby-agency-summary").removeClass("red").addClass("green");
             }
             $("#nearby-agency-summary").hide().html(agency_summary).fadeIn(1000);
             $("#nearby-agency-summary").children("a").eq(0).bind("click", function(e){
@@ -329,7 +329,7 @@ jQuery(document).ready(function($)
 <div class="col-group body-content">    
     <h2 class="hide-on-load bluegreen"><img src="{% static_url /images/ajax-loader-bluegreen.gif %}" width="16" height="16" />&nbsp;searching...</h2>
     <h2 class="bluegreen" id="num_apps_found"></h2>
-    <h5 class="dark-red" id="nearby-agency-summary">&nbsp;</h5>
+    <h5 class="red" id="nearby-agency-summary">&nbsp;</h5>
     <div id="nearby-agency-details"></div>
     <div class="body-content col-group hidden">
         <h3>Public transit apps near <span class="clean_query_text">&nbsp;</span>:</h3>
