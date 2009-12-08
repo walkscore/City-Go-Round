@@ -58,7 +58,7 @@ jQuery(document).ready(function($)
         
     function html_for_transit_app_thumb(transit_app) 
     {
-        var feature_html = (transit_app.is_featured) ? '<img class="featured" src="{% static_url /images/editors-choice3.gif %}" />' : '';
+        var feature_html = (transit_app.is_featured) ? '<img class="featured" src="{% static_url /images/editors-choice3.gif %}" alt="Editors Choice" />' : '';
         
         var html = '<div class="app">';
         html += '<a href="' + transit_app.details_url + '">';
@@ -328,7 +328,7 @@ jQuery(document).ready(function($)
 
 {% block content %}
 <div class="col-group body-content">    
-    <h2 class="hide-on-load bluegreen"><img src="{% static_url /images/ajax-loader-bluegreen.gif %}" width="16" height="16" />&nbsp;searching...</h2>
+    <h2 class="hide-on-load bluegreen"><img src="{% static_url /images/ajax-loader-bluegreen.gif %}" width="16" height="16" alt="progress spinner" />&nbsp;searching...</h2>
     <h2 class="bluegreen" id="num_apps_found"></h2>
     <h5 class="red" id="nearby-agency-summary">&nbsp;</h5>
     <div id="nearby-agency-details"></div>
