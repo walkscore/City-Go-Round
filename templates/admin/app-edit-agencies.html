@@ -6,12 +6,10 @@
 <script type="text/javascript" src="{% static_url /js/jquery.tablesorter.min.js %}"></script>
 <script type="text/javascript" src="{% static_url /js/app-form-agencies.js %}"></script>
 <script type="text/javascript">
-<![CDATA[
     jQuery(document).ready(function($)
     {
         reconstitute_from_keys("{{angency_keys_encoded|escapejs}}");
     });
-]]>
 </script>
 {% endblock %}
 
