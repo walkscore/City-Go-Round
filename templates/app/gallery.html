@@ -22,17 +22,30 @@
     </div>
     
     <div class="col-group app-gallery body-content">
-    	<h3 class="clear-all">All transit apps</h3> 
+    	<h3 class="clear-all">Public transit apps</h3> 
     	<div class="app-thumbs">
-    		{% partial "includes/app-thumb-list.html" {'apps': main_app_list} %}
+    		{% partial "includes/app-thumb-list.html" {'apps': transit_apps} %}
     	</div>
     </div>
     <div class="col-group app-gallery body-content">
-    	<h3 class="clear-all">Bicycling apps</h3> 
+    	<h3 class="clear-all">Biking apps</h3> 
     	<div class="app-thumbs">
-    		{% partial "includes/app-thumb-list.html" {'apps': bike_app_list} %}
+    		{% partial "includes/app-thumb-list.html" {'apps': biking_apps} %}
     	</div>
     </div>
+    <div class="col-group app-gallery body-content">
+    	<h3 class="clear-all">Walking apps</h3> 
+    	<div class="app-thumbs">
+    		{% partial "includes/app-thumb-list.html" {'apps': walking_apps} %}
+    	</div>
+    </div>
+    <div class="col-group app-gallery body-content">
+    	<h3 class="clear-all">Driving apps</h3> 
+    	<div class="app-thumbs">
+    		{% partial "includes/app-thumb-list.html" {'apps': driving_apps} %}
+    	</div>
+    </div>
+
 </div>
 <div class="wide-col rightmost">
 	{% include "includes/mrec1.html" %}
