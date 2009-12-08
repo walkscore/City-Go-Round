@@ -81,6 +81,7 @@ class Agency(GeoModel):
             'latitude':(self.location.lat if self.location else None),
             'longitude':(self.location.lon if self.location else None),
             'executive_email':self.executive_email,
+            'agency_url':self.agency_url,
         }
 
     @staticmethod
