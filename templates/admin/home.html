@@ -31,9 +31,21 @@
     <p>&nbsp;</p>
     
     <h2>Here are some statistics:</h2>
+
     {% for stat in all_stats %}
     <p>{{stat.name}}:{{stat.value}}</p>
     {% endfor %}
+
+    <p>&nbsp;</p>
+    
+    <h2>Want to validate the HTML of this site? Follow these links:</h2>
+    
+    <p><a target="_blank" href="http://validator.w3.org/check?uri=http%3A%2F%2Fwww.citygoround.org%2F&charset=%28detect+automatically%29&doctype=Inline&group=0">Home Page</a></p>
+    <p><a target="_blank" href="http://validator.w3.org/check?uri=http%3A%2F%2Fwww.citygoround.org%2Fapps%2F&charset=%28detect+automatically%29&doctype=Inline&group=0&user-agent=W3C_Validator%2F1.654">Apps Gallery</a></p>
+    <p><a target="_blank" href="http://validator.w3.org/check?uri=http%3A%2F%2Fwww.citygoround.org%2Fagencies%2F&charset=%28detect+automatically%29&doctype=Inline&group=0&user-agent=W3C_Validator%2F1.654">Agencies List</a></p>
+    <p><a target="_blank" href="http://validator.w3.org/check?uri=http%3A%2F%2Fwww.citygoround.org%2Fapps%2Fnearby%2F%3Fq%3Dseattle%2C%2520wa&charset=%28detect+automatically%29&doctype=Inline&group=0&user-agent=W3C_Validator%2F1.654">Search Results for Seattle, WA</a></p>
+    <p><a target="_blank" href="http://validator.w3.org/check?uri=http%3A%2F%2Fwww.citygoround.org%2Fapps%2Fwalk-score%2F&charset=%28detect+automatically%29&doctype=Inline&group=0&user-agent=W3C_Validator%2F1.654">Walk Score App Details Page</a></p>
+    <p><a target="_blank" href="http://validator.w3.org/check?uri=http%3A%2F%2Fwww.citygoround.org%2Fapps%2Fadd%2F&charset=%28detect+automatically%29&doctype=Inline&group=0&user-agent=W3C_Validator%2F1.654">Add App Form Page</a></p>
     
 </div>
 {% endblock %}
