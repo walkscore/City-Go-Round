@@ -29,9 +29,11 @@
       for(i=0; i<data.results.length; i++) {
         if (i < 7) {
             var result = data.results[i];
-            $("#tweet-viewer").append("<div class='tweet'><a href='http://twitter.com/"+result.from_user+"'><img src="+result.profile_image_url+
-                                      " width=50px height=50px></a><div><blockquote><cite>@"+result.from_user+
-                                      " said:</cite> '"+result.text+"'</blockquote><label>"+mil_to_standard(result.created_at)+"</label></div></div>")
+            $("#tweet-viewer").append(
+                '<div class="tweet"><a href="http://twitter.com/' + result.from_user + '">' + 
+                '<img src="' + result.profile_image_url + '" style="width:50px; height:50px;" alt="profile image for twitter user" />' +
+                '</a><div><blockquote><cite>@' + result.from_user +
+                ' said:</cite> &#8220;' + result.text + '&#8221;</blockquote><label>' + mil_to_standard(result.created_at) + '</label></div></div>')
             }
         }
       }

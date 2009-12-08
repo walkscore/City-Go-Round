@@ -2,7 +2,7 @@
   {% for open_agency in open_agencies|slice:":3" %}
   <li>
     <h5 class="agency_title"><a href="agencies/{{open_agency.urlslug}}">{{open_agency.name}}</a></h5>
-      <span>Added {{open_agency.date_opened|date}}</span></p>
+    <span>Added {{open_agency.date_opened|date}}</span>
   </li>
   {% endfor %}
 </ul>
