@@ -69,7 +69,6 @@ def gallery(request):
         for category in CATEGORIES:
             if category in app.categories:
                 categorized_list[category].append( app )
-                break
                 
     template_vars = {
         'biking_apps':         categorized_list.get('Biking',[]),
