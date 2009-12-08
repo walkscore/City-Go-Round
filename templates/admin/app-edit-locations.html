@@ -6,13 +6,13 @@
 {% block headscripts %}
 <script type="text/javascript" src="{% static_url /js/app-form-locations.js %}"></script>
 <script type="text/javascript">
-<![CDATA[
+//<![CDATA[
 jQuery(document).ready(function($) 
 {
     reconstitute_locations("{{location_list|escapejs}}"); 
     // $("#debug-input").click(function () { $("#dbug").text($("#id_location_list").val()); });
 });
-]]>
+//]]>
 </script>
 {% endblock %}
 
