@@ -3,7 +3,7 @@
 {% block content %}
 
 {% for feed_ref in all_references %}
-[{{feed_ref.ref.gtfs_data_exchange_id}}] <a href="{{feed_ref.ref.url}}">{{feed_ref.ref.name}}</a> ({{feed_ref.date_added}} - {{feed_ref.ago}} ago) <a href="{{feed_ref.ref.dataexchange_url}}">feed</a><br>
+[{{feed_ref.ref.gtfs_data_exchange_id}}] <a href="{{feed_ref.ref.url}}">{{feed_ref.ref.name}}</a> ({{feed_ref.date_added}} - {{feed_ref.ago}} ago) <a href="{{feed_ref.ref.dataexchange_url}}">feed</a><br />
 {% endfor %}
     
 {% endblock %}
