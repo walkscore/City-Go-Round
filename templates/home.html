@@ -10,8 +10,8 @@
 // wait until document is fully scriptable 
 $(document).ready(function() { 
  
-    // select #flowplanes and make it scrollable. use circular and navigator plugins 
-    $("#flowpanes").scrollable({size: 1, clickable:false}).circular().navigator({ 
+    // select #flowplanes and make it scrollable. use circular and navigator plugins     
+    var api = $("#flowpanes").scrollable({size: 1, clickable:false}).circular().navigator({ 
  
         // select #flowtabs to be used as navigator 
         navi: "#jumplinks", 
@@ -20,9 +20,17 @@ $(document).ready(function() {
         naviItem: 'a', 
  
         // assign "current" class name for the active A tag inside navigator 
-        activeClass: 'current' 
- 
-    }); 
+        activeClass: 'current',
+
+        // NOTE DAVEPECK: This api parameter is absolute insanity, it and took forever to 
+        // notice that it even exists. This makes it clear to me that jQuery Tools is garbage.
+        // but here it is...
+        api:true
+    });
+    
+    // we'll open up to a randomly chosen app
+    var move_to = Math.floor(Math.random() * {{featured_apps|length}});
+    api.setPage(move_to, 0);
 });
 //]]>
 </script>
