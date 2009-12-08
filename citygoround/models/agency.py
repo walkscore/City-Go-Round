@@ -80,7 +80,7 @@ class Agency(GeoModel):
             'has_real_time_data': self.has_real_time_data,
             'latitude':(self.location.lat if self.location else None),
             'longitude':(self.location.lon if self.location else None),
-            'executive_email':executive_email,
+            'executive_email':self.executive_email,
         }
 
     @staticmethod
