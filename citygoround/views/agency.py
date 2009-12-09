@@ -85,7 +85,10 @@ def edit_agency(request, agency_id=None):
                                    'standard_license':agency.standard_license,})
     
     return render_to_response( request, "edit_agency.html", {'agency':agency, 'form':form} )
-  
+
+def agency_app_counts(request):
+    return render_to_json( TransitApp.agency_app_counts() )
+
 @memcache_parameterized_view_response(time = settings.MEMCACHE_PAGE_SECONDS)  
 def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):        
     # TODO davepeck: I just looked at this code -- we _really_ need to clean this stuff up

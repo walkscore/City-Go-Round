@@ -530,6 +530,15 @@ class TransitApp(db.Model):
     @staticmethod
     def count_apps_in_category(category):
         return TransitApp.all().filter("categories =", category).count()
+        
+    @staticmethod
+    def agency_app_counts():
+        #TODO: this always runs so slowly it times out
+        
+        ret = {}
+        for agency in Agency.all():
+            ret[str(agency.key())] = len(list(TransitApp.iter_for_agency(agency)))
+        return ret
 
 class TransitAppLocation(GeoModel):
     """Represents a many-many relationship between TransitApps and explcitly named cities where they work."""

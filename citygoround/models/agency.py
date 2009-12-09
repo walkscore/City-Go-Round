@@ -72,6 +72,7 @@ class Agency(GeoModel):
             'passenger_miles':self.passenger_miles,
             'is_public':self.is_public,
             'name': cgi.escape(self.name),
+            'short_name': cgi.escape(self.short_name) if self.short_name else None,
             'city': cgi.escape(self.city),
             'urlslug': self.urlslug,
             'state': cgi.escape(self.state),
@@ -80,6 +81,9 @@ class Agency(GeoModel):
             'has_real_time_data': self.has_real_time_data,
             'latitude':(self.location.lat if self.location else None),
             'longitude':(self.location.lon if self.location else None),
+            'executive':cgi.escape(self.executive) if self.executive else None,
+            'executive_email':cgi.escape(self.executive_email) if self.executive_email else None,
+            'agency_url':cgi.escape(self.agency_url) if self.agency_url else None,
         }
 
     @staticmethod
@@ -194,4 +198,4 @@ class Agency(GeoModel):
         seen_set = set()
         for transit_app in transit_apps:
             for agency in iter_uniquify(Agency.iter_for_transit_app(transit_app, uniquify = False), seen_set, uniquify):
-                yield agency        
+                yield agency         
