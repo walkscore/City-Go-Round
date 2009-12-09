@@ -23,7 +23,7 @@
      
             <!-- the items --> <!-- loop here to enter apps -->
             {% for transit_app in featured_apps %}
-            <div>
+            <div class="hidden featured_app_container">
                 <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.default_180sq_screen_shot_url}}" alt="{{transit_app.slug}} screen shot" /></a>
                 <h4><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h4>
                 <p>{{transit_app.description}}</p>

@@ -31,6 +31,18 @@ $(document).ready(function() {
     // we'll open up to a randomly chosen app
     var move_to = Math.floor(Math.random() * {{featured_apps|length}});
     api.setPage(move_to, 0);
+    
+    // now: show our applications
+    if ($.browser.msie)
+    {
+        // TODO davepeck: we're shipping in < 24 hours and MSIE fading
+        // looks awful. So turn it off using (evil) browser detection.
+        $(".featured_app_container").removeClass("hidden");
+    }
+    else
+    {
+        $(".featured_app_container").fadeIn(250).removeClass("hidden");
+    }
 });
 //]]>
 </script>
