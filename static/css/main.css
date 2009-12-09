@@ -205,15 +205,6 @@
             width: 276px;
         }
     
-    #footer {
-        clear: both;
-        margin: 0 auto 0 auto;
-        width: 920px;
-        position: relative;
-        top: 10px;
-    }
-    
-    
     .floatleft {
         float: left;
         margin-right: 12px;
@@ -306,7 +297,12 @@
     #footer {
         padding-top: 50px;
         padding-bottom: 20px;
-    }
+        clear: both;
+        margin: 0 auto 0 auto;
+        width: 920px;
+        position: relative;
+        top: 10px;        
+    }    
     #footer #license {
         margin-top: 12px;
     }
@@ -327,17 +323,18 @@
     #footer #content-right {
         padding-top: 50px;
         position: absolute;
-        top: 0;
+        top: -15px;
         right: 0;       
+        float: right;
     }
+    
     #footer #content-right p#gtfs-data-exchange {
         font-size: 11px;
         color: #999;
     }
     #footer #content-right p#gtfs-data-exchange img{
-        float: right;
         position: relative;
-        top: -10px;
+        top: 15px;
     }
     
     
@@ -1030,21 +1027,27 @@ margin-top: 20px;
         clear: both;
         padding-top: 8px;
     }
+    
+    .tweet a {
+    }
+    
     .tweet img {
         float: left;
         margin-right: 7px;
-        position: relative;
-        top: 3px;
-        border: 1px solid #bbb;
+        border: 1px solid #bbb;        
     }
+    
     .tweet div {
         width: 242px;
+        display: inline;
     }
+    
     .tweet label {
         float: right;
         color: #999;
         font-size:  11px;
     }
+    
     .tweet blockquote {
         color: #666;
         font-size:  11px;
