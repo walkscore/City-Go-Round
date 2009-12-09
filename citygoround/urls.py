@@ -73,6 +73,7 @@ urlpatterns += patterns(
     url(r'^apps/add/agencies/(?P<progress_uuid>[\w]+)/$', 'add_agencies', name='apps_add_agencies'),
     url(r'^apps/add/success/$', 'add_success', name='apps_add_success'),
     url(r'^apps/(?P<transit_app_slug>[\w-]+)/$', 'details', name='apps_details'),
+    url(r'^apps/(?P<transit_app_slug>[\w-]+)/location/$', 'app_location', name='app_location'),
     url(r'^apps/(?P<transit_app_slug>[\w-]+)/screenshot-(?P<screen_shot_index>[\d]+)-(?P<screen_shot_size_name>[\w\d]+).png$', 'screenshot', name='apps_screenshot'),
     url(r'^apps/(?P<transit_app_slug>[\w-]+)/rating/vote/$', 'app_rating_vote', name='app_rating_vote'),    
     url(r'^admin/apps/$', 'admin_apps_list', name='admin_apps_list'),

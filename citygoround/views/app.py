@@ -98,7 +98,20 @@ def details(request, transit_app):
         'locations': transit_app.get_supported_location_list(),
     }    
     return render_to_response(request, 'app/details.html', template_vars)
-    
+
+@requires_valid_transit_app_slug
+def app_location(request, transit_app):
+        
+    template_vars = {
+        'transit_app': transit_app,
+        'explicit_agencies': [agency for agency in Agency.iter_explicitly_supported_for_transit_app(transit_app)],
+        'supports_public_agencies': transit_app.supports_all_public_agencies,
+        'locations': transit_app.get_supported_location_list(),
+        'location_query': request.GET.get('q',''),
+    }    
+    return render_to_response(request, 'app/location.html', template_vars)
+
+
 @requires_valid_transit_app_slug
 def screenshot(request, transit_app, screen_shot_index, screen_shot_size_name):
     # To make caching of images behave better when we update an app's images, use

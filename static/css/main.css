@@ -858,7 +858,11 @@ margin-top: 20px;
         margin: 0;
         padding: 0;
     }
+    
+/*********** APP INFO FOR SPECIFIC LOCATION ****************/
 
+    #no-nearby-agencies, #all-agencies-have-data, #some-agencies-missing-data { display: none; }
+    
 /*********** AGENCY DETAILS ****************/
     
     #agency-details label {
