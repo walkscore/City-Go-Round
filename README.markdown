@@ -12,7 +12,7 @@ This repository contains all the code and assets that power [http://citygoround.
 
 This code is released under the BSD license. Do what you will with it. 
 
-(There are a few third-party libraries checked into this repository. They are licensed separately.)
+(There are a few third-party libraries checked into this repository. They are licensed separately. See the individual license files for details, or in some cases comments at the top of each file.)
 
 
 HOW TO GET RUNNING LOCALLY
