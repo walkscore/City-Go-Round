@@ -4,6 +4,7 @@ runtime: python
 api_version: 1
 
 handlers:
+
 - url: /images
   static_dir: static/images
   
@@ -12,6 +13,10 @@ handlers:
 
 - url: /css
   static_dir: static/css
+
+- url: /favicon.ico
+  static_files: static/favicon.ico
+  upload: static/favicon.ico
   
 - url: /remote_api
   script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
