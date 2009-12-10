@@ -34,7 +34,7 @@ Used to mail API users and administrators regarding errors, reports, etc.
 Contains core mail functions, plus convenience functions for common cases
 """
 
-def send_to_contact(subject, body, recipient="jesse@frontseat.org"):
+def send_to_contact(subject, body, recipient="info@citygoround.org"):
     message = mail.EmailMessage(sender="no-reply@citygoround.org")
     message.to = recipient
     logging.info("MAIL: %s :: %s" % (subject, body))
