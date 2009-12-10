@@ -13,7 +13,6 @@ INSTALLED_APPS = ['citygoround', 'gaeunit']
 MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.http.ConditionalGetMiddleware',
-    'citygoround.middleware.SiteWideUsernameAndPasswordMiddleware',
     'citygoround.middleware.AppEngineSecureSessionMiddleware',
 ]
 
