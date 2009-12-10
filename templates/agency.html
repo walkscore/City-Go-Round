@@ -5,11 +5,12 @@
 {% block content %}
 
 <div id="agency-details" class="body-content col-group">    
+    
+    <h2>{{agency.name}} {% if agency.short_name %}({{agency.short_name}}){% endif %}</h2>
+    
     {% if agency.date_opened %}
-        <h2>{{agency.short_name}}</h2>
         <h4 class="green">Provides open data</h4>
     {% else %}
-        <h2>{{agency.short_name}}</h2>
         <h4 class="red">Does not provide open data</h4>
     {% endif %}
     

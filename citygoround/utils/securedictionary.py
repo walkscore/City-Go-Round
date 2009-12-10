@@ -1,5 +1,11 @@
 import os
 
+# NOTE davepeck:
+# This code is a heavily modified version of Werkzeug's secure cookie code.
+# The copyright to this code is owned by Werkzeug's specific authors, though I have
+# made substantial changes. It is no longer concerned just with cookies, and it plays
+# nicely in a django + App Engine world.
+
 from hashlib import sha1
 import cPickle as pickle
 from hmac import new as hmac
