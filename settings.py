@@ -81,7 +81,7 @@ TRANSIT_APP_IMAGE_HEIGHT = 180
 #override in local_settings.py, not here
 GOOGLE_API_KEY='ABQIAAAAOtgwyX124IX2Zpe7gGhBsxScRvQHjv9UbfX2QLoR8lJzqlEEMhQOYVWJMRvlY9Hz-bSACEukjIPCWA'
 
-BBOX_SIDE_IN_MILES = 10.0
+BBOX_SIDE_IN_MILES = 50.0 #like a search radius of 25 miles
 NEARBY_AGENCIES_BBOX_SIDE_IN_MILES = 50.0 #like a search radius of 25 miles
 
 if DEBUG:
