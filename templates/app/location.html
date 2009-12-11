@@ -20,7 +20,7 @@ jQuery(document).ready(function($)
         return html;
     }
     
-    function handle_agency_query_results(agencies, query_info_html)
+    function handle_agency_query_results(agencies, geocoded_city)
     {
         var num_closed_agencies = 0;
         var num_open_agencies = 0;
@@ -55,7 +55,12 @@ jQuery(document).ready(function($)
             $("#nearby-agency-details").hide().html(agency_details);
             
             var agency_summary = num_open_agencies + ' of ' + agencies.length;
-            agency_summary += ' ' + query_info_html + ' transit agencies provide open data:';            
+
+            if (geocoded_city)
+                agency_summary += ' transit agencies near ' + geocoded_city + ' provide open data:';
+            else 
+                agency_summary += ' nearby transit agencies provide open data:';
+
             if ( num_open_agencies == agencies.length ) {
                 $("#standard-text").hide();
                 $("#nearby-agency-summary").removeClass("red").addClass("green");
@@ -68,14 +73,15 @@ jQuery(document).ready(function($)
             $("#nearby-agency-details").show("blind", { direction: "vertical" }, 1000);
         }
         else {
-            $("#nearby-agency-summary").hide().html("No transit agencies were found near " + query_info_html + ".").fadeIn(1000);
+            var message = (geocoded_city) ? "No transit agencies were found near " + geocoded_city + "." : "No transit agencies were found near the location you queried.";
+            $("#nearby-agency-summary").hide().html(message).fadeIn(1000);
             $("#no-nearby-agencies").hide().fadeIn(1000);            
         }    
     }
     
-    function query_for_agencies(latitude, longitude, country_code, query_info_html)
+    function query_for_agencies(latitude, longitude, country_code, geocoded_city)
     {
-        $.getJSON(url_for_agency_query(latitude, longitude), function(all_agencies){ handle_agency_query_results(all_agencies, query_info_html); });
+        $.getJSON(url_for_agency_query(latitude, longitude), function(all_agencies){ handle_agency_query_results(all_agencies, geocoded_city); });
     }
     
     // TODO davepeck: move this to shared utils and rationalize with similar code.
@@ -115,7 +121,7 @@ jQuery(document).ready(function($)
             locality = null;
         }
         
-        // return whatever is most detailed
+        // return a city, state, country, or nothing.  If no city, we don't display any of these things.
         if (locality)
         {
             if (country_name == "USA")
@@ -124,16 +130,14 @@ jQuery(document).ready(function($)
         }
         else
         {
-            if (country_name == "USA")
-                return admin_area;
-            return [admin_area, country_name].join(", ");                        
+            return "";                        
         }
     }
     
     function handle_google_geocode_response(response)
     {
-        // human-friendly geocode result (default in case something goes wrong)
-        var query_info_html = "&#8220;{{location_query|force_escape|escapejs}}&#8221;";
+        // default to blank -- use this later to see if we got a city from the geocode
+        var geocoded_city = "";
         
         if (response && response.Status.code == 200)
         {
@@ -152,11 +156,11 @@ jQuery(document).ready(function($)
             var shorthand = shorthand_for_place(place);            
             if (shorthand)
             {
-                query_info_html = shorthand;
+                geocoded_city = shorthand;
             }
             
             // Perform the agencies query     
-            query_for_agencies(latitude, longitude, country_code, query_info_html);
+            query_for_agencies(latitude, longitude, country_code, geocoded_city);
         }
         else
         {
