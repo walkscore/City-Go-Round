@@ -3,7 +3,7 @@ from django.conf import settings
 from google.appengine.api import images
 from google.appengine.ext import db
 from django.utils.translation import ugettext_lazy as _
-from .utils.image import image_bytes_are_valid
+from .utils.image import convert_image
 from .utils.places import CityInfo, CountryInfo, CitiesAndCountries
 from .nameddict import nameddict
 # from bootstrap import BREAKPOINT
@@ -15,7 +15,12 @@ class AppEngineImageField(forms.FileField):
     image_error_messages = {
         'invalid_image': _(u"Upload a valid image. The file you uploaded was either not an image or was a corrupted image."),
         'too_large_image': _(u"Your image was too large. Please keep images under 1MB in size."),
+        'too_large_converted_image': _(u"Your image was too large. Please try again with a smaller image."),
     }
+    
+    def __init__(self, target_output_encoding = images.PNG, *args, **kwargs):
+        super(AppEngineImageField, self).__init__(*args, **kwargs)
+        self._target_output_encoding = target_output_encoding
     
     def clean(self, data, initial = None):
         raw_file = super(AppEngineImageField, self).clean(data, initial)
@@ -38,8 +43,13 @@ class AppEngineImageField(forms.FileField):
         if len(bytes) > settings.MAX_IMAGE_SIZE:
             raise forms.ValidationError(self.image_error_messages['too_large_image'])
                         
-        if (len(bytes) > 0) and (not image_bytes_are_valid(bytes)):
-            raise forms.ValidationError(self.image_error_messages['invalid_image'])
+        if len(bytes) > 0:
+            converted = convert_image(bytes, output_encoding = self._target_output_encoding)
+            if not converted:
+                raise forms.ValidationError(self.image_error_messages['invalid_image'])
+            # Fix bmander/issues#99 -- but note that, long term, we want to fix bmander/issues#100 as well
+            if len(converted) > settings.MAX_IMAGE_SIZE:
+                raise forms.ValidationError(self.image_error_messages['too_large_converted_image'])
         
         if hasattr(raw_file, 'seek') and callable(raw_file.seek):
             raw_file.seek(0)
