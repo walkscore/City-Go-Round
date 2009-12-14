@@ -29,7 +29,7 @@ class AppEngineImageField(forms.FileField):
         else:
             try:
                 bytes = data['content']
-            except:
+            except (TypeError, KeyError, ValueError):
                 bytes = None
         
         if bytes is None:
@@ -81,7 +81,7 @@ class LocationListField(forms.CharField):
         try:
             latitude = float(latitude_x)
             longitude = float(longitude_x)
-        except:
+        except (TypeError, ValueError):
             raise forms.ValidationError(self.location_error_messages['malformed_city_info'])    
                     
         city_name = city_name_x.strip()
@@ -150,7 +150,7 @@ class AgencyListField(forms.CharField):
         try:
             encoded_keys = value.strip().split('|')
             datastore_keys = [db.Key(encoded_key.strip()) for encoded_key in encoded_keys]
-        except:
+        except (AttributeError, TypeError, ValueError, db.Error):
             raise forms.ValidationError(self.agency_error_messages['invalid_agency_key'])
             
         return datastore_keys

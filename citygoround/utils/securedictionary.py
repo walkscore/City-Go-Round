@@ -58,7 +58,7 @@ def _quote(value):
 def _unquote(value):
     try:
         return pickle.loads(value.decode('base64'))
-    except:
+    except Exception:
         raise UnquoteError("whoops.")
 
 def serialize_dictionary(dictionary, secret_key=settings.SERIALIZATION_SECRET_KEY, expires=None):

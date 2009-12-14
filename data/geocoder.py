@@ -17,7 +17,7 @@ def geocode_name(city, state, key):
     url = geocoder_url % (key, loc)
     try:
        geo = urllib2.urlopen(url).read()
-    except:
+    except Exception:
        print 'error with %s' % url
        time.sleep(5)
        geo = urllib2.urlopen(geocoder_url % loc).read()

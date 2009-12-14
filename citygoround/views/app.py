@@ -503,7 +503,7 @@ def admin_apps_delete(request, transit_app):
         # Get rid of the transit app itself.
         clear_all_apps()
         transit_app.delete()        
-    except:
+    except Exception:
         return render_to_json({"success": False, "transit_app_slug": transit_app.slug})
     return render_to_json({"success": True, "transit_app_slug": transit_app.slug})
         
@@ -522,7 +522,7 @@ def app_rating_vote(request, transit_app):
     if new_rating is not None:
         try:
             new_rating = int(new_rating)
-        except:
+        except (TypeError, ValueError):
             return bad_request("Invalid rating: not a number.")
 
     # Validate that it is "in range"
