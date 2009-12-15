@@ -137,9 +137,9 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
             for item in jsonable_list:
                 csv_writer.writerow( [item[header_col] for header_col in header] )
                         
-            return HttpResponse( content=csv_buffer.getvalue(), mimetype="text/plain" )
+            return HttpResponse( content=csv_buffer.getvalue(), mimetype="text/csv" )
         else:
-            return HttpResponse("")
+            return HttpResponse( content="", mimetype="text/csv")
 
     public_filter = request.GET.get('public','all')
     public_count = no_public_count = 0
