@@ -17,6 +17,7 @@ class AppEngineBlobField(forms.FileField):
         super(AppEngineBlobField, self).__init__(*args, **kwargs)
     
     def clean(self, data, initial = None):
+        from bootstrap import BREAKPOINT; BREAKPOINT()
         raise forms.ValidationError("Whatever")
 
 class AppEngineImageField(forms.FileField):

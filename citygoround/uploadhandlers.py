@@ -27,6 +27,7 @@ class AppEngineBlobUploadHandler(FileUploadHandler):
 
     def new_file(self, *args, **kwargs):
         super(AppEngineBlobUploadHandler, self).new_file(*args, **kwargs)
+        from bootstrap import BREAKPOINT; BREAKPOINT()
         if self.activated:
             self.file = StringIO()
             raise StopFutureHandlers()
@@ -36,6 +37,7 @@ class AppEngineBlobUploadHandler(FileUploadHandler):
         Add the data to the StringIO file.
         """
         if self.activated:
+            from bootstrap import BREAKPOINT; BREAKPOINT()
             self.file.write(raw_data)
         else:
             return raw_data
@@ -47,6 +49,7 @@ class AppEngineBlobUploadHandler(FileUploadHandler):
         if not self.activated:
             return
 
+        from bootstrap import BREAKPOINT; BREAKPOINT()
         self.file.seek(0)
         return InMemoryUploadedFile(
             file = self.file,

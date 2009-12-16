@@ -20,12 +20,9 @@ def work_around_app_engine_blobstore_internal_redirect_bug(request):
     if not settings.RUNNING_APP_ENGINE_LOCAL_SERVER:
         return request
 
+    from bootstrap import BREAKPOINT; BREAKPOINT()
     request_bytes = request.META['wsgi.input'].read()
-    request.META['wsgi.input'].close()
-    request_bytes.replace('\n', '\r\n')    
-    new_request_file = StringIO(request_bytes)
-    new_request_environ = request.environ
-    new_request_environ['wsgi.input'] = new_request_file    
-    working_request = wsgi.WSGIRequest(environ = new_request_environ)
-    
-    return working_request
+    fixed_request_bytes = request_bytes.replace('\n', '\r\n')    
+    request.environ['wsgi.input'].close()    
+    request.environ['wsgi.input'] = StringIO(fixed_request_bytes)
+    return request
