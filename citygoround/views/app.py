@@ -19,6 +19,7 @@ from ..utils.misc import chunk_sequence, pad_list, collapse_list
 from ..utils.ratings import get_user_rating_for_app, set_user_rating_for_app, adjust_rating_for_app
 from ..utils.memcache import clear_all_apps
 from ..utils.mailer import kick_off_new_app_notification
+from ..utils.blob import work_around_app_engine_blobstore_internal_redirect_bug
 from ..decorators import requires_valid_transit_app_slug, requires_valid_progress_uuid, requires_POST, memcache_view_response, memcache_parameterized_view_response
 from ..models import Agency, TransitApp, TransitAppStats, TransitAppLocation, TransitAppFormProgress, FeedReference, NamedStat
 
@@ -141,7 +142,9 @@ def screenshot(request, transit_app, screen_shot_index, screen_shot_size_name):
 
 def add_form(request):
     if request.method == 'POST':
+        request = work_around_app_engine_blobstore_internal_redirect_bug(request)
         form = NewAppGeneralInfoForm(request.POST, request.FILES)
+        from bootstrap import BREAKPOINT; BREAKPOINT()
         if form.is_valid():
             # Create a data store entity to hold on to progress with our form
             progress = TransitAppFormProgress.new_with_uuid()

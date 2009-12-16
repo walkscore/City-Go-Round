@@ -6,7 +6,18 @@ from django.utils.translation import ugettext_lazy as _
 from .utils.image import convert_image
 from .utils.places import CityInfo, CountryInfo, CitiesAndCountries
 from .nameddict import nameddict
-# from bootstrap import BREAKPOINT
+
+class AppEngineBlobField(forms.FileField):
+    blob_error_messages = {
+        'invalid_blob': _(u"Invalid blob."),
+    }
+    
+    # Handles generic blob uploading
+    def __init__(self, *args, **kwargs):
+        super(AppEngineBlobField, self).__init__(*args, **kwargs)
+    
+    def clean(self, data, initial = None):
+        raise forms.ValidationError("Whatever")
 
 class AppEngineImageField(forms.FileField):
     # Django's built-in ImageField doesn't work on AppEngine because

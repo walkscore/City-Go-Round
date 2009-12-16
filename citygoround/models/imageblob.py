@@ -1,14 +1,17 @@
 from uuid import uuid4
 
 from google.appengine.ext import db
+from google.appengine.ext import blobstore
 from google.appengine.api import images
+
 
 class ImageBlob(db.Model):
     ORIGINAL_SIZE = (0, 0)
     
     # Image entities are unique across family+width+height
     # All images with the same "family" have the same effective image, but may have different width/height        
-    image = db.BlobProperty()
+    image = db.BlobProperty() # DEPRECATED -- images will be served from the blobstore...
+    blob = blobstore.BlobReferenceProperty()
     family = db.StringProperty(required = True, indexed = True)
     width = db.IntegerProperty(indexed = True)
     height = db.IntegerProperty(indexed = True)
@@ -30,6 +33,7 @@ class ImageBlob(db.Model):
     def get_original_for_family(family):
         return ImageBlob.get_for_family_and_size(family, ImageBlob.ORIGINAL_SIZE)
 
+    # DEPRECATED
     @staticmethod
     def get_bytes_and_extension_for_family_and_size(family, (width, height)):
         blob = ImageBlob.get_for_family_and_size(family, (width, height))

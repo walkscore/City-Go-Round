@@ -45,7 +45,8 @@ TEMPLATE_DIRS = [os.path.join(os.path.dirname(__file__), 'templates')]
 
 TEMPLATE_LOADERS = ['django.template.loaders.filesystem.load_template_source']
 
-FILE_UPLOAD_HANDLERS = ['django.core.files.uploadhandler.MemoryFileUploadHandler']
+# FILE_UPLOAD_HANDLERS = ['django.core.files.uploadhandler.MemoryFileUploadHandler']
+FILE_UPLOAD_HANDLERS = ['citygoround.uploadhandlers.AppEngineBlobUploadHandler']
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10485760 # 10 MB -- an appengine maximum
 MAX_IMAGE_SIZE = 983040  # 960 KB per image -- slightly under 1MB to guard against issues with db.put()

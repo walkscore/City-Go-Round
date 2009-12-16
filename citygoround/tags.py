@@ -5,6 +5,7 @@
 
 import django.template as djangot
 from django.conf import settings
+from google.appengine.ext import blobstore
 from google.appengine.ext.webapp import template
 from django.template.loader import get_template as djangot_get_template
 from django.template import Context as djangot_Context
@@ -58,6 +59,57 @@ class StaticUrlNode(djangot.Node):
     def render(self, context):
         return self.relative_path
 
+
+#------------------------------------------------------------------------------
+# App Engine Blob Post URL
+#------------------------------------------------------------------------------
+
+@register.tag(name="app_engine_blob_post_url")
+def app_engine_blob_post_url(parser, token):
+    try:
+        contents = token.split_contents()
+        url_name = contents[1]
+        url_parameters = ' '.join(contents[2:]).strip()
+        
+        # (Attempt to) process the url_parameters
+        url_args = []
+        url_kwargs = {}
+        if len(url_parameters) > 0:
+            split_url_parameters = [x.strip() for x in url_parameters.split(',')]
+            for split_url_parameter in split_url_parameters:
+                if '=' in split_url_parameter:
+                    key, raw_value = (x.strip() for x in split_url_parameter.split('='))
+                    url_kwargs[key] = raw_value
+                else:
+                    url_args.append(split_url_parameter)            
+    except Exception:
+        raise djangot.TemplateSyntaxError, "app_engine_blob_post_url expects a url name and possibly parameters to that URL"
+    return AppEngineBlobPostUrlNode(url_name, url_args, url_kwargs)
+
+class AppEngineBlobPostUrlNode(djangot.Node):
+    def __init__(self, url_name, url_args, url_kwargs):
+        super(AppEngineBlobPostUrlNode, self).__init__()
+        self.url_name = url_name.strip()
+        self.url_args = url_args
+        self.url_kwargs = url_kwargs
+    
+    def render(self, context):
+        try:
+            # Process the arguments and kwargs supplied...
+            args = []
+            kwargs = {}        
+            for url_arg in self.url_args:
+                args.append(_resolve_variable_or_expression(url_arg, context))
+            for k, v in self.url_kwargs.iteritems():
+                kwargs[k] = _resolve_variable_or_expression(v, context)
+
+            # Attempt to build a URL from them...
+            final_url = reverse(self.url_name, args = args, kwargs = kwargs)
+            
+            # Now generate the blob store URL
+            return str(blobstore.create_upload_url(final_url))
+        except Exception:
+            return ""
 
 #------------------------------------------------------------------------------
 # "Static Or S3 URLs."
