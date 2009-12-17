@@ -292,7 +292,7 @@ function DataManager()
 	{
 		var data = this.queryDataList.getDataString();
 		var append = ( $("#entire-us").eq(0).is(":checked") ) ? (( data.length > 0 ) ? " | US" : "US") : "";
-		alert( data + append);
+		return data + append;
 	}
 	
 	this.sendDataString = function()
