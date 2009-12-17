@@ -45,7 +45,7 @@ def api_agencies_search(request):
         try:
             latitude = float(request.GET.get('lat', None))
             longitude = float(request.GET.get('lon', None))
-        except:
+        except (ValueError, TypeError):
             return bad_request('lat/lon parameters must be supplied and must be valid floats')
         if not are_latitude_and_longitude_valid(latitude, longitude):
             return bad_request('lat/lon parameters must be properly bounded')
@@ -97,7 +97,7 @@ def api_apps_search(request):
     try:
         latitude = float(request.GET.get('lat', None))
         longitude = float(request.GET.get('lon', None))
-    except:
+    except (ValueError, TypeError):
         return bad_request('lat/lon parameters must be supplied and must be valid floats')
     if not are_latitude_and_longitude_valid(latitude, longitude):
         return bad_request('lat/lon parameters must be properly bounded')
@@ -156,13 +156,13 @@ def api_apps_for_agencies(request):
     for potential_key in potential_keys:
         try:
             agency_keys.append(db.Key(potential_key))
-        except:
+        except db.Error:
             return bad_request('At least one invalid agency key.')
     
     # Turn keys into real agencies
     try:
         agencies = Agency.get(agency_keys)
-    except:
+    except db.Error:
         return bad_request('At least one invalid agency key.')
 
     # Send off the apps!

@@ -22,7 +22,7 @@ def taskqueue_screen_shot_resize(request):
     try:
         width = int(width_str)
         height = int(height_str)
-    except:
+    except (TypeError, ValueError):
         raise Error("Invalid width or height given to screen shot resize task invocation.")
     
     # Do the real work, and throw an exception if bad things happen.

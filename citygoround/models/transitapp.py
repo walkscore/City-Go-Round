@@ -131,6 +131,7 @@ class TransitApp(db.Model):
         for name, (width, height) in TransitApp.SCREEN_SHOT_SIZES:
             if name == size_name:
                 return (width, height)
+        return (0, 0)
     
     @staticmethod
     def screen_shot_name_from_size(size):
@@ -237,14 +238,14 @@ class TransitApp(db.Model):
     def has_screen_shot(self, index, width = None, height = None, size = None, size_name = None):
         try:
             family, width, height = self._resolve_screen_shot(index = index, width = width, height = height, size = size, size_name = size_name)
-        except:
+        except (ValueError, IndexError):
             return False
         return True
         
     def get_screen_shot_bytes_and_extension(self, index, width = None, height = None, size = None, size_name = None):
         try:
             family, width, height = self._resolve_screen_shot(index = index, width = width, height = height, size = size, size_name = size_name)
-        except:
+        except (ValueError, IndexError):
             return (None, None)
         return ImageBlob.get_bytes_and_extension_for_family_and_size(family, (width, height))
         

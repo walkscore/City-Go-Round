@@ -127,7 +127,7 @@ def requires_valid_agency_key_encoded(view_function):
     def wrapper(request, key_encoded, *args, **kwargs):
         try:
             agency = Agency.get(db.Key(key_encoded.strip()))
-        except:
+        except db.Error:
             raise Http404
         if agency is None:
             raise Http404

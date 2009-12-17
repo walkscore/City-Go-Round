@@ -25,14 +25,14 @@ def _resolve_variable_or_expression(v_or_e, context):
     try:
         variable = djangot.Variable(v_or_e)
         value = variable.resolve(context)
-    except:
+    except Exception:   # Not sure what to catch here, but make sure we don't catch AppEngine's DeadlineExceededException.
         value = None
 
     # And as an actual python value second
     if value is None:
         try:
             value = eval(v_or_e)
-        except:
+        except Exception:
             value = None
             
     return value
@@ -130,14 +130,14 @@ class ScreenShotImageUrlNode(djangot.Node):
         elif isinstance(transit_app, TransitApp):
             try:
                 transit_app_slug = transit_app.slug
-            except:
+            except Exception:
                 return "" # Can't do anything about this error. Fail silently like a good Django template.
                 
         # Second, get the image index...
         index_maybe = _resolve_variable_or_expression(self.index_str, context)
         try:
             index = int(index_maybe)
-        except:
+        except (TypeError, ValueError):
             index = 0
             
         # Now form the URL
@@ -203,7 +203,7 @@ def partial(parser, token):
         dictionary_info = parse_dictionary_string(dictionary_string)
     except djangot.TemplateSyntaxError:
         raise
-    except:
+    except Exception:
         raise djangot.TemplateSyntaxError, "partial tag expects a dictionary, like {% partial designer/wild.txt {'hello': neato, 'goodbye': dolly} %}"
     return PartialNode(template_path, dictionary_info)
 

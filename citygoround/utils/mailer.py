@@ -45,7 +45,7 @@ def send_to_contact(subject, body, recipient="info@citygoround.org"):
     except OverQuotaError:
         exc_str = exception_string()
         logging.error("Over Quota:  failed to send mail: %s\n%s" % (subject, exc_str))
-    except:
+    except Exception:
         exc_str = exception_string()
         logging.error("Unknown error: failed to send mail: %s\n%s" % (subject, exc_str))
     return  
@@ -98,7 +98,7 @@ def send_to_admin(subject, body):
     except OverQuotaError:
         exc_str = exception_string()
         logging.error("Over Quota:  failed to send mail: %s\n%s" % (subject, exc_str))
-    except:
+    except Exception:
         exc_str = exception_string()
         logging.error("Unknown error: failed to send mail: %s\n%s" % (subject, exc_str))
     return  

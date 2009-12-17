@@ -80,7 +80,7 @@ def admin_integrity_check(request):
         potential_class = getattr(modmod, attr)
         try:
             is_subclass = issubclass(potential_class, db.Model)
-        except:
+        except Exception:
             is_subclass = False
         if is_subclass:
             model_classes.append((attr, potential_class))
@@ -99,7 +99,7 @@ def admin_integrity_check(request):
                     is_list = isinstance(potential_ref, db.ListProperty)
                     if is_list:
                         is_key_list = (potential_ref.item_type == db.Key)
-            except:
+            except Exception:
                 is_instance = False
                 is_key_list = False
                 
@@ -114,7 +114,7 @@ def admin_integrity_check(request):
         for item in model_class.all():
             try:
                 other_side_of_ref = eval("item." + property_name)
-            except:
+            except Exception:
                 ref_info = {
                     "model_name": model_name,
                     "property_name": property_name,
@@ -132,7 +132,7 @@ def admin_integrity_check(request):
             for key in keys:
                 try:
                     entity = db.get(key)
-                except:
+                except Exception:
                     list_info = {
                         "model_name": model_name,
                         "property_name": property_name,
