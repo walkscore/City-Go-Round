@@ -6,6 +6,7 @@ google.load("maps", "2.167");
 // be possible to have them local to _some_ scope...
 data_manager = null;
 
+
 function updateUI()
 {			
 	// TODO DAVEPECK HACK HACK
@@ -48,85 +49,6 @@ $(document).ready(function()
     	};
     });
 });
-			
-function Geocoder() 
-{
-	googleCoder = new GClientGeocoder();
-	this.geocoding = false;
-	
-	this.isGeocoding = function() {return this.geocoding; }
-	this.confirmSuccess = function() { this.geocoding = false; clearTimeout(this.geoTimeout); }
-	this.timeOut = function() {	this.geocoding = false; clearTimeout(this.geoTimeout); }
-	
-	this.geocode = function(query)
-	{
-		this.geocoding = true;
-		googleCoder.getLocations( query, geocodeReturn );
-		this.geoTimeout = setTimeout("geocodeTimeout()", 15000);
-	}
-}	
-	
-function geocodeTimeout() 
-{
-	data_manager.handleGeocodeTimeout();
-}
-
-function geocodeReturn(response) 
-{
-	var place, lat, lng;
-	var latLng, countryCode, formattedAddress, administrativeArea, thoroughfare, locality, postalCode;
-	var latLng = countryCode = formattedAddress = administrativeArea = thoroughfare = locality = postalCode = null;
-
-	if (response && response.Status.code == 200) 
-	{
-		place = response.Placemark[0];
-		lat = place.Point.coordinates[1];
-		lng = place.Point.coordinates[0];											
-		latLng	= new GLatLng(lat,lng);	
-		
-		if (place.AddressDetails.Country) 
-		{			
-			countryCode = String(place.AddressDetails.Country.CountryNameCode);
-			formattedAddress = String(place.address);
-			//store additional information if available
-			if (place.AddressDetails.Country.AdministrativeArea) 
-			{
-				
-				if (place.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName) 
-				{
-					administrativeArea = String(place.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName);
-				}
-				
-				//for more details, need to see if this area has a SubAdministrativeArea
-				var adminArea = place.AddressDetails.Country.AdministrativeArea;
-				if (place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea) 
-				{
-					adminArea = place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea
-				}
-				
-				if (adminArea.Locality) 
-				{
-					if (adminArea.Locality.Thoroughfare)
-					{
-						thoroughfare = String(adminArea.Locality.Thoroughfare.ThoroughfareName);
-					}
-								
-					if (adminArea.Locality.LocalityName)
-					{
-						locality = String(adminArea.Locality.LocalityName);
-					}
-					
-					if (adminArea.Locality.PostalCode)
-					{
-						postalCode = String(adminArea.Locality.PostalCode.PostalCodeNumber);
-					}
-				}
-			}
-		}
-	}
-
-	data_manager.handleGeocodeResponse(latLng, countryCode, formattedAddress, administrativeArea, thoroughfare, locality, postalCode);
-}
 
 //we keep a list of these, created when a user clicks "Add"
 //on geoQuery return, we fill in the returned data into the existing object
@@ -327,24 +249,24 @@ function DataManager()
 		var nextQueryItem = this.queryDataList.getNextQuery();
 		if ( nextQueryItem ) 
 		{	
-			this.activeQueryKey = nextQueryItem.getKey();
-			this.geocoder.geocode( nextQueryItem.getQuery() );
+			this.activeQueryKey = nextQueryItem.getKey();		
+			this.geocoder.geocode( nextQueryItem.getQuery(), bindCallback(this, this.handleGeocodeResponse) );
 		}
 	}
 
-	this.handleGeocodeResponse = function(latLng, countryCode, formattedAddress, administrativeArea, thoroughfare, locality, postalCode)
+	this.handleGeocodeResponse = function(geodata)
 	{
 		this.geocoder.confirmSuccess();
 		
 		var currentQueryDataItem = this.queryDataList.getByKey(this.activeQueryKey);
 		if (currentQueryDataItem ) 
 		{
-			currentQueryDataItem.setData(locality, administrativeArea, countryCode, latLng);
+			currentQueryDataItem.setData(geodata.getCity(), geodata.getAdminArea(), geodata.getCountryCode(), geodata.getLatLng());
 			if (currentQueryDataItem.hasValidData()) 
 			{
-				var countryName = fullCountryName(countryCode);
-				var label = (locality) ? "City" : "Country";
-				var name = (locality) ? locality + ", " + administrativeArea + ", " + countryName : countryName;
+				var countryName = fullCountryName(geodata.getCountryCode());
+				var label = (geodata.hasCity()) ? "City" : "Country";
+				var name = (geodata.hasCity()) ? geodata.getShorthand() : geodata.getCountryName();
 				var entryText = name + " <span>(" + label + ")</span>"
 				$( "#name" + this.activeQueryKey ).html(entryText);
 				$( "#name" + this.activeQueryKey ).addClass("goodresult");
@@ -353,7 +275,9 @@ function DataManager()
 			else 
 			{
 				$( "#name" + this.activeQueryKey ).html(currentQueryDataItem.getQuery() + " was not recognized.  Please try again.");
-				setTimeout("data_manager.removeQuery(" + this.activeQueryKey + ")", 1000);
+				var thisObj = this;
+				var thisObjActiveQueryKey = this.activeQueryKey;
+				setTimeout(function(){ thisObj.removeQuery(thisObjActiveQueryKey) }, 1000);
 			}
 		}
 		else
@@ -363,18 +287,12 @@ function DataManager()
 			
 		this.geocodeQueuedQueries();
 	}
-				
-	this.handleGeocodeTimeout = function()
-	{
-		this.geocoder.timeOut();
-		//XXX retry the failed geocode?
-	}
 	
 	this.getDataString = function()
 	{
 		var data = this.queryDataList.getDataString();
 		var append = ( $("#entire-us").eq(0).is(":checked") ) ? (( data.length > 0 ) ? " | US" : "US") : "";
-		return data + append;
+		alert( data + append);
 	}
 	
 	this.sendDataString = function()

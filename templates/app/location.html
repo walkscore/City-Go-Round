@@ -20,7 +20,7 @@ jQuery(document).ready(function($)
         return html;
     }
     
-    function handle_agency_query_results(agencies, geocoded_city)
+    function handle_agency_query_results(agencies, geodata)
     {
         var num_closed_agencies = 0;
         var num_open_agencies = 0;
@@ -56,8 +56,8 @@ jQuery(document).ready(function($)
             
             var agency_summary = num_open_agencies + ' of ' + agencies.length;
 
-            if (geocoded_city)
-                agency_summary += ' transit agencies near ' + geocoded_city + ' provide open data:';
+            if (geodata.hasCity())
+                agency_summary += ' transit agencies near ' + geodata.getCity() + ' provide open data:';
             else 
                 agency_summary += ' nearby transit agencies provide open data:';
 
@@ -73,94 +73,23 @@ jQuery(document).ready(function($)
             $("#nearby-agency-details").show("blind", { direction: "vertical" }, 1000);
         }
         else {
-            var message = (geocoded_city) ? "No transit agencies were found near " + geocoded_city + "." : "No transit agencies were found near the location you queried.";
+            var message = (geodata.hasCity()) ? "No transit agencies were found near " + geodata.getCity() + "." : "No transit agencies were found near the location you queried.";
             $("#nearby-agency-summary").hide().html(message).fadeIn(1000);
             $("#no-nearby-agencies").hide().fadeIn(1000);            
         }    
     }
     
-    function query_for_agencies(latitude, longitude, country_code, geocoded_city)
+    function query_for_agencies(latitude, longitude, country_code, geodata)
     {
-        $.getJSON(url_for_agency_query(latitude, longitude), function(all_agencies){ handle_agency_query_results(all_agencies, geocoded_city); });
+        $.getJSON(url_for_agency_query(latitude, longitude), function(all_agencies){ handle_agency_query_results(all_agencies, geodata); });
     }
     
-    // TODO davepeck: move this to shared utils and rationalize with similar code.
-    function shorthand_for_place(place)
+    function handle_google_geocode_response(geodata)
     {
-        // Basic sanity check.
-        if (!place.AddressDetails.Country)
+        if (geodata.hasData())
         {
-            return null;
-        }        
-        var country_name = String(place.AddressDetails.Country.CountryName);
-        
-        // do we have any details? Or just a country?
-        if (!place.AddressDetails.Country.AdministrativeArea)
-        {
-            // in this case, the 'address' value has the best representation for what we want.
-            return place.address;
-        }
-        
-        // get our basic administrative details
-        var admin_area = String(place.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName);                    
-        
-        // try and get a detailed locality...
-        var locality = null;
-        if (place.AddressDetails.Country.AdministrativeArea.Locality)
-        {
-            var locality = String(place.AddressDetails.Country.AdministrativeArea.Locality.LocalityName);
-        }
-        else if (place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea && place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality)
-        {
-            var locality = String(place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea.Locality.LocalityName);
-        }
-
-        // don't use the locality if it simply duplicates the administrative area...
-        if (locality == admin_area)
-        {
-            locality = null;
-        }
-        
-        // return a city, state, country, or nothing.  If no city, we don't display any of these things.
-        if (locality)
-        {
-            if (country_name == "USA")
-                return [locality, admin_area].join(", ");
-            return [locality, admin_area, country_name].join(", ");
-        }
-        else
-        {
-            return "";                        
-        }
-    }
-    
-    function handle_google_geocode_response(response)
-    {
-        // default to blank -- use this later to see if we got a city from the geocode
-        var geocoded_city = "";
-        
-        if (response && response.Status.code == 200)
-        {
-            var place = response.Placemark[0];
-            var latitude = place.Point.coordinates[1];
-            var longitude = place.Point.coordinates[0];
-            
-            // What's the country code? (default to US)
-            var country_code = "US"; 
-            if (place.AddressDetails.Country)
-            {
-                country_code = String(place.AddressDetails.Country.CountryNameCode);                
-            }
-            
-            // What's the human-friendly description of where the geocode landed?
-            var shorthand = shorthand_for_place(place);            
-            if (shorthand)
-            {
-                geocoded_city = shorthand;
-            }
-            
-            // Perform the agencies query     
-            query_for_agencies(latitude, longitude, country_code, geocoded_city);
+            // Perform the agencies queries            
+            query_for_agencies(geodata.getLat(), geodata.getLng(), geodata.getCountryCode(), geodata);
         }
         else
         {
@@ -172,8 +101,8 @@ jQuery(document).ready(function($)
     function find_nearby_transit_apps()
     {
         var query = "{{location_query|escapejs}}";
-        var googleCoder = new GClientGeocoder();
-        googleCoder.getLocations(query, handle_google_geocode_response);    
+        var geocoder = new Geocoder();
+        geocoder.geocode(query, handle_google_geocode_response);
     }
 
     find_nearby_transit_apps();
