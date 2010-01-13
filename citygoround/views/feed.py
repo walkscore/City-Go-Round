@@ -54,6 +54,7 @@ def replace_feed_references(old_references, new_references):
             gtfs_is_official[fr.gtfs_data_exchange_id] = fr.date_added
         
     # flip the date_added prop for every agency
+    # for each agency
     for agency in Agency.all():
         
         date_agency_opened = None
