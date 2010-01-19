@@ -48,6 +48,13 @@ indexes:
 - kind: Agency
   properties:
   - name: date_opened
+  - name: private
+  - name: passenger_miles
+    direction: desc
+
+- kind: Agency
+  properties:
+  - name: date_opened
   - name: service_area_population
     direction: desc
 
