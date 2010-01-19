@@ -91,6 +91,7 @@ def update_feed_references(request):
         return redirect_to("admin_feed_references")
     except Exception, e:
         send_to_contact( "Cron job messed up", "The Update Feeds cron job messed up: %s at %s"%(e, time.time()), "badhill@gmail.com" )
+        raise
     
 def admin_feed_references(request):
     all_references = FeedReference.all().order("-date_added")
