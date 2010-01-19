@@ -264,3 +264,10 @@ def create_agency_from_feed(request, feed_id):
     agency.put()
     
     return redirect_to( "edit_agency", agency_id = agency.key().id() )
+    
+def make_everything_public(request):
+    for agency in Agency.all():
+        agency.private = False
+        agency.put()
+        
+    return redirect_to("admin_agencies_list")

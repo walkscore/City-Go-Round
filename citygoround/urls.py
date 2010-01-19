@@ -60,6 +60,7 @@ urlpatterns += patterns(
     url(r'^admin/agencies/add/$', 'edit_agency', name='admin_agencies_add'),
     url(r'^admin/agencies/update-locations/$', 'admin_agencies_update_locations', name='admin_agencies_update_locations'),
     url(r'^admin/agencies/appcounts/$', 'agency_app_counts', name='agency_app_counts'),
+    url(r'^admin/agencies/makepublic/$', 'make_everything_public', name='make_everything_public'),
 )
 
 
