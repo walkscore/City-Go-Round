@@ -267,7 +267,8 @@ def create_agency_from_feed(request, feed_id):
     
 def make_everything_public(request):
     for agency in Agency.all():
-        agency.private = False
-        agency.put()
+        if agency.private is None:
+            agency.private = False
+            agency.put()
         
     return redirect_to("admin_agencies_list")
