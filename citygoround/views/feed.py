@@ -14,13 +14,14 @@ from django.http import HttpResponse
 
 def id_from_gtfs_data_exchange_url(url):
     return re.findall( "/agency/(.*)/", urlparse( url )[2] )[0]
-
-def replace_feed_references(old_references, new_references):
+    
+def delete_feed_references(old_references):
     # TODO: deleting one at a time is stupid
     # delete all current references
     for feed_reference in old_references:
         feed_reference.delete()
-    
+        
+def add_new_references( new_references ):
     # keep correspondance of gtfs_data_exchange_ids to is_officialness
     gtfs_is_official = {}
     
@@ -52,7 +53,10 @@ def replace_feed_references(old_references, new_references):
         # mark the date_opened of the feed, for flipping the agency open bit later
         if fr.is_official:
             gtfs_is_official[fr.gtfs_data_exchange_id] = fr.date_added
-        
+            
+    return gtfs_is_official
+    
+def set_agency_date_added( gtfs_is_official ):
     # flip the date_added prop for every agency
     # for each agency
     for agency in Agency.all():
@@ -83,7 +87,18 @@ def update_feed_references(request):
         
         # replace feed references in a transaction
         old_references = FeedReference.all().fetch(1000)
-        replace_feed_references( old_references, feed_refs_json )
+        
+        if request.GET.get( "delete" ) != "false":
+            # delete old references
+            delete_feed_references(old_references)
+        
+        if request.GET.get( "add" ) != "false":
+            # add new references
+            gtfs_is_official = add_new_references( feed_refs_json )
+        
+        if request.GET.get( "sync" ) != "false":
+            # set the official flag on every agency that's official
+            set_agency_date_added( gtfs_is_official )
         
         send_to_contact( "Cron job ran successfully", "Cron job ran successfully at %s"%time.time(), "badhill@gmail.com" )
           
