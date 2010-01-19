@@ -92,11 +92,9 @@ def update_feed_references(request):
             # delete old references
             delete_feed_references(old_references)
         
-        if request.GET.get( "add" ) != "false":
+        if request.GET.get( "addsync" ) != "false":
             # add new references
             gtfs_is_official = add_new_references( feed_refs_json )
-        
-        if request.GET.get( "sync" ) != "false":
             # set the official flag on every agency that's official
             set_agency_date_added( gtfs_is_official )
         
