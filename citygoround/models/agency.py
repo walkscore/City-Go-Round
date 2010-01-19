@@ -47,6 +47,9 @@ class Agency(GeoModel):
     countryslug     = db.StringProperty()
     urlslug         = db.StringProperty()
     
+    # whether or not the agency is a non-government organization
+    private         = db.BooleanProperty(default=False)
+    
     def __init__(self, *args, **kwargs):
         # this loads everything to self that's passed as a kwarg, making required and default attribs safe to use
         GeoModel.__init__(self, *args, **kwargs)

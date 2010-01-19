@@ -22,7 +22,7 @@ def home(request):
         'petition_form': PetitionForm(),
         'no_getsatisfaction' : True,
         'agency_count': Agency.all().count(),
-        'closed_agencies': Agency.all().filter("date_opened =", None).order("-passenger_miles"),
+        'closed_agencies': Agency.all().filter("date_opened =", None).filter("private !=", True).order("-passenger_miles"),
         'open_agencies': Agency.all().filter("date_opened !=", None).order("-date_opened"),
     }    
     return render_to_response(request, 'home.html', template_vars)
