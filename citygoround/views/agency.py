@@ -268,14 +268,23 @@ def create_agency_from_feed(request, feed_id):
 def make_everything_public(request):
     """Added the 'private' property to Agencies after launch; this initializes them"""
     
+    # This method is really big and nasty because at one point the index got corrupted and I had to figure out a way
+    # to hit and re-put every single element without timing out.
+    #
+    # This method isn't really useful anymore. If there are no bugs in the Agency.private system beyoond a couple
+    # weeks after Jan 10 2010, you should delete this and spare yourself the eyesore
+    
     things_an_agency_can_be = {}
+    
+    n=int(request.GET.get("n",1000))
+    offset=int(request.GET.get("offset",0))
     
     i=0
     count=0
-    for agency in Agency.all():
+    for agency in Agency.all().fetch(n, offset):
         things_an_agency_can_be[agency.private] = things_an_agency_can_be.get(agency.private,0)+1
         
-        if agency.private != True and agency.private != False:
+        if agency.private != True:
             agency.private = False
             agency.put()
             i+=1
@@ -285,4 +294,4 @@ def make_everything_public(request):
     all_private_count = Agency.all().filter("private =", True).count()
     all_all_count = Agency.all().count()
         
-    return HttpResponse("flipped the public bit on %d agencies (%d public %d private %d nothing %d all %d count %s histogram)"%(i, all_public_count, all_private_count, i, all_all_count, count, histogram) )
+    return HttpResponse("n:%d offset:%d, flipped the public bit on %d agencies (%d public %d private %d nothing %d all %d count %s histogram)"%(n, offset, i, all_public_count, all_private_count, i, all_all_count, count, things_an_agency_can_be) )
