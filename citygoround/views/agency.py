@@ -266,8 +266,12 @@ def create_agency_from_feed(request, feed_id):
     return redirect_to( "edit_agency", agency_id = agency.key().id() )
     
 def make_everything_public(request):
+    """Added the 'private' property to Agencies after launch; this initializes them"""
+    
+    i = 0
     for agency in Agency.all().filter("private =", None):
         agency.private = False
         agency.put()
+        i+=1
         
-    return redirect_to("admin_agencies_list")
+    return HttpResponse("flipped the public bit on %d agencies"%i)
