@@ -278,4 +278,4 @@ def make_everything_public(request):
     all_private_count = Agency.all().filter("private =", True).count()
     all_all_count = Agency.all().count()
         
-    return HttpResponse("flipped the public bit on %d agencies (%d public %d private %d none %d all)"%(all_none_count, all_public_count, all_private_count, all_none_count, all_all_count)
+    return HttpResponse("flipped the public bit on %d agencies (%d public %d private %d none %d all)"%(all_none_count, all_public_count, all_private_count, all_none_count, all_all_count) )
