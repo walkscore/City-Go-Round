@@ -2,3 +2,6 @@ cron:
 - description: daily gtfs data exchange pull
   url: /admin/feeds/update
   schedule: every 24 hours
+- description: daily fancy math rank update
+  url: /admin/apps/bayes/refresh/
+  schedule: every 24 hours
