@@ -268,14 +268,15 @@ def create_agency_from_feed(request, feed_id):
 def make_everything_public(request):
     """Added the 'private' property to Agencies after launch; this initializes them"""
     
-    all_none = Agency.all().filter("private =", None)
-    for agency in all_none:
-        agency.private = False
-        agency.put()
+    i=0
+    for agency in Agency.all():
+        if agency.private != True and agency.private != False:
+            agency.private = False
+            agency.put()
+            i+=1
     
-    all_none_count = all_none.count()
     all_public_count = Agency.all().filter("private =", False).count()
     all_private_count = Agency.all().filter("private =", True).count()
     all_all_count = Agency.all().count()
         
-    return HttpResponse("flipped the public bit on %d agencies (%d public %d private %d none %d all)"%(all_none_count, all_public_count, all_private_count, all_none_count, all_all_count) )
+    return HttpResponse("flipped the public bit on %d agencies (%d public %d private %d nothing %d all)"%(i, all_public_count, all_private_count, i, all_all_count) )
