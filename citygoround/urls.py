@@ -38,6 +38,7 @@ urlpatterns += patterns(
 urlpatterns += patterns(
     'citygoround.views.feed',
     url(r'^admin/feeds/update/$', 'update_feed_references', name='update_feed_references'),
+    url(r'^admin/feeds/delete/$', 'delete_all_feed_references', name='delete_all_feed_references'),
     url(r'^admin/feeds/references/$', 'admin_feed_references', name='admin_feed_references'),
 )
 

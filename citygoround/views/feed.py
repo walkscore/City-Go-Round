@@ -107,6 +107,12 @@ def sync_agency_date_added( ):
             # the date the agency opened is the date the earliest feed opened
             agency.date_opened = date_agency_opened
             agency.put()
+            
+def delete_all_feed_references(request):
+    for feed_reference in FeedReference.all():
+        feed_reference.delete()
+        
+    return redirect_to("admin_feed_references")
 
 def update_feed_references(request):
     try:
