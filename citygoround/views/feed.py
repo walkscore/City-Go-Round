@@ -20,83 +20,108 @@ def delete_feed_references(old_references):
     # delete all current references
     for feed_reference in old_references:
         feed_reference.delete()
-        
-def add_new_references( new_references ):
-    # keep correspondance of gtfs_data_exchange_ids to is_officialness
-    gtfs_is_official = {}
+
+def gtfs_data_exchange_id_from_feed_reference_json( feed_reference_json ):
+    # be hopeful that the api call has the external id. If not, yank it from the url
+    if 'external_id' in feed_reference_json:
+        return feed_reference_json['external_id']
+    else:
+        return id_from_gtfs_data_exchange_url( feed_reference_json['dataexchange_url'].strip() )
+
+def new_feed_reference_from_json( feed_reference_json, parentKey ):
+    fr = FeedReference(parent=parentKey)
     
-    # add all the new references
+    fr.date_last_updated = feed_reference_json['date_last_updated']
+    fr.feed_baseurl      = feed_reference_json['feed_baseurl'].strip() if feed_reference_json['feed_baseurl'] != "" else None
+    fr.name              = feed_reference_json['name']
+    fr.area              = feed_reference_json['area']
+    fr.url               = feed_reference_json['url'].strip()
+    fr.country           = feed_reference_json['country']
+    fr.dataexchange_url  = feed_reference_json['dataexchange_url'].strip()
+    fr.state             = feed_reference_json['state']
+    fr.license_url       = feed_reference_json['license_url'].strip() if feed_reference_json['license_url'] != "" else None
+    fr.date_added        = datetime.fromtimestamp( feed_reference_json['date_added'] )
+    fr.is_official       = feed_reference_json.get('is_official', True) # is_official is True by default
+    
+    fr.gtfs_data_exchange_id = gtfs_data_exchange_id_from_feed_reference_json( feed_reference_json )
+            
+    return fr
+        
+def update_references( new_references ):
+    
+    # snag all the old feed references so we can efficiently refer to them
+    old_feed_references = {}
+    for feed_reference in FeedReference.all():
+        old_feed_references[ feed_reference.gtfs_data_exchange_id ] = feed_reference
+    
+    # add new and updated references
     parentKey = db.Key.from_path("FeedReference", "base")
     for feed_reference_json in new_references:
-        fr = FeedReference(parent=parentKey)
+        external_id = gtfs_data_exchange_id_from_feed_reference_json( feed_reference_json )
         
-        fr.date_last_updated = datetime.fromtimestamp( feed_reference_json['date_last_updated'] )
-        fr.feed_baseurl      = feed_reference_json['feed_baseurl'].strip() if feed_reference_json['feed_baseurl'] != "" else None
-        fr.name              = feed_reference_json['name']
-        fr.area              = feed_reference_json['area']
-        fr.url               = feed_reference_json['url'].strip()
-        fr.country           = feed_reference_json['country']
-        fr.dataexchange_url  = feed_reference_json['dataexchange_url'].strip()
-        fr.state             = feed_reference_json['state']
-        fr.license_url       = feed_reference_json['license_url'].strip() if feed_reference_json['license_url'] != "" else None
-        fr.date_added        = datetime.fromtimestamp( feed_reference_json['date_added'] )
-        fr.is_official       = feed_reference_json.get('is_official', True) # is_official is True by default
-        
-        # be hopeful that the api call has the external id. If not, yank it from the url
-        if 'external_id' in feed_reference_json:
-            fr.gtfs_data_exchange_id = feed_reference_json['external_id']
-        else:
-            fr.gtfs_data_exchange_id = id_from_gtfs_data_exchange_url( fr.dataexchange_url )
-        
-        fr.put()
-        
-        # mark the date_opened of the feed, for flipping the agency open bit later
-        if fr.is_official:
-            gtfs_is_official[fr.gtfs_data_exchange_id] = fr.date_added
+        # if the incoming feed reference isn't already around, add it
+        if external_id not in old_feed_references:
+            logging.info( "adding new feed reference '%s' (last updated %s)"%(external_id, feed_reference_json['date_last_updated']) )
             
-    return gtfs_is_official
+            fr = new_feed_reference_from_json( feed_reference_json, parentKey )
+            fr.put()
+            
+        # if the incoming feed reference already exists, and has been updated recently, replace it
+        elif feed_reference_json['date_last_updated'] > old_feed_references[external_id].date_last_updated:
+            logging.info( "replacing outdated feed reference '%s' (old: %s new: %s)"%(external_id, 
+                                                                                      old_feed_references[external_id].date_last_updated,
+                                                                                      feed_reference_json['date_last_updated'] )                                                                                      )
+            
+            old_feed_references[external_id].delete()
+            fr = new_feed_reference_from_json( feed_reference_json, parentKey )
+            fr.put()
+            
+def sync_agency_date_added( ):
+    # snag all the old feed references so we can efficiently refer to them
+    feed_references = {}
+    for feed_reference in FeedReference.all():
+        feed_references[ feed_reference.gtfs_data_exchange_id ] = feed_reference
     
-def set_agency_date_added( gtfs_is_official ):
     # flip the date_added prop for every agency
     # for each agency
     for agency in Agency.all():
         
         date_agency_opened = None
         
-        # for every gtfs data exchange page for this agency
+        # for every associated feed reference for this agency
         for gtfs_data_exchange_id in agency.gtfs_data_exchange_id:
-            date_feed_opened = gtfs_is_official.get(gtfs_data_exchange_id)
+            feed_reference = feed_references.get( gtfs_data_exchange_id )
+            
+            if feed_reference is None:
+                continue
+                
+            date_feed_opened = feed_reference.date_added
             
             # if the feed is open, and before the current date_agency_opened
             if date_feed_opened is not None and (date_agency_opened is None or date_feed_opened < date_agency_opened):
                 date_agency_opened = date_feed_opened
                 
-        # the date the agency opened is the date the earliest feed opened
-        agency.date_opened = date_agency_opened
-        
-        # only update the agency if you did something to it
+        # only update the agency if we're making a change
         if date_agency_opened is not None:
+            
+            # the date the agency opened is the date the earliest feed opened
+            agency.date_opened = date_agency_opened
             agency.put()
 
 def update_feed_references(request):
     try:
-        FEED_REFS_URL = "http://www.gtfs-data-exchange.com/api/agencies"
+        FEED_REFS_URL = "http://gtfs-data-exchange.appspot.com/api/agencies"
         
         # grab feed references and load into json
         feed_refs_json = json.loads( fetch_url( FEED_REFS_URL ).content )['data']
         
-        # replace feed references in a transaction
-        old_references = FeedReference.all().fetch(1000)
-        
-        if request.GET.get( "delete" ) != "false":
-            # delete old references
-            delete_feed_references(old_references)
-        
-        if request.GET.get( "addsync" ) != "false":
+        if request.GET.get( "add" ) != "false":
             # add new references
-            gtfs_is_official = add_new_references( feed_refs_json )
+            update_references( feed_refs_json )
+            
+        if request.GET.get( "sync" ) != "false":
             # set the official flag on every agency that's official
-            set_agency_date_added( gtfs_is_official )
+            sync_agency_date_added()
         
         send_to_contact( "Cron job ran successfully", "Cron job ran successfully at %s"%time.time(), "badhill@gmail.com" )
           

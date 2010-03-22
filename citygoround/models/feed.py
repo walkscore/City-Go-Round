@@ -9,7 +9,12 @@ class FeedReference(db.Model):
     """feed reference models a GTFS Data Exchange entity"""
     
     gtfs_data_exchange_id = db.StringProperty()
-    date_last_updated = db.DateTimeProperty()
+    
+    # use a float instead of a datetime - otherwise, the locale's timezone shift 
+    # is applied when parsing incoming float-based timestamps. This is often
+    # applied inconsistently, causing weird problems, so it's best to just avoid
+    # it
+    date_last_updated = db.FloatProperty() 
     feed_baseurl      = db.LinkProperty()
     name              = db.StringProperty()
     area              = db.StringProperty()
