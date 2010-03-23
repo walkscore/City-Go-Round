@@ -1,7 +1,9 @@
+# for some reason, the cron jobs never ran when they were on a 24 hour period
+
 cron:
 - description: daily gtfs data exchange pull
-  url: /admin/feeds/update
-  schedule: every 24 hours
+  url: /admin/feeds/update/
+  schedule: every 23 hours
 - description: daily fancy math rank update
   url: /admin/apps/bayes/refresh/
-  schedule: every 24 hours
+  schedule: every 23 hours

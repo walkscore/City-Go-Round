@@ -134,7 +134,7 @@ def update_feed_references(request):
         send_to_contact( "Cron job ran successfully", "Cron job ran successfully at %s"%time.time(), "badhill@gmail.com" )
           
         # redirect to a page for viewing all your new feed references
-        return redirect_to("admin_feed_references")
+        return HttpResponse("success")
     except Exception, e:
         send_to_contact( "Cron job messed up", "The Update Feeds cron job messed up: %s at %s"%(e, time.time()), "badhill@gmail.com" )
         raise
