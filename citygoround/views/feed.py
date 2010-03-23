@@ -98,11 +98,13 @@ def sync_agency_date_added( ):
             date_feed_opened = feed_reference.date_added
             
             # if the feed is open, and before the current date_agency_opened
-            if date_feed_opened is not None and (date_agency_opened is None or date_feed_opened < date_agency_opened):
+            if date_feed_opened is not None \
+               and (date_agency_opened is None or date_feed_opened < date_agency_opened) \
+               and feed_reference.is_official:
                 date_agency_opened = date_feed_opened
                 
         # only update the agency if we're making a change
-        if date_agency_opened is not None:
+        if agency.date_opened != date_agency_opened:
             
             # the date the agency opened is the date the earliest feed opened
             agency.date_opened = date_agency_opened
