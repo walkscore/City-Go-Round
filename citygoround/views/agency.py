@@ -92,7 +92,7 @@ def agency_app_counts(request):
 def safe_str(item):
     """it's like applying str() but it won't cause ascii encoding problems down the line"""
 
-    if type(item)==str:
+    if type(item)==str or type(item)==unicode:
         return item.encode("utf8")
     else:
         return str(item)
