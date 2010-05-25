@@ -135,7 +135,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
             csv_writer.writerow( header )
             
             for item in jsonable_list:
-                csv_writer.writerow( [item[header_col] for header_col in header] )
+                csv_writer.writerow( [item[header_col].encode("utf8") for header_col in header] )
                         
             return HttpResponse( content=csv_buffer.getvalue(), mimetype="text/csv" )
         else:
