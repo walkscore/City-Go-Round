@@ -89,6 +89,14 @@ def edit_agency(request, agency_id=None):
 def agency_app_counts(request):
     return render_to_json( TransitApp.agency_app_counts() )
 
+def safe_str(item):
+    """it's like applying str() but it won't cause ascii encoding problems down the line"""
+
+    if type(item)==str:
+        return item.encode("utf8")
+    else:
+        return str(item)
+
 @memcache_parameterized_view_response(time = settings.MEMCACHE_PAGE_SECONDS)  
 def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):        
     # TODO davepeck: I just looked at this code -- we _really_ need to clean this stuff up
@@ -135,7 +143,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
             csv_writer.writerow( header )
             
             for item in jsonable_list:
-                csv_writer.writerow( [item[header_col].encode("utf8") for header_col in header] )
+                csv_writer.writerow( [safe_str(item[header_col]) for header_col in header] )
                         
             return HttpResponse( content=csv_buffer.getvalue(), mimetype="text/csv" )
         else:
