@@ -168,8 +168,8 @@ class TransitApp(db.Model):
     def __str__(self):
         return "%s (%s)" % (self.title, self.url)
     
-    def to_jsonable(self):
-        return {
+    def to_jsonable(self, include_visibility = False):
+        jsonable = {
             "title": cgi.escape(self.title),
             "slug": self.slug,
             "description": cgi.escape(self.description),
@@ -189,6 +189,11 @@ class TransitApp(db.Model):
             "default_180sq_screen_shot_url": self.default_180sq_screen_shot_url,
             "default_80sq_screen_shot_url": self.default_80sq_screen_shot_url,
         }
+        
+        if include_visibility:
+            jsonable["is_hidden"] = self.is_hidden
+        
+        return jsonable
 
     @staticmethod
     def query_all(self, visible_only = True):

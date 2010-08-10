@@ -77,8 +77,9 @@ def api_apps_all(request):
         Return a list of all transit apps.
         Called via GET only.
     """
-    # TODO HIDDEN DAVEPECK
-    return render_to_json([transit_app.to_jsonable() for transit_app in TransitApp.query_all(visible_only = True)])
+    visible_only_param = request.GET.get('visible_only', 'yes')
+    visible_only = not (visible_only_param.lower() == 'no')
+    return render_to_json([transit_app.to_jsonable(include_visibility = not visible_only) for transit_app in TransitApp.query_all(visible_only = visible_only)])
 
 @requires_GET
 @memcache_parameterized_view_response(time = settings.MEMCACHE_API_SECONDS)

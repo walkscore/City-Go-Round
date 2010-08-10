@@ -587,6 +587,10 @@ def admin_apps_update_schema(request):
             transit_app.price = Decimal("0.00")
             changed = True
             
+        if not transit_app.is_hidden:
+            transit_app.is_hidden = False
+            changed = True
+            
         blob = transit_app.screen_shot
         if blob:
             changed = True
