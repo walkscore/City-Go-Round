@@ -36,17 +36,18 @@
   {% block header %}
     <h1 onclick="document.location='{% url home %}'">City-Go-Round</h1>
     <h2>Apps that help you get around</h2>
-    <a id="front-seat-logo" href="http://www.frontseat.org"><img src="{% static_url /images/front-seat-logo.gif %}" alt="Front Seat Logo" /></a>
+    <a id="front-seat-logo" href="http://www.walkscore.com"><img src="{% static_url /images/walk-score-logo.png %}" alt="Walk Score Logo" /></a>
     <p id="nav">
         <a href="{% url apps_gallery %}">Apps</a> &nbsp; | &nbsp;
         <a href="{% url agencies %}">Agencies</a> &nbsp; | &nbsp;
-        <a href="{% url about %}">About</a> 
+        <a href="{% url about %}">About</a> &nbsp; | &nbsp;
+        <a href="http://www.walkscore.com/transit-score.php">Transit Score</a>
     </p>
     <div class="hover-buttons">
-      <div class="clickable2 button-twitter" onclick='trackNavigationNewWindow("http://twitter.com/citygoround", "header", "follow us", "twitter")'>
+      <div class="clickable2 button-twitter" onclick='trackNavigationNewWindow("http://twitter.com/walkscore/", "header", "follow us", "twitter")'>
         <p>Follow us</p>
       </div>
-      <div class="clickable2 button-facebook" onclick='trackNavigationNewWindow("http://www.facebook.com/pages/City-Go-Round/179590999311", "header", "follow us", "facebook")'>
+      <div class="clickable2 button-facebook" onclick='trackNavigationNewWindow("http://www.facebook.com/walkscore", "header", "follow us", "facebook")'>
         <p>Friend us</p>
       </div>
     </div>
