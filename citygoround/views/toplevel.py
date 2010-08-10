@@ -177,9 +177,9 @@ def admin_clear_memcache(request):
 def admin_apps_csv(request):
     string_io = StringIO.StringIO()
     writer = csv.writer(string_io)
-    writer.writerow(["APP NAME", "APP AUTHOR", "AUTHOR EMAIL", "APP HOMEPAGE", "APP DESCRIPTION"])
-    for transit_app in TransitApp.all():
-        writer.writerow([transit_app.title.encode('utf8'), transit_app.author_name.encode('utf8'), str(transit_app.author_email).encode('utf8'), str(transit_app.url).encode('utf8'), transit_app.description.encode('utf8')])
+    writer.writerow(["APP NAME", "APP AUTHOR", "AUTHOR EMAIL", "APP HOMEPAGE", "APP DESCRIPTION", "APP IS HIDDEN"])
+    for transit_app in TransitApp.query_all(visible_only = False):
+        writer.writerow([transit_app.title.encode('utf8'), transit_app.author_name.encode('utf8'), str(transit_app.author_email).encode('utf8'), str(transit_app.url).encode('utf8'), transit_app.description.encode('utf8'), repr(transit_app.is_hidden).encode('utf8')])
     csv_output = string_io.getvalue()
     string_io.close()
     return render_csv(csv_output)

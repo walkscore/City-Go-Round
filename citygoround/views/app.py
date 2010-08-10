@@ -47,7 +47,7 @@ def gallery(request):
     NUM_FEATURED_APPS = 3
     CATEGORIES = ["Public Transit", "Biking", "Walking", "Driving"]
     
-    all_apps = TransitApp.all().order('-bayesian_average').fetch(500);
+    all_apps = TransitApp.fetch_all_sorted_by_rating()
 
     recent_list = TransitApp.all_by_most_recently_added().fetch(NUM_RECENT_APPS)
     featured_list = []
@@ -77,7 +77,7 @@ def gallery(request):
         'transit_apps':        categorized_list.get('Public Transit',[]),
         'featured_apps':       featured_list, 
         'recently_added_apps': recent_list, 
-        'transit_app_count':   TransitApp.all().count(),
+        'transit_app_count':   TransitApp.query_all().count(),
         'public_feed_count':   Agency.all().filter("date_opened != ", None).count(),
     }
         
@@ -538,7 +538,7 @@ def app_rating_vote(request, transit_app):
     return render_to_json([transit_app.average_rating, transit_app.num_ratings])
     
 def refresh_all_bayesian_averages(request):
-    all_apps = TransitApp.all()
+    all_apps = TransitApp.query_all(visible_only = False)
     
     all_rating_sum = NamedStat.get_stat( "all_rating_sum" )
     all_rating_count = NamedStat.get_stat( "all_rating_count" )
@@ -555,7 +555,7 @@ def admin_apps_update_schema(request):
     changed_apps = []
     new_families = []
 
-    for transit_app in TransitApp.all():    
+    for transit_app in TransitApp.query_all(visible_only = False):    
         changed = False
         
         # Make sure that the app has appropriate dates
