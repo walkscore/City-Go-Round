@@ -507,6 +507,16 @@ def admin_apps_delete(request, transit_app):
         return render_to_json({"success": False, "transit_app_slug": transit_app.slug})
     return render_to_json({"success": True, "transit_app_slug": transit_app.slug})
         
+@requires_POST
+@requires_valid_transit_app_slug
+def admin_apps_hide_unhide(request, transit_app):
+    try:
+        transit_app.is_hidden = not transit_app.is_hidden
+        transit_app.put()
+    except Exception:
+        return render_to_json({"success": False, "transit_app_slug": transit_app.slug})
+    return render_to_json({"success": True, "transit_app_slug": transit_app.slug})
+        
 def increment_stat(request):
     stat_name = request.GET['name']
     stat_value = NamedStat.increment( stat_name )

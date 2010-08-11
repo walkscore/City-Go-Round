@@ -10,7 +10,7 @@ jQuery(document).ready(function($)
 {
     function url_for_transit_apps_query()
     {
-        return "{% url api_apps_all %}";
+        return "{% url api_apps_all %}?visible_only=no";
     }
     
     function url_for_transit_app_edit(transit_app_slug)
@@ -22,15 +22,33 @@ jQuery(document).ready(function($)
     {
         return "{% url admin_apps_delete transit_app_slug="REPLACEME" %}".replace("REPLACEME", transit_app_slug);
     }
+    
+    function url_for_transit_app_hide_unhide(transit_app_slug)
+    {
+        return "{% url admin_apps_hide_unhide transit_app_slug="REPLACEME" %}".replace("REPLACEME", transit_app_slug);
+    }
         
     function get_html_for_transit_app(transit_app, row_class)
     {
-        return '<tr class="' + row_class + '"><td><a href="' + transit_app.details_url + '">' + transit_app.title + "</a></td><td>" + transit_app.description + "</td><td>" + transit_app.author_name + '</td><td><a href="#" class="edit_link" id="edit_' + transit_app.slug + '">Edit</a></td><td><a href="#" class="delete_link" id="delete_' + transit_app.slug + '">Delete</a></td>\n';        
+        var hide_unhide_text = null;
+        var hide_unhide_class = null;
+        if (transit_app.is_hidden)
+        {
+            hide_unhide_text = "Unhide";
+            hide_unhide_class = "hidden-app";
+        }
+        else
+        {
+            hide_unhide_text = "Hide";
+            hide_unhide_class = "visible-app";
+        }
+        
+        return '<tr class="' + row_class + ' ' + hide_unhide_class + '"><td><a href="' + transit_app.details_url + '">' + transit_app.title + "</a></td><td>" + transit_app.description + "</td><td>" + transit_app.author_name + '</td><td><a href="#" class="edit_link" id="edit_' + transit_app.slug + '">Edit</a></td><td><a href="#" class="delete_link" id="delete_' + transit_app.slug + '">Delete</a></td><td><a href="#" class="hide_unhide_link" id="delete_' + transit_app.slug + '">' + hide_unhide_text + '</a></td>\n';        
     }
     
     function get_html_for_transit_apps(transit_apps)
     {
-        var transit_apps_html = '<table style="width:1000px">\n<tr><th>Name</th><th>Description</th><th>Author</th><th>Edit</th><th>Delete</th></tr>\n';        
+        var transit_apps_html = '<table style="width:1000px">\n<tr><th>Name</th><th>Description</th><th>Author</th><th>Edit</th><th>Delete</th><th>Hide/Unhide</th></tr>\n';        
         $.each(transit_apps, function(i, transit_app)
         {
             var row_class = ((i % 2) == 0) ? "even" : "odd";
@@ -65,7 +83,7 @@ jQuery(document).ready(function($)
     {
         if (errorInfo != "success")
         {
-            alert("An unknown network failure was encountered when attempting to delete '" + transit_app_slug + "' (" + errorInfo.toString() + "). Please try again.");
+            alert("An unknown network failure was encountered when attempting to delete (" + errorInfo.toString() + "). Please try again.");
             return;
         }
         
@@ -77,7 +95,7 @@ jQuery(document).ready(function($)
         }
         else
         {
-            alert("Could not delete '" + json.transit_app_slug + "'. Please try again");
+            alert("Could not delete '" + json.transit_app_slug + "'. Please try again.");
         }        
     }
     
@@ -94,6 +112,32 @@ jQuery(document).ready(function($)
         return false;        
     }
     
+    function on_hide_unhide_app_callback(json, errorInfo)
+    {
+        if (errorInfo != "success")
+        {
+            alert("An unknown network failure was encountered when attempting to hide/unhide (" + errorInfo.toString() + "). Please try again.");
+            return;
+        }
+        
+        if (json.success)
+        {
+            $("#transit_apps").html("&nbsp;");
+            query_for_transit_apps();
+        }
+        else
+        {
+            alert("Could not hide/unhide '" + json.transit_app_slug + "'. Please try again.");
+        }
+    }
+    
+    function on_hide_unhide_link_click()
+    {
+        var transit_app_slug = $(this).attr("id").toString().split('_')[1];
+        var url = url_for_transit_app_hide_unhide(transit_app_slug);
+        $.post(url, {}, on_hide_unhide_app_callback, "json");
+    }
+    
     function query_for_transit_apps()
     {
         $.getJSON(url_for_transit_apps_query(), function(transit_apps)
@@ -102,6 +146,7 @@ jQuery(document).ready(function($)
             $("#transit_app_count").text(get_text_for_transit_app_count($(transit_apps).length));
             $("#transit_apps a.edit_link").click(on_edit_link_click);
             $("#transit_apps a.delete_link").click(on_delete_link_click);
+            $("#transit_apps a.hide_unhide_link").click(on_hide_unhide_link_click);
         });
     }
     
