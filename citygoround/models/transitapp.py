@@ -180,10 +180,13 @@ class TransitApp(db.Model):
             "is_free": self.is_free,
             "author_name": cgi.escape(str(self.author_name)), # DO NOT INCLUDE AUTHOR EMAIL.
             "long_description": cgi.escape(self.long_description),
-            "tags": [cgi.escape(tag) for tag in self.tags],
-            "platforms": [cgi.escape(platform) for platform in self.platforms],
+            "tags": [cgi.escape(tag) for tag in self.tags], # NOTE davepeck: while editing code near here, I filed CGR Bug 117 about this line of code.
+            "platforms": [cgi.escape(platform) for platform in self.platforms], # NOTE davepeck: while editing code near here, I filed CGR Bug 117 about this line of code.
             "is_featured": self.is_featured,
             "details_url": self.details_url,
+            "bayesian_average": self.bayesian_average,
+            "average_rating_out_of_80": self.average_rating_out_of_80,
+            "categories": [category for category in self.categories], # Note that bug 117 doesn't apply here -- I don't escape this.
             "default_300w_screen_shot_url": self.default_300w_screen_shot_url,
             "default_145w_screen_shot_url": self.default_145w_screen_shot_url,
             "default_180sq_screen_shot_url": self.default_180sq_screen_shot_url,
