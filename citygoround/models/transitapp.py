@@ -514,7 +514,8 @@ class TransitApp(db.Model):
 
     @staticmethod
     def fetch_transit_apps_near(latitude, longitude, max_results = 500, bbox_side_in_miles = settings.BBOX_SIDE_IN_MILES, visible_only = True):
-        return [transit_app_location.transit_app for transit_app_location in TransitAppLocation.fetch_transit_app_locations_near(latitude, longitude, query = None, max_results = max_results, bbox_side_in_miles = bbox_side_in_miles, visible_only = visible_only)]
+        raw_transit_apps = [transit_app_location.transit_app for transit_app_location in TransitAppLocation.fetch_transit_app_locations_near(latitude, longitude, query = None, max_results = max_results, bbox_side_in_miles = bbox_side_in_miles)]
+        return [transit_app for transit_app in raw_transit_apps if not (visible_only and transit_app.is_hidden)]
     
     @staticmethod
     def iter_for_location_and_country_code(latitude, longitude, country_code, bbox_side_in_miles = settings.BBOX_SIDE_IN_MILES, uniquify = True, visible_only = True):
@@ -574,11 +575,11 @@ class TransitAppLocation(GeoModel):
         return "lat: %.4f, lon: %.4f (for %s)" % (self.location.lat, self.location.lon, self.city_details)
 
     @staticmethod
-    def fetch_transit_app_locations_near(latitude, longitude, query = None, max_results = 500, bbox_side_in_miles = settings.BBOX_SIDE_IN_MILES, visible_only = True):
+    def fetch_transit_app_locations_near(latitude, longitude, query = None, max_results = 500, bbox_side_in_miles = settings.BBOX_SIDE_IN_MILES):
         bounding_box = square_bounding_box_centered_at(latitude, longitude, bbox_side_in_miles)
         if query is None:
-            query = TransitAppLocation.query_all(visible_only = visible_only)
-        return TransitAppLocation.bounding_box_fetch(query, bounding_box, max_results = max_results)      
+            query = TransitAppLocation.all()
+        return TransitAppLocation.bounding_box_fetch(query, bounding_box, max_results = max_results)
 
 
 class TransitAppFormProgress(db.Model):
