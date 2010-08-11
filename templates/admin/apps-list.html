@@ -43,7 +43,7 @@ jQuery(document).ready(function($)
             hide_unhide_class = "visible-app";
         }
         
-        return '<tr class="' + row_class + ' ' + hide_unhide_class + '"><td><a href="' + transit_app.details_url + '">' + transit_app.title + "</a></td><td>" + transit_app.description + "</td><td>" + transit_app.author_name + '</td><td><a href="#" class="edit_link" id="edit_' + transit_app.slug + '">Edit</a></td><td><a href="#" class="delete_link" id="delete_' + transit_app.slug + '">Delete</a></td><td><a href="#" class="hide_unhide_link" id="delete_' + transit_app.slug + '">' + hide_unhide_text + '</a></td>\n';        
+        return '<tr id="row_' + transit_app.slug + '" class="' + row_class + ' ' + hide_unhide_class + '"><td><a href="' + transit_app.details_url + '">' + transit_app.title + "</a></td><td>" + transit_app.description + "</td><td>" + transit_app.author_name + '</td><td><a href="#" class="edit_link" id="edit_' + transit_app.slug + '">Edit</a></td><td><a href="#" class="delete_link" id="delete_' + transit_app.slug + '">Delete</a></td><td><a href="#" class="hide_unhide_link" id="delete_' + transit_app.slug + '">' + hide_unhide_text + '</a></td>\n';        
     }
     
     function get_html_for_transit_apps(transit_apps)
@@ -122,8 +122,21 @@ jQuery(document).ready(function($)
         
         if (json.success)
         {
-            $("#transit_apps").html("&nbsp;");
-            query_for_transit_apps();
+            var tr_id = "#row_" + json.transit_app_slug;
+            var hide_unhide_selector = tr_id + " .hide_unhide_link";
+            
+            if (json.is_hidden)
+            {
+                $(tr_id).removeClass("visible-app");
+                $(tr_id).addClass("hidden-app");
+                $(hide_unhide_selector).text("Unhide");
+            }
+            else
+            {
+                $(tr_id).removeClass("hidden-app");
+                $(tr_id).addClass("visible-app");
+                $(hide_unhide_selector).text("Hide");
+            }
         }
         else
         {
@@ -136,6 +149,7 @@ jQuery(document).ready(function($)
         var transit_app_slug = $(this).attr("id").toString().split('_')[1];
         var url = url_for_transit_app_hide_unhide(transit_app_slug);
         $.post(url, {}, on_hide_unhide_app_callback, "json");
+        return false;
     }
     
     function query_for_transit_apps()

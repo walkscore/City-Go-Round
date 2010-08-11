@@ -517,7 +517,7 @@ def admin_apps_hide_unhide(request, transit_app):
         transit_app.put()
     except Exception:
         return render_to_json({"success": False, "transit_app_slug": transit_app.slug})
-    return render_to_json({"success": True, "transit_app_slug": transit_app.slug})
+    return render_to_json({"success": True, "transit_app_slug": transit_app.slug, "is_hidden": transit_app.is_hidden})
         
 def increment_stat(request):
     stat_name = request.GET['name']
