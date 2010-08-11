@@ -71,7 +71,8 @@ def api_agencies_search(request):
     return render_to_json([agency.to_jsonable() for agency in agencies_iter])
 
 @requires_GET
-@memcache_view_response(time = settings.MEMCACHE_API_SECONDS)
+# Can't use the memcache decorator here because of the private
+# (well, as private as open source APIs get) visible_only flag.
 def api_apps_all(request):
     """
         Return a list of all transit apps.
