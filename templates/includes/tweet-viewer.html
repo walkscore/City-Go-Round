@@ -2,7 +2,7 @@
 <script type="text/javascript">
 //<![CDATA[
     
-    var search_term = "citygoround.org";
+    var search_url = "http://search.twitter.com/search?q=%22Walk+Score%22+OR+walkscore+OR+walkscore.com+OR+www.walkscore.com";
     
     function mil_to_standard(mil){
         try{
@@ -40,7 +40,7 @@
       }
     
      $(document).ready(function(){
-      $.getJSON("http://search.twitter.com/search.json?callback=?&q="+search_term, react_to_twitter);
+      $.getJSON(search_url, react_to_twitter);
      });
 
 //]]>
