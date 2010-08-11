@@ -316,6 +316,7 @@ def admin_apps_edit_basic(request, transit_app):
             transit_app.categories = form.category_list
             transit_app.tags = form.tag_list
             transit_app.is_featured = form.cleaned_data["is_featured"]
+            transit_app.is_hidden = form.cleaned_data["is_hidden"]
             transit_app.put()    
                     
             clear_all_apps()
@@ -334,6 +335,7 @@ def admin_apps_edit_basic(request, transit_app):
             "categories": transit_app.category_choice_list,
             "tags": transit_app.tag_list_as_string,
             "is_featured": transit_app.is_featured,
+            "is_hidden": transit_app.is_hidden,
         }
         form = EditAppGeneralInfoForm(initial = form_initial_values)
     

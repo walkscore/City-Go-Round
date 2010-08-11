@@ -92,3 +92,15 @@ indexes:
   - name: is_featured=
   - name: date_added
     direction: desc
+
+- kind: TransitApp
+  properties:
+  - name: is_hidden
+  - name: bayesian_average
+    direction: desc
+
+- kind: TransitApp
+  properties:
+  - name: is_hidden
+  - name: date_added
+    direction: desc

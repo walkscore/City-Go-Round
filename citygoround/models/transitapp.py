@@ -196,7 +196,7 @@ class TransitApp(db.Model):
         return jsonable
 
     @staticmethod
-    def query_all(self, visible_only = True):
+    def query_all(visible_only = True):
         query = TransitApp.all()
         if visible_only: query = query.filter('is_hidden =', False)
         return query

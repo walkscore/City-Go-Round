@@ -105,7 +105,7 @@ def requires_http_basic_authentication(view_function, correct_username, correct_
 
 def requires_valid_transit_app_slug(view_function):
     def wrapper(request, transit_app_slug, *args, **kwargs):
-        transit_app = TransitApp.transit_app_for_slug(transit_app_slug)
+        transit_app = TransitApp.transit_app_for_slug(transit_app_slug, visible_only = False)
         if transit_app is not None:
             return view_function(request, transit_app, *args, **kwargs)
         else:

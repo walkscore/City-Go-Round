@@ -1272,6 +1272,11 @@ margin-top: 20px;
     color: #AAA;
 }
 
+#admin-transit-apps-list tr.hidden-app a:hover
+{
+    color: #628dc7;
+}
+
 #admin-home.integrity-check table th
 {
     font-weight: bold;

@@ -9,6 +9,7 @@ class EditAppGeneralInfoForm(forms.Form):
     original_slug       = forms.CharField(required = True, widget = forms.widgets.HiddenInput)
     title               = forms.CharField(max_length = 64, min_length = 2, label = u"Title")
     is_featured         = forms.BooleanField(required = False)
+    is_hidden           = forms.BooleanField(required = False)
     description         = forms.CharField(max_length = 140, min_length = 2, label = u"One Sentence Description")
     url                 = forms.URLField(verify_exists = False, min_length = 2, label = u"App URL")
     price               = forms.DecimalField(decimal_places = 2, max_digits = 6, min_value = Decimal("0.00"), initial = Decimal("0.00"), label = u"Price (USD)")
