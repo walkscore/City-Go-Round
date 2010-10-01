@@ -68,8 +68,8 @@ $(document).ready(function() {
 	<div style="float: left;">
     	<div id="no-data-list" class="data-lists body-content">
     		<h2><a href="{% url citygoround.views.agency.agencies %}us/?public=no_public">Apps Need Open Data</a></h2>
-            <p><a href="{% url citygoround.views.agency.agencies %}?public=no_public">{{closed_agencies.count}} transit agencies</a> do not provide open data to app developers.</p>
-            <label>Largest agencies with no open data:</label>
+            <!--p><a href="{% url citygoround.views.agency.agencies %}?public=no_public">{{closed_agencies.count}} transit agencies</a> do not provide open data to app developers.</p-->
+            <label>Largest transit agencies with no open data:</label>
             {% include "includes/no-data-list.html" %}
             <p>Transit agency? <a href="{% static_url /about/#0.1_agency %}">How to get off this list</a></p>
         </div>

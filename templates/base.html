@@ -30,6 +30,22 @@
 </script>
 {% block extra_head %}{% endblock %}
 
+<script type='text/javascript' src='http://partner.googleadservices.com/gampad/google_service.js'>
+</script>
+<script type='text/javascript'>
+GS_googleAddAdSenseService("ca-pub-0760627883975840");
+GS_googleEnableAllServices();
+</script>
+<script type='text/javascript'>
+GA_googleAddSlot("ca-pub-0760627883975840", "CGR_ATF_TopMREC_300x250");
+GA_googleAddSlot("ca-pub-0760627883975840", "CGR_ATF_BottomMREC_300x250");
+GA_googleAddAdSenseSlotAttr("CGR_ATF_TopMREC_300x250", "google_ad_channel", "1773350105");
+GA_googleAddAdSenseSlotAttr("CGR_ATF_BottomMREC_300x250", "google_ad_channel", "7966081123");
+</script>
+<script type='text/javascript'>
+GA_googleFetchAds();
+</script>
+
 </head>
 <body>
 <div id="header">
@@ -71,7 +87,8 @@
         <a href="{% url contact %}">Contact</a> &nbsp;-&nbsp; 
         <a href="{% url opensource %}">Open Source</a> &nbsp;-&nbsp; 
         <a href="{% url widgets %}">Widgets</a> &nbsp;-&nbsp; 
-        <a href="{% url terms_of_use %}">Terms</a>
+        <a href="{% url terms_of_use %}">Terms</a> &nbsp;-&nbsp; 
+        <a href="http://www.walkscore.com/services/public-transit-api.php" target="_blank">Public Transit API</a>
     </div>
     <div id="license"><p><a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/us/"><img alt="Creative Commons License" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/3.0/us/80x15.png" /></a></p></div>
     <div id="content-right"><p id="gtfs-data-exchange"><span>Data provided by GTFS Data Exchange</span><a href="http://www.gtfs-data-exchange.com/"><img src="{% static_url /images/gtfs-data-exchange-logo.gif %}" alt="GTFS Data Exchange Logo" /></a></p></div>
