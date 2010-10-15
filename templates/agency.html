@@ -40,8 +40,7 @@
             <p>{{agency.executive}}</p>
         </div>  
     {% endif %} 
-    
-       
+        
     {% if agency.date_opened %}
     {% else %}
         <div id="petition" class="body-content thinline">
@@ -58,10 +57,13 @@
         </div>
 
     {% endif %}
-
+    
 </div> 
-    
-    
+
+<div class="wide-col rightmost">
+	{% include "includes/mrec1.html" %}
+</div>
+
         
 
 {% endblock %}
