@@ -22,9 +22,12 @@ handlers:
   script: $PYTHON_LIB/google/appengine/ext/remote_api/handler.py
   login: admin
 
-- url: /admin/test.*
-  script: gaeunit.py
-  login: admin
+# This was removed by dave -- gaeunit appears to depend on 
+# undocumented GAE APIs that were recently removed.
+# CONSIDER upgrading gae?
+# - url: /admin/test.*
+#   script: gaeunit.py
+#   login: admin
   
 - url: /admin/.*
   script: bootstrap.py

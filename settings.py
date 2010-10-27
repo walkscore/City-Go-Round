@@ -8,7 +8,7 @@ S3_URL_ROOT = "http://files.citygoround.org.s3.amazonaws.com"
 
 APPEND_SLASH = True
 
-INSTALLED_APPS = ['citygoround', 'gaeunit']
+INSTALLED_APPS = ['citygoround'] # , 'gaeunit' -- removed by dave because it was BUSTED.
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.common.CommonMiddleware',
