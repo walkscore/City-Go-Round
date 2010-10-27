@@ -67,7 +67,7 @@ def update_references( new_references ):
             fr.put()
             
         # if the incoming feed reference already exists, and has been updated recently, replace it
-        elif (feed_reference_json['date_last_updated'] > old_feed_references[external_id].date_last_updated) or
+        elif (feed_reference_json['date_last_updated'] > old_feed_references[external_id].date_last_updated) or \
 	     (feed_reference_json['is_official'] != old_feed_references[external_id].is_official):
             logging.info( "replacing outdated feed reference '%s' (old: %s new: %s)"%(external_id, 
                                                                                       old_feed_references[external_id].date_last_updated,
