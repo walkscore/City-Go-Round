@@ -58,6 +58,11 @@ def update_references( new_references ):
     parentKey = db.Key.from_path("FeedReference", "base")
     for feed_reference_json in new_references:
         external_id = gtfs_data_exchange_id_from_feed_reference_json( feed_reference_json )
+
+        if external_id == "":
+            # Just skip this feed
+            logging.error("Had trouble processing this feed reference: %s" % feed_reference_json)
+            continue
         
         # if the incoming feed reference isn't already around, add it
         if external_id not in old_feed_references:
