@@ -3,6 +3,7 @@ import logging
 from django.utils import simplejson as json
 from google.appengine.ext import db
 from google.appengine.api.urlfetch import fetch as fetch_url
+from google.appengine.api.datastore_errors import BadValueError
 from ..utils.view import render_to_response, redirect_to, not_implemented
 from ..utils.mailer import send_to_contact
 from ..utils.prettyprint import pretty_print_time_elapsed
@@ -35,7 +36,11 @@ def new_feed_reference_from_json( feed_reference_json, parentKey ):
     fr.feed_baseurl      = feed_reference_json['feed_baseurl'].strip() if feed_reference_json['feed_baseurl'] != "" else None
     fr.name              = feed_reference_json['name']
     fr.area              = feed_reference_json['area']
-    fr.url               = feed_reference_json['url'].strip()
+    try:
+        fr.url               = feed_reference_json['url'].strip()
+    except BadValueError, e:
+        logging.error ("Invalid url %s, setting to None" % feed_reference_json['url'])
+        fr.url           = None
     fr.country           = feed_reference_json['country']
     fr.dataexchange_url  = feed_reference_json['dataexchange_url'].strip()
     fr.state             = feed_reference_json['state']
@@ -67,9 +72,10 @@ def update_references( new_references ):
         # if the incoming feed reference isn't already around, add it
         if external_id not in old_feed_references:
             logging.info( "adding new feed reference '%s' (last updated %s)"%(external_id, feed_reference_json['date_last_updated']) )
-            
+
             fr = new_feed_reference_from_json( feed_reference_json, parentKey )
             fr.put()
+
             
         # if the incoming feed reference already exists, and has been updated recently, replace it
         elif (feed_reference_json['date_last_updated'] > old_feed_references[external_id].date_last_updated) or \
