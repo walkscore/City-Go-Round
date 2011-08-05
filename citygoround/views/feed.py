@@ -23,8 +23,8 @@ def delete_feed_references(old_references):
 
 def gtfs_data_exchange_id_from_feed_reference_json( feed_reference_json ):
     # be hopeful that the api call has the external id. If not, yank it from the url
-    if 'external_id' in feed_reference_json:
-        return feed_reference_json['external_id']
+    if 'dataexchange_id' in feed_reference_json:
+        return feed_reference_json['dataexchange_id']
     else:
         return id_from_gtfs_data_exchange_url( feed_reference_json['dataexchange_url'].strip() )
 
