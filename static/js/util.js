@@ -1,34 +1,34 @@
-// © Front Seat Management 2007
+// © Walk Score 2012
 
 //*********** Utility functions ***********
-		function getUrlParam( name, doEscapeCleaning, doAddressCleaning) {  
-			name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");  
-			var regexS = "[\\?&]"+name+"=([^&#]*)";  
-			var regex = new RegExp( regexS );  
-			var results = regex.exec( window.location.href );  
-			if( results == null ) {   
-				return "";  
+		function getUrlParam( name, doEscapeCleaning, doAddressCleaning) {
+			name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+			var regexS = "[\\?&]"+name+"=([^&#]*)";
+			var regex = new RegExp( regexS );
+			var results = regex.exec( window.location.href );
+			if( results == null ) {
+				return "";
 			}
 			else {
 				var ret = results[1];
-				if (doEscapeCleaning) ret = cleanEscapes(ret);		
+				if (doEscapeCleaning) ret = cleanEscapes(ret);
 				if (doAddressCleaning) ret = cleanAddress(ret);
 				return ret;
 			}
 		}
-		
+
 		function cleanEscapes(address) {
 			address = unescape(address);
-			address = replaceAll( address, "+", " " );		
+			address = replaceAll( address, "+", " " );
 			return address;
 		}
-		
+
 		function cleanAddress(address) {
 			address = replaceAll( address, "&", " and " );
 			//address = replaceAll( address, "#", " " );
 			return address;
 		}
-		
+
 		function replaceAll (strOrig, strTarget, strSubString) {
 			var intIndexOfMatch = strOrig.indexOf( strTarget );
 			while (intIndexOfMatch != -1) {
@@ -37,17 +37,17 @@
 			}
 			return strOrig;
 		}
-		
+
 		function urlify(name, value, excludeNulls) {
 			return (value == null && excludeNulls) ? "" : name + "=" + encodeURIComponent(value);
 		}
-		
+
 		function sluggify(string) {
 			string = replaceAll( string, " ", "-" );
 			string = replaceAll( string, "'", "" );
 			return string.toLowerCase();
 		}
-		
+
 		// if str is not a string, returns ""
 		function safeString(str, addLeadingSpace, addTrailingSpace){
 			if (typeof str != "string")
@@ -56,13 +56,13 @@
 			if (addTrailingSpace) str = str + " ";
 			return str;
 		}
-		
+
 		function trimURL(url) {
 			var i = url.indexOf("://");
 			if (i != -1)
 				return url.substr(i+3);
 		}
-		
+
 		function forEach(array, fn, objThis) {
 			objThis = objThis || this;
 			var len = array.length;
@@ -72,7 +72,7 @@
 					return r;
 			}
 		}
-		
+
 		function paramIsSet(param) {
 			return (typeof param != "undefined");
 		}
@@ -80,7 +80,7 @@
 		function defaultIfNotSet(param, defaultVal) {
 			return (typeof param != "undefined") ? param : defaultVal;
 		}
-		
+
 		function trackEvent(control, action, label, value) {
 			//alertThese("Track Event", control, action, label, value);
 			if(pageTracker)
@@ -93,7 +93,7 @@
 			if (url)
 				document.location = url;
 		}
-		
+
 		function trackNavigationNewWindow(url, component, action, label) {
 			if (component && action)
 				trackEvent(component, action, safeString(label) );
@@ -113,7 +113,7 @@
 				return true;
 			return false;
 		}
-		
+
 		function getLeadingNumber(str){
 			if (!leadsWithNumber(str))
 				return false
@@ -123,29 +123,29 @@
 			return false;
 		}
 
-		
+
 //*********** JS OOP ******************
-	Function.prototype.inheritsFrom = function( parentClassOrObject ){ 
-		if ( parentClassOrObject.constructor == Function ) 
-		{ 
-			//Normal Inheritance 
+	Function.prototype.inheritsFrom = function( parentClassOrObject ){
+		if ( parentClassOrObject.constructor == Function )
+		{
+			//Normal Inheritance
 			this.prototype = new parentClassOrObject;
 			this.prototype.constructor = this;
 			this.prototype.parent = parentClassOrObject.prototype;
-		} 
-		else 
-		{ 
-			//Pure Virtual Inheritance 
+		}
+		else
+		{
+			//Pure Virtual Inheritance
 			this.prototype = parentClassOrObject;
 			this.prototype.constructor = this;
 			this.prototype.parent = parentClassOrObject;
-		} 
+		}
 		return this;
 	}
 
 
 //*********** BIND CALLBACK ******************
-    //lets you pass an object method as a callback to another function, such 
+    //lets you pass an object method as a callback to another function, such
     //that that function can store it and call it later with arbitrary parameters
     function bindCallback(toObject, method){
         return function() {  return method.apply(toObject, arguments); }
@@ -162,7 +162,7 @@ function Geodata(query, latLng, countryCode, countryName, formattedAddress, admi
     this._thoroughfare = safeString(thoroughfare);
     this._locality = safeString(locality);
     this._postalCode = safeString(postalCode);
-    
+
     this.getQuery = function() {return this._query}
     this.getLatLng = function() {return this._latLng}
     this.getLat = function() {return this._latLng.lat()}
@@ -175,22 +175,22 @@ function Geodata(query, latLng, countryCode, countryName, formattedAddress, admi
     this.getCity = function() {return this._locality}
     this.getPostalCode = function() {return this._postalCode}
 
-    this.getShorthand = function(hideCountryUS) { 
-        if (this.hasCity()) 
+    this.getShorthand = function(hideCountryUS) {
+        if (this.hasCity())
         {
             if (hideCountryUS && this._countryName == "USA")
                 return [this._locality, this._adminArea].join(", ");
             else
                 return [this._locality, this._adminArea, this._countryName].join(", ");
         }
-        else if (this.hasAdminArea()) 
+        else if (this.hasAdminArea())
         {
             if (hideCountryUS && this._countryName == "USA")
                 return this._adminArea;
             else
                 return [this._adminArea, this._countryName].join(", ");
         }
-        else if (this.hasCountry()) 
+        else if (this.hasCountry())
         {
             return this._formattedAddress;
         }
@@ -200,21 +200,21 @@ function Geodata(query, latLng, countryCode, countryName, formattedAddress, admi
         }
     }
     this.getCityStateZip = function() {return [this._locality, this._adminArea, this._postalCode].join(", "); }
-    this.hasCity = function() {return (this._locality != "") }    
-    this.hasData = function() {return (this._latLng != null) }    
-    this.hasAdminArea = function() {return (this._adminArea != "") }    
-    this.hasCountry = function() {return (this._countryCode != "") }    
+    this.hasCity = function() {return (this._locality != "") }
+    this.hasData = function() {return (this._latLng != null) }
+    this.hasAdminArea = function() {return (this._adminArea != "") }
+    this.hasCountry = function() {return (this._countryCode != "") }
 }
 
-function Geocoder() 
+function Geocoder()
 {
 	googleCoder = new GClientGeocoder();
 	this.geocoding = false;
-	
+
 	this.isGeocoding = function() {return this.geocoding; }
 	this.confirmSuccess = function() { this.geocoding = false; clearTimeout(this.geoTimeout); }
 	this.timeOut = function() {	this.geocoding = false; clearTimeout(this.geoTimeout); }
-	
+
 	this.geocode = function(query, callback_func)
 	{
 		this.geocoding = true;
@@ -223,51 +223,51 @@ function Geocoder()
 		googleCoder.getLocations( query, bindCallback(this, this.geocodeReturn) );
 		this.geoTimeout = setTimeout( bindCallback(this, this.timeOut), 15000);
 	}
-	this.geocodeReturn = function(response) 
+	this.geocodeReturn = function(response)
     {
     	var place, lat, lng;
     	var latLng = countryCode = formattedAddress = administrativeArea = thoroughfare = locality = postalCode = null;
-    
-    	if (response && response.Status.code == 200) 
+
+    	if (response && response.Status.code == 200)
     	{
     		place = response.Placemark[0];
     		lat = place.Point.coordinates[1];
-    		lng = place.Point.coordinates[0];											
-    		latLng	= new GLatLng(lat,lng);	
-    		
-    		if (place.AddressDetails.Country) 
-    		{			
+    		lng = place.Point.coordinates[0];
+    		latLng	= new GLatLng(lat,lng);
+
+    		if (place.AddressDetails.Country)
+    		{
     			countryCode = String(place.AddressDetails.Country.CountryNameCode);
     			countryName = String(place.AddressDetails.Country.CountryName);
     			formattedAddress = String(place.address);
     			//store additional information if available
-    			if (place.AddressDetails.Country.AdministrativeArea) 
+    			if (place.AddressDetails.Country.AdministrativeArea)
     			{
-    				
-    				if (place.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName) 
+
+    				if (place.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName)
     				{
     					administrativeArea = String(place.AddressDetails.Country.AdministrativeArea.AdministrativeAreaName);
     				}
-    				
+
     				//for more details, need to see if this area has a SubAdministrativeArea
     				var adminArea = place.AddressDetails.Country.AdministrativeArea;
-    				if (place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea) 
+    				if (place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea)
     				{
     					adminArea = place.AddressDetails.Country.AdministrativeArea.SubAdministrativeArea
     				}
-    				
-    				if (adminArea.Locality) 
+
+    				if (adminArea.Locality)
     				{
     					if (adminArea.Locality.Thoroughfare)
     					{
     						thoroughfare = String(adminArea.Locality.Thoroughfare.ThoroughfareName);
     					}
-    								
+
     					if (adminArea.Locality.LocalityName)
     					{
     						locality = String(adminArea.Locality.LocalityName);
     					}
-    					
+
     					if (adminArea.Locality.PostalCode)
     					{
     						postalCode = String(adminArea.Locality.PostalCode.PostalCodeNumber);
@@ -277,14 +277,14 @@ function Geocoder()
     		}
     		var geodata = new Geodata(this.activeQuery, latLng, countryCode, countryName, formattedAddress, administrativeArea, thoroughfare, locality, postalCode);
     	}
-    	else 
+    	else
     	{
     	   var geodata = new Geodata(this.activeQuery);
     	}
-    	
+
     	this.activeQuery = "";
     	this.callback_func(geodata);
     }
-}		
+}
 
-	
+

@@ -5,19 +5,19 @@
 {% block content %}
 <div id="admin-home">
     <h1>Admin.</h1>
-    
+
     <p>&nbsp;</p>
-    
+
     <h2>Here are some things you can do:</h2>
-    
+
     <p>Get a <a href="{% url admin_agencies_list %}">list of agencies</a> so you can edit them.</p>
     <p>Get a <a href="{% url admin_apps_list %}">list of transit apps</a> so you can edit them.</p>
     <p><a href="{% url admin_agencies_add %}">Add a new agency</a> by hand.</p>
 
     <p>&nbsp;</p>
-    
+
     <h2>Here are some things you might do less frequently:</h2>
-    
+
     <p>Delete <a href="{% url delete_all_feed_references %}">all gtfs feed exchange</a> references</p>
     <p>Force the <a href="{% url update_feed_references %}">feed references to update</a> from GTFS Exchange.</p>
     <p>Force all agencies to <a href="{% url admin_agencies_update_locations %}">update their geocell information</a> based on their current latitude/longitude.</p>
@@ -28,9 +28,9 @@
     <p>Verify the <a href="{% url admin_integrity_check %}">referential integrity</a> of all entities in the datastore.</p>
     <p>Get <a href="{% url admin_memcache_statistics %}">memcache statistics</a>.</p>
     <p>Get a <a href="{% url admin_apps_csv %}">CSV file of all apps</a> and their contact information.</p>
-    
+
     <p>&nbsp;</p>
-    
+
     <h2>Here are some statistics:</h2>
 
     {% for stat in all_stats %}
@@ -38,15 +38,15 @@
     {% endfor %}
 
     <p>&nbsp;</p>
-    
+
     <h2>Want to validate the HTML of this site? Follow these links:</h2>
-    
+
     <p><a target="_blank" href="http://validator.w3.org/check?uri=http%3A%2F%2Fwww.citygoround.org%2F&charset=%28detect+automatically%29&doctype=Inline&group=0">Home Page</a></p>
     <p><a target="_blank" href="http://validator.w3.org/check?uri=http%3A%2F%2Fwww.citygoround.org%2Fapps%2F&charset=%28detect+automatically%29&doctype=Inline&group=0&user-agent=W3C_Validator%2F1.654">Apps Gallery</a></p>
     <p><a target="_blank" href="http://validator.w3.org/check?uri=http%3A%2F%2Fwww.citygoround.org%2Fagencies%2F&charset=%28detect+automatically%29&doctype=Inline&group=0&user-agent=W3C_Validator%2F1.654">Agencies List</a></p>
     <p><a target="_blank" href="http://validator.w3.org/check?uri=http%3A%2F%2Fwww.citygoround.org%2Fapps%2Fnearby%2F%3Fq%3Dseattle%2C%2520wa&charset=%28detect+automatically%29&doctype=Inline&group=0&user-agent=W3C_Validator%2F1.654">Search Results for Seattle, WA</a></p>
-    <p><a target="_blank" href="http://validator.w3.org/check?uri=http%3A%2F%2Fwww.citygoround.org%2Fapps%2Fwalk-score%2F&charset=%28detect+automatically%29&doctype=Inline&group=0&user-agent=W3C_Validator%2F1.654">Walk Score App Details Page</a></p>
+    <p><a target="_blank" href="http://validator.w3.org/check?uri=http%3A%2F%2Fwww.citygoround.org%2Fapps%2Fwalk-score%2F&charset=%28detect+automatically%29&doctype=Inline&group=0&user-agent=W3C_Validator%2F1.654">City-Go-Round App Details Page</a></p>
     <p><a target="_blank" href="http://validator.w3.org/check?uri=http%3A%2F%2Fwww.citygoround.org%2Fapps%2Fadd%2F&charset=%28detect+automatically%29&doctype=Inline&group=0&user-agent=W3C_Validator%2F1.654">Add App Form Page</a></p>
-    
+
 </div>
 {% endblock %}
