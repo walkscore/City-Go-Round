@@ -296,7 +296,6 @@
 
     #footer {
         padding-top: 50px;
-        padding-bottom: 20px;
         clear: both;
         margin: 0 auto 0 auto;
         width: 920px;
@@ -393,7 +392,7 @@ h5, h5 a, h5 a:hover, h5 a:link, h5 a:visited {
 }
 #footer h5 a:hover {background-color: transparent;}
 #footer .section {
- width:120px;
+ width: 160px;
  float: left;
  margin: 0 10px 20px;
 }
