@@ -48,7 +48,7 @@ def send_to_contact(subject, body, recipient="info@citygoround.org"):
     except Exception:
         exc_str = exception_string()
         logging.error("Unknown error: failed to send mail: %s\n%s" % (subject, exc_str))
-    return  
+    return
 
 """
 New app email notification taskqueue function
@@ -67,8 +67,8 @@ def kick_off_new_app_notification(transit_app):
     task.add(queue_name = "notify-new-app-queue")
 
 """
-throttle_mail Returns True if a mail with this subject HAS been sent in the last 
-five minutes.  
+throttle_mail Returns True if a mail with this subject HAS been sent in the last
+five minutes.
 Returns False if it has NOT been sent (I know, it's poorly named)
 """
 
@@ -82,15 +82,15 @@ def throttle_mail(subject):
         return False
     if time.time() - last_time <= 300:
         return True
-    memcache.set(mkey, time.time())     
-    return False  
+    memcache.set(mkey, time.time())
+    return False
 
 def send_to_admin(subject, body):
     if throttle_mail(subject):
         logging.debug('already sent out an email titled %s in the last 5 mins' % subject)
         return
     message = mail.EmailMessage(sender="info@citygoround.org")
-    message.to = "api-error@frontseat.org"
+    message.to = "api-error@walkscore.com"
     message.subject = subject
     message.body = body
     try:
@@ -101,6 +101,6 @@ def send_to_admin(subject, body):
     except Exception:
         exc_str = exception_string()
         logging.error("Unknown error: failed to send mail: %s\n%s" % (subject, exc_str))
-    return  
+    return
 """
 

@@ -31,7 +31,7 @@ SITE_WIDE_USERNAME_AND_PASSWORD_URL_EXCEPTIONS = [ r'^/admin/taskqueue/.*$' ]
 
 ROOT_URLCONF = 'urls'
 
-TEMPLATE_CONTEXT_PROCESSORS = ['citygoround.context.api_keys'] 
+TEMPLATE_CONTEXT_PROCESSORS = ['citygoround.context.api_keys']
 
 # NOTE davepeck:
 #
@@ -96,8 +96,8 @@ if RUNNING_APP_ENGINE_LOCAL_SERVER:
     except ImportError, exp:
         pass
 
-NEW_APP_EMAIL_RECIPIENTS = ["badhill@gmail.com", 
+NEW_APP_EMAIL_RECIPIENTS = ["badhill@gmail.com",
                             "davepeck@davepeck.org",
-                            "jesse@frontseat.org",
-                            "matt@frontseat.org",
-                            "aleisha@frontseat.org"]
+                            "jesse@walkscore.com",
+                            "matt@walkscore.com",
+                            "aleisha@walkscore.com"]
