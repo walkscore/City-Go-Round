@@ -11,7 +11,6 @@ urlpatterns += patterns(
     url(r'^contact/$', 'contact', name='contact'),
     url(r'^contact-thanks/$', 'contact_thanks', name='contact_thanks'),
     url(r'^about/$', 'static', {'template':'about.html'}, name='about'),
-    url(r'^opensource/$', 'static', {'template':'opensource.html'}, name='opensource'),
     url(r'^petition-signed/$', 'static', {'template':'petition_signed.html'}, name='petition_signed'),
     url(r'^widgets/$', 'static', {'template':'widgets.html'}, name='widgets'),
     url(r'^terms-of-use/$', 'static', {'template':'terms_of_use.html'}, name='terms_of_use'),
