@@ -194,6 +194,7 @@ def agencies(request, countryslug='', stateslug='', cityslug='', nameslug=''):
         'is_current_user_admin': users.is_current_user_admin(),
         'page_title': page_title,
         'page_url':request.META['PATH_INFO']+"?"+request.META['QUERY_STRING'],
+        'show_redfin_links': True,
     }
     
     return render_to_response( request, "agency_list.html", template_vars)

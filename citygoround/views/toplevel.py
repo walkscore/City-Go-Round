@@ -24,6 +24,7 @@ def home(request):
         'agency_count': Agency.all().count(),
         'closed_agencies': Agency.all().filter("date_opened =", None).filter("private =", False).order("-passenger_miles"),
         'open_agencies': Agency.all().filter("date_opened !=", None).order("-date_opened"),
+        'show_redfin_links': True,
     }    
     return render_to_response(request, 'home.html', template_vars)
 
@@ -54,7 +55,9 @@ def contact_thanks(request):
     return render_to_response(request, 'contact-thanks.html', template_vars)
 
 def static(request, template):
-    return render_to_response(request, template)
+    return render_to_response(
+        request, template, {'show_redfin_links': template == 'about.html'}
+    )
     
 def admin_login(request):
     return HttpResponseRedirect( create_login_url("/") )

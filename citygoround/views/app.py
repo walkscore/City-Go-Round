@@ -79,6 +79,7 @@ def gallery(request):
         'recently_added_apps': recent_list, 
         'transit_app_count':   TransitApp.query_all().count(),
         'public_feed_count':   Agency.all().filter("date_opened != ", None).count(),
+        'show_redfin_links':   True,
     }
         
     return render_to_response(request, 'app/gallery.html', template_vars)
