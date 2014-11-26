@@ -354,6 +354,9 @@
   margin-right: 2%;
   width: 40%;
 }
+#footer #popular_cities.full_width {
+  width: 100%;
+}
 #footer #walkable_hoods {
   float: left;
   width: 58%;
@@ -367,6 +370,12 @@
 .right-half {
   float: left;
   width: 49%;
+  overflow: hidden;
+}
+.one_third_col {
+  float: left;
+  margin-right: 2%;
+  width: 30%;
   overflow: hidden;
 }
 #footer .cities a, #footer a.cities:hover, #footer a.cities:visited {

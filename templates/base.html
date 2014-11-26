@@ -85,8 +85,58 @@ GA_googleFetchAds();
 <div id="footer">
   <div class="root-container clearfix">
     <div class="cities clearfix">
-      <div id="popular_cities">
+      <div id="popular_cities"{% if show_redfin_links %} class="full_width" {% endif %}>
         <h5>Popular Cities</h5>
+        {% if show_redfin_links %}
+        <div class="one_third_col">
+          <ul class="textlist">
+            <li><a href="https://www.redfin.com/city/250/VA/Alexandria" target="_blank">Alexandria Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/30756/GA/Atlanta" target="_blank">Atlanta Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/30818/TX/Austin" target="_blank">Austin Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/1073/MD/Baltimore" target="_blank">Baltimore Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/1387/WA/Bellevue" target="_blank">Bellevue Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/1826/MA/Boston" target="_blank">Boston Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/3105/NC/Charlotte" target="_blank">Charlotte Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/29470/IL/Chicago" target="_blank">Chicago Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/30794/TX/Dallas" target="_blank">Dallas Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/5155/CO/Denver" target="_blank">Denver Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/6173/FL/Fort-Lauderdale" target="_blank">Fort Lauderdale Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/30827/TX/Fort-Worth" target="_blank">Fort Worth Homes for Sale</a></li>
+          </ul>
+        </div>
+        <div class="one_third_col">
+          <ul class="textlist">
+            <li><a href="https://www.redfin.com/city/8903/TX/Houston" target="_blank">Houston Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/9361/CA/Irvine" target="_blank">Irvine Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/9148/WA/Kirkland" target="_blank">Kirkland Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/10201/NV/Las-Vegas" target="_blank">Las Vegas Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/11203/CA/Los-Angeles" target="_blank">Los Angeles Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/11458/FL/Miami" target="_blank">Miami Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/10943/MN/Minneapolis" target="_blank">Minneapolis Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/13654/CA/Oakland" target="_blank">Oakland Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/13655/FL/Orlando" target="_blank">Orlando Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/15502/PA/Philadelphia" target="_blank">Philadelphia Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/14240/AZ/Phoenix" target="_blank">Phoenix Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/30772/OR/Portland" target="_blank">Portland Homes for Sale</a></li>
+          </ul>
+        </div>
+        <div class="one_third_col">
+          <ul class="textlist">
+            <li><a href="https://www.redfin.com/city/35711/NC/Raleigh" target="_blank">Raleigh Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/14913/WA/Redmond" target="_blank">Redmond Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/16409/CA/Sacramento" target="_blank">Sacramento Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/16657/TX/San-Antonio" target="_blank">San Antonio Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/16904/CA/San-Diego" target="_blank">San Diego Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/17151/CA/San-Francisco" target="_blank">San Francisco Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/17420/CA/San-Jose" target="_blank">San Jose Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/16660/AZ/Scottsdale" target="_blank">Scottsdale Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/16163/WA/Seattle" target="_blank">Seattle Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/18142/FL/Tampa" target="_blank">Tampa Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/12839/DC/Washington-DC" target="_blank">Washington D.C. Homes for Sale</a></li>
+            <li><a href="https://www.redfin.com/city/20373/NY/White-Plains" target="_blank">White Plains Homes for Sale</a></li>
+          </ul>
+        </div>
+        {% else %}
         <div class="left-half">
           <ul class="textlist">
             <li><a href="http://www.walkscore.com/NY/New_York">New York Apartments</a></li>
@@ -125,7 +175,9 @@ GA_googleFetchAds();
             <li><a href="http://www.walkscore.com/TX/Dallas">Dallas Apartments</a></li>
           </ul>
         </div>
+        {% endif %}
       </div><!-- //halves -->
+      {% if not show_redfin_links %}
       <div id="walkable_hoods">
         <h5>Walkable Neighborhoods</h5>
         <div class="left-half">
@@ -167,6 +219,7 @@ GA_googleFetchAds();
           </ul>
         </div>
       </div>
+      {% endif %}
     </div></div><!-- //root-container -->
   <div id="city-footer">
     <div class="root-container clearfix">
