@@ -7,10 +7,6 @@ import logging
 logging.info('Loading %s, app version = %s', __name__, os.getenv('CURRENT_VERSION_ID'))
 
 def bootstrap_django():
-    # Declare the Django version we need.
-    from google.appengine.dist import use_library
-    use_library('django', '1.1')
-
     # Fail early if we can't import Django 1.x.  Log identifying information.
     import django
     logging.info('django.__file__ = %r, django.VERSION = %r', django.__file__, django.VERSION)
