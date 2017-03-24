@@ -15,7 +15,7 @@ from google.appengine.api import users
 from .models import TransitApp
 
 
-register = template.create_template_register()
+register = djangot.Library()
 
 
 def _resolve_variable_or_expression(v_or_e, context):
