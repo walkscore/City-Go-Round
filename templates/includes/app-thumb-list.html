@@ -1,3 +1,4 @@
+{% load tags %}
 {% for transit_app in apps %}
 	<div class="app {% cycle 'odd' 'even' %}"> <a href="{% url apps_details transit_app_slug=transit_app.slug %}"><img src="{{transit_app.default_80sq_screen_shot_url}}" alt="Application Screen Shot" /></a>
 		<h5><a href="{% url apps_details transit_app_slug=transit_app.slug %}">{{transit_app.title}}</a></h5>
